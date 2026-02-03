@@ -1,0 +1,63 @@
+"use client";
+
+import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
+
+export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleLogin = async () => {
+    setLoading(true);
+    await authClient.signIn.email(
+      { email, password },
+      {
+        onSuccess: () => {
+          router.push("/dashboard");
+        },
+        onError: (ctx) => {
+          alert(ctx.error.message);
+          setLoading(false);
+        },
+      }
+    );
+  };
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="w-full max-w-md p-8 bg-white rounded shadow">
+        <h1 className="text-2xl font-bold mb-6">Login</h1>
+        <div className="space-y-4">
+          <Input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full"
+          />
+          <Input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full"
+          />
+          <Button onClick={handleLogin} disabled={loading} className="w-full">
+            {loading ? "Logging in..." : "Login"}
+          </Button>
+          <p className="text-center text-sm text-gray-600">
+            Don't have an account?{" "}
+            <a href="/register" className="text-primary-600 hover:underline">
+              Register
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
