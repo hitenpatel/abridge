@@ -13,7 +13,6 @@
 	},
 	"dependencies": {
 		"@fastify/cors": "^10.0.0",
-		"@fastify/websocket": "^11.0.0",
 		"@schoolconnect/db": "workspace:*",
 		"@trpc/server": "^11.0.0",
 		"better-auth": "^1.4.18",

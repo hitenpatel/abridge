@@ -5,6 +5,7 @@ export const authRouter = router({
 		return ctx.user;
 	}),
 	getSecretMessage: protectedProcedure.query(({ ctx }) => {
-		return `Hello ${ctx.user.name}, this is a secret message!`;
+		const displayName = ctx.user.name || ctx.user.email.split("@")[0];
+		return `Hello ${displayName}, this is a secret message!`;
 	}),
 });

@@ -8,11 +8,23 @@ import { appRouter } from "./router";
 
 const server = Fastify({ logger: true });
 
+function getAllowedOrigins(): string[] {
+	if (process.env.NODE_ENV === "development") {
+		return ["http://localhost:3000", "http://localhost:8081"];
+	}
+
+	const webUrl = process.env.WEB_URL;
+	if (!webUrl) {
+		throw new Error("WEB_URL environment variable is required in production");
+	}
+
+	// Support comma-separated origins for multiple frontend domains
+	return webUrl.split(",").map((u) => u.trim());
+}
+
 async function main() {
 	await server.register(cors, {
-		origin:
-			process.env.WEB_URL ||
-			(process.env.NODE_ENV === "development" ? "http://localhost:3000" : false),
+		origin: getAllowedOrigins(),
 		credentials: true,
 	});
 
@@ -35,7 +47,7 @@ async function main() {
 	}
 
 	await server.listen({ port, host: "0.0.0.0" });
-	console.log(`API server running on port ${port}`);
+	server.log.info(`API server running on port ${port}`);
 }
 
 main().catch((err) => {

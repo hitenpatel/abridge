@@ -8,21 +8,12 @@ export async function createContext({ req, res }: CreateFastifyContextOptions) {
 		headers: fromNodeHeaders(req.headers),
 	});
 
-	const user = session?.user ?? null;
-	const staffMembers = user
-		? await prisma.staffMember.findMany({
-				where: { userId: user.id },
-				select: { schoolId: true, role: true },
-			})
-		: [];
-
 	return {
 		prisma,
 		req,
 		res,
-		user,
+		user: session?.user ?? null,
 		session: session?.session ?? null,
-		staffMembers,
 	};
 }
 

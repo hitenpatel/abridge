@@ -9,7 +9,6 @@ function createTestContext(overrides?: Partial<Context>): Context {
 		res: {} as Context["res"],
 		user: null,
 		session: null,
-		staffMembers: [],
 		...overrides,
 	};
 }
