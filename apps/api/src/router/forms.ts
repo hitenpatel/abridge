@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { protectedProcedure, router, schoolStaffProcedure } from "../trpc";
@@ -32,9 +33,26 @@ export const formsRouter = router({
 					schoolId: input.schoolId,
 					title: input.title,
 					description: input.description,
-					fields: input.fields as any, // Prisma Json type
+					fields: input.fields as Prisma.InputJsonValue, // Prisma Json type
 				},
 			});
+		}),
+
+	getTemplate: protectedProcedure
+		.input(z.object({ templateId: z.string() }))
+		.query(async ({ ctx, input }) => {
+			const template = await ctx.prisma.formTemplate.findUnique({
+				where: { id: input.templateId },
+			});
+
+			if (!template) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Template not found",
+				});
+			}
+
+			return template;
 		}),
 
 	getPendingForms: protectedProcedure
@@ -82,6 +100,38 @@ export const formsRouter = router({
 					},
 				},
 				orderBy: { createdAt: "desc" },
+			});
+		}),
+
+	getCompletedForms: protectedProcedure
+		.input(z.object({ childId: z.string() }))
+		.query(async ({ ctx, input }) => {
+			// Verify parent owns child
+			const ownership = await ctx.prisma.parentChild.findUnique({
+				where: {
+					userId_childId: {
+						userId: ctx.user.id,
+						childId: input.childId,
+					},
+				},
+			});
+
+			if (!ownership) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "You are not a parent of this child",
+				});
+			}
+
+			return ctx.prisma.formResponse.findMany({
+				where: {
+					childId: input.childId,
+					parentId: ctx.user.id,
+				},
+				include: {
+					template: true,
+				},
+				orderBy: { submittedAt: "desc" },
 			});
 		}),
 
