@@ -1,7 +1,7 @@
 {
-  "extends": "@schoolconnect/tsconfig/base.json",
-  "compilerOptions": {
-    "outDir": "./dist"
-  },
-  "include": ["src"]
+	"extends": "@schoolconnect/tsconfig/base.json",
+	"compilerOptions": {
+		"outDir": "./dist"
+	},
+	"include": ["src"]
 }

@@ -37,6 +37,8 @@ model User {
   id            String    @id @default(cuid())
   email         String    @unique
   name          String
+  emailVerified Boolean   @default(false)
+  image         String?
   phone         String?
   language      String    @default("en")
   avatarUrl     String?
@@ -60,7 +62,10 @@ model Session {
   userId    String
   token     String   @unique
   expiresAt DateTime
+  ipAddress String?
+  userAgent String?
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -75,11 +80,26 @@ model Account {
   accessToken       String?
   refreshToken      String?
   expiresAt         Int?
+  password          String?
+  idToken           String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verifications")
 }
 
 // ─── School Staff ────────────────────────────────────────────

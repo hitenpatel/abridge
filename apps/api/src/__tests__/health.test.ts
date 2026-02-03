@@ -1,24 +1,25 @@
-import { describe, it, expect } from "vitest";
-import { appRouter } from "../router";
+import { describe, expect, it } from "vitest";
 import type { Context } from "../context";
+import { appRouter } from "../router";
 
 function createTestContext(overrides?: Partial<Context>): Context {
-  return {
-    prisma: {} as Context["prisma"],
-    req: {} as Context["req"],
-    res: {} as Context["res"],
-    user: null,
-    session: null,
-    ...overrides,
-  };
+	return {
+		prisma: {} as Context["prisma"],
+		req: {} as Context["req"],
+		res: {} as Context["res"],
+		user: null,
+		session: null,
+		staffMembers: [],
+		...overrides,
+	};
 }
 
 describe("health router", () => {
-  it("returns ok status", async () => {
-    const caller = appRouter.createCaller(createTestContext());
-    const result = await caller.health.check();
+	it("returns ok status", async () => {
+		const caller = appRouter.createCaller(createTestContext());
+		const result = await caller.health.check();
 
-    expect(result.status).toBe("ok");
-    expect(result.timestamp).toBeDefined();
-  });
+		expect(result.status).toBe("ok");
+		expect(result.timestamp).toBeDefined();
+	});
 });
