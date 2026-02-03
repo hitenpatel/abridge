@@ -28,6 +28,7 @@ model School {
   payments   PaymentItem[]
   events     Event[]
   attendance AttendanceRecord[]
+  formTemplates FormTemplate[]
 
   @@map("schools")
 }
@@ -54,6 +55,7 @@ model User {
   payments      Payment[]
   sessions      Session[]
   accounts      Account[]
+  formResponses FormResponse[]
 
   @@map("users")
 }
@@ -143,6 +145,7 @@ model Child {
   attendance  AttendanceRecord[]
   messages    MessageChild[]
   payments    PaymentItemChild[]
+  formResponses FormResponse[]
 
   @@map("children")
 }
@@ -346,4 +349,40 @@ enum EventCategory {
   EVENT
   DEADLINE
   CLUB
+}
+
+// ─── Forms & Consent ─────────────────────────────────────────
+
+model FormTemplate {
+  id          String   @id @default(cuid())
+  schoolId    String
+  title       String
+  description String?
+  fields      Json     // Array of field definitions { id, type, label, required }
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school    School         @relation(fields: [schoolId], references: [id])
+  responses FormResponse[]
+
+  @@index([schoolId])
+  @@map("form_templates")
+}
+
+model FormResponse {
+  id          String   @id @default(cuid())
+  templateId  String
+  childId     String
+  parentId    String
+  data        Json     // Key-value pairs matching field ids
+  signature   String?  // Base64 signature image
+  submittedAt DateTime @default(now())
+
+  template FormTemplate @relation(fields: [templateId], references: [id])
+  child    Child        @relation(fields: [childId], references: [id])
+  parent   User         @relation(fields: [parentId], references: [id])
+
+  @@unique([templateId, childId])
+  @@map("form_responses")
 }
