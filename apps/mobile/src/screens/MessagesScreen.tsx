@@ -1,12 +1,17 @@
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import type { CompositeNavigationProp } from "@react-navigation/native";
 import { useCallback } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { MessageCard, type MessageItem } from "../components/MessageCard";
 import { trpc } from "../lib/trpc";
-import type { RootStackParamList, MessageItem as RouteMessageItem } from "../../App";
+import type { RootStackParamList, TabParamList, MessageItem as RouteMessageItem } from "../../App";
 
 interface MessagesScreenProps {
-	navigation: NativeStackNavigationProp<RootStackParamList, "Messages">;
+	navigation: CompositeNavigationProp<
+		BottomTabNavigationProp<TabParamList, "Messages">,
+		NativeStackNavigationProp<RootStackParamList>
+	>;
 }
 
 export const MessagesScreen: React.FC<MessagesScreenProps> = ({ navigation }) => {

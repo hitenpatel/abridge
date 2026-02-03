@@ -11,8 +11,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard" },
-    { name: "Sent Messages", href: "/dashboard/messages" },
-    { name: "Compose", href: "/dashboard/messages/new" },
+    { name: "Messages", href: "/dashboard/messages" },
+    { name: "Payments", href: "/dashboard/payments" },
   ];
 
   return (

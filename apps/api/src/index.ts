@@ -1,10 +1,12 @@
 import cors from "@fastify/cors";
+import rawBody from "fastify-raw-body";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 import { toNodeHandler } from "better-auth/node";
 import Fastify from "fastify";
 import { createContext } from "./context";
 import { auth } from "./lib/auth";
 import { appRouter } from "./router";
+import { webhookRoutes } from "./routes/webhooks";
 
 const server = Fastify({ logger: true });
 
@@ -23,10 +25,20 @@ function getAllowedOrigins(): string[] {
 }
 
 async function main() {
+	await server.register(rawBody, {
+		field: "rawBody",
+		global: false,
+		encoding: false, // get it as Buffer
+		runFirst: true,
+		routes: ["/api/webhooks/stripe"],
+	});
+
 	await server.register(cors, {
 		origin: getAllowedOrigins(),
 		credentials: true,
 	});
+
+	await server.register(webhookRoutes);
 
 	await server.register(fastifyTRPCPlugin, {
 		prefix: "/trpc",
