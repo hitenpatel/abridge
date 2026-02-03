@@ -16,9 +16,10 @@ model School {
   address   String?
   phone     String?
   email     String?
-  logoUrl   String?
-  timezone  String   @default("Europe/London")
-  createdAt DateTime @default(now())
+  logoUrl          String?
+  timezone         String   @default("Europe/London")
+  stripeAccountId  String?  @unique
+  createdAt        DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   staff      StaffMember[]
