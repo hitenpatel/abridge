@@ -29,12 +29,18 @@ export const attendanceRouter = router({
 				});
 			}
 
+			// Normalize dates to start and end of day in UTC
+			const start = new Date(input.startDate);
+			start.setUTCHours(0, 0, 0, 0);
+			const end = new Date(input.endDate);
+			end.setUTCHours(23, 59, 59, 999);
+
 			return ctx.prisma.attendanceRecord.findMany({
 				where: {
 					childId: input.childId,
 					date: {
-						gte: input.startDate,
-						lte: input.endDate,
+						gte: start,
+						lte: end,
 					},
 				},
 				orderBy: { date: "desc" },
@@ -71,9 +77,9 @@ export const attendanceRouter = router({
 			// 2. Generate dates range
 			const dates: Date[] = [];
 			const current = new Date(input.startDate);
-			current.setHours(0, 0, 0, 0);
+			current.setUTCHours(0, 0, 0, 0);
 			const end = new Date(input.endDate);
-			end.setHours(0, 0, 0, 0);
+			end.setUTCHours(0, 0, 0, 0);
 
 			if (end < current) {
 				throw new TRPCError({
@@ -84,7 +90,7 @@ export const attendanceRouter = router({
 
 			while (current <= end) {
 				dates.push(new Date(current));
-				current.setDate(current.getDate() + 1);
+				current.setUTCDate(current.getUTCDate() + 1);
 			}
 
 			// 3. Create records for AM and PM
