@@ -1,0 +1,22 @@
+{
+  "name": "schoolconnect",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "test": "turbo test",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "db:migrate": "pnpm --filter @schoolconnect/api db:migrate",
+    "db:push": "pnpm --filter @schoolconnect/api db:push",
+    "db:studio": "pnpm --filter @schoolconnect/api db:studio"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.0",
+    "turbo": "^2.3.0"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
