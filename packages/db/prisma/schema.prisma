@@ -1,0 +1,328 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Multi-tenancy ───────────────────────────────────────────
+
+model School {
+  id        String   @id @default(cuid())
+  name      String
+  urn       String   @unique // Ofsted URN
+  address   String?
+  phone     String?
+  email     String?
+  logoUrl   String?
+  timezone  String   @default("Europe/London")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  staff      StaffMember[]
+  children   Child[]
+  messages   Message[]
+  payments   PaymentItem[]
+  events     Event[]
+  attendance AttendanceRecord[]
+
+  @@map("schools")
+}
+
+// ─── Users & Roles ───────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String
+  phone         String?
+  language      String    @default("en")
+  avatarUrl     String?
+  quietStart    String?   // HH:mm format
+  quietEnd      String?   // HH:mm format
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  parentLinks   ParentChild[]
+  staffLinks    StaffMember[]
+  messageReads  MessageRead[]
+  payments      Payment[]
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  provider          String
+  providerAccountId String
+  accessToken       String?
+  refreshToken      String?
+  expiresAt         Int?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+// ─── School Staff ────────────────────────────────────────────
+
+model StaffMember {
+  id       String    @id @default(cuid())
+  userId   String
+  schoolId String
+  role     StaffRole @default(TEACHER)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, schoolId])
+  @@map("staff_members")
+}
+
+enum StaffRole {
+  ADMIN
+  TEACHER
+  OFFICE
+}
+
+// ─── Children & Parent Links ─────────────────────────────────
+
+model Child {
+  id          String   @id @default(cuid())
+  firstName   String
+  lastName    String
+  dateOfBirth DateTime @db.Date
+  yearGroup   String?
+  className   String?
+  avatarUrl   String?
+  schoolId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school      School            @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  parentLinks ParentChild[]
+  attendance  AttendanceRecord[]
+  messages    MessageChild[]
+  payments    PaymentItemChild[]
+
+  @@map("children")
+}
+
+model ParentChild {
+  id       String             @id @default(cuid())
+  userId   String
+  childId  String
+  relation ParentRelationType @default(PARENT)
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  child Child @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, childId])
+  @@map("parent_children")
+}
+
+enum ParentRelationType {
+  PARENT
+  GUARDIAN
+  CARER
+}
+
+// ─── Messaging ───────────────────────────────────────────────
+
+model Message {
+  id        String          @id @default(cuid())
+  schoolId  String
+  subject   String
+  body      String
+  category  MessageCategory @default(STANDARD)
+  authorId  String?
+  createdAt DateTime        @default(now())
+
+  school   School         @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  children MessageChild[]
+  reads    MessageRead[]
+
+  @@index([schoolId, createdAt])
+  @@map("messages")
+}
+
+model MessageChild {
+  messageId String
+  childId   String
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  child   Child   @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@id([messageId, childId])
+  @@map("message_children")
+}
+
+model MessageRead {
+  id        String   @id @default(cuid())
+  messageId String
+  userId    String
+  readAt    DateTime @default(now())
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId])
+  @@map("message_reads")
+}
+
+enum MessageCategory {
+  URGENT
+  STANDARD
+  FYI
+}
+
+// ─── Attendance ──────────────────────────────────────────────
+
+model AttendanceRecord {
+  id       String         @id @default(cuid())
+  childId  String
+  schoolId String
+  date     DateTime       @db.Date
+  session  SchoolSession
+  mark     AttendanceMark
+  note     String?
+
+  child  Child  @relation(fields: [childId], references: [id], onDelete: Cascade)
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([childId, date, session])
+  @@index([schoolId, date])
+  @@map("attendance_records")
+}
+
+enum SchoolSession {
+  AM
+  PM
+}
+
+enum AttendanceMark {
+  PRESENT
+  ABSENT_AUTHORISED
+  ABSENT_UNAUTHORISED
+  LATE
+  NOT_REQUIRED
+}
+
+// ─── Payments ────────────────────────────────────────────────
+
+model PaymentItem {
+  id          String        @id @default(cuid())
+  schoolId    String
+  title       String
+  description String?
+  amount      Int           // in pence
+  dueDate     DateTime?     @db.Date
+  category    PaymentCategory
+  createdAt   DateTime      @default(now())
+
+  school   School             @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  children PaymentItemChild[]
+  payments PaymentLineItem[]
+
+  @@map("payment_items")
+}
+
+model PaymentItemChild {
+  paymentItemId String
+  childId       String
+
+  paymentItem PaymentItem @relation(fields: [paymentItemId], references: [id], onDelete: Cascade)
+  child       Child       @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@id([paymentItemId, childId])
+  @@map("payment_item_children")
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  userId        String
+  totalAmount   Int           // in pence
+  status        PaymentStatus @default(PENDING)
+  stripeId      String?       @unique
+  receiptNumber String?       @unique
+  createdAt     DateTime      @default(now())
+  completedAt   DateTime?
+
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lineItems PaymentLineItem[]
+
+  @@map("payments")
+}
+
+model PaymentLineItem {
+  id            String @id @default(cuid())
+  paymentId     String
+  paymentItemId String
+  childId       String?
+  amount        Int    // in pence
+
+  payment     Payment     @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  paymentItem PaymentItem @relation(fields: [paymentItemId], references: [id], onDelete: Cascade)
+
+  @@map("payment_line_items")
+}
+
+enum PaymentCategory {
+  DINNER_MONEY
+  TRIP
+  CLUB
+  UNIFORM
+  OTHER
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+// ─── Calendar ────────────────────────────────────────────────
+
+model Event {
+  id        String    @id @default(cuid())
+  schoolId  String
+  title     String
+  body      String?
+  startDate DateTime
+  endDate   DateTime?
+  allDay    Boolean   @default(false)
+  category  EventCategory
+  createdAt DateTime  @default(now())
+
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId, startDate])
+  @@map("events")
+}
+
+enum EventCategory {
+  TERM_DATE
+  INSET_DAY
+  EVENT
+  DEADLINE
+  CLUB
+}
