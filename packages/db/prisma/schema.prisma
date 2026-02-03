@@ -43,6 +43,7 @@ model User {
   language      String    @default("en")
   quietStart    String?   // HH:mm format
   quietEnd      String?   // HH:mm format
+  pushToken     String?   // Expo push token for notifications
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
