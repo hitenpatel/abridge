@@ -10,3 +10,4 @@ dist/
 coverage/
 *.db
 .claude/**
+.worktrees/
