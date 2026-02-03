@@ -1,0 +1,10 @@
+{
+  "extends": "@schoolconnect/tsconfig/react-native.json",
+  "compilerOptions": {
+    "declaration": false,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", "../../apps/api/src/router/index.ts"]
+}
