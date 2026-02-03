@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StatusBar } from "expo-status-bar";
 import * as Notifications from 'expo-notifications';
 import { ActivityIndicator, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { MessageSquare, CreditCard as CreditCardIcon } from "lucide-react-native";
+import { MessageSquare, CreditCard as CreditCardIcon, Calendar } from "lucide-react-native";
 import { authClient } from "./src/lib/auth-client";
 import { trpc } from "./src/lib/trpc";
 import { TRPCProvider } from "./src/lib/provider";
@@ -13,6 +13,7 @@ import { LoginScreen } from "./src/screens/LoginScreen";
 import { MessagesScreen } from "./src/screens/MessagesScreen";
 import { MessageDetailScreen } from "./src/screens/MessageDetailScreen";
 import { PaymentsScreen } from "./src/screens/PaymentsScreen";
+import { AttendanceScreen } from "./src/screens/AttendanceScreen";
 
 // Message item type matching the API response
 export interface MessageItem {
@@ -35,6 +36,7 @@ export type RootStackParamList = {
 export type TabParamList = {
 	Messages: undefined;
 	Payments: undefined;
+	Attendance: undefined;
 };
 
 // Configure notification handler
@@ -79,6 +81,15 @@ function TabNavigator() {
 				options={{
 					title: "Inbox",
 					tabBarIcon: ({ color, size }) => <MessageSquare size={size} color={color} />,
+					headerRight: () => <HeaderRight />,
+				}}
+			/>
+			<Tab.Screen
+				name="Attendance"
+				component={AttendanceScreen}
+				options={{
+					title: "Attendance",
+					tabBarIcon: ({ color, size }) => <Calendar size={size} color={color} />,
 					headerRight: () => <HeaderRight />,
 				}}
 			/>

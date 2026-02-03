@@ -16,4 +16,11 @@ export const userRouter = router({
 			
 			return { success: true };
 		}),
+
+	listChildren: protectedProcedure.query(async ({ ctx }) => {
+		return ctx.prisma.parentChild.findMany({
+			where: { userId: ctx.user.id },
+			include: { child: true },
+		});
+	}),
 });
