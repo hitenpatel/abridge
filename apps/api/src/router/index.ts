@@ -1,6 +1,7 @@
 import { router } from "../trpc";
 import { attendanceRouter } from "./attendance";
 import { authRouter } from "./auth";
+import { dashboardRouter } from "./dashboard";
 import { healthRouter } from "./health";
 import { messagingRouter } from "./messaging";
 import { paymentsRouter } from "./payments";
@@ -10,6 +11,7 @@ import { userRouter } from "./user";
 export const appRouter = router({
 	health: healthRouter,
 	auth: authRouter,
+	dashboard: dashboardRouter,
 	messaging: messagingRouter,
 	payments: paymentsRouter,
 	stripe: stripeRouter,
