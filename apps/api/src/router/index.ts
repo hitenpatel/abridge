@@ -2,6 +2,7 @@ import { router } from "../trpc";
 import { attendanceRouter } from "./attendance";
 import { authRouter } from "./auth";
 import { dashboardRouter } from "./dashboard";
+import { formsRouter } from "./forms";
 import { healthRouter } from "./health";
 import { messagingRouter } from "./messaging";
 import { paymentsRouter } from "./payments";
@@ -17,6 +18,7 @@ export const appRouter = router({
 	stripe: stripeRouter,
 	user: userRouter,
 	attendance: attendanceRouter,
+	forms: formsRouter,
 });
 
 export type AppRouter = typeof appRouter;
