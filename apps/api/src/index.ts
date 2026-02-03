@@ -3,6 +3,8 @@ import cors from "@fastify/cors";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 import { appRouter } from "./router";
 import { createContext } from "./context";
+import { auth } from "./lib/auth";
+import { toNodeHandler } from "better-auth/node";
 
 const server = Fastify({ logger: true });
 
@@ -15,6 +17,11 @@ async function main() {
   await server.register(fastifyTRPCPlugin, {
     prefix: "/trpc",
     trpcOptions: { router: appRouter, createContext },
+  });
+
+  // Register better-auth routes
+  server.all("/api/auth/*", async (req, res) => {
+    return toNodeHandler(auth)(req.raw, res.raw);
   });
 
   const port = Number(process.env.PORT ?? 4000);

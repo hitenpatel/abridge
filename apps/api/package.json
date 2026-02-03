@@ -12,19 +12,20 @@
     "db:studio": "prisma studio --schema=../../packages/db/prisma/schema.prisma"
   },
   "dependencies": {
-    "@schoolconnect/db": "workspace:*",
-    "@trpc/server": "^11.0.0",
-    "fastify": "^5.2.0",
     "@fastify/cors": "^10.0.0",
     "@fastify/websocket": "^11.0.0",
+    "@schoolconnect/db": "workspace:*",
+    "@trpc/server": "^11.0.0",
+    "better-auth": "^1.4.18",
+    "fastify": "^5.2.0",
     "superjson": "^2.2.0",
     "zod": "^3.24.0"
   },
   "devDependencies": {
     "@schoolconnect/tsconfig": "workspace:*",
+    "@types/node": "^22.0.0",
     "tsx": "^4.19.0",
     "typescript": "^5.7.0",
-    "vitest": "^2.1.0",
-    "@types/node": "^22.0.0"
+    "vitest": "^2.1.0"
   }
 }
