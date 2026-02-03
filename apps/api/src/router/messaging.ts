@@ -31,7 +31,7 @@ export const messagingRouter = router({
 					where: { schoolId: input.schoolId },
 					select: { id: true },
 				});
-				targetChildIds = children.map((c) => c.id);
+				targetChildIds = children.map((c: { id: string }) => c.id);
 			} else if (input.childIds) {
 				// Verify children belong to this school
 				const validChildren = await ctx.prisma.child.findMany({
@@ -41,7 +41,7 @@ export const messagingRouter = router({
 					},
 					select: { id: true },
 				});
-				targetChildIds = validChildren.map((c) => c.id);
+				targetChildIds = validChildren.map((c: { id: string }) => c.id);
 			}
 
 			if (targetChildIds.length === 0) {
@@ -78,7 +78,7 @@ export const messagingRouter = router({
 						distinct: ["userId"],
 					});
 
-					const userIds = parents.map((p) => p.userId);
+					const userIds = parents.map((p: { userId: string }) => p.userId);
 					if (userIds.length > 0) {
 						const notificationSvc = notificationService.getInstance(ctx.prisma);
 						await notificationSvc.sendPush(
@@ -126,8 +126,9 @@ export const messagingRouter = router({
 			]);
 
 			return {
-				data: messages.map((m) => ({
+				data: messages.map((m: { id: string; subject: string; body: string; category: string; createdAt: Date; _count: { children: number; reads: number } }) => ({
 					...m,
+					category: m.category as "STANDARD" | "URGENT" | "FYI",
 					recipientCount: m._count.children,
 					readCount: m._count.reads,
 				})),
@@ -183,11 +184,11 @@ export const messagingRouter = router({
 			}
 
 			return {
-				items: messages.map((m) => ({
+				items: messages.map((m: { id: string; subject: string; body: string; category: string; createdAt: Date; school: { name: string; logoUrl: string | null }; reads: { readAt: Date }[] }) => ({
 					id: m.id,
 					subject: m.subject,
 					body: m.body,
-					category: m.category,
+					category: m.category as "STANDARD" | "URGENT" | "FYI",
 					createdAt: m.createdAt,
 					schoolName: m.school.name,
 					schoolLogo: m.school.logoUrl,

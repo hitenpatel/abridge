@@ -1,15 +1,18 @@
 import React from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StatusBar } from "expo-status-bar";
 import * as Notifications from 'expo-notifications';
 import { ActivityIndicator, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { MessageSquare, CreditCard as CreditCardIcon } from "lucide-react-native";
 import { authClient } from "./src/lib/auth-client";
 import { trpc } from "./src/lib/trpc";
 import { TRPCProvider } from "./src/lib/provider";
 import { LoginScreen } from "./src/screens/LoginScreen";
 import { MessagesScreen } from "./src/screens/MessagesScreen";
 import { MessageDetailScreen } from "./src/screens/MessageDetailScreen";
+import { PaymentsScreen } from "./src/screens/PaymentsScreen";
 
 // Message item type matching the API response
 export interface MessageItem {
@@ -25,8 +28,13 @@ export interface MessageItem {
 }
 
 export type RootStackParamList = {
-	Messages: undefined;
+	Main: undefined;
 	MessageDetail: { message: MessageItem };
+};
+
+export type TabParamList = {
+	Messages: undefined;
+	Payments: undefined;
 };
 
 // Configure notification handler
@@ -39,6 +47,7 @@ Notifications.setNotificationHandler({
 });
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const Tab = createBottomTabNavigator<TabParamList>();
 
 function HeaderRight() {
 	return (
@@ -46,9 +55,43 @@ function HeaderRight() {
 			onPress={async () => {
 				await authClient.signOut();
 			}}
+			style={{ marginRight: 16 }}
 		>
 			<Text style={styles.logoutLink}>Logout</Text>
 		</TouchableOpacity>
+	);
+}
+
+function TabNavigator() {
+	return (
+		<Tab.Navigator
+			screenOptions={{
+				headerStyle: { backgroundColor: "#1d4ed8" },
+				headerTintColor: "#fff",
+				headerTitleStyle: { fontWeight: "600" },
+				tabBarActiveTintColor: "#1d4ed8",
+				tabBarInactiveTintColor: "#6b7280",
+			}}
+		>
+			<Tab.Screen
+				name="Messages"
+				component={MessagesScreen}
+				options={{
+					title: "Inbox",
+					tabBarIcon: ({ color, size }) => <MessageSquare size={size} color={color} />,
+					headerRight: () => <HeaderRight />,
+				}}
+			/>
+			<Tab.Screen
+				name="Payments"
+				component={PaymentsScreen}
+				options={{
+					title: "Payments",
+					tabBarIcon: ({ color, size }) => <CreditCardIcon size={size} color={color} />,
+					headerRight: () => <HeaderRight />,
+				}}
+			/>
+		</Tab.Navigator>
 	);
 }
 
@@ -90,12 +133,9 @@ function AuthenticatedApp() {
 				}}
 			>
 				<Stack.Screen
-					name="Messages"
-					component={MessagesScreen}
-					options={{
-						title: "Inbox",
-						headerRight: () => <HeaderRight />,
-					}}
+					name="Main"
+					component={TabNavigator}
+					options={{ headerShown: false }}
 				/>
 				<Stack.Screen
 					name="MessageDetail"

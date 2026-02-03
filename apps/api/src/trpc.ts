@@ -49,7 +49,7 @@ export const staffProcedure = protectedProcedure.use(async ({ ctx, next }) => {
 
 // Unscoped admin procedure - for endpoints that require admin at any school
 export const adminProcedure = staffProcedure.use(({ ctx, next }) => {
-	const isAdmin = ctx.staffMembers.some((s) => s.role === "ADMIN");
+	const isAdmin = ctx.staffMembers.some((s: { role: string }) => s.role === "ADMIN");
 	if (!isAdmin) {
 		throw new TRPCError({
 			code: "FORBIDDEN",
