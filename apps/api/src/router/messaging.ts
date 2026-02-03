@@ -150,7 +150,7 @@ export const messagingRouter = router({
 				where: { userId: ctx.user.id },
 				select: { childId: true },
 			});
-			const childIds = parentLinks.map((p) => p.childId);
+			const childIds = parentLinks.map((p: { childId: string }) => p.childId);
 
 			if (childIds.length === 0) {
 				return { items: [], nextCursor: undefined };

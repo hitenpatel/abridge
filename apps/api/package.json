@@ -12,6 +12,7 @@
 		"db:studio": "prisma studio --schema=../../packages/db/prisma/schema.prisma"
 	},
 	"dependencies": {
+		"@elastic/elasticsearch": "^9.2.1",
 		"@fastify/cors": "^10.0.0",
 		"@schoolconnect/db": "workspace:*",
 		"@trpc/server": "^11.0.0",

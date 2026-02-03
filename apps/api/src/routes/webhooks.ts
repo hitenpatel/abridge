@@ -34,7 +34,7 @@ export async function webhookRoutes(server: FastifyInstance) {
 			const metadata = session.metadata;
 
 			if (metadata?.paymentId) {
-				await prisma.$transaction(async (tx) => {
+				await prisma.$transaction(async (tx: any) => {
 					// 1. Update Payment status
 					await tx.payment.update({
 						where: { id: metadata.paymentId },
