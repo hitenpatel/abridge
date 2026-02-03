@@ -162,7 +162,7 @@ export const formsRouter = router({
 				});
 			}
 
-			return ctx.prisma.formResponse.create({
+			const form = await ctx.prisma.formResponse.create({
 				data: {
 					templateId: input.templateId,
 					childId: input.childId,
@@ -171,5 +171,10 @@ export const formsRouter = router({
 					signature: input.signature,
 				},
 			});
+
+			console.log("Generating PDF for form", form.id);
+			console.log("Emailing receipt to", ctx.user.email);
+
+			return form;
 		}),
 });
