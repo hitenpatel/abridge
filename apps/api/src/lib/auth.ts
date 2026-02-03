@@ -14,7 +14,7 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24, // 1 day (every 1 day the session expiration is updated)
   },
   trustedOrigins: [
-    process.env.WEB_URL ?? "http://localhost:3000",
-    "schoolconnect://" // For mobile deep links (future proofing)
-  ],
+    process.env.WEB_URL || (process.env.NODE_ENV === "development" ? "http://localhost:3000" : ""),
+    process.env.MOBILE_APP_SCHEME ?? "schoolconnect://"
+  ].filter(Boolean),
 });

@@ -10,7 +10,7 @@ const server = Fastify({ logger: true });
 
 async function main() {
   await server.register(cors, {
-    origin: process.env.WEB_URL ?? "http://localhost:3000",
+    origin: process.env.WEB_URL || (process.env.NODE_ENV === "development" ? "http://localhost:3000" : false),
     credentials: true,
   });
 
@@ -24,7 +24,14 @@ async function main() {
     return toNodeHandler(auth)(req.raw, res.raw);
   });
 
-  const port = Number(process.env.PORT ?? 4000);
+  const rawPort = process.env.PORT || "4000";
+  const port = Number.parseInt(rawPort, 10);
+  
+  if (Number.isNaN(port)) {
+    server.log.error(`Invalid PORT: ${rawPort}`);
+    process.exit(1);
+  }
+
   await server.listen({ port, host: "0.0.0.0" });
   console.log(`API server running on port ${port}`);
 }
