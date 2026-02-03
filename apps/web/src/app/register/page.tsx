@@ -5,6 +5,7 @@ import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -13,7 +14,8 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleRegister = async () => {
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
     await authClient.signUp.email(
       { email, password, name },
@@ -33,37 +35,43 @@ export default function RegisterPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <div className="w-full max-w-md p-8 bg-white rounded shadow">
         <h1 className="text-2xl font-bold mb-6">Register</h1>
-        <div className="space-y-4">
+        <form onSubmit={handleRegister} className="space-y-4">
           <Input
             placeholder="Full Name"
+            aria-label="Full Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="w-full"
+            required
           />
           <Input
             type="email"
             placeholder="Email"
+            aria-label="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full"
+            required
           />
           <Input
             type="password"
             placeholder="Password"
+            aria-label="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full"
+            required
           />
-          <Button onClick={handleRegister} disabled={loading} className="w-full">
+          <Button type="submit" disabled={loading} className="w-full">
             {loading ? "Registering..." : "Register"}
           </Button>
           <p className="text-center text-sm text-gray-600">
             Already have an account?{" "}
-            <a href="/login" className="text-primary-600 hover:underline">
+            <Link href="/login" className="text-primary-600 hover:underline">
               Login
-            </a>
+            </Link>
           </p>
-        </div>
+        </form>
       </div>
     </div>
   );
