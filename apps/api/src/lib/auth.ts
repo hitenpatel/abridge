@@ -17,13 +17,23 @@ export const auth = betterAuth({
 	database: prismaAdapter(prisma, {
 		provider: "postgresql",
 	}),
+	user: {
+		modelName: "User",
+	},
+	session: {
+		modelName: "Session",
+		expiresIn: 60 * 60 * 24 * 7, // 7 days
+		updateAge: 60 * 60 * 24, // 1 day (every 1 day the session expiration is updated)
+	},
+	account: {
+		modelName: "Account",
+	},
+	verification: {
+		modelName: "Verification",
+	},
 	emailAndPassword: {
 		enabled: true,
 		minPasswordLength: 8,
-	},
-	session: {
-		expiresIn: 60 * 60 * 24 * 7, // 7 days
-		updateAge: 60 * 60 * 24, // 1 day (every 1 day the session expiration is updated)
 	},
 	trustedOrigins: [
 		process.env.WEB_URL || (process.env.NODE_ENV === "development" ? "http://localhost:3000" : ""),

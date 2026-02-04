@@ -63,35 +63,34 @@ model User {
 
 model Session {
   id        String   @id @default(cuid())
-  userId    String
-  token     String   @unique
   expiresAt DateTime
-  ipAddress String?
-  userAgent String?
+  token     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  provider          String
-  providerAccountId String
-  accessToken       String?
-  refreshToken      String?
-  expiresAt         Int?
-  password          String?
-  idToken           String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
   @@map("accounts")
 }
 
@@ -146,6 +145,7 @@ model Child {
   attendance  AttendanceRecord[]
   messages    MessageChild[]
   payments    PaymentItemChild[]
+  lineItems   PaymentLineItem[]
   formResponses FormResponse[]
 
   @@map("children")
@@ -311,6 +311,7 @@ model PaymentLineItem {
 
   payment     Payment     @relation(fields: [paymentId], references: [id], onDelete: Cascade)
   paymentItem PaymentItem @relation(fields: [paymentItemId], references: [id], onDelete: Cascade)
+  child       Child?      @relation(fields: [childId], references: [id])
 
   @@map("payment_line_items")
 }

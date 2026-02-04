@@ -24,7 +24,8 @@ export default function RegisterPage() {
 					router.push("/dashboard");
 				},
 				onError: (ctx) => {
-					alert(ctx.error.message);
+					const errorMessage = ctx.error?.message || "Registration failed. Please try again.";
+					alert(errorMessage);
 					setLoading(false);
 				},
 			},

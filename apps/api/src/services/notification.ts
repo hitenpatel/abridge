@@ -62,7 +62,10 @@ export class NotificationService {
 				const translatedBody = await translateText(body, lang);
 
 				const messages = group.tokens.map((token, idx) => {
-					userByToken[token] = group.userIds[idx];
+					const userId = group.userIds[idx];
+					if (userId) {
+						userByToken[token] = userId;
+					}
 					return {
 						to: token,
 						sound: "default",
@@ -85,6 +88,8 @@ export class NotificationService {
 						for (let i = 0; i < ticketChunk.length; i++) {
 							const ticket = ticketChunk[i];
 							const message = chunk[i];
+							if (!ticket || !message) continue;
+
 							const userId = userByToken[message.to as string];
 
 							if (ticket.status === "ok") {
@@ -100,7 +105,7 @@ export class NotificationService {
 												sentAt: new Date(),
 											},
 										})
-										.catch(() => {});
+										.catch(() => { });
 								}
 							} else {
 								console.warn("Push notification failed:", ticket);
@@ -115,7 +120,7 @@ export class NotificationService {
 												error: JSON.stringify(ticket),
 											},
 										})
-										.catch(() => {});
+										.catch(() => { });
 								}
 							}
 						}

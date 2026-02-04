@@ -1,0 +1,4 @@
+- [x] Task 4: Dashboard Mobile Enhancements <!-- id: 0 -->
+  - [x] Create `apps/mobile/src/screens/DashboardScreen.tsx` <!-- id: 1 -->
+  - [x] Modify `apps/mobile/App.tsx` <!-- id: 2 -->
+  - [x] Commit changes <!-- id: 3 -->

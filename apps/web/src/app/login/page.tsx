@@ -23,7 +23,8 @@ export default function LoginPage() {
 					router.push("/dashboard");
 				},
 				onError: (ctx) => {
-					alert(ctx.error.message);
+					const errorMessage = ctx.error?.message || "Login failed. Please try again.";
+					alert(errorMessage);
 					setLoading(false);
 				},
 			},
