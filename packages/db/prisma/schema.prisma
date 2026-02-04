@@ -264,6 +264,10 @@ model PaymentItem {
   category    PaymentCategory
   createdAt   DateTime      @default(now())
 
+  allowInstalments Boolean @default(false)
+  instalmentPlan   Json?
+  isRecurring      Boolean @default(false)
+
   school   School             @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   children PaymentItemChild[]
   payments PaymentLineItem[]
