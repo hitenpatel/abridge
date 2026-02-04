@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { PaymentItemList } from "@/components/payments/payment-item-list";
 import { OutstandingPayments } from "@/components/payments/outstanding-payments";
+import { PaymentItemList } from "@/components/payments/payment-item-list";
+import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
+import Link from "next/link";
 
 export default function PaymentsDashboardPage() {
 	// TODO: Dynamic school selection
@@ -15,7 +15,15 @@ export default function PaymentsDashboardPage() {
 		<div className="max-w-6xl mx-auto px-4 py-8 space-y-12">
 			{/* Parent View */}
 			<section>
-				<h2 className="text-xl font-bold text-gray-900 mb-4">Outstanding Payments</h2>
+				<div className="flex justify-between items-center mb-4">
+					<h2 className="text-xl font-bold text-gray-900">Outstanding Payments</h2>
+					<Link
+						href="/dashboard/payments/history"
+						className="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
+					>
+						View Payment History
+					</Link>
+				</div>
 				<OutstandingPayments />
 			</section>
 
@@ -26,7 +34,9 @@ export default function PaymentsDashboardPage() {
 				<div className="flex justify-between items-center mb-6">
 					<div>
 						<h2 className="text-xl font-bold text-gray-900">Manage School Payments</h2>
-						<p className="text-sm text-gray-600">Create and monitor payment items for this school.</p>
+						<p className="text-sm text-gray-600">
+							Create and monitor payment items for this school.
+						</p>
 					</div>
 					<div className="flex gap-4">
 						{!stripeStatus?.isConnected && (
