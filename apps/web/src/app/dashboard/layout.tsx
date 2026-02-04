@@ -1,5 +1,6 @@
 "use client";
 
+import { SearchBar } from "@/components/search/search-bar";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -45,7 +46,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 								})}
 							</div>
 						</div>
-						<div className="flex items-center">
+						<div className="flex items-center gap-4">
+							<div className="w-72">
+								<SearchBar />
+							</div>
 							{session && <span className="text-sm text-gray-500">{session.user.name}</span>}
 						</div>
 					</div>
