@@ -1,6 +1,7 @@
 "use client";
 
 import { SummaryCards } from "@/components/dashboard/summary-cards";
+import { ThisWeek } from "@/components/dashboard/this-week";
 import { TodayOverview } from "@/components/dashboard/today-overview";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
@@ -69,13 +70,22 @@ export default function DashboardPage() {
 			{/* Summary Cards */}
 			{summaryData && <SummaryCards data={summaryData.metrics} />}
 
-			{/* Today's Overview */}
+			{/* Dashboard Widgets */}
 			{summaryData && (
-				<div className="mb-10 max-w-3xl">
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
 					<TodayOverview
 						childrenData={summaryData.children}
 						todayAttendance={summaryData.todayAttendance}
 						attendancePercentage={summaryData.attendancePercentage}
+					/>
+					<ThisWeek
+						events={summaryData.upcomingEvents.map((e) => ({
+							id: e.id,
+							title: e.title,
+							date: e.startDate,
+							type: e.category,
+							description: e.body,
+						}))}
 					/>
 				</div>
 			)}

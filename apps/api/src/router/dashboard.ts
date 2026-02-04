@@ -167,6 +167,8 @@ export const dashboardRouter = router({
 				id: true,
 				title: true,
 				startDate: true,
+				category: true,
+				body: true,
 			},
 		});
 
