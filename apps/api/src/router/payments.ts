@@ -112,6 +112,179 @@ export const paymentsRouter = router({
 			return { url: (session as any).url };
 		}),
 
+	createCartCheckout: protectedProcedure
+		.input(
+			z.object({
+				items: z.array(
+					z.object({
+						paymentItemId: z.string(),
+						childId: z.string(),
+					}),
+				),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			if (input.items.length === 0) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "Cart is empty",
+				});
+			}
+
+			// 1. Fetch all unique payment items requested
+			const paymentItemIds = Array.from(new Set(input.items.map((i) => i.paymentItemId)));
+			const paymentItems = await ctx.prisma.paymentItem.findMany({
+				where: { id: { in: paymentItemIds } },
+				include: {
+					school: {
+						select: { id: true, stripeAccountId: true } as any,
+					},
+					children: true,
+				},
+			});
+
+			// 2. Validate all items exist and children are linked
+			if (paymentItems.length !== paymentItemIds.length) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "One or more items not found",
+				});
+			}
+
+			// Map for easy lookup
+			const itemMap = new Map(paymentItems.map((item) => [item.id, item]));
+
+			// Validate school consistency and child links
+			const firstSchoolId = paymentItems[0]?.schoolId;
+			const stripeAccountId = (paymentItems[0]?.school as any).stripeAccountId;
+
+			if (!stripeAccountId) {
+				throw new TRPCError({
+					code: "PRECONDITION_FAILED",
+					message: "School has not set up payments yet",
+				});
+			}
+
+			for (const item of input.items) {
+				const paymentItem = itemMap.get(item.paymentItemId);
+				if (!paymentItem) continue;
+
+				if (paymentItem.schoolId !== firstSchoolId) {
+					throw new TRPCError({
+						code: "BAD_REQUEST",
+						message: "All items must belong to the same school",
+					});
+				}
+
+				const isChildLinked = paymentItem.children.some((c) => c.childId === item.childId);
+				if (!isChildLinked) {
+					throw new TRPCError({
+						code: "NOT_FOUND",
+						message: `Item ${paymentItem.title} is not available for this child`,
+					});
+				}
+			}
+
+			// 3. Check if any item already paid
+			const completedPayments = await ctx.prisma.payment.findMany({
+				where: {
+					userId: ctx.user.id,
+					status: "COMPLETED",
+					lineItems: {
+						some: {
+							OR: input.items.map((i) => ({
+								paymentItemId: i.paymentItemId,
+								childId: i.childId,
+							})),
+						},
+					},
+				},
+				include: { lineItems: true },
+			});
+
+			const alreadyPaidPairs = new Set(
+				completedPayments.flatMap((p) =>
+					p.lineItems.map((li) => `${li.paymentItemId}-${li.childId}`),
+				),
+			);
+
+			for (const item of input.items) {
+				if (alreadyPaidPairs.has(`${item.paymentItemId}-${item.childId}`)) {
+					const paymentItem = itemMap.get(item.paymentItemId);
+					throw new TRPCError({
+						code: "BAD_REQUEST",
+						message: `Item "${paymentItem?.title}" has already been paid for`,
+					});
+				}
+			}
+
+			// 4. Calculate total and line items for DB
+			const totalAmount = input.items.reduce((sum, item) => {
+				const paymentItem = itemMap.get(item.paymentItemId);
+				return sum + (paymentItem?.amount || 0);
+			}, 0);
+
+			// 5. Create database record
+			const payment = await ctx.prisma.payment.create({
+				data: {
+					userId: ctx.user.id,
+					totalAmount,
+					status: "PENDING",
+					lineItems: {
+						createMany: {
+							data: input.items.map((item) => ({
+								paymentItemId: item.paymentItemId,
+								childId: item.childId,
+								amount: itemMap.get(item.paymentItemId)!.amount,
+							})),
+						},
+					},
+				},
+			});
+
+			// 6. Create Stripe Checkout Session
+			const stripeLineItems = input.items.map((item) => {
+				const paymentItem = itemMap.get(item.paymentItemId);
+				return {
+					price_data: {
+						currency: "gbp",
+						product_data: {
+							name: paymentItem!.title,
+							description: paymentItem!.description || undefined,
+						},
+						unit_amount: paymentItem!.amount,
+					},
+					quantity: 1,
+				};
+			});
+
+			const session = await (stripe.checkout.sessions.create as any)({
+				payment_method_types: ["card"],
+				line_items: stripeLineItems,
+				mode: "payment",
+				success_url: `${process.env.WEB_URL}/dashboard/payments/success?session_id={CHECKOUT_SESSION_ID}`,
+				cancel_url: `${process.env.WEB_URL}/dashboard/payments`,
+				metadata: {
+					paymentId: payment.id,
+					userId: ctx.user.id,
+					cartItems: JSON.stringify(input.items),
+				},
+				payment_intent_data: {
+					transfer_data: {
+						destination: stripeAccountId,
+					},
+				},
+			});
+
+			// 7. Update payment with stripe ID
+			await ctx.prisma.payment.update({
+				where: { id: payment.id },
+				data: { stripeId: (session as any).id },
+			});
+
+			return { url: (session as any).url };
+		}),
+
 	listOutstandingPayments: protectedProcedure.query(async ({ ctx }) => {
 		// 1. Get user's children
 		const parentLinks = await ctx.prisma.parentChild.findMany({
