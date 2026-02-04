@@ -23,17 +23,28 @@ export class NotificationService {
 				select: {
 					id: true,
 					pushToken: true,
+					quietStart: true,
+					quietEnd: true,
 				},
 			});
 
-			// Filter for valid Expo push tokens
+			const isUrgent = data?.category === "URGENT";
+
+			// Filter for valid Expo push tokens and respect quiet hours
 			const validTokens: string[] = [];
 			const userByToken: Record<string, string> = {};
 			for (const user of users) {
-				if (user.pushToken && Expo.isExpoPushToken(user.pushToken)) {
-					validTokens.push(user.pushToken);
-					userByToken[user.pushToken] = user.id;
+				if (!user.pushToken || !Expo.isExpoPushToken(user.pushToken)) {
+					continue;
 				}
+
+				// Skip if in quiet hours and not urgent
+				if (!isUrgent && this.isInQuietHours(user)) {
+					continue;
+				}
+
+				validTokens.push(user.pushToken);
+				userByToken[user.pushToken] = user.id;
 			}
 
 			if (validTokens.length === 0) {
@@ -141,6 +152,24 @@ export class NotificationService {
 		}
 
 		return false;
+	}
+
+	private isInQuietHours(user: { quietStart: string | null; quietEnd: string | null }): boolean {
+		if (!user.quietStart || !user.quietEnd) return false;
+
+		const now = new Date();
+		const [startH, startM] = user.quietStart.split(":").map(Number);
+		const [endH, endM] = user.quietEnd.split(":").map(Number);
+
+		const currentMinutes = now.getHours() * 60 + now.getMinutes();
+		const startMinutes = (startH || 0) * 60 + (startM || 0);
+		const endMinutes = (endH || 0) * 60 + (endM || 0);
+
+		if (startMinutes <= endMinutes) {
+			return currentMinutes >= startMinutes && currentMinutes < endMinutes;
+		}
+		// Wraps midnight (e.g., 22:00 - 07:00)
+		return currentMinutes >= startMinutes || currentMinutes < endMinutes;
 	}
 }
 
