@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Trash2, ShoppingCart } from "lucide-react";
+import { ShoppingCart, Trash2 } from "lucide-react";
 
 export interface CartItem {
 	id: string;
@@ -40,10 +40,9 @@ export function PaymentCart({ items, onRemove, onCheckout, isPending }: PaymentC
 							<p className="text-gray-500 text-xs">{item.childName}</p>
 						</div>
 						<div className="flex items-center gap-3">
-							<span className="font-semibold text-gray-900">
-								£{(item.amount / 100).toFixed(2)}
-							</span>
+							<span className="font-semibold text-gray-900">£{(item.amount / 100).toFixed(2)}</span>
 							<button
+								type="button"
 								onClick={() => onRemove(item.id, item.childId)}
 								className="text-gray-400 hover:text-red-500 transition-colors"
 								aria-label={`Remove ${item.title} for ${item.childName}`}
@@ -57,15 +56,9 @@ export function PaymentCart({ items, onRemove, onCheckout, isPending }: PaymentC
 			<div className="p-4 bg-gray-50 border-t border-gray-100">
 				<div className="flex justify-between items-center mb-4">
 					<span className="text-gray-600 font-medium">Total to pay</span>
-					<span className="text-xl font-bold text-gray-900">
-						£{(total / 100).toFixed(2)}
-					</span>
+					<span className="text-xl font-bold text-gray-900">£{(total / 100).toFixed(2)}</span>
 				</div>
-				<Button
-					className="w-full py-6 text-lg"
-					onClick={onCheckout}
-					disabled={isPending}
-				>
+				<Button className="w-full py-6 text-lg" onClick={onCheckout} disabled={isPending}>
 					{isPending ? "Preparing Checkout..." : "Checkout Now"}
 				</Button>
 			</div>

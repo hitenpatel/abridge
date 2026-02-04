@@ -109,7 +109,7 @@ export function SearchBar() {
 
 	const renderHighlight = (text: string, highlight?: string[]) => {
 		if (highlight && highlight.length > 0) {
-			// eslint-disable-next-line react/no-danger
+			// biome-ignore lint/security/noDangerouslySetInnerHtml: Search highlights require HTML
 			return <span dangerouslySetInnerHTML={{ __html: highlight[0] }} />;
 		}
 		return <span className="truncate">{text}</span>;

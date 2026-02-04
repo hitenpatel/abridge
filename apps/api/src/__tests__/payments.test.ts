@@ -170,7 +170,7 @@ describe("payments router", () => {
 
 			expect(result.data).toHaveLength(1);
 			expect(result.total).toBe(1);
-			expect(result.data[0]!.id).toBe("pay-1");
+			expect(result.data[0]?.id).toBe("pay-1");
 		});
 	});
 
@@ -211,7 +211,7 @@ describe("payments router", () => {
 			expect(result.ofstedUrn).toBe("123456");
 			expect(result.totalAmount).toBe(1000);
 			expect(result.receiptNumber).toBe("REC-123");
-			expect(result.items[0]!.childName).toBe("Child One");
+			expect(result.items[0]?.childName).toBe("Child One");
 		});
 
 		it("should throw NOT_FOUND if payment does not exist or belongs to another user", async () => {

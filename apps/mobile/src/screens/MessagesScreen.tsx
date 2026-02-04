@@ -1,11 +1,11 @@
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import type { CompositeNavigationProp } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useCallback } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
+import type { RootStackParamList, MessageItem as RouteMessageItem, TabParamList } from "../../App";
 import { MessageCard, type MessageItem } from "../components/MessageCard";
 import { trpc } from "../lib/trpc";
-import type { RootStackParamList, TabParamList, MessageItem as RouteMessageItem } from "../../App";
 
 interface MessagesScreenProps {
 	navigation: CompositeNavigationProp<
@@ -46,7 +46,7 @@ export const MessagesScreen: React.FC<MessagesScreenProps> = ({ navigation }) =>
 
 	const handleMessagePress = useCallback(
 		(message: MessageItem) => {
-			navigation.navigate("MessageDetail", { 
+			navigation.navigate("MessageDetail", {
 				message: {
 					...message,
 					schoolLogo: null,

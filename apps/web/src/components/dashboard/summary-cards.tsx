@@ -61,9 +61,7 @@ export function SummaryCards({ data }: SummaryCardsProps) {
 					</div>
 					<div className="text-2xl font-bold">{data.attendanceAlerts}</div>
 					{data.attendanceAlerts > 0 && (
-						<p className="text-xs text-red-600 mt-1 font-medium">
-							Last 7 days
-						</p>
+						<p className="text-xs text-red-600 mt-1 font-medium">Last 7 days</p>
 					)}
 				</div>
 			</Link>

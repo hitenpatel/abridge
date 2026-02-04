@@ -18,7 +18,6 @@ vi.mock("../services/notification", () => ({
 	},
 }));
 
-// biome-ignore lint/suspicious/noExplicitAny: Test mocks require flexible typing
 function createTestContext(overrides?: Record<string, any>): any {
 	return {
 		prisma: {

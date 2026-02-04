@@ -1,6 +1,6 @@
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useCallback } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../App";
 import { trpc } from "../lib/trpc";
 
@@ -78,9 +78,7 @@ export const MessageDetailScreen = ({ route }: MessageDetailScreenProps) => {
 						{ backgroundColor: getCategoryBackgroundColor(message.category) },
 					]}
 				>
-					<Text
-						style={[styles.categoryText, { color: getCategoryColor(message.category) }]}
-					>
+					<Text style={[styles.categoryText, { color: getCategoryColor(message.category) }]}>
 						{message.category}
 					</Text>
 				</View>

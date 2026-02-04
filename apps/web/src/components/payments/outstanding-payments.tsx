@@ -26,6 +26,7 @@ export function OutstandingPayments() {
 		},
 	});
 
+	// biome-ignore lint/suspicious/noExplicitAny: UI component
 	const addToCart = (payment: any) => {
 		if (cart.some((item) => item.id === payment.id && item.childId === payment.childId)) return;
 		setCart([

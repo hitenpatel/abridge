@@ -105,7 +105,7 @@ export class NotificationService {
 												sentAt: new Date(),
 											},
 										})
-										.catch(() => { });
+										.catch(() => {});
 								}
 							} else {
 								console.warn("Push notification failed:", ticket);
@@ -120,7 +120,7 @@ export class NotificationService {
 												error: JSON.stringify(ticket),
 											},
 										})
-										.catch(() => { });
+										.catch(() => {});
 								}
 							}
 						}

@@ -1,18 +1,20 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
+import { trpc } from "@/lib/trpc";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const paymentItemSchema = z.object({
 	title: z.string().min(1, "Title is required"),
 	description: z.string().optional(),
-	amount: z.string().refine((val) => !Number.isNaN(Number.parseFloat(val)) && Number.parseFloat(val) > 0, {
-		message: "Amount must be a positive number",
-	}),
+	amount: z
+		.string()
+		.refine((val) => !Number.isNaN(Number.parseFloat(val)) && Number.parseFloat(val) > 0, {
+			message: "Amount must be a positive number",
+		}),
 	category: z.enum(["DINNER_MONEY", "TRIP", "CLUB", "UNIFORM", "OTHER"]),
 	allChildren: z.boolean(),
 });
@@ -46,7 +48,7 @@ export function PaymentItemForm({ schoolId }: PaymentItemFormProps) {
 	const onSubmit = (values: PaymentItemValues) => {
 		// Convert pounds to pence
 		const amountInPence = Math.round(Number.parseFloat(values.amount) * 100);
-		
+
 		createPaymentItem.mutate({
 			schoolId,
 			title: values.title,
@@ -126,11 +128,7 @@ export function PaymentItemForm({ schoolId }: PaymentItemFormProps) {
 			</div>
 
 			<div className="pt-4">
-				<Button
-					type="submit"
-					className="w-full"
-					disabled={createPaymentItem.isPending}
-				>
+				<Button type="submit" className="w-full" disabled={createPaymentItem.isPending}>
 					{createPaymentItem.isPending ? "Creating..." : "Create Payment Item"}
 				</Button>
 			</div>

@@ -56,7 +56,7 @@ describe("calendar router", () => {
 			});
 
 			expect(result.length).toBe(1);
-			expect(result[0]!.title).toBe("Sports Day");
+			expect(result[0]?.title).toBe("Sports Day");
 			expect(ctx.prisma.parentChild.findMany).toHaveBeenCalledWith(
 				expect.objectContaining({
 					where: { userId: "parent-1" },

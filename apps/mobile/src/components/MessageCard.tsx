@@ -41,7 +41,20 @@ function formatDate(date: Date): string {
 	}
 
 	// Otherwise, format as "Jan 3"
-	const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+	const months = [
+		"Jan",
+		"Feb",
+		"Mar",
+		"Apr",
+		"May",
+		"Jun",
+		"Jul",
+		"Aug",
+		"Sep",
+		"Oct",
+		"Nov",
+		"Dec",
+	];
 	return `${months[messageDate.getMonth()]} ${messageDate.getDate()}`;
 }
 

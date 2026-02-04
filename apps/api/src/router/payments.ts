@@ -235,7 +235,7 @@ export const paymentsRouter = router({
 							data: input.items.map((item) => ({
 								paymentItemId: item.paymentItemId,
 								childId: item.childId,
-								amount: itemMap.get(item.paymentItemId)!.amount,
+								amount: itemMap.get(item.paymentItemId)?.amount || 0,
 							})),
 						},
 					},
@@ -249,10 +249,10 @@ export const paymentsRouter = router({
 					price_data: {
 						currency: "gbp",
 						product_data: {
-							name: paymentItem!.title,
-							description: paymentItem!.description || undefined,
+							name: paymentItem?.title || "Unknown",
+							description: paymentItem?.description || undefined,
 						},
-						unit_amount: paymentItem!.amount,
+						unit_amount: paymentItem?.amount || 0,
 					},
 					quantity: 1,
 				};

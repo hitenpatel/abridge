@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { MessageList } from "@/components/messaging/message-list";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function MessagesPage() {
 	// TODO: Get schoolId from context/auth

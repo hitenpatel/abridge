@@ -3,7 +3,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { appRouter } from "../router";
 
-// biome-ignore lint/suspicious/noExplicitAny: Test mocks require flexible typing
 function createTestContext(overrides?: Record<string, any>): any {
 	return {
 		prisma: {

@@ -72,6 +72,7 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 						Completed
 					</h3>
 					<div className="grid gap-3">
+						{/* biome-ignore lint/suspicious/noExplicitAny: UI component */}
 						{completedForms.map((response: any) => (
 							<div
 								key={response.id}

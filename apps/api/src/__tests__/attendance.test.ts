@@ -3,7 +3,6 @@ import { describe, expect, it, vi } from "vitest";
 import { appRouter } from "../router";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// biome-ignore lint/suspicious/noExplicitAny: Test mocks require flexible typing
 function createTestContext(overrides?: any): any {
 	return {
 		prisma: {

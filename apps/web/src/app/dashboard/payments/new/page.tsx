@@ -9,7 +9,10 @@ export default function NewPaymentItemPage() {
 	return (
 		<div className="max-w-2xl mx-auto px-4 py-8">
 			<div className="mb-8">
-				<Link href="/dashboard/payments" className="text-primary-600 hover:text-primary-700 text-sm font-medium mb-2 inline-block">
+				<Link
+					href="/dashboard/payments"
+					className="text-primary-600 hover:text-primary-700 text-sm font-medium mb-2 inline-block"
+				>
 					&larr; Back to Payments
 				</Link>
 				<h1 className="text-2xl font-bold text-gray-900">Create Payment Item</h1>

@@ -9,7 +9,6 @@ vi.mock("../lib/search-indexer", () => ({
 }));
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// biome-ignore lint/suspicious/noExplicitAny: Test mocks require flexible typing
 function createTestContext(overrides?: any): any {
 	return {
 		prisma: {
