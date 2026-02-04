@@ -56,6 +56,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   formResponses FormResponse[]
+  notificationDeliveries NotificationDelivery[]
 
   @@map("users")
 }
@@ -183,6 +184,7 @@ model Message {
   school   School         @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   children MessageChild[]
   reads    MessageRead[]
+  deliveries NotificationDelivery[]
 
   @@index([schoolId, createdAt])
   @@map("messages")
@@ -385,4 +387,37 @@ model FormResponse {
 
   @@unique([templateId, childId])
   @@map("form_responses")
+}
+
+model NotificationDelivery {
+  id        String              @id @default(cuid())
+  messageId String
+  userId    String
+  channel   NotificationChannel
+  status    DeliveryStatus      @default(PENDING)
+  sentAt    DateTime?
+  openedAt  DateTime?
+  error     String?
+  createdAt DateTime            @default(now())
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, channel])
+  @@index([status, createdAt])
+  @@map("notification_deliveries")
+}
+
+enum NotificationChannel {
+  PUSH
+  SMS
+  EMAIL
+}
+
+enum DeliveryStatus {
+  PENDING
+  SENT
+  DELIVERED
+  OPENED
+  FAILED
 }
