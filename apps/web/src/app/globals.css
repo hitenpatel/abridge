@@ -1,3 +1,104 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+	:root {
+		/* Background: Very light purple/white mix for brand feel */
+		--background: 290 30% 98%;
+		/* Foreground: Deep Purple */
+		--foreground: 296 34% 26%;
+
+		/* Card: White */
+		--card: 0 0% 100%;
+		--card-foreground: 296 34% 26%;
+
+		/* Popover: White */
+		--popover: 0 0% 100%;
+		--popover-foreground: 296 34% 26%;
+
+		/* Primary: Electric Purple #A02CAF */
+		--primary: 286 60% 43%;
+		--primary-foreground: 0 0% 100%;
+
+		/* Secondary: Mint Green #6EDFB4 */
+		--secondary: 157 68% 65%;
+		--secondary-foreground: 296 34% 26%;
+
+		/* Muted: Soft purple gray */
+		--muted: 290 20% 90%;
+		--muted-foreground: 296 20% 40%;
+
+		/* Accent: Mint tint */
+		--accent: 157 68% 90%;
+		--accent-foreground: 296 34% 26%;
+
+		/* Destructive: Red */
+		--destructive: 0 84.2% 60.2%;
+		--destructive-foreground: 210 40% 98%;
+
+		/* Border: Light purple */
+		--border: 290 20% 85%;
+		--input: 290 20% 85%;
+		--ring: 286 60% 43%;
+
+		--radius: 0.75rem;
+
+		/* Font Outfit */
+		--font-outfit: "Outfit", sans-serif;
+	}
+
+	.dark {
+		/* Background: Deep Purple #562C59 (darkened) */
+		--background: 296 34% 10%;
+		--foreground: 290 20% 95%;
+
+		/* Card: Slightly lighter deep purple */
+		--card: 296 34% 15%;
+		--card-foreground: 290 20% 95%;
+
+		--popover: 296 34% 15%;
+		--popover-foreground: 290 20% 95%;
+
+		/* Primary: Slightly lighter purple for dark mode contrast */
+		--primary: 286 60% 55%;
+		--primary-foreground: 0 0% 100%;
+
+		/* Secondary: Mint Green */
+		--secondary: 157 68% 65%;
+		--secondary-foreground: 296 34% 26%;
+
+		--muted: 296 30% 25%;
+		--muted-foreground: 290 20% 70%;
+
+		--accent: 296 30% 25%;
+		--accent-foreground: 290 20% 95%;
+
+		--destructive: 0 62.8% 30.6%;
+		--destructive-foreground: 210 40% 98%;
+
+		--border: 296 30% 25%;
+		--input: 296 30% 25%;
+		--ring: 286 60% 55%;
+	}
+}
+
+@layer base {
+	* {
+		@apply border-border;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
+}
+
+/* Custom Utilities for "Glass" or "Modern" effects */
+@layer utilities {
+	.glass {
+		@apply bg-white/70 dark:bg-black/30 backdrop-blur-md border border-white/20;
+	}
+
+	.text-balance {
+		text-wrap: balance;
+	}
+}

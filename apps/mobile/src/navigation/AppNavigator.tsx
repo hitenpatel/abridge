@@ -1,8 +1,9 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { theme } from "../lib/theme";
 import { LoginScreen } from "../screens/LoginScreen";
-import { MessagesScreen } from "../screens/MessagesScreen";
 import { MessageDetailScreen } from "../screens/MessageDetailScreen";
+import { MessagesScreen } from "../screens/MessagesScreen";
 
 // Message item type matching the API response
 export interface MessageItem {
@@ -35,9 +36,9 @@ export const AppNavigator = ({ isAuthenticated }: AppNavigatorProps) => {
 			<Stack.Navigator
 				screenOptions={{
 					headerStyle: {
-						backgroundColor: "#1d4ed8",
+						backgroundColor: theme.colors.headerBackground,
 					},
-					headerTintColor: "#fff",
+					headerTintColor: theme.colors.headerText,
 					headerTitleStyle: {
 						fontWeight: "600",
 					},

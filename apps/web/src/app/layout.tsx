@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
+import { cn } from "@/lib/utils";
+
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
 	title: "SchoolConnect",
@@ -9,8 +13,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en">
-			<body className="min-h-screen bg-gray-50 antialiased">
+		<html lang="en" suppressHydrationWarning>
+			<body className={cn("min-h-screen bg-background font-sans antialiased", outfit.variable)}>
 				<Providers>{children}</Providers>
 			</body>
 		</html>

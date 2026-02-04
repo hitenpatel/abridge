@@ -13,6 +13,7 @@ import {
 	View,
 } from "react-native";
 import type { RootStackParamList, TabParamList } from "../../App";
+import { theme } from "../lib/theme";
 import { trpc } from "../lib/trpc";
 
 interface DashboardScreenProps {
@@ -32,7 +33,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
 	if (isLoading) {
 		return (
 			<View style={styles.loadingContainer}>
-				<ActivityIndicator size="large" color="#1d4ed8" />
+				<ActivityIndicator size="large" color={theme.colors.primary} />
 			</View>
 		);
 	}
@@ -41,7 +42,10 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
 		return (
 			<View style={styles.errorContainer}>
 				<Text style={styles.errorText}>Failed to load dashboard</Text>
-				<TouchableOpacity onPress={() => refetch()} style={styles.retryButton}>
+				<TouchableOpacity
+					onPress={() => refetch()}
+					style={[styles.retryButton, { backgroundColor: theme.colors.primary }]}
+				>
 					<Text style={styles.retryText}>Retry</Text>
 				</TouchableOpacity>
 			</View>
@@ -54,15 +58,19 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
 		<ScrollView
 			style={styles.container}
 			refreshControl={
-				<RefreshControl refreshing={isRefetching} onRefresh={onRefresh} tintColor="#1d4ed8" />
+				<RefreshControl
+					refreshing={isRefetching}
+					onRefresh={onRefresh}
+					tintColor={theme.colors.primary}
+				/>
 			}
 		>
 			<View style={styles.section}>
 				<Text style={styles.sectionTitle}>Overview</Text>
 				<View style={styles.statsGrid}>
 					<TouchableOpacity style={styles.statCard} onPress={() => navigation.navigate("Messages")}>
-						<View style={[styles.iconBox, { backgroundColor: "#dbeafe" }]}>
-							<Mail size={24} color="#1d4ed8" />
+						<View style={[styles.iconBox, { backgroundColor: theme.colors.brandLight }]}>
+							<Mail size={24} color={theme.colors.primary} />
 						</View>
 						<Text style={styles.statValue}>{metrics.unreadMessages}</Text>
 						<Text style={styles.statLabel}>Unread Messages</Text>

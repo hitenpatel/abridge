@@ -99,15 +99,17 @@ function HeaderRight() {
 	);
 }
 
+import { theme } from "./src/lib/theme";
+
 function TabNavigator() {
 	return (
 		<Tab.Navigator
 			screenOptions={{
-				headerStyle: { backgroundColor: "#1d4ed8" },
-				headerTintColor: "#fff",
+				headerStyle: { backgroundColor: theme.colors.headerBackground },
+				headerTintColor: theme.colors.headerText,
 				headerTitleStyle: { fontWeight: "600" },
-				tabBarActiveTintColor: "#1d4ed8",
-				tabBarInactiveTintColor: "#6b7280",
+				tabBarActiveTintColor: theme.colors.activeTab,
+				tabBarInactiveTintColor: theme.colors.inactiveTab,
 			}}
 		>
 			<Tab.Screen
@@ -190,8 +192,8 @@ function AuthenticatedApp() {
 		<NavigationContainer>
 			<Stack.Navigator
 				screenOptions={{
-					headerStyle: { backgroundColor: "#1d4ed8" },
-					headerTintColor: "#fff",
+					headerStyle: { backgroundColor: theme.colors.headerBackground },
+					headerTintColor: theme.colors.headerText,
 					headerTitleStyle: { fontWeight: "600" },
 				}}
 			>
@@ -228,7 +230,7 @@ export default function App() {
 	if (isPending) {
 		return (
 			<View style={styles.container}>
-				<ActivityIndicator size="large" color="#1d4ed8" />
+				<ActivityIndicator size="large" color={theme.colors.primary} />
 				<Text style={styles.loadingText}>Loading...</Text>
 			</View>
 		);

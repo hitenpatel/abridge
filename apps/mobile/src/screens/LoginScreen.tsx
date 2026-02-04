@@ -9,6 +9,7 @@ import {
 	View,
 } from "react-native";
 import { authClient } from "../lib/auth-client";
+import { theme } from "../lib/theme";
 
 export const LoginScreen = () => {
 	const [email, setEmail] = useState("");
@@ -84,20 +85,20 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		textAlign: "center",
 		marginBottom: 40,
-		color: "#333",
+		color: theme.colors.primary,
 	},
 	form: {
 		gap: 15,
 	},
 	input: {
 		borderWidth: 1,
-		borderColor: "#ddd",
+		borderColor: theme.colors.border,
 		padding: 15,
 		borderRadius: 8,
 		fontSize: 16,
 	},
 	button: {
-		backgroundColor: "#007AFF",
+		backgroundColor: theme.colors.primary,
 		padding: 15,
 		borderRadius: 8,
 		alignItems: "center",
