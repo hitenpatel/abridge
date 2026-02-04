@@ -1,4 +1,4 @@
-import { format, isSameDay, parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { Calendar, Clock } from "lucide-react";
 
 export interface Event {
