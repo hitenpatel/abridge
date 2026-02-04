@@ -1,9 +1,19 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
+import {
+	type NativeStackNavigationProp,
+	createNativeStackNavigator,
+} from "@react-navigation/native-stack";
 import * as Notifications from "expo-notifications";
 import { StatusBar } from "expo-status-bar";
-import { Calendar, CreditCard as CreditCardIcon, Home, MessageSquare } from "lucide-react-native";
+import {
+	Calendar,
+	CreditCard as CreditCardIcon,
+	Home,
+	MessageSquare,
+	Search,
+} from "lucide-react-native";
 import React from "react";
 import {
 	ActivityIndicator,
@@ -22,6 +32,7 @@ import { LoginScreen } from "./src/screens/LoginScreen";
 import { MessageDetailScreen } from "./src/screens/MessageDetailScreen";
 import { MessagesScreen } from "./src/screens/MessagesScreen";
 import { PaymentsScreen } from "./src/screens/PaymentsScreen";
+import { SearchScreen } from "./src/screens/SearchScreen";
 
 // Message item type matching the API response
 export interface MessageItem {
@@ -39,6 +50,7 @@ export interface MessageItem {
 export type RootStackParamList = {
 	Main: undefined;
 	MessageDetail: { message: MessageItem };
+	Search: undefined;
 };
 
 export type TabParamList = {
@@ -61,15 +73,26 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
 function HeaderRight() {
+	const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
 	return (
-		<TouchableOpacity
-			onPress={async () => {
-				await authClient.signOut();
-			}}
-			style={{ marginRight: 16 }}
-		>
-			<Text style={styles.logoutLink}>Logout</Text>
-		</TouchableOpacity>
+		<View style={{ flexDirection: "row", alignItems: "center", marginRight: 16 }}>
+			<TouchableOpacity
+				onPress={() => {
+					navigation.navigate("Search");
+				}}
+				style={{ marginRight: 16 }}
+			>
+				<Search size={20} color="#fff" />
+			</TouchableOpacity>
+			<TouchableOpacity
+				onPress={async () => {
+					await authClient.signOut();
+				}}
+			>
+				<Text style={styles.logoutLink}>Logout</Text>
+			</TouchableOpacity>
+		</View>
 	);
 }
 
@@ -174,6 +197,13 @@ function AuthenticatedApp() {
 							fontSize: 16,
 						},
 					})}
+				/>
+				<Stack.Screen
+					name="Search"
+					component={SearchScreen}
+					options={{
+						title: "Search",
+					}}
 				/>
 			</Stack.Navigator>
 		</NavigationContainer>
