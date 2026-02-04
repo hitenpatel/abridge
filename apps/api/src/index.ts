@@ -1,9 +1,11 @@
 import cors from "@fastify/cors";
-import rawBody from "fastify-raw-body";
+import { prisma } from "@schoolconnect/db";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 import { toNodeHandler } from "better-auth/node";
 import Fastify from "fastify";
+import rawBody from "fastify-raw-body";
 import { createContext } from "./context";
+import { checkUndeliveredNotifications } from "./jobs/notification-fallback";
 import { auth } from "./lib/auth";
 import { appRouter } from "./router";
 import { webhookRoutes } from "./routes/webhooks";
@@ -60,6 +62,14 @@ async function main() {
 
 	await server.listen({ port, host: "0.0.0.0" });
 	server.log.info(`API server running on port ${port}`);
+
+	// Run every 5 minutes
+	setInterval(
+		() => {
+			checkUndeliveredNotifications(prisma).catch(console.error);
+		},
+		5 * 60 * 1000,
+	);
 }
 
 main().catch((err) => {
