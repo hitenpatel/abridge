@@ -6,6 +6,7 @@ import { formsRouter } from "./forms";
 import { healthRouter } from "./health";
 import { messagingRouter } from "./messaging";
 import { paymentsRouter } from "./payments";
+import { searchRouter } from "./search";
 import { stripeRouter } from "./stripe";
 import { userRouter } from "./user";
 
@@ -19,6 +20,7 @@ export const appRouter = router({
 	user: userRouter,
 	attendance: attendanceRouter,
 	forms: formsRouter,
+	search: searchRouter,
 });
 
 export type AppRouter = typeof appRouter;
