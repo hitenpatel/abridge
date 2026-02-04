@@ -1,6 +1,7 @@
 import { router } from "../trpc";
 import { attendanceRouter } from "./attendance";
 import { authRouter } from "./auth";
+import { calendarRouter } from "./calendar";
 import { dashboardRouter } from "./dashboard";
 import { formsRouter } from "./forms";
 import { healthRouter } from "./health";
@@ -13,6 +14,7 @@ import { userRouter } from "./user";
 export const appRouter = router({
 	health: healthRouter,
 	auth: authRouter,
+	calendar: calendarRouter,
 	dashboard: dashboardRouter,
 	messaging: messagingRouter,
 	payments: paymentsRouter,

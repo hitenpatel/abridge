@@ -1,7 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { protectedProcedure, router, schoolStaffProcedure } from "../trpc";
+import { indexPaymentItem } from "../lib/search-indexer";
 import { stripe } from "../lib/stripe";
+import { protectedProcedure, router, schoolStaffProcedure } from "../trpc";
 
 export const paymentsRouter = router({
 	createCheckoutSession: protectedProcedure
@@ -163,7 +164,9 @@ export const paymentsRouter = router({
 		for (const item of paymentItems) {
 			for (const childLink of item.children) {
 				if (!paidPairs.has(`${item.id}-${childLink.childId}`)) {
-					const child = parentLinks.find((p: { childId: string }) => p.childId === childLink.childId)?.child;
+					const child = parentLinks.find(
+						(p: { childId: string }) => p.childId === childLink.childId,
+					)?.child;
 					outstanding.push({
 						id: item.id,
 						title: item.title,
@@ -247,7 +250,24 @@ export const paymentsRouter = router({
 				},
 			});
 
-			return { success: true, paymentItemId: paymentItem.id, recipientCount: targetChildIds.length };
+			// Index payment item
+			indexPaymentItem({
+				id: paymentItem.id,
+				schoolId: paymentItem.schoolId,
+				title: paymentItem.title,
+				description: paymentItem.description,
+				category: paymentItem.category,
+				amount: paymentItem.amount,
+				dueDate: paymentItem.dueDate,
+			}).catch((e) => {
+				console.error(`Failed to index payment item ${paymentItem.id}:`, e);
+			});
+
+			return {
+				success: true,
+				paymentItemId: paymentItem.id,
+				recipientCount: targetChildIds.length,
+			};
 		}),
 
 	listPaymentItems: schoolStaffProcedure
@@ -280,11 +300,20 @@ export const paymentsRouter = router({
 			]);
 
 			return {
-				data: items.map((item: { id: string; title: string; amount: number; category: string; createdAt: Date; _count: { children: number; payments: number } }) => ({
-					...item,
-					recipientCount: item._count.children,
-					paymentCount: item._count.payments,
-				})),
+				data: items.map(
+					(item: {
+						id: string;
+						title: string;
+						amount: number;
+						category: string;
+						createdAt: Date;
+						_count: { children: number; payments: number };
+					}) => ({
+						...item,
+						recipientCount: item._count.children,
+						paymentCount: item._count.payments,
+					}),
+				),
 				total,
 				totalPages: Math.ceil(total / input.limit),
 			};
