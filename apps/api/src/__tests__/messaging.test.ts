@@ -1,7 +1,13 @@
 // Tests for messaging router
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, expect, it, vi } from "vitest";
+import { indexMessage } from "../lib/search-indexer";
 import { appRouter } from "../router";
+
+// Mock Search Indexer
+vi.mock("../lib/search-indexer", () => ({
+	indexMessage: vi.fn().mockResolvedValue(undefined),
+}));
 
 // Mock NotificationService
 vi.mock("../services/notification", () => ({
@@ -61,6 +67,7 @@ describe("messaging router", () => {
 
 			expect(result.success).toBe(true);
 			expect(ctx.prisma.message.create).toHaveBeenCalled();
+			expect(indexMessage).toHaveBeenCalled();
 		});
 	});
 

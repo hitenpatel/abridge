@@ -1,7 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { protectedProcedure, router, schoolStaffProcedure } from "../trpc";
+import { indexMessage } from "../lib/search-indexer";
 import { notificationService } from "../services/notification";
+import { protectedProcedure, router, schoolStaffProcedure } from "../trpc";
 
 export const messagingRouter = router({
 	send: schoolStaffProcedure
@@ -67,6 +68,9 @@ export const messagingRouter = router({
 				},
 			});
 
+			// Index message in Elasticsearch (fire-and-forget)
+			indexMessage(message).catch(() => {});
+
 			// 3. Find parents to notify (async)
 			// Don't await this if we want fast response, but for MVP safer to await
 			// or fire-and-forget properly.
@@ -126,12 +130,21 @@ export const messagingRouter = router({
 			]);
 
 			return {
-				data: messages.map((m: { id: string; subject: string; body: string; category: string; createdAt: Date; _count: { children: number; reads: number } }) => ({
-					...m,
-					category: m.category as "STANDARD" | "URGENT" | "FYI",
-					recipientCount: m._count.children,
-					readCount: m._count.reads,
-				})),
+				data: messages.map(
+					(m: {
+						id: string;
+						subject: string;
+						body: string;
+						category: string;
+						createdAt: Date;
+						_count: { children: number; reads: number };
+					}) => ({
+						...m,
+						category: m.category as "STANDARD" | "URGENT" | "FYI",
+						recipientCount: m._count.children,
+						readCount: m._count.reads,
+					}),
+				),
 				total,
 				totalPages: Math.ceil(total / input.limit),
 			};
@@ -184,17 +197,27 @@ export const messagingRouter = router({
 			}
 
 			return {
-				items: messages.map((m: { id: string; subject: string; body: string; category: string; createdAt: Date; school: { name: string; logoUrl: string | null }; reads: { readAt: Date }[] }) => ({
-					id: m.id,
-					subject: m.subject,
-					body: m.body,
-					category: m.category as "STANDARD" | "URGENT" | "FYI",
-					createdAt: m.createdAt,
-					schoolName: m.school.name,
-					schoolLogo: m.school.logoUrl,
-					isRead: m.reads.length > 0,
-					readAt: m.reads[0]?.readAt,
-				})),
+				items: messages.map(
+					(m: {
+						id: string;
+						subject: string;
+						body: string;
+						category: string;
+						createdAt: Date;
+						school: { name: string; logoUrl: string | null };
+						reads: { readAt: Date }[];
+					}) => ({
+						id: m.id,
+						subject: m.subject,
+						body: m.body,
+						category: m.category as "STANDARD" | "URGENT" | "FYI",
+						createdAt: m.createdAt,
+						schoolName: m.school.name,
+						schoolLogo: m.school.logoUrl,
+						isRead: m.reads.length > 0,
+						readAt: m.reads[0]?.readAt,
+					}),
+				),
 				nextCursor,
 			};
 		}),
