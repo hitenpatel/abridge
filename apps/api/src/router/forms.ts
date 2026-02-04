@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@schoolconnect/db";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { protectedProcedure, router, schoolStaffProcedure } from "../trpc";

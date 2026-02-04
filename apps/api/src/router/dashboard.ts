@@ -155,18 +155,18 @@ export const dashboardRouter = router({
 		// 6. Upcoming Events (Current Week)
 		const upcomingEvents = await ctx.prisma.event.findMany({
 			where: {
-				start: {
+				startDate: {
 					gte: new Date(),
 					lte: endOfWeek(new Date()),
 				},
 			},
 			orderBy: {
-				start: "asc",
+				startDate: "asc",
 			},
 			select: {
 				id: true,
 				title: true,
-				start: true,
+				startDate: true,
 			},
 		});
 

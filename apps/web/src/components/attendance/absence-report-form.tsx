@@ -53,7 +53,8 @@ export function AbsenceReportForm({
 	} = useForm<AbsenceFormData>({
 		resolver: zodResolver(absenceSchema),
 		defaultValues: {
-			childId: defaultChildId || (childrenLinks.length > 0 ? childrenLinks[0].childId : ""),
+			childId:
+				defaultChildId || (childrenLinks.length > 0 ? (childrenLinks[0]?.childId ?? "") : ""),
 		},
 	});
 
