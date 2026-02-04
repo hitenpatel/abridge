@@ -1,6 +1,7 @@
 import type { PrismaClient } from "@schoolconnect/db";
 import { Expo } from "expo-server-sdk";
 import { sendSms } from "./sms";
+import { translateText } from "./translator";
 
 export class NotificationService {
 	private expo: Expo;
@@ -25,14 +26,15 @@ export class NotificationService {
 					pushToken: true,
 					quietStart: true,
 					quietEnd: true,
+					language: true,
 				},
 			});
 
 			const isUrgent = data?.category === "URGENT";
 
-			// Filter for valid Expo push tokens and respect quiet hours
-			const validTokens: string[] = [];
-			const userByToken: Record<string, string> = {};
+			// Group users by language and filter by quiet hours
+			const groups: Record<string, { userIds: string[]; tokens: string[] }> = {};
+
 			for (const user of users) {
 				if (!user.pushToken || !Expo.isExpoPushToken(user.pushToken)) {
 					continue;
@@ -43,70 +45,83 @@ export class NotificationService {
 					continue;
 				}
 
-				validTokens.push(user.pushToken);
-				userByToken[user.pushToken] = user.id;
+				const lang = user.language || "en";
+				if (!groups[lang]) {
+					groups[lang] = { userIds: [], tokens: [] };
+				}
+				groups[lang].userIds.push(user.id);
+				groups[lang].tokens.push(user.pushToken);
 			}
 
-			if (validTokens.length === 0) {
-				return { success: true, count: 0 };
-			}
-
-			// Create push notification messages
-			const messages = validTokens.map((token) => ({
-				to: token,
-				sound: "default",
-				title,
-				body: body.length > 100 ? `${body.substring(0, 97)}...` : body,
-				data,
-			}));
-
-			// Send notifications in chunks (Expo API limit)
-			const chunks = this.expo.chunkPushNotifications(messages);
 			let successCount = 0;
+			const userByToken: Record<string, string> = {};
 
-			for (const chunk of chunks) {
-				try {
-					const ticketChunk = await this.expo.sendPushNotificationsAsync(chunk);
+			// Process each language group
+			for (const [lang, group] of Object.entries(groups)) {
+				const translatedTitle = await translateText(title, lang);
+				const translatedBody = await translateText(body, lang);
 
-					// Check for failed tickets
-					for (let i = 0; i < ticketChunk.length; i++) {
-						const ticket = ticketChunk[i];
-						const message = chunk[i];
-						const userId = userByToken[message.to as string];
+				const messages = group.tokens.map((token, idx) => {
+					userByToken[token] = group.userIds[idx];
+					return {
+						to: token,
+						sound: "default",
+						title: translatedTitle,
+						body:
+							translatedBody.length > 100
+								? `${translatedBody.substring(0, 97)}...`
+								: translatedBody,
+						data,
+					};
+				});
 
-						if (ticket.status === "ok") {
-							successCount++;
+				// Send notifications in chunks
+				const chunks = this.expo.chunkPushNotifications(messages);
 
-							// Create delivery record if messageId is present
-							if (data?.messageId && userId) {
-								await this.prisma.notificationDelivery.create({
-									data: {
-										messageId: data.messageId as string,
-										userId,
-										channel: "PUSH",
-										status: "SENT",
-										sentAt: new Date(),
-									},
-								});
-							}
-						} else {
-							console.warn("Push notification failed:", ticket);
+				for (const chunk of chunks) {
+					try {
+						const ticketChunk = await this.expo.sendPushNotificationsAsync(chunk);
 
-							if (data?.messageId && userId) {
-								await this.prisma.notificationDelivery.create({
-									data: {
-										messageId: data.messageId as string,
-										userId,
-										channel: "PUSH",
-										status: "FAILED",
-										error: JSON.stringify(ticket),
-									},
-								});
+						for (let i = 0; i < ticketChunk.length; i++) {
+							const ticket = ticketChunk[i];
+							const message = chunk[i];
+							const userId = userByToken[message.to as string];
+
+							if (ticket.status === "ok") {
+								successCount++;
+								if (data?.messageId && userId) {
+									await this.prisma.notificationDelivery
+										.create({
+											data: {
+												messageId: data.messageId as string,
+												userId,
+												channel: "PUSH",
+												status: "SENT",
+												sentAt: new Date(),
+											},
+										})
+										.catch(() => {});
+								}
+							} else {
+								console.warn("Push notification failed:", ticket);
+								if (data?.messageId && userId) {
+									await this.prisma.notificationDelivery
+										.create({
+											data: {
+												messageId: data.messageId as string,
+												userId,
+												channel: "PUSH",
+												status: "FAILED",
+												error: JSON.stringify(ticket),
+											},
+										})
+										.catch(() => {});
+								}
 							}
 						}
+					} catch (error) {
+						console.error("Error sending push notification chunk:", error);
 					}
-				} catch (error) {
-					console.error("Error sending push notification chunk:", error);
 				}
 			}
 
