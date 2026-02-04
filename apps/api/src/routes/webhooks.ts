@@ -1,6 +1,7 @@
-import type { FastifyInstance } from "fastify";
-import { stripe } from "../lib/stripe";
 import { prisma } from "@schoolconnect/db";
+import type { FastifyInstance } from "fastify";
+import type Stripe from "stripe";
+import { stripe } from "../lib/stripe";
 
 export async function webhookRoutes(server: FastifyInstance) {
 	server.post("/api/webhooks/stripe", async (req, res) => {
@@ -12,14 +13,14 @@ export async function webhookRoutes(server: FastifyInstance) {
 			return res.status(500).send("Webhook secret not configured");
 		}
 
-		let event: any;
+		let event: Stripe.Event;
 
 		try {
 			// use rawBody provided by fastify-raw-body plugin
 			event = stripe.webhooks.constructEvent(
-				(req as any).rawBody,
+				(req as { rawBody: string | Buffer }).rawBody,
 				signature,
-				webhookSecret
+				webhookSecret,
 			);
 		} catch (err: unknown) {
 			const message = err instanceof Error ? err.message : "Unknown error";
@@ -30,32 +31,66 @@ export async function webhookRoutes(server: FastifyInstance) {
 		server.log.info(`Received Stripe event: ${event.type}`);
 
 		if (event.type === "checkout.session.completed") {
-			const session = event.data.object as { metadata: any; amount_total: number; receipt_number?: string };
-			const metadata = session.metadata;
+			const session = event.data.object as Stripe.Checkout.Session;
+			const metadata = session.metadata as {
+				paymentId?: string;
+				cartItems?: string;
+				paymentItemId?: string;
+				childId?: string;
+			} | null;
 
 			if (metadata?.paymentId) {
-				await prisma.$transaction(async (tx: any) => {
+				await prisma.$transaction(async (tx) => {
 					// 1. Update Payment status
+					const receiptNumber = `SC-${new Date().getFullYear()}-${Math.floor(
+						1000 + Math.random() * 9000,
+					)}`;
+
 					await tx.payment.update({
 						where: { id: metadata.paymentId },
 						data: {
 							status: "COMPLETED",
 							completedAt: new Date(),
-							receiptNumber: session.receipt_number || `REC-${Date.now()}`,
+							receiptNumber,
 						},
 					});
 
-					// 2. Create PaymentLineItem
-					await tx.paymentLineItem.create({
-						data: {
-							paymentId: metadata.paymentId,
-							paymentItemId: metadata.paymentItemId,
-							childId: metadata.childId,
-							amount: session.amount_total,
-						},
-					});
+					// 2. Create PaymentLineItems
+					if (metadata.cartItems) {
+						const cartItems = JSON.parse(metadata.cartItems) as Array<{
+							paymentItemId: string;
+							childId?: string;
+						}>;
+
+						for (const item of cartItems) {
+							const paymentItem = await tx.paymentItem.findUnique({
+								where: { id: item.paymentItemId },
+							});
+
+							if (paymentItem) {
+								await tx.paymentLineItem.create({
+									data: {
+										paymentId: metadata.paymentId as string,
+										paymentItemId: item.paymentItemId,
+										childId: item.childId,
+										amount: paymentItem.amount,
+									},
+								});
+							}
+						}
+					} else if (metadata.paymentItemId) {
+						// Fallback to old single-item logic
+						await tx.paymentLineItem.create({
+							data: {
+								paymentId: metadata.paymentId as string,
+								paymentItemId: metadata.paymentItemId,
+								childId: metadata.childId,
+								amount: session.amount_total || 0,
+							},
+						});
+					}
 				});
-				
+
 				server.log.info(`Payment ${metadata.paymentId} fulfilled successfully`);
 			}
 		}
