@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Calendar, User, ShoppingCart, Check } from "lucide-react";
-import { PaymentCart, type CartItem } from "./payment-cart";
+import { trpc } from "@/lib/trpc";
+import { Calendar, Check, CreditCard, ShoppingCart, User } from "lucide-react";
+import { useState } from "react";
+import { type CartItem, PaymentCart } from "./payment-cart";
 
 export function OutstandingPayments() {
 	const [cart, setCart] = useState<CartItem[]>([]);
@@ -28,13 +28,16 @@ export function OutstandingPayments() {
 
 	const addToCart = (payment: any) => {
 		if (cart.some((item) => item.id === payment.id && item.childId === payment.childId)) return;
-		setCart([...cart, {
-			id: payment.id,
-			title: payment.title,
-			amount: payment.amount,
-			childId: payment.childId,
-			childName: payment.childName
-		}]);
+		setCart([
+			...cart,
+			{
+				id: payment.id,
+				title: payment.title,
+				amount: payment.amount,
+				childId: payment.childId,
+				childName: payment.childName,
+			},
+		]);
 	};
 
 	const removeFromCart = (id: string, childId: string) => {
@@ -50,7 +53,8 @@ export function OutstandingPayments() {
 		});
 	};
 
-	if (isLoading) return <div className="text-center py-8 text-gray-500">Loading your payments...</div>;
+	if (isLoading)
+		return <div className="text-center py-8 text-gray-500">Loading your payments...</div>;
 	if (isError) return <div className="text-center py-8 text-red-500">Error loading payments.</div>;
 	if (!payments || payments.length === 0) {
 		return (
@@ -66,18 +70,27 @@ export function OutstandingPayments() {
 		<div className="space-y-8">
 			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 				{payments.map((payment) => {
-					const isInCart = cart.some((item) => item.id === payment.id && item.childId === payment.childId);
-					
+					const isInCart = cart.some(
+						(item) => item.id === payment.id && item.childId === payment.childId,
+					);
+
 					return (
-						<div key={`${payment.id}-${payment.childId}`} className="bg-white rounded-lg shadow border p-6 flex flex-col justify-between">
+						<div
+							key={`${payment.id}-${payment.childId}`}
+							className="bg-white rounded-lg shadow border p-6 flex flex-col justify-between"
+						>
 							<div>
 								<div className="flex justify-between items-start mb-2">
 									<span className="text-xs font-semibold uppercase tracking-wider text-primary-600 bg-primary-50 px-2 py-1 rounded">
 										{payment.category}
 									</span>
-									<span className="text-lg font-bold text-gray-900">£{(payment.amount / 100).toFixed(2)}</span>
+									<span className="text-lg font-bold text-gray-900">
+										£{(payment.amount / 100).toFixed(2)}
+									</span>
 								</div>
-								<h3 className="text-lg font-semibold text-gray-900 line-clamp-1">{payment.title}</h3>
+								<h3 className="text-lg font-semibold text-gray-900 line-clamp-1">
+									{payment.title}
+								</h3>
 								<div className="mt-2 space-y-1">
 									<div className="flex items-center text-sm text-gray-500">
 										<User className="mr-1.5 h-4 w-4 flex-shrink-0" />
@@ -96,9 +109,11 @@ export function OutstandingPayments() {
 							</div>
 							<div className="mt-6 space-y-2">
 								<Button
-									variant={isInCart ? "outline" : "default"}
+									variant={isInCart ? "outline" : "primary"}
 									className="w-full"
-									onClick={() => isInCart ? removeFromCart(payment.id, payment.childId) : addToCart(payment)}
+									onClick={() =>
+										isInCart ? removeFromCart(payment.id, payment.childId) : addToCart(payment)
+									}
 								>
 									{isInCart ? (
 										<>
@@ -113,7 +128,9 @@ export function OutstandingPayments() {
 								<Button
 									variant="ghost"
 									className="w-full text-gray-500 hover:text-gray-700"
-									onClick={() => createSession.mutate({ paymentItemId: payment.id, childId: payment.childId })}
+									onClick={() =>
+										createSession.mutate({ paymentItemId: payment.id, childId: payment.childId })
+									}
 									disabled={createSession.isPending}
 								>
 									{createSession.isPending ? "Preparing..." : "Pay Now"}
@@ -124,9 +141,9 @@ export function OutstandingPayments() {
 				})}
 			</div>
 
-			<PaymentCart 
-				items={cart} 
-				onRemove={removeFromCart} 
+			<PaymentCart
+				items={cart}
+				onRemove={removeFromCart}
 				onCheckout={handleCartCheckout}
 				isPending={createCartSession.isPending}
 			/>
