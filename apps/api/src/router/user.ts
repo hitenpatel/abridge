@@ -13,7 +13,7 @@ export const userRouter = router({
 				where: { id: ctx.user.id },
 				data: { pushToken: input.pushToken },
 			});
-			
+
 			return { success: true };
 		}),
 
@@ -23,4 +23,32 @@ export const userRouter = router({
 			include: { child: true },
 		});
 	}),
+
+	updateNotificationPreferences: protectedProcedure
+		.input(
+			z.object({
+				quietStart: z
+					.string()
+					.regex(/^\d{2}:\d{2}$/)
+					.nullable(),
+				quietEnd: z
+					.string()
+					.regex(/^\d{2}:\d{2}$/)
+					.nullable(),
+				phone: z.string().nullable().optional(),
+				language: z.string().default("en"),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			await ctx.prisma.user.update({
+				where: { id: ctx.user.id },
+				data: {
+					quietStart: input.quietStart,
+					quietEnd: input.quietEnd,
+					language: input.language,
+					...(input.phone !== undefined ? { phone: input.phone } : {}),
+				},
+			});
+			return { success: true };
+		}),
 });
