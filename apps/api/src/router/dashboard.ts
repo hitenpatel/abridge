@@ -1,5 +1,5 @@
-import { router, protectedProcedure } from "../trpc";
-import { subDays } from "date-fns";
+import { endOfDay, endOfWeek, startOfDay, startOfWeek, subDays } from "date-fns";
+import { protectedProcedure, router } from "../trpc";
 
 // Define local interfaces since generated types are missing/broken in this env
 export interface Child {
@@ -49,6 +49,9 @@ export const dashboardRouter = router({
 					paymentsTotal: 0, // in pence
 					attendanceAlerts: 0,
 				},
+				todayAttendance: [],
+				upcomingEvents: [],
+				attendancePercentage: [],
 			};
 		}
 
@@ -133,6 +136,64 @@ export const dashboardRouter = router({
 			},
 		});
 
+		// 5. Today's Attendance
+		const todayAttendance = await ctx.prisma.attendanceRecord.findMany({
+			where: {
+				childId: { in: childIds },
+				date: {
+					gte: startOfDay(new Date()),
+					lte: endOfDay(new Date()),
+				},
+			},
+			select: {
+				childId: true,
+				session: true,
+				mark: true,
+			},
+		});
+
+		// 6. Upcoming Events (Current Week)
+		const upcomingEvents = await ctx.prisma.event.findMany({
+			where: {
+				start: {
+					gte: new Date(),
+					lte: endOfWeek(new Date()),
+				},
+			},
+			orderBy: {
+				start: "asc",
+			},
+			select: {
+				id: true,
+				title: true,
+				start: true,
+			},
+		});
+
+		// 7. Attendance Percentage (Last 30 Days)
+		const last30DaysAttendance = await ctx.prisma.attendanceRecord.findMany({
+			where: {
+				childId: { in: childIds },
+				date: {
+					gte: subDays(new Date(), 30),
+				},
+			},
+			select: {
+				childId: true,
+				mark: true,
+			},
+		});
+
+		const attendancePercentage = childIds.map((childId) => {
+			const records = last30DaysAttendance.filter((r) => r.childId === childId);
+			if (records.length === 0) {
+				return { childId, percentage: 0 };
+			}
+			const presentOrLate = records.filter((r) => ["PRESENT", "LATE"].includes(r.mark)).length;
+			const percentage = Math.round((presentOrLate / records.length) * 100);
+			return { childId, percentage };
+		});
+
 		return {
 			children,
 			metrics: {
@@ -141,6 +202,9 @@ export const dashboardRouter = router({
 				paymentsTotal,
 				attendanceAlerts,
 			},
+			todayAttendance,
+			upcomingEvents,
+			attendancePercentage,
 		};
 	}),
 });
