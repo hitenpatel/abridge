@@ -1,6 +1,7 @@
 "use client";
 
 import { SummaryCards } from "@/components/dashboard/summary-cards";
+import { TodayOverview } from "@/components/dashboard/today-overview";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/lib/trpc";
@@ -12,10 +13,13 @@ export default function DashboardPage() {
 	const { data: session, isPending: isAuthPending } = authClient.useSession();
 	const router = useRouter();
 
-	const { data: summaryData, isLoading: isSummaryLoading, error: summaryError } = 
-		trpc.dashboard.getSummary.useQuery(undefined, {
-			enabled: !!session,
-		});
+	const {
+		data: summaryData,
+		isLoading: isSummaryLoading,
+		error: summaryError,
+	} = trpc.dashboard.getSummary.useQuery(undefined, {
+		enabled: !!session,
+	});
 
 	useEffect(() => {
 		if (!isAuthPending && !session) {
@@ -49,9 +53,7 @@ export default function DashboardPage() {
 			<div className="flex justify-between items-center mb-8">
 				<div>
 					<h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-					<p className="text-gray-500 mt-1">
-						Welcome back, {session.user.name}
-					</p>
+					<p className="text-gray-500 mt-1">Welcome back, {session.user.name}</p>
 				</div>
 				<Button
 					variant="outline"
@@ -67,18 +69,29 @@ export default function DashboardPage() {
 			{/* Summary Cards */}
 			{summaryData && <SummaryCards data={summaryData.metrics} />}
 
+			{/* Today's Overview */}
+			{summaryData && (
+				<div className="mb-10 max-w-3xl">
+					<TodayOverview
+						childrenData={summaryData.children}
+						todayAttendance={summaryData.todayAttendance}
+						attendancePercentage={summaryData.attendancePercentage}
+					/>
+				</div>
+			)}
+
 			{/* My Children Section */}
 			<div className="mt-10">
 				<h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
 					<GraduationCap className="h-5 w-5" />
 					My Children
 				</h2>
-				
+
 				{summaryData?.children && summaryData.children.length > 0 ? (
 					<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 						{summaryData.children.map((child) => (
-							<div 
-								key={child.id} 
+							<div
+								key={child.id}
 								className="bg-white p-6 rounded-lg shadow border border-gray-100 flex items-start gap-4"
 							>
 								<div className="bg-primary-50 p-3 rounded-full">
@@ -89,9 +102,7 @@ export default function DashboardPage() {
 										{child.firstName} {child.lastName}
 									</h3>
 									{/* Placeholder for Year Group / School as they are not in the current API response */}
-									<p className="text-sm text-gray-500 mt-1">
-										Student
-									</p>
+									<p className="text-sm text-gray-500 mt-1">Student</p>
 								</div>
 							</div>
 						))}
