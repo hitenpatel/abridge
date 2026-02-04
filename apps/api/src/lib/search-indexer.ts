@@ -1,3 +1,4 @@
+import { extractText } from "../services/ocr";
 import { elasticsearchClient } from "./elasticsearch";
 
 export const INDICES = {
@@ -73,21 +74,43 @@ export async function ensureIndices() {
 	}
 }
 
-export async function indexMessage(message: {
-	id: string;
-	schoolId: string;
-	subject: string;
-	body: string;
-	category: string;
-	createdAt: Date;
-}) {
+export async function indexMessage(
+	message: {
+		id: string;
+		schoolId: string;
+		subject: string;
+		body: string;
+		category: string;
+		createdAt: Date;
+	},
+	attachments?: Array<{ buffer: Buffer; mimeType: string }>,
+) {
+	let indexedBody = message.body;
+
+	if (attachments && attachments.length > 0) {
+		const attachmentTexts = await Promise.all(
+			attachments.map(async (att) => {
+				try {
+					return await extractText(att.buffer, att.mimeType);
+				} catch (error) {
+					console.error("Error extracting text from attachment:", error);
+					return "";
+				}
+			}),
+		);
+		const combinedAttachmentText = attachmentTexts.filter(Boolean).join("\n\n");
+		if (combinedAttachmentText) {
+			indexedBody = `${indexedBody}\n\n--- Attachment Content ---\n\n${combinedAttachmentText}`;
+		}
+	}
+
 	await elasticsearchClient.index({
 		index: INDICES.MESSAGES,
 		id: message.id,
 		document: {
 			schoolId: message.schoolId,
 			subject: message.subject,
-			body: message.body,
+			body: indexedBody,
 			category: message.category,
 			createdAt: message.createdAt,
 		},
@@ -145,6 +168,7 @@ export interface SearchResult {
 	index: string;
 	score: number;
 	source: Record<string, unknown>;
+	highlight?: Record<string, string[]>;
 }
 
 export async function searchAll(query: string, schoolId: string): Promise<SearchResult[]> {
@@ -170,6 +194,16 @@ export async function searchAll(query: string, schoolId: string): Promise<Search
 				],
 			},
 		},
+		highlight: {
+			fields: {
+				subject: {},
+				body: {},
+				title: {},
+				description: {},
+			},
+			pre_tags: ['<mark class="bg-yellow-200 text-gray-900 rounded-sm px-0.5">'],
+			post_tags: ["</mark>"],
+		},
 	});
 
 	return result.hits.hits.map((hit) => ({
@@ -177,5 +211,6 @@ export async function searchAll(query: string, schoolId: string): Promise<Search
 		index: hit._index,
 		score: hit._score || 0,
 		source: (hit._source as Record<string, unknown>) || {},
+		highlight: hit.highlight as Record<string, string[]> | undefined,
 	}));
 }
