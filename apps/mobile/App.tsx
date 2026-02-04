@@ -1,19 +1,27 @@
-import React from 'react';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import * as Notifications from "expo-notifications";
 import { StatusBar } from "expo-status-bar";
-import * as Notifications from 'expo-notifications';
-import { ActivityIndicator, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { MessageSquare, CreditCard as CreditCardIcon, Calendar } from "lucide-react-native";
+import { Calendar, CreditCard as CreditCardIcon, Home, MessageSquare } from "lucide-react-native";
+import React from "react";
+import {
+	ActivityIndicator,
+	SafeAreaView,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import { authClient } from "./src/lib/auth-client";
-import { trpc } from "./src/lib/trpc";
 import { TRPCProvider } from "./src/lib/provider";
-import { LoginScreen } from "./src/screens/LoginScreen";
-import { MessagesScreen } from "./src/screens/MessagesScreen";
-import { MessageDetailScreen } from "./src/screens/MessageDetailScreen";
-import { PaymentsScreen } from "./src/screens/PaymentsScreen";
+import { trpc } from "./src/lib/trpc";
 import { AttendanceScreen } from "./src/screens/AttendanceScreen";
+import { DashboardScreen } from "./src/screens/DashboardScreen";
+import { LoginScreen } from "./src/screens/LoginScreen";
+import { MessageDetailScreen } from "./src/screens/MessageDetailScreen";
+import { MessagesScreen } from "./src/screens/MessagesScreen";
+import { PaymentsScreen } from "./src/screens/PaymentsScreen";
 
 // Message item type matching the API response
 export interface MessageItem {
@@ -34,6 +42,7 @@ export type RootStackParamList = {
 };
 
 export type TabParamList = {
+	Dashboard: undefined;
 	Messages: undefined;
 	Payments: undefined;
 	Attendance: undefined;
@@ -41,11 +50,11 @@ export type TabParamList = {
 
 // Configure notification handler
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
+	handleNotification: async () => ({
+		shouldShowAlert: true,
+		shouldPlaySound: true,
+		shouldSetBadge: true,
+	}),
 });
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -75,6 +84,15 @@ function TabNavigator() {
 				tabBarInactiveTintColor: "#6b7280",
 			}}
 		>
+			<Tab.Screen
+				name="Dashboard"
+				component={DashboardScreen}
+				options={{
+					title: "Home",
+					tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
+					headerRight: () => <HeaderRight />,
+				}}
+			/>
 			<Tab.Screen
 				name="Messages"
 				component={MessagesScreen}
@@ -114,8 +132,8 @@ function AuthenticatedApp() {
 			try {
 				// Request permissions
 				const { status } = await Notifications.requestPermissionsAsync();
-				if (status !== 'granted') {
-					console.log('Push notification permissions denied');
+				if (status !== "granted") {
+					console.log("Push notification permissions denied");
 					return;
 				}
 
@@ -123,10 +141,10 @@ function AuthenticatedApp() {
 				const tokenData = await Notifications.getExpoPushTokenAsync();
 				if (tokenData.data) {
 					await updatePushToken.mutateAsync({ pushToken: tokenData.data });
-					console.log('Push token registered successfully');
+					console.log("Push token registered successfully");
 				}
 			} catch (error) {
-				console.error('Failed to register push token:', error);
+				console.error("Failed to register push token:", error);
 			}
 		};
 
@@ -140,21 +158,17 @@ function AuthenticatedApp() {
 					headerStyle: { backgroundColor: "#1d4ed8" },
 					headerTintColor: "#fff",
 					headerTitleStyle: { fontWeight: "600" },
-					headerBackTitleVisible: false,
 				}}
 			>
-				<Stack.Screen
-					name="Main"
-					component={TabNavigator}
-					options={{ headerShown: false }}
-				/>
+				<Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
 				<Stack.Screen
 					name="MessageDetail"
 					component={MessageDetailScreen}
 					options={({ route }) => ({
-						title: route.params.message.subject.length > 25
-							? `${route.params.message.subject.substring(0, 25)}...`
-							: route.params.message.subject,
+						title:
+							route.params.message.subject.length > 25
+								? `${route.params.message.subject.substring(0, 25)}...`
+								: route.params.message.subject,
 						headerTitleStyle: {
 							fontWeight: "600",
 							fontSize: 16,
