@@ -9,6 +9,7 @@ import * as Notifications from "expo-notifications";
 import { StatusBar } from "expo-status-bar";
 import {
 	Calendar,
+	ClipboardCheck,
 	CreditCard as CreditCardIcon,
 	Home,
 	MessageSquare,
@@ -27,6 +28,7 @@ import { authClient } from "./src/lib/auth-client";
 import { TRPCProvider } from "./src/lib/provider";
 import { trpc } from "./src/lib/trpc";
 import { AttendanceScreen } from "./src/screens/AttendanceScreen";
+import { CalendarScreen } from "./src/screens/CalendarScreen";
 import { DashboardScreen } from "./src/screens/DashboardScreen";
 import { LoginScreen } from "./src/screens/LoginScreen";
 import { MessageDetailScreen } from "./src/screens/MessageDetailScreen";
@@ -56,6 +58,7 @@ export type RootStackParamList = {
 export type TabParamList = {
 	Dashboard: undefined;
 	Messages: undefined;
+	Calendar: undefined;
 	Payments: undefined;
 	Attendance: undefined;
 };
@@ -126,11 +129,20 @@ function TabNavigator() {
 				}}
 			/>
 			<Tab.Screen
+				name="Calendar"
+				component={CalendarScreen}
+				options={{
+					title: "Calendar",
+					tabBarIcon: ({ color, size }) => <Calendar size={size} color={color} />,
+					headerRight: () => <HeaderRight />,
+				}}
+			/>
+			<Tab.Screen
 				name="Attendance"
 				component={AttendanceScreen}
 				options={{
 					title: "Attendance",
-					tabBarIcon: ({ color, size }) => <Calendar size={size} color={color} />,
+					tabBarIcon: ({ color, size }) => <ClipboardCheck size={size} color={color} />,
 					headerRight: () => <HeaderRight />,
 				}}
 			/>
