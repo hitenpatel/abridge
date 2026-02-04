@@ -7,6 +7,10 @@ if (!process.env.BETTER_AUTH_SECRET) {
 	throw new Error("BETTER_AUTH_SECRET environment variable is required");
 }
 
+if (process.env.NODE_ENV === "production" && process.env.BETTER_AUTH_SECRET.length < 32) {
+	throw new Error("BETTER_AUTH_SECRET must be at least 32 characters long in production");
+}
+
 export const auth = betterAuth({
 	secret: process.env.BETTER_AUTH_SECRET,
 	baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:4000",

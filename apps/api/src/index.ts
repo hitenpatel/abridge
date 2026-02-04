@@ -12,18 +12,34 @@ import { webhookRoutes } from "./routes/webhooks";
 
 const server = Fastify({ logger: true });
 
-function getAllowedOrigins(): string[] {
-	if (process.env.NODE_ENV === "development") {
-		return ["http://localhost:3000", "http://localhost:8081"];
-	}
+function getCorsOptions() {
+	return {
+		origin: (origin: string | undefined, cb: (err: Error | null, allow: boolean) => void) => {
+			// Allow requests with no origin (like mobile apps, curl)
+			if (!origin) {
+				cb(null, true);
+				return;
+			}
 
-	const webUrl = process.env.WEB_URL;
-	if (!webUrl) {
-		throw new Error("WEB_URL environment variable is required in production");
-	}
+			const allowedOrigins = [
+				process.env.WEB_URL,
+				process.env.MOBILE_APP_SCHEME,
+				process.env.NODE_ENV === "development" ? "http://localhost:3000" : null,
+				process.env.NODE_ENV === "development" ? "http://localhost:8081" : null,
+			]
+				.filter(Boolean)
+				.flatMap((u) => (u?.includes(",") ? u.split(",") : [u]))
+				.map((u) => u?.trim()) as string[];
 
-	// Support comma-separated origins for multiple frontend domains
-	return webUrl.split(",").map((u) => u.trim());
+			if (allowedOrigins.includes(origin) || process.env.NODE_ENV === "development") {
+				cb(null, true);
+				return;
+			}
+
+			cb(new Error("Not allowed by CORS"), false);
+		},
+		credentials: true,
+	};
 }
 
 async function main() {
@@ -35,10 +51,7 @@ async function main() {
 		routes: ["/api/webhooks/stripe"],
 	});
 
-	await server.register(cors, {
-		origin: getAllowedOrigins(),
-		credentials: true,
-	});
+	await server.register(cors, getCorsOptions());
 
 	await server.register(webhookRoutes);
 
