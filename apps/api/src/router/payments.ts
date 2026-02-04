@@ -491,4 +491,121 @@ export const paymentsRouter = router({
 				totalPages: Math.ceil(total / input.limit),
 			};
 		}),
+
+	getPaymentHistory: protectedProcedure
+		.input(
+			z.object({
+				page: z.number().min(1).default(1),
+				limit: z.number().min(1).max(100).default(20),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const skip = (input.page - 1) * input.limit;
+
+			const [payments, total] = await Promise.all([
+				ctx.prisma.payment.findMany({
+					where: {
+						userId: ctx.user.id,
+						status: "COMPLETED",
+					},
+					include: {
+						lineItems: {
+							include: {
+								paymentItem: {
+									include: {
+										school: {
+											select: { name: true },
+										},
+									},
+								},
+							},
+						},
+					},
+					orderBy: { createdAt: "desc" },
+					take: input.limit,
+					skip,
+				}),
+				ctx.prisma.payment.count({
+					where: {
+						userId: ctx.user.id,
+						status: "COMPLETED",
+					},
+				}),
+			]);
+
+			return {
+				data: payments,
+				total,
+				totalPages: Math.ceil(total / input.limit),
+			};
+		}),
+
+	getReceipt: protectedProcedure
+		.input(z.object({ paymentId: z.string() }))
+		.query(async ({ ctx, input }) => {
+			const payment = await ctx.prisma.payment.findUnique({
+				where: {
+					id: input.paymentId,
+					userId: ctx.user.id,
+				},
+				include: {
+					user: { select: { name: true } },
+					lineItems: {
+						include: {
+							paymentItem: {
+								include: {
+									school: {
+										select: {
+											name: true,
+											urn: true,
+											address: true,
+										},
+									},
+								},
+							},
+							child: {
+								select: {
+									firstName: true,
+									lastName: true,
+								},
+							},
+						},
+					},
+				},
+			});
+
+			if (!payment || payment.status !== "COMPLETED") {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Payment not found or not completed",
+				});
+			}
+
+			// All items in a payment session should belong to the same school
+			const firstItem = payment.lineItems[0];
+			if (!firstItem) {
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "Payment has no line items",
+				});
+			}
+
+			const school = firstItem.paymentItem.school;
+
+			// Construct UC-compliant receipt structure
+			return {
+				receiptNumber: payment.receiptNumber || payment.id,
+				paymentDate: payment.completedAt || payment.createdAt,
+				totalAmount: payment.totalAmount,
+				providerName: school.name,
+				ofstedUrn: school.urn,
+				providerAddress: school.address,
+				parentName: payment.user.name,
+				items: payment.lineItems.map((li) => ({
+					name: li.paymentItem.title,
+					amount: li.amount,
+					childName: li.child ? `${li.child.firstName} ${li.child.lastName}` : null,
+				})),
+			};
+		}),
 });

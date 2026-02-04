@@ -22,12 +22,15 @@ function createTestContext(overrides?: Partial<Context>): Context {
 			},
 			payment: {
 				findFirst: vi.fn(),
+				findUnique: vi.fn(),
 				create: vi.fn(),
 				update: vi.fn(),
 				findMany: vi.fn(),
+				count: vi.fn(),
 			},
 			child: {
 				findMany: vi.fn(),
+				findUnique: vi.fn(),
 			},
 			parentChild: {
 				findMany: vi.fn(),
@@ -132,6 +135,94 @@ describe("payments router", () => {
 			expect(result.url).toBe("https://stripe.com/checkout");
 			expect(ctx.prisma.payment.create).toHaveBeenCalled();
 			expect(stripe.checkout.sessions.create).toHaveBeenCalled();
+		});
+	});
+
+	describe("getPaymentHistory", () => {
+		const mockUser = { id: "user-1" };
+		const mockSession = { userId: "user-1" };
+
+		it("should return paginated payment history", async () => {
+			const ctx = createTestContext({ user: mockUser as any, session: mockSession as any });
+			const mockPayments = [
+				{
+					id: "pay-1",
+					totalAmount: 1000,
+					status: "COMPLETED",
+					createdAt: new Date(),
+					lineItems: [
+						{
+							id: "li-1",
+							amount: 1000,
+							paymentItem: {
+								title: "School Trip",
+								school: { name: "Test School" },
+							},
+						},
+					],
+				},
+			];
+			(ctx.prisma.payment.findMany as any).mockResolvedValue(mockPayments);
+			(ctx.prisma.payment.count as any).mockResolvedValue(1);
+
+			const caller = appRouter.createCaller(ctx);
+			const result = await caller.payments.getPaymentHistory({ page: 1, limit: 10 });
+
+			expect(result.data).toHaveLength(1);
+			expect(result.total).toBe(1);
+			expect(result.data[0].id).toBe("pay-1");
+		});
+	});
+
+	describe("getReceipt", () => {
+		const mockUser = { id: "user-1", name: "Parent Name" };
+		const mockSession = { userId: "user-1" };
+
+		it("should return a UC-compliant receipt", async () => {
+			const ctx = createTestContext({ user: mockUser as any, session: mockSession as any });
+			const mockPayment = {
+				id: "pay-1",
+				totalAmount: 1000,
+				status: "COMPLETED",
+				receiptNumber: "REC-123",
+				completedAt: new Date(),
+				user: { name: "Parent Name" },
+				lineItems: [
+					{
+						amount: 1000,
+						child: { firstName: "Child", lastName: "One" },
+						paymentItem: {
+							title: "School Trip",
+							school: {
+								name: "Test School",
+								urn: "123456",
+								address: "123 Test St",
+							},
+						},
+					},
+				],
+			};
+			(ctx.prisma.payment.findUnique as any).mockResolvedValue(mockPayment);
+
+			const caller = appRouter.createCaller(ctx);
+			const result = await caller.payments.getReceipt({ paymentId: "pay-1" });
+
+			expect(result.providerName).toBe("Test School");
+			expect(result.ofstedUrn).toBe("123456");
+			expect(result.totalAmount).toBe(1000);
+			expect(result.receiptNumber).toBe("REC-123");
+			expect(result.items[0].childName).toBe("Child One");
+		});
+
+		it("should throw NOT_FOUND if payment does not exist or belongs to another user", async () => {
+			const ctx = createTestContext({ user: mockUser as any, session: mockSession as any });
+			(ctx.prisma.payment.findUnique as any).mockResolvedValue(null);
+
+			const caller = appRouter.createCaller(ctx);
+
+			await expect(caller.payments.getReceipt({ paymentId: "pay-other" })).rejects.toThrow(
+				"Payment not found",
+			);
 		});
 	});
 });
