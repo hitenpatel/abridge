@@ -38,7 +38,7 @@ export function getRedisClient(): Redis | null {
 		}
 		return redis;
 	} catch (err) {
-		logger.warn("Failed to initialize Redis", err as Error);
+		logger.warn("Failed to initialize Redis", { error: (err as Error).message });
 		return null;
 	}
 }

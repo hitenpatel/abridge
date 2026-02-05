@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
@@ -6,21 +6,22 @@ import { cn } from "@/lib/utils";
 
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
+export const viewport: Viewport = {
+	width: "device-width",
+	initialScale: 1,
+	maximumScale: 1,
+	userScalable: false,
+	themeColor: "#2563eb",
+};
+
 export const metadata: Metadata = {
 	title: "SchoolConnect",
 	description: "School-parent communication platform for UK schools",
 	manifest: "/manifest.json",
-	themeColor: "#2563eb",
 	appleWebApp: {
 		capable: true,
 		statusBarStyle: "default",
 		title: "SchoolConnect",
-	},
-	viewport: {
-		width: "device-width",
-		initialScale: 1,
-		maximumScale: 1,
-		userScalable: false,
 	},
 	icons: {
 		icon: [
