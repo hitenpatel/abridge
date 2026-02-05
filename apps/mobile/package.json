@@ -9,7 +9,8 @@
     "ios": "expo start --ios",
     "build": "echo 'Mobile build handled by EAS'",
     "test": "jest",
-    "test:watch": "jest --watchAll"
+    "test:watch": "jest --watchAll",
+    "test:ci": "jest --ci --coverage --forceExit"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
