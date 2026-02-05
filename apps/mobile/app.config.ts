@@ -19,6 +19,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		},
 	},
 	extra: {
-		apiUrl: process.env.API_URL ?? "http://localhost:4000",
+		apiUrl: process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:4000",
 	},
 });

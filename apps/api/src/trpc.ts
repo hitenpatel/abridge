@@ -2,6 +2,7 @@ import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { z } from "zod";
 import type { Context } from "./context";
+import { getCachedStaffMembership, setCachedStaffMembership } from "./lib/redis";
 
 const t = initTRPC.context<Context>().create({
 	transformer: superjson,
@@ -27,10 +28,19 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 // Unscoped staff procedure - for endpoints that operate across all schools
 // (e.g. "list my schools")
 export const staffProcedure = protectedProcedure.use(async ({ ctx, next }) => {
-	const staffMembers = await ctx.prisma.staffMember.findMany({
-		where: { userId: ctx.user.id },
-		select: { schoolId: true, role: true },
-	});
+	// Try cache first
+	let staffMembers = await getCachedStaffMembership(ctx.user.id);
+
+	if (!staffMembers) {
+		// Cache miss - query database
+		staffMembers = await ctx.prisma.staffMember.findMany({
+			where: { userId: ctx.user.id },
+			select: { schoolId: true, role: true },
+		});
+
+		// Cache the result
+		await setCachedStaffMembership(ctx.user.id, staffMembers);
+	}
 
 	if (staffMembers.length === 0) {
 		throw new TRPCError({
@@ -66,14 +76,23 @@ const schoolInput = z.object({ schoolId: z.string() });
 export const schoolStaffProcedure = protectedProcedure
 	.input(schoolInput)
 	.use(async ({ ctx, input, next }) => {
-		const staffMember = await ctx.prisma.staffMember.findUnique({
-			where: {
-				userId_schoolId: {
-					userId: ctx.user.id,
-					schoolId: input.schoolId,
+		// Try cache first
+		let staffMember = await getCachedStaffMembership(ctx.user.id, input.schoolId);
+
+		if (!staffMember) {
+			// Cache miss - query database
+			staffMember = await ctx.prisma.staffMember.findUnique({
+				where: {
+					userId_schoolId: {
+						userId: ctx.user.id,
+						schoolId: input.schoolId,
+					},
 				},
-			},
-		});
+			});
+
+			// Cache the result (even if null, to avoid repeated queries)
+			await setCachedStaffMembership(ctx.user.id, staffMember, input.schoolId);
+		}
 
 		if (!staffMember) {
 			throw new TRPCError({
@@ -95,14 +114,23 @@ export const schoolStaffProcedure = protectedProcedure
 export const schoolAdminProcedure = protectedProcedure
 	.input(schoolInput)
 	.use(async ({ ctx, input, next }) => {
-		const staffMember = await ctx.prisma.staffMember.findUnique({
-			where: {
-				userId_schoolId: {
-					userId: ctx.user.id,
-					schoolId: input.schoolId,
+		// Try cache first
+		let staffMember = await getCachedStaffMembership(ctx.user.id, input.schoolId);
+
+		if (!staffMember) {
+			// Cache miss - query database
+			staffMember = await ctx.prisma.staffMember.findUnique({
+				where: {
+					userId_schoolId: {
+						userId: ctx.user.id,
+						schoolId: input.schoolId,
+					},
 				},
-			},
-		});
+			});
+
+			// Cache the result
+			await setCachedStaffMembership(ctx.user.id, staffMember, input.schoolId);
+		}
 
 		if (!staffMember || staffMember.role !== "ADMIN") {
 			throw new TRPCError({

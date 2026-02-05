@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
-import { Loader2, Printer, X } from "lucide-react";
+import { Download, Loader2, Printer, X } from "lucide-react";
 
 interface ReceiptViewProps {
 	paymentId: string;
@@ -14,6 +14,10 @@ export function ReceiptView({ paymentId, onClose }: ReceiptViewProps) {
 
 	const handlePrint = () => {
 		window.print();
+	};
+
+	const handleDownloadPDF = () => {
+		window.open(`/api/pdf/payment-receipt/${paymentId}`, "_blank");
 	};
 
 	if (!paymentId) return null;
@@ -118,9 +122,15 @@ export function ReceiptView({ paymentId, onClose }: ReceiptViewProps) {
 							<div className="mt-8 flex justify-end gap-3 print:hidden">
 								<Button variant="outline" onClick={handlePrint}>
 									<Printer className="h-4 w-4 mr-2" />
-									Print Receipt
+									Print
 								</Button>
-								<Button onClick={onClose}>Close</Button>
+								<Button variant="default" onClick={handleDownloadPDF}>
+									<Download className="h-4 w-4 mr-2" />
+									Download PDF
+								</Button>
+								<Button variant="outline" onClick={onClose}>
+									Close
+								</Button>
 							</div>
 						</>
 					) : null}

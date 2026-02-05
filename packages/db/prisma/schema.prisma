@@ -29,8 +29,27 @@ model School {
   events     Event[]
   attendance AttendanceRecord[]
   formTemplates FormTemplate[]
+  invitations Invitation[]
 
   @@map("schools")
+}
+
+// ─── Invitations ───────────────────────────────────────────────
+
+model Invitation {
+  id        String    @id @default(cuid())
+  email     String
+  schoolId  String
+  role      StaffRole @default(TEACHER)
+  token     String    @unique
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  acceptedAt DateTime?
+
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([email, schoolId])
+  @@map("invitations")
 }
 
 // ─── Users & Roles ───────────────────────────────────────────

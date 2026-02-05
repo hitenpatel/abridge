@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
-import { ChevronLeft, ChevronRight, Receipt } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, Receipt } from "lucide-react";
 import { useState } from "react";
 import { ReceiptView } from "./receipt-view";
 
@@ -71,13 +71,29 @@ export function PaymentHistory() {
 									£{(payment.totalAmount / 100).toFixed(2)}
 								</td>
 								<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={() => setSelectedPaymentId(payment.id)}
-									>
-										View Receipt
-									</Button>
+									<div className="flex gap-2 justify-end">
+										<Button
+											variant="outline"
+											size="sm"
+											onClick={() => setSelectedPaymentId(payment.id)}
+										>
+											<Receipt className="h-4 w-4 mr-1" />
+											View
+										</Button>
+										{payment.status === "COMPLETED" && (
+											<Button
+												variant="default"
+												size="sm"
+												onClick={() => {
+													window.open(`/api/pdf/payment-receipt/${payment.id}`, "_blank");
+												}}
+												title="Download UC-compliant receipt"
+											>
+												<Download className="h-4 w-4 mr-1" />
+												PDF
+											</Button>
+										)}
+									</div>
 								</td>
 							</tr>
 						))}

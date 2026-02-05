@@ -7,9 +7,12 @@ import { trpc } from "@/lib/trpc";
 import Link from "next/link";
 
 export default function PaymentsDashboardPage() {
-	// TODO: Dynamic school selection
-	const schoolId = "school-1";
-	const { data: stripeStatus } = trpc.stripe.getStripeStatus.useQuery({ schoolId });
+	const { data: session } = trpc.auth.getSession.useQuery();
+	const schoolId = session?.schoolId || "school-1";
+	const { data: stripeStatus } = trpc.stripe.getStripeStatus.useQuery(
+		{ schoolId },
+		{ enabled: !!schoolId },
+	);
 
 	return (
 		<div className="max-w-6xl mx-auto px-4 py-8 space-y-12">

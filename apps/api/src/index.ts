@@ -1,3 +1,4 @@
+import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
 import { prisma } from "@schoolconnect/db";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
@@ -8,9 +9,18 @@ import { createContext } from "./context";
 import { checkUndeliveredNotifications } from "./jobs/notification-fallback";
 import { auth } from "./lib/auth";
 import { appRouter } from "./router";
+import { pdfRoutes } from "./routes/pdf";
 import { webhookRoutes } from "./routes/webhooks";
 
 const server = Fastify({ logger: true });
+
+// Add prisma to Fastify instance for use in routes
+declare module "fastify" {
+	interface FastifyInstance {
+		prisma: typeof prisma;
+	}
+}
+server.decorate("prisma", prisma);
 
 function getCorsOptions() {
 	return {
@@ -43,6 +53,8 @@ function getCorsOptions() {
 }
 
 async function main() {
+	await server.register(cookie);
+
 	await server.register(rawBody, {
 		field: "rawBody",
 		global: false,
@@ -54,6 +66,8 @@ async function main() {
 	await server.register(cors, getCorsOptions());
 
 	await server.register(webhookRoutes);
+
+	await server.register(pdfRoutes);
 
 	await server.register(fastifyTRPCPlugin, {
 		prefix: "/trpc",

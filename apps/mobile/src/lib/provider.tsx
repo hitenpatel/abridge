@@ -1,17 +1,14 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
+import Constants from "expo-constants";
 import { useState } from "react";
 import superjson from "superjson";
 import { authClient } from "./auth-client";
 import { trpc } from "./trpc";
 
 const getApiUrl = () => {
-	// For development, use the local API
-	if (__DEV__) {
-		return "http://localhost:3000/trpc";
-	}
-	// For production, replace with your actual API URL
-	return "https://your-api-domain.com/trpc";
+	const baseUrl = Constants.expoConfig?.extra?.apiUrl ?? "http://localhost:4000";
+	return `${baseUrl}/trpc`;
 };
 
 export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {

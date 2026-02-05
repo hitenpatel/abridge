@@ -1,22 +1,22 @@
 "use client";
 
 import { MessageComposer } from "@/components/messaging/composer";
-import { authClient } from "@/lib/auth-client";
+import { trpc } from "@/lib/trpc";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function NewMessagePage() {
-	const { data: session, isPending } = authClient.useSession();
+	const { data: session, isLoading } = trpc.auth.getSession.useQuery();
 	const router = useRouter();
 
 	// Protect the route
 	useEffect(() => {
-		if (!isPending && !session) {
+		if (!isLoading && !session) {
 			router.push("/login");
 		}
-	}, [isPending, session, router]);
+	}, [isLoading, session, router]);
 
-	if (isPending) {
+	if (isLoading) {
 		return <div className="flex h-[50vh] items-center justify-center">Loading...</div>;
 	}
 
@@ -24,11 +24,7 @@ export default function NewMessagePage() {
 		return null;
 	}
 
-	// TODO: Retrieve the actual school ID from the user's profile or context.
-	// For MVP, we assume the user belongs to a school and hardcode a placeholder or
-	// fetch it if available. Since session user doesn't have it typed yet, we use a placeholder.
-	// This will need to be updated when the school selection/context is implemented.
-	const schoolId = "school-1";
+	const schoolId = session.schoolId || "school-1";
 
 	return (
 		<div className="max-w-4xl mx-auto py-8 px-4">

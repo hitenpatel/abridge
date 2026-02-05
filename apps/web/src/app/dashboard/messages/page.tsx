@@ -2,11 +2,12 @@
 
 import { MessageList } from "@/components/messaging/message-list";
 import { Button } from "@/components/ui/button";
+import { trpc } from "@/lib/trpc";
 import Link from "next/link";
 
 export default function MessagesPage() {
-	// TODO: Get schoolId from context/auth
-	const schoolId = "school-1";
+	const { data: session } = trpc.auth.getSession.useQuery();
+	const schoolId = session?.schoolId || "school-1";
 
 	return (
 		<div className="max-w-4xl mx-auto px-4">

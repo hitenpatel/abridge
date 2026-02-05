@@ -1,6 +1,8 @@
 import { prisma } from "@schoolconnect/db";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { logger } from "./logger";
+import { invalidateStaffCache } from "./redis";
 
 // Validate required environment variables at startup
 if (!process.env.BETTER_AUTH_SECRET) {
@@ -34,6 +36,42 @@ export const auth = betterAuth({
 	emailAndPassword: {
 		enabled: true,
 		minPasswordLength: 8,
+	},
+	databaseHooks: {
+		user: {
+			create: {
+				after: async (user) => {
+					logger.info("Creating user, checking invites", { email: user.email });
+					// Check for pending invitations for this email
+					// Using raw SQL to bypass Prisma client generation issues
+					const invitations: any[] = await prisma.$queryRawUnsafe(
+						`SELECT * FROM invitations
+						 WHERE email = $1 AND "acceptedAt" IS NULL AND "expiresAt" > NOW()`,
+						user.email,
+					);
+					logger.info("Found invitations", { count: invitations.length });
+
+					for (const invite of invitations) {
+						await prisma.staffMember.create({
+							data: {
+								userId: user.id,
+								schoolId: invite.schoolId,
+								role: invite.role,
+							},
+						});
+						logger.info("Created staff member", { userId: user.id, schoolId: invite.schoolId });
+
+						// Invalidate staff cache for the new member
+						await invalidateStaffCache(user.id, invite.schoolId);
+
+						await prisma.$executeRawUnsafe(
+							`UPDATE invitations SET "acceptedAt" = NOW() WHERE id = $1`,
+							invite.id,
+						);
+					}
+				},
+			},
+		},
 	},
 	trustedOrigins: [
 		process.env.WEB_URL || (process.env.NODE_ENV === "development" ? "http://localhost:3000" : ""),

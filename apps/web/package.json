@@ -6,7 +6,8 @@
 		"dev": "next dev --port 3000",
 		"build": "next build",
 		"start": "next start",
-		"test": "vitest"
+		"test": "vitest",
+		"generate-icons": "node scripts/generate-icons.js"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.2.2",
@@ -20,6 +21,7 @@
 		"date-fns": "^4.1.0",
 		"lucide-react": "^0.563.0",
 		"next": "^14.2.0",
+		"next-pwa": "^5.6.0",
 		"react": "^18.3.0",
 		"react-dom": "^18.3.0",
 		"react-hook-form": "^7.71.1",
@@ -43,6 +45,7 @@
 		"happy-dom": "^20.5.0",
 		"jsdom": "^28.0.0",
 		"postcss": "^8.4.0",
+		"sharp": "^0.34.5",
 		"tailwindcss": "^3.4.0",
 		"typescript": "^5.7.0",
 		"vitest": "^2.1.0"
