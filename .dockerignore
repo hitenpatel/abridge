@@ -1,0 +1,16 @@
+node_modules
+.next
+dist
+.expo
+.turbo
+.git
+.claude
+.worktrees
+coverage
+*.tsbuildinfo
+.env
+.env.local
+.env.*.local
+apps/mobile
+e2e
+docs
