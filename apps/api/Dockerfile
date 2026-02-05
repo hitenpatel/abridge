@@ -23,7 +23,7 @@ COPY packages/db ./packages/db
 COPY apps/api ./apps/api
 
 # Generate Prisma client
-RUN cd packages/db && npx prisma generate
+RUN cd packages/db && pnpm exec prisma generate
 
 # Build TypeScript
 RUN cd apps/api && pnpm build
@@ -45,7 +45,7 @@ RUN pnpm install --frozen-lockfile --filter @schoolconnect/api... --prod
 
 # Copy Prisma schema and generate for correct platform (linux-musl-openssl)
 COPY packages/db/prisma ./packages/db/prisma
-RUN cd packages/db && npx prisma generate
+RUN cd packages/db && pnpm exec prisma generate
 
 # Copy built output
 COPY --from=builder /app/apps/api/dist ./apps/api/dist

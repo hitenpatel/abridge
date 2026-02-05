@@ -29,7 +29,7 @@ COPY apps/api/package.json ./apps/api/package.json
 COPY apps/web ./apps/web
 
 # Generate Prisma client
-RUN cd packages/db && npx prisma generate
+RUN cd packages/db && pnpm exec prisma generate
 
 # NEXT_PUBLIC_ vars must be available at build time (baked into client JS)
 ARG NEXT_PUBLIC_API_URL

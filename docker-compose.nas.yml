@@ -98,7 +98,7 @@ services:
     depends_on:
       schoolconnect-db:
         condition: service_healthy
-    command: npx prisma migrate deploy --schema ./packages/db/prisma/schema.prisma
+    command: pnpm exec prisma migrate deploy --schema ./packages/db/prisma/schema.prisma
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@schoolconnect-db:5432/${POSTGRES_DB}
     networks:
