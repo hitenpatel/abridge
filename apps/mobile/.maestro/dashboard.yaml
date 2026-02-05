@@ -1,0 +1,17 @@
+appId: host.exp.Exponent
+name: Dashboard Overview
+tags:
+  - smoke
+  - dashboard
+---
+- launchApp
+
+- assertVisible:
+    text: "Home"
+    timeout: 10000
+
+- assertVisible: "Overview"
+- assertVisible: "Unread Messages"
+- assertVisible: "Outstanding"
+- assertVisible: "My Children"
+- assertVisible: "Upcoming Events"

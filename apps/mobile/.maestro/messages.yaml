@@ -1,0 +1,13 @@
+appId: host.exp.Exponent
+name: Messages Flow
+tags:
+  - smoke
+  - messages
+---
+- launchApp
+
+- tapOn: "Inbox"
+
+- assertVisible:
+    text: "Inbox"
+    timeout: 5000

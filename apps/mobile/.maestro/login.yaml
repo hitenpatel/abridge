@@ -1,0 +1,22 @@
+appId: host.exp.Exponent
+name: Login Flow
+tags:
+  - smoke
+  - auth
+---
+- launchApp:
+    clearState: true
+
+- assertVisible: "SchoolConnect"
+
+- tapOn: "Email"
+- inputText: "parent@test.com"
+
+- tapOn: "Password"
+- inputText: "password123"
+
+- tapOn: "Login"
+
+- assertVisible:
+    text: "Home"
+    timeout: 10000
