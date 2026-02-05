@@ -34,23 +34,15 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Copy workspace structure for pnpm
-COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
-COPY apps/api/package.json ./apps/api/package.json
-COPY packages/db/package.json ./packages/db/package.json
-COPY packages/tsconfig/package.json ./packages/tsconfig/package.json
-
-# Install deps (includes prisma CLI needed for generate)
-RUN pnpm install --frozen-lockfile --filter @schoolconnect/api...
-
-# Copy Prisma schema and generate for correct platform (linux-musl-openssl)
-COPY packages/db/prisma ./packages/db/prisma
-RUN cd packages/db && pnpm exec prisma generate
+# Copy node_modules from builder (includes generated Prisma client for this platform)
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
+COPY --from=builder /app/packages/db/node_modules ./packages/db/node_modules
 
 # Copy built output
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
 
-# Copy migrations for the migrate init container
+# Copy Prisma schema + migrations for the migrate init container
 COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
 
 RUN addgroup --system --gid 1001 nodejs
