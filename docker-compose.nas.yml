@@ -95,10 +95,11 @@ services:
     image: schoolconnect-api
     container_name: schoolconnect-migrate
     restart: "no"
+    working_dir: /app
     depends_on:
       schoolconnect-db:
         condition: service_healthy
-    command: pnpm exec prisma migrate deploy --schema ./packages/db/prisma/schema.prisma
+    command: ./packages/db/node_modules/.bin/prisma migrate deploy --schema ./packages/db/prisma/schema.prisma
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@schoolconnect-db:5432/${POSTGRES_DB}
     networks:
@@ -206,4 +207,5 @@ volumes:
 
 networks:
   homelab:
+    name: home-server_homelab
     external: true

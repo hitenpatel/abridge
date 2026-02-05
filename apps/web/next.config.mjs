@@ -4,7 +4,9 @@ import withPWA from "next-pwa";
 const nextConfig = {
 	output: "standalone",
 	transpilePackages: ["@schoolconnect/db"],
-	turbopack: {},
+	turbopack: {
+		root: "../..",
+	},
 	typescript: {
 		// API code is type-checked separately via its own build process.
 		// The web tsconfig includes API router files for tRPC types, which

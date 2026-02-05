@@ -19,7 +19,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
 COPY --from=deps /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=deps /app/packages/db/node_modules ./packages/db/node_modules
-COPY --from=deps /app/packages/tsconfig ./packages/tsconfig
+COPY packages/tsconfig ./packages/tsconfig
 
 # Copy source needed for build
 COPY packages/db ./packages/db

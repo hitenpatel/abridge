@@ -105,6 +105,7 @@ export const invitationRouter = router({
 
 			const userData = existingUser ?? {
 				id: invitation.email,
+				email: invitation.email,
 				name: invitation.email.split("@")[0],
 				emailVerified: true,
 			};

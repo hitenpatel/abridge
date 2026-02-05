@@ -29,7 +29,8 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 // (e.g. "list my schools")
 export const staffProcedure = protectedProcedure.use(async ({ ctx, next }) => {
 	// Try cache first
-	let staffMembers = await getCachedStaffMembership(ctx.user.id);
+	const cached = await getCachedStaffMembership(ctx.user.id);
+	let staffMembers = Array.isArray(cached) ? cached : null;
 
 	if (!staffMembers) {
 		// Cache miss - query database
@@ -59,7 +60,7 @@ export const staffProcedure = protectedProcedure.use(async ({ ctx, next }) => {
 
 // Unscoped admin procedure - for endpoints that require admin at any school
 export const adminProcedure = staffProcedure.use(({ ctx, next }) => {
-	const isAdmin = ctx.staffMembers.some((s: { role: string }) => s.role === "ADMIN");
+	const isAdmin = ctx.staffMembers.some((s) => s?.role === "ADMIN");
 	if (!isAdmin) {
 		throw new TRPCError({
 			code: "FORBIDDEN",
@@ -77,7 +78,8 @@ export const schoolStaffProcedure = protectedProcedure
 	.input(schoolInput)
 	.use(async ({ ctx, input, next }) => {
 		// Try cache first
-		let staffMember = await getCachedStaffMembership(ctx.user.id, input.schoolId);
+		const cachedMember = await getCachedStaffMembership(ctx.user.id, input.schoolId);
+		let staffMember = cachedMember && !Array.isArray(cachedMember) ? cachedMember : null;
 
 		if (!staffMember) {
 			// Cache miss - query database
@@ -115,7 +117,8 @@ export const schoolAdminProcedure = protectedProcedure
 	.input(schoolInput)
 	.use(async ({ ctx, input, next }) => {
 		// Try cache first
-		let staffMember = await getCachedStaffMembership(ctx.user.id, input.schoolId);
+		const cachedAdmin = await getCachedStaffMembership(ctx.user.id, input.schoolId);
+		let staffMember = cachedAdmin && !Array.isArray(cachedAdmin) ? cachedAdmin : null;
 
 		if (!staffMember) {
 			// Cache miss - query database
