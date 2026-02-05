@@ -40,8 +40,8 @@ COPY apps/api/package.json ./apps/api/package.json
 COPY packages/db/package.json ./packages/db/package.json
 COPY packages/tsconfig/package.json ./packages/tsconfig/package.json
 
-# Install production deps only
-RUN pnpm install --frozen-lockfile --filter @schoolconnect/api... --prod
+# Install deps (includes prisma CLI needed for generate)
+RUN pnpm install --frozen-lockfile --filter @schoolconnect/api...
 
 # Copy Prisma schema and generate for correct platform (linux-musl-openssl)
 COPY packages/db/prisma ./packages/db/prisma
