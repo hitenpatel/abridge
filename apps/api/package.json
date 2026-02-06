@@ -13,7 +13,6 @@
 	},
 	"dependencies": {
 		"tsx": "^4.19.0",
-		"@elastic/elasticsearch": "^9.2.1",
 		"@fastify/cookie": "^11.0.2",
 		"@fastify/cors": "^10.0.0",
 		"@schoolconnect/db": "workspace:*",

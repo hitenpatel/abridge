@@ -96,20 +96,19 @@ model Session {
 
 model Account {
   id                    String    @id @default(cuid())
-  accountId             String
-  providerId            String
+  accountId             String    @map("providerAccountId")
+  providerId            String    @map("provider")
   userId                String
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
   idToken               String?
-  accessTokenExpiresAt  DateTime?
-  refreshTokenExpiresAt DateTime?
-  scope                 String?
+  expiresAt             Int?
   password              String?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
+  @@unique([providerId, accountId])
   @@map("accounts")
 }
 

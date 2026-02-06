@@ -32,21 +32,17 @@ RUN cp -r /app/node_modules/.pnpm/@prisma+client@*/node_modules/.prisma /app/pac
 RUN cd apps/api && pnpm build
 
 # Create JS versions of packages/db (these files are simple, just strip types)
-RUN cat <<'EOFJS' > packages/db/src/index.js
-export { prisma } from "./client.js";
-export * from "@prisma/client";
-EOFJS
-RUN cat <<'EOFJS' > packages/db/src/client.js
-import { PrismaClient } from "@prisma/client";
-export * from "@prisma/client";
-const globalForPrisma = globalThis;
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({
-  log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-});
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
-}
-EOFJS
+RUN printf '%s\n' 'export { prisma } from "./client.js";' 'export * from "@prisma/client";' > packages/db/src/index.js
+RUN printf '%s\n' \
+  'import { PrismaClient } from "@prisma/client";' \
+  'export * from "@prisma/client";' \
+  'const globalForPrisma = globalThis;' \
+  'export const prisma = globalForPrisma.prisma ?? new PrismaClient({' \
+  '  log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],' \
+  '});' \
+  'if (process.env.NODE_ENV !== "production") {' \
+  '  globalForPrisma.prisma = prisma;' \
+  '}' > packages/db/src/client.js
 
 # Update packages/db exports to point to compiled .js files and add type: module
 RUN node -e " \

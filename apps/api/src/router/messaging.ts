@@ -1,6 +1,5 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { indexMessage } from "../lib/search-indexer";
 import { notificationService } from "../services/notification";
 import { protectedProcedure, router, schoolStaffProcedure } from "../trpc";
 
@@ -68,10 +67,7 @@ export const messagingRouter = router({
 				},
 			});
 
-			// Index message in Elasticsearch (fire-and-forget)
-			indexMessage(message).catch(() => {});
-
-			// 3. Find parents to notify (async)
+				// 3. Find parents to notify (async)
 			// Don't await this if we want fast response, but for MVP safer to await
 			// or fire-and-forget properly.
 			(async () => {

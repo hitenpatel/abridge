@@ -1,6 +1,8 @@
 import type { User } from "@schoolconnect/db/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { logger } from "../lib/logger";
+import { invalidateStaffCache } from "../lib/redis";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const authRouter = router({
@@ -8,7 +10,7 @@ export const authRouter = router({
 		if (!ctx.user) return null;
 
 		// Fetch roles
-		const [parentLinks, staffMember] = await Promise.all([
+		let [parentLinks, staffMember] = await Promise.all([
 			ctx.prisma.parentChild.findMany({
 				where: { userId: ctx.user.id },
 				select: { id: true }, // Just check existence
@@ -19,6 +21,53 @@ export const authRouter = router({
 				select: { role: true, schoolId: true },
 			}),
 		]);
+
+		// If user has no staff membership, check for unprocessed invitations
+		// (handles case where the signup hook failed to process them)
+		if (!staffMember) {
+			try {
+				const invitations: any[] = await ctx.prisma.$queryRawUnsafe(
+					`SELECT * FROM invitations
+					 WHERE email = $1 AND "acceptedAt" IS NULL AND "expiresAt" > NOW()`,
+					ctx.user.email,
+				);
+
+				for (const invite of invitations) {
+					await ctx.prisma.staffMember.create({
+						data: {
+							userId: ctx.user.id,
+							schoolId: invite.schoolId,
+							role: invite.role,
+						},
+					});
+					logger.info("Recovered: created staff member from pending invitation", {
+						userId: ctx.user.id,
+						schoolId: invite.schoolId,
+						role: invite.role,
+					});
+
+					await invalidateStaffCache(ctx.user.id, invite.schoolId);
+
+					await ctx.prisma.$executeRawUnsafe(
+						`UPDATE invitations SET "acceptedAt" = NOW() WHERE id = $1`,
+						invite.id,
+					);
+				}
+
+				// Re-fetch staff member if invitations were processed
+				if (invitations.length > 0) {
+					staffMember = await ctx.prisma.staffMember.findFirst({
+						where: { userId: ctx.user.id },
+						select: { role: true, schoolId: true },
+					});
+				}
+			} catch (error) {
+				logger.error("Failed to recover pending invitations", {
+					userId: ctx.user.id,
+					error: error instanceof Error ? error.message : String(error),
+				});
+			}
+		}
 
 		return {
 			...ctx.user,

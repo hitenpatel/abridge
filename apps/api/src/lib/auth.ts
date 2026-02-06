@@ -41,33 +41,44 @@ export const auth = betterAuth({
 		user: {
 			create: {
 				after: async (user) => {
-					logger.info("Creating user, checking invites", { email: user.email });
-					// Check for pending invitations for this email
-					// Using raw SQL to bypass Prisma client generation issues
-					const invitations: any[] = await prisma.$queryRawUnsafe(
-						`SELECT * FROM invitations
-						 WHERE email = $1 AND "acceptedAt" IS NULL AND "expiresAt" > NOW()`,
-						user.email,
-					);
-					logger.info("Found invitations", { count: invitations.length });
-
-					for (const invite of invitations) {
-						await prisma.staffMember.create({
-							data: {
-								userId: user.id,
-								schoolId: invite.schoolId,
-								role: invite.role,
-							},
-						});
-						logger.info("Created staff member", { userId: user.id, schoolId: invite.schoolId });
-
-						// Invalidate staff cache for the new member
-						await invalidateStaffCache(user.id, invite.schoolId);
-
-						await prisma.$executeRawUnsafe(
-							`UPDATE invitations SET "acceptedAt" = NOW() WHERE id = $1`,
-							invite.id,
+					try {
+						logger.info("Creating user, checking invites", { email: user.email });
+						// Check for pending invitations for this email
+						// Using raw SQL to bypass Prisma client generation issues
+						const invitations: any[] = await prisma.$queryRawUnsafe(
+							`SELECT * FROM invitations
+							 WHERE email = $1 AND "acceptedAt" IS NULL AND "expiresAt" > NOW()`,
+							user.email,
 						);
+						logger.info("Found invitations", { count: invitations.length });
+
+						for (const invite of invitations) {
+							await prisma.staffMember.create({
+								data: {
+									userId: user.id,
+									schoolId: invite.schoolId,
+									role: invite.role,
+								},
+							});
+							logger.info("Created staff member", { userId: user.id, schoolId: invite.schoolId });
+
+							// Invalidate staff cache for the new member
+							await invalidateStaffCache(user.id, invite.schoolId);
+
+							await prisma.$executeRawUnsafe(
+								`UPDATE invitations SET "acceptedAt" = NOW() WHERE id = $1`,
+								invite.id,
+							);
+						}
+					} catch (error) {
+						logger.error("Failed to process invitations during signup", {
+							email: user.email,
+							userId: user.id,
+							error: error instanceof Error ? error.message : String(error),
+						});
+						// Don't re-throw - allow user creation to succeed even if
+						// invitation processing fails. The invitation can be accepted
+						// later via the accept endpoint.
 					}
 				},
 			},

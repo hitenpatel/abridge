@@ -1,6 +1,5 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { indexPaymentItem } from "../lib/search-indexer";
 import { stripe } from "../lib/stripe";
 import { protectedProcedure, router, schoolStaffProcedure } from "../trpc";
 
@@ -423,20 +422,7 @@ export const paymentsRouter = router({
 				},
 			});
 
-			// Index payment item
-			indexPaymentItem({
-				id: paymentItem.id,
-				schoolId: paymentItem.schoolId,
-				title: paymentItem.title,
-				description: paymentItem.description,
-				category: paymentItem.category,
-				amount: paymentItem.amount,
-				dueDate: paymentItem.dueDate,
-			}).catch((e) => {
-				console.error(`Failed to index payment item ${paymentItem.id}:`, e);
-			});
-
-			return {
+				return {
 				success: true,
 				paymentItemId: paymentItem.id,
 				recipientCount: targetChildIds.length,

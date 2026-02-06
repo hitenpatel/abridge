@@ -33,19 +33,28 @@ function RegisterForm() {
 	const handleRegister = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setLoading(true);
-		await authClient.signUp.email(
-			{ email, password, name },
-			{
-				onSuccess: () => {
-					router.push("/dashboard");
+		try {
+			await authClient.signUp.email(
+				{ email, password, name },
+				{
+					onSuccess: () => {
+						router.push("/dashboard");
+					},
+					onError: (ctx) => {
+						const errorMessage =
+							ctx.error?.message ||
+							ctx.error?.statusText ||
+							"Registration failed. Please try again.";
+						alert(errorMessage);
+						setLoading(false);
+					},
 				},
-				onError: (ctx) => {
-					const errorMessage = ctx.error?.message || "Registration failed. Please try again.";
-					alert(errorMessage);
-					setLoading(false);
-				},
-			},
-		);
+			);
+		} catch (err) {
+			const message = err instanceof Error ? err.message : "Registration failed. Please try again.";
+			alert(message);
+			setLoading(false);
+		}
 	};
 
 	return (

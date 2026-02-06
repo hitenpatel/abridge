@@ -42,7 +42,7 @@ export async function sendStaffInvitationEmail(data: StaffInvitationEmailData) {
 	const expiryDate = data.expiresAt.toLocaleDateString("en-GB");
 
 	try {
-		const result = await resend.emails.send({
+		const { data: emailData, error: emailError } = await resend.emails.send({
 			from: FROM_EMAIL,
 			to: [data.recipientEmail],
 			subject: `Invitation to join ${data.schoolName} on SchoolConnect`,
@@ -125,13 +125,22 @@ export async function sendStaffInvitationEmail(data: StaffInvitationEmailData) {
 			`,
 		});
 
+		if (emailError) {
+			logger.error("Resend API returned error for staff invitation", {
+				error: emailError.message,
+				recipient: data.recipientEmail,
+				school: data.schoolName,
+			});
+			return { success: false, error: emailError };
+		}
+
 		logger.info("Staff invitation email sent", {
-			messageId: result.data?.id,
+			messageId: emailData?.id,
 			recipient: data.recipientEmail,
 			school: data.schoolName,
 		});
 
-		return { success: true, messageId: result.data?.id };
+		return { success: true, messageId: emailData?.id };
 	} catch (error) {
 		logger.error("Failed to send staff invitation email", error as Error, {
 			recipient: data.recipientEmail,
@@ -146,7 +155,7 @@ export async function sendStaffInvitationEmail(data: StaffInvitationEmailData) {
  */
 export async function sendNotificationEmail(data: NotificationEmailData) {
 	try {
-		const result = await resend.emails.send({
+		const { data: emailData, error: emailError } = await resend.emails.send({
 			from: FROM_EMAIL,
 			to: [data.recipientEmail],
 			subject: `${data.schoolName}: ${data.subject}`,
@@ -193,12 +202,20 @@ export async function sendNotificationEmail(data: NotificationEmailData) {
 			`,
 		});
 
+		if (emailError) {
+			logger.error("Resend API returned error for notification email", {
+				error: emailError.message,
+				recipient: data.recipientEmail,
+			});
+			return { success: false, error: emailError };
+		}
+
 		logger.info("Notification email sent", {
-			messageId: result.data?.id,
+			messageId: emailData?.id,
 			recipient: data.recipientEmail,
 		});
 
-		return { success: true, messageId: result.data?.id };
+		return { success: true, messageId: emailData?.id };
 	} catch (error) {
 		logger.error("Failed to send notification email", error as Error, {
 			recipient: data.recipientEmail,
@@ -212,7 +229,7 @@ export async function sendNotificationEmail(data: NotificationEmailData) {
  */
 export async function sendReceiptEmail(data: ReceiptEmailData) {
 	try {
-		const result = await resend.emails.send({
+		const { data: emailData, error: emailError } = await resend.emails.send({
 			from: FROM_EMAIL,
 			to: [data.recipientEmail],
 			subject: `Payment Receipt ${data.receiptNumber} - ${data.schoolName}`,
@@ -277,13 +294,22 @@ export async function sendReceiptEmail(data: ReceiptEmailData) {
 			`,
 		});
 
+		if (emailError) {
+			logger.error("Resend API returned error for receipt email", {
+				error: emailError.message,
+				recipient: data.recipientEmail,
+				receiptNumber: data.receiptNumber,
+			});
+			return { success: false, error: emailError };
+		}
+
 		logger.info("Receipt email sent", {
-			messageId: result.data?.id,
+			messageId: emailData?.id,
 			recipient: data.recipientEmail,
 			receiptNumber: data.receiptNumber,
 		});
 
-		return { success: true, messageId: result.data?.id };
+		return { success: true, messageId: emailData?.id };
 	} catch (error) {
 		logger.error("Failed to send receipt email", error as Error, {
 			recipient: data.recipientEmail,

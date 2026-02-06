@@ -60,37 +60,6 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  schoolconnect-elasticsearch:
-    image: elasticsearch:8.11.0
-    container_name: schoolconnect-elasticsearch
-    restart: unless-stopped
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - ES_JAVA_OPTS=-Xms512m -Xmx1g
-    volumes:
-      - schoolconnect-esdata:/usr/share/elasticsearch/data
-    networks:
-      - homelab
-    healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:9200 || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-        reservations:
-          memory: 1G
-    security_opt:
-      - no-new-privileges:true
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-
   schoolconnect-migrate:
     image: schoolconnect-api
     container_name: schoolconnect-migrate
@@ -131,7 +100,6 @@ services:
       PORT: "4000"
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@schoolconnect-db:5432/${POSTGRES_DB}
       REDIS_URL: redis://schoolconnect-redis:6379
-      ELASTICSEARCH_URL: http://schoolconnect-elasticsearch:9200
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
       BETTER_AUTH_URL: https://school-api.hiten-patel.co.uk
       SETUP_KEY: ${SETUP_KEY}
@@ -203,7 +171,6 @@ services:
 volumes:
   schoolconnect-pgdata:
   schoolconnect-redis-data:
-  schoolconnect-esdata:
 
 networks:
   homelab:

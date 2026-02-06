@@ -1,6 +1,5 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { indexEvent } from "../lib/search-indexer";
 import { protectedProcedure, router, schoolStaffProcedure } from "../trpc";
 
 export const calendarRouter = router({
@@ -59,21 +58,7 @@ export const calendarRouter = router({
 				},
 			});
 
-			// Index the event for search
-			indexEvent({
-				id: event.id,
-				schoolId: event.schoolId,
-				title: event.title,
-				body: event.body,
-				category: event.category,
-				startDate: event.startDate,
-				endDate: event.endDate,
-			}).catch((e) => {
-				// Don't fail the request if indexing fails, just log it
-				console.error(`Failed to index event ${event.id}:`, e);
-			});
-
-			return { success: true, eventId: event.id };
+				return { success: true, eventId: event.id };
 		}),
 
 	deleteEvent: schoolStaffProcedure

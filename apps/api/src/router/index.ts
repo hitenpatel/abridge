@@ -9,7 +9,6 @@ import { healthRouter } from "./health";
 import { invitationRouter } from "./invitation";
 import { messagingRouter } from "./messaging";
 import { paymentsRouter } from "./payments";
-import { searchRouter } from "./search";
 import { setupRouter } from "./setup";
 import { staffRouter } from "./staff";
 import { stripeRouter } from "./stripe";
@@ -26,7 +25,6 @@ export const appRouter = router({
 	user: userRouter,
 	attendance: attendanceRouter,
 	forms: formsRouter,
-	search: searchRouter,
 	invitation: invitationRouter,
 	setup: setupRouter,
 	staff: staffRouter,
