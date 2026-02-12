@@ -1,10 +1,31 @@
 "use client";
 
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
-import { Plus, Settings, ShieldCheck, Trash2, User, Users } from "lucide-react";
+import { Plus, ShieldCheck, Trash2, User, Users } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function StaffManagementPage() {
 	const utils = trpc.useUtils();
@@ -23,6 +44,11 @@ export default function StaffManagementPage() {
 	const [newInviteForm, setNewInviteForm] = useState(false);
 	const [newEmail, setNewEmail] = useState("");
 	const [newRole, setNewRole] = useState<"ADMIN" | "TEACHER" | "OFFICE">("TEACHER");
+	const [staffToRemove, setStaffToRemove] = useState<{
+		userId: string;
+		name: string;
+		email: string;
+	} | null>(null);
 
 	const sendInvitation = trpc.invitation.send.useMutation({
 		onSuccess: () => {
@@ -31,16 +57,18 @@ export default function StaffManagementPage() {
 			utils.invitation.list.invalidate();
 		},
 		onError: (err) => {
-			alert(err.message);
+			toast.error(err.message);
 		},
 	});
 
 	const removeStaff = trpc.staff.remove.useMutation({
 		onSuccess: () => {
 			utils.staff.list.invalidate();
+			setStaffToRemove(null);
+			toast.success("Staff member removed successfully");
 		},
 		onError: (err) => {
-			alert(err.message);
+			toast.error(err.message);
 		},
 	});
 
@@ -93,11 +121,11 @@ export default function StaffManagementPage() {
 
 			<div className="grid gap-6 lg:grid-cols-3">
 				{/* Invite New Staff */}
-				<div className="bg-card p-6 rounded-xl border h-fit">
-					<div className="flex items-center justify-between mb-4">
-						<h2 className="text-xl font-semibold flex items-center gap-2">
+				<Card className="h-fit">
+					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+						<CardTitle className="flex items-center gap-2">
 							<User className="w-5 h-5" /> Invite Staff
-						</h2>
+						</CardTitle>
 						<Button
 							variant={newInviteForm ? "ghost" : "default"}
 							size="sm"
@@ -111,173 +139,202 @@ export default function StaffManagementPage() {
 								</>
 							)}
 						</Button>
-					</div>
+					</CardHeader>
 
 					{newInviteForm && (
-						<form
-							onSubmit={(e) => {
-								e.preventDefault();
-								if (session?.schoolId) {
-									sendInvitation.mutate({
-										schoolId: session.schoolId,
-										email: newEmail,
-										role: newRole,
-									});
-								}
-							}}
-							className="space-y-4"
-						>
-							<div className="space-y-1">
-								<label htmlFor="email" className="text-sm font-medium">
-									Email Address
-								</label>
-								<input
-									id="email"
-									type="email"
-									placeholder="teacher@school.sch.uk"
-									value={newEmail}
-									onChange={(e) => setNewEmail(e.target.value)}
-									className="w-full px-3 py-2 border border-border rounded-lg bg-background"
-									required
-								/>
-							</div>
-							<div className="space-y-1">
-								<label htmlFor="role" className="text-sm font-medium">
-									Role
-								</label>
-								<select
-									id="role"
-									value={newRole}
-									onChange={(e) => setNewRole(e.target.value as "ADMIN" | "TEACHER" | "OFFICE")}
-									className="w-full px-3 py-2 border border-border rounded-lg bg-background"
-								>
-									<option value="TEACHER">Teacher</option>
-									<option value="OFFICE">Office Staff</option>
-									<option value="ADMIN">Administrator</option>
-								</select>
-							</div>
-							<Button type="submit" className="w-full" disabled={sendInvitation.isPending}>
-								{sendInvitation.isPending ? "Sending..." : "Send Invitation"}
-							</Button>
-						</form>
+						<CardContent>
+							<form
+								onSubmit={(e) => {
+									e.preventDefault();
+									if (session?.schoolId) {
+										sendInvitation.mutate({
+											schoolId: session.schoolId,
+											email: newEmail,
+											role: newRole,
+										});
+									}
+								}}
+								className="space-y-4"
+							>
+								<div className="space-y-1">
+									<Label htmlFor="email">Email Address</Label>
+									<input
+										id="email"
+										type="email"
+										placeholder="teacher@school.sch.uk"
+										value={newEmail}
+										onChange={(e) => setNewEmail(e.target.value)}
+										className="w-full px-3 py-2 border border-border rounded-lg bg-background"
+										required
+									/>
+								</div>
+								<div className="space-y-1">
+									<Label htmlFor="role">Role</Label>
+									<Select
+										value={newRole}
+										onValueChange={(value) => setNewRole(value as "ADMIN" | "TEACHER" | "OFFICE")}
+									>
+										<SelectTrigger id="role" className="w-full">
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="TEACHER">Teacher</SelectItem>
+											<SelectItem value="OFFICE">Office Staff</SelectItem>
+											<SelectItem value="ADMIN">Administrator</SelectItem>
+										</SelectContent>
+									</Select>
+								</div>
+								<Button type="submit" className="w-full" disabled={sendInvitation.isPending}>
+									{sendInvitation.isPending ? "Sending..." : "Send Invitation"}
+								</Button>
+							</form>
+						</CardContent>
 					)}
-				</div>
+				</Card>
 
 				{/* Existing Staff */}
 				<div className="lg:col-span-2 space-y-6">
-					<div className="bg-card p-6 rounded-xl border">
-						<h2 className="text-xl font-semibold flex items-center gap-2 mb-6">
-							<Users className="w-5 h-5" /> Current Staff
-						</h2>
-
-						{isLoadingStaff ? (
-							<div className="space-y-3">
-								{[1, 2, 3].map((i) => (
-									<div key={i} className="h-16 bg-muted rounded-lg animate-pulse" />
-								))}
-							</div>
-						) : !staff || staff.length === 0 ? (
-							<div className="text-center py-12 text-muted-foreground bg-muted/20 rounded-lg border-2 border-dashed">
-								<Users className="w-12 h-12 mx-auto mb-4 opacity-20" />
-								<p>No staff members found.</p>
-							</div>
-						) : (
-							<div className="divide-y divide-border">
-								{staff.map((member) => (
-									<div
-										key={member.id}
-										className="flex items-center justify-between py-4 first:pt-0 last:pb-0"
-									>
-										<div className="flex items-center gap-3">
-											<div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold">
-												{member.user.name?.[0] || member.user.email[0].toUpperCase()}
+					<Card>
+						<CardHeader>
+							<CardTitle className="flex items-center gap-2">
+								<Users className="w-5 h-5" /> Current Staff
+							</CardTitle>
+						</CardHeader>
+						<CardContent>
+							{isLoadingStaff ? (
+								<div className="space-y-3">
+									{[1, 2, 3].map((i) => (
+										<Skeleton key={i} className="h-16 w-full" />
+									))}
+								</div>
+							) : !staff || staff.length === 0 ? (
+								<div className="text-center py-12 text-muted-foreground bg-muted/20 rounded-lg border-2 border-dashed">
+									<Users className="w-12 h-12 mx-auto mb-4 opacity-20" />
+									<p>No staff members found.</p>
+								</div>
+							) : (
+								<div className="divide-y divide-border">
+									{staff.map((member) => (
+										<div
+											key={member.id}
+											className="flex items-center justify-between py-4 first:pt-0 last:pb-0"
+										>
+											<div className="flex items-center gap-3">
+												<Avatar>
+													<AvatarFallback className="bg-primary/10 text-primary font-bold">
+														{member.user.name?.[0] || member.user.email[0].toUpperCase()}
+													</AvatarFallback>
+												</Avatar>
+												<div>
+													<p className="font-medium">{member.user.name || "Unnamed User"}</p>
+													<p className="text-sm text-muted-foreground">{member.user.email}</p>
+												</div>
 											</div>
-											<div>
-												<p className="font-medium">{member.user.name || "Unnamed User"}</p>
-												<p className="text-sm text-muted-foreground">{member.user.email}</p>
-											</div>
-										</div>
-										<div className="flex items-center gap-3">
-											<span
-												className={cn(
-													"text-xs px-2.5 py-0.5 rounded-full font-medium",
-													member.role === "ADMIN"
-														? "bg-purple-100 text-purple-700"
-														: "bg-blue-100 text-blue-700",
+											<div className="flex items-center gap-3">
+												<Badge variant={member.role === "ADMIN" ? "default" : "info"}>
+													{member.role}
+												</Badge>
+												{session?.staffRole === "ADMIN" && member.userId !== session.id && (
+													<Button
+														variant="ghost"
+														size="icon"
+														className="text-muted-foreground hover:text-destructive"
+														onClick={() => {
+															setStaffToRemove({
+																userId: member.userId,
+																name: member.user.name || "",
+																email: member.user.email,
+															});
+														}}
+														disabled={removeStaff.isPending}
+													>
+														<Trash2 className="w-4 h-4" />
+													</Button>
 												)}
-											>
-												{member.role}
-											</span>
-											{session?.staffRole === "ADMIN" && member.userId !== session.id && (
-												<Button
-													variant="ghost"
-													size="icon"
-													className="text-muted-foreground hover:text-destructive"
-													onClick={() => {
-														if (
-															confirm(`Remove ${member.user.name || member.user.email} from staff?`)
-														) {
-															if (session?.schoolId) {
-																removeStaff.mutate({
-																	schoolId: session.schoolId,
-																	userId: member.userId,
-																});
-															}
-														}
-													}}
-													disabled={removeStaff.isPending}
-												>
-													<Trash2 className="w-4 h-4" />
-												</Button>
-											)}
+											</div>
 										</div>
-									</div>
-								))}
-							</div>
-						)}
-					</div>
+									))}
+								</div>
+							)}
+						</CardContent>
+					</Card>
 
 					{/* Pending Invitations */}
 					{invitations && invitations.length > 0 && (
-						<div className="bg-card p-6 rounded-xl border border-primary/20 bg-primary/5">
-							<h2 className="text-xl font-semibold flex items-center gap-2 mb-6">
-								<ShieldCheck className="w-5 h-5 text-primary" /> Pending Invitations
-							</h2>
-							<div className="divide-y divide-primary/10">
-								{invitations.map((invite) => (
-									<div
-										key={invite.id}
-										className="flex items-center justify-between py-4 first:pt-0 last:pb-0"
-									>
-										<div>
-											<p className="font-medium">{invite.email}</p>
-											<p className="text-xs text-muted-foreground">
-												Role: {invite.role} • Expires{" "}
-												{new Date(invite.expiresAt).toLocaleDateString()}
-											</p>
-										</div>
-										<Button
-											variant="outline"
-											size="sm"
-											onClick={() => {
-												const link = `${window.location.origin}/register?token=${invite.token}`;
-												navigator.clipboard.writeText(link);
-												alert("Invite link copied to clipboard!");
-											}}
+						<Card className="border-primary/20 bg-primary/5">
+							<CardHeader>
+								<CardTitle className="flex items-center gap-2">
+									<ShieldCheck className="w-5 h-5 text-primary" /> Pending Invitations
+								</CardTitle>
+							</CardHeader>
+							<CardContent>
+								<div className="divide-y divide-primary/10">
+									{invitations.map((invite) => (
+										<div
+											key={invite.id}
+											className="flex items-center justify-between py-4 first:pt-0 last:pb-0"
 										>
-											Copy Link
-										</Button>
-									</div>
-								))}
-							</div>
-						</div>
+											<div>
+												<p className="font-medium">{invite.email}</p>
+												<p className="text-xs text-muted-foreground">
+													Role: {invite.role} • Expires{" "}
+													{new Date(invite.expiresAt).toLocaleDateString()}
+												</p>
+											</div>
+											<Button
+												variant="outline"
+												size="sm"
+												onClick={() => {
+													const link = `${window.location.origin}/register?token=${invite.token}`;
+													navigator.clipboard.writeText(link);
+													toast.success("Invite link copied to clipboard!");
+												}}
+											>
+												Copy Link
+											</Button>
+										</div>
+									))}
+								</div>
+							</CardContent>
+						</Card>
 					)}
 				</div>
 			</div>
+
+			{/* Remove Staff Confirmation Dialog */}
+			<Dialog open={!!staffToRemove} onOpenChange={(open) => !open && setStaffToRemove(null)}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Remove Staff Member</DialogTitle>
+						<DialogDescription>
+							Are you sure you want to remove{" "}
+							<span className="font-semibold">
+								{staffToRemove?.name || staffToRemove?.email}
+							</span>{" "}
+							from staff? This action cannot be undone.
+						</DialogDescription>
+					</DialogHeader>
+					<DialogFooter>
+						<Button variant="outline" onClick={() => setStaffToRemove(null)}>
+							Cancel
+						</Button>
+						<Button
+							variant="destructive"
+							onClick={() => {
+								if (staffToRemove && session?.schoolId) {
+									removeStaff.mutate({
+										schoolId: session.schoolId,
+										userId: staffToRemove.userId,
+									});
+								}
+							}}
+							disabled={removeStaff.isPending}
+						>
+							Remove
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
-}
-
-function cn(...classes: (string | boolean | undefined)[]) {
-	return classes.filter(Boolean).join(" ");
 }

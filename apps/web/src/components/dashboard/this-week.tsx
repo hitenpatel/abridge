@@ -1,3 +1,5 @@
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { format, parseISO } from "date-fns";
 import { Calendar, Clock } from "lucide-react";
 
@@ -20,20 +22,20 @@ export function ThisWeek({ events }: ThisWeekProps) {
 		return dateA - dateB;
 	});
 
-	const getBadgeColor = (type: Event["type"]) => {
+	const getBadgeVariant = (type: Event["type"]) => {
 		switch (type) {
 			case "EVENT":
-				return "bg-blue-100 text-blue-700 border-blue-200";
+				return "info" as const;
 			case "TERM_DATE":
-				return "bg-purple-100 text-purple-700 border-purple-200";
+				return "default" as const;
 			case "INSET_DAY":
-				return "bg-amber-100 text-amber-700 border-amber-200";
+				return "warning" as const;
 			case "DEADLINE":
-				return "bg-red-100 text-red-700 border-red-200";
+				return "destructive" as const;
 			case "CLUB":
-				return "bg-green-100 text-green-700 border-green-200";
+				return "success" as const;
 			default:
-				return "bg-gray-100 text-gray-700 border-gray-200";
+				return "secondary" as const;
 		}
 	};
 
@@ -46,51 +48,54 @@ export function ThisWeek({ events }: ThisWeekProps) {
 	};
 
 	return (
-		<div className="bg-white rounded-lg shadow border border-gray-100 overflow-hidden h-full">
-			<div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-				<h3 className="font-semibold text-gray-900 flex items-center gap-2">
-					<Calendar className="h-5 w-5 text-gray-500" />
+		<Card className="overflow-hidden h-full">
+			<div className="p-4 border-b border-border flex items-center justify-between bg-muted/50">
+				<h3 className="font-semibold text-foreground flex items-center gap-2">
+					<Calendar className="h-5 w-5 text-muted-foreground" />
 					This Week
 				</h3>
 			</div>
-			<div className="divide-y divide-gray-100">
+			<div className="divide-y divide-border">
 				{sortedEvents.length > 0 ? (
 					sortedEvents.map((event) => {
 						const { day, date } = formatEventDate(event.date);
 						return (
 							<div
 								key={event.id}
-								className="p-4 flex items-start gap-4 hover:bg-gray-50 transition-colors"
+								className="p-4 flex items-start gap-4 hover:bg-muted transition-colors"
 							>
-								<div className="flex-shrink-0 flex flex-col items-center justify-center bg-white border border-gray-200 rounded-lg w-14 h-14 shadow-sm">
-									<span className="text-xs font-medium text-gray-500 uppercase">{day}</span>
-									<span className="text-lg font-bold text-gray-900 leading-none">
+								<div className="flex-shrink-0 flex flex-col items-center justify-center bg-card border border-border rounded-lg w-14 h-14 shadow-sm">
+									<span className="text-xs font-medium text-muted-foreground uppercase">{day}</span>
+									<span className="text-lg font-bold text-foreground leading-none">
 										{date.split(" ")[0]}
 									</span>
 								</div>
 								<div className="flex-1 min-w-0">
 									<div className="flex items-center gap-2 mb-1">
-										<span
-											className={`text-[10px] px-2 py-0.5 rounded-full font-medium border uppercase tracking-wide ${getBadgeColor(event.type)}`}
+										<Badge
+											variant={getBadgeVariant(event.type)}
+											className="text-[10px] uppercase tracking-wide"
 										>
 											{event.type.replace("_", " ")}
-										</span>
+										</Badge>
 									</div>
-									<h4 className="text-sm font-semibold text-gray-900 truncate">{event.title}</h4>
+									<h4 className="text-sm font-semibold text-foreground truncate">{event.title}</h4>
 									{event.description && (
-										<p className="text-xs text-gray-500 mt-1 line-clamp-1">{event.description}</p>
+										<p className="text-xs text-muted-foreground mt-1 line-clamp-1">
+											{event.description}
+										</p>
 									)}
 								</div>
 							</div>
 						);
 					})
 				) : (
-					<div className="p-8 text-center text-gray-500 italic flex flex-col items-center">
-						<Clock className="h-8 w-8 text-gray-300 mb-2" />
+					<div className="p-8 text-center text-muted-foreground italic flex flex-col items-center">
+						<Clock className="h-8 w-8 text-muted-foreground/50 mb-2" />
 						<p>No events this week.</p>
 					</div>
 				)}
 			</div>
-		</div>
+		</Card>
 	);
 }

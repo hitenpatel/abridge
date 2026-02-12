@@ -43,7 +43,10 @@ test.describe("Staff Operations", () => {
 		}).toPass({ timeout: 30000 });
 
 		// Step 2: Invite a teacher
-		await page.getByRole("link", { name: /Staff Management/i }).first().click();
+		await page
+			.getByRole("link", { name: /Staff Management/i })
+			.first()
+			.click();
 		await expect(page.getByRole("heading", { name: /Staff Management/i })).toBeVisible();
 
 		await page.getByRole("button", { name: "Invite", exact: true }).click();
@@ -153,7 +156,10 @@ test.describe("Staff Operations", () => {
 		}).toPass({ timeout: 30000 });
 
 		// Invite and register staff
-		await page.getByRole("link", { name: /Staff Management/i }).first().click();
+		await page
+			.getByRole("link", { name: /Staff Management/i })
+			.first()
+			.click();
 		await page.getByRole("button", { name: "Invite", exact: true }).click();
 		await page.getByLabel("Email Address").fill(staffEmail);
 		await page.getByLabel("Role").selectOption("OFFICE");

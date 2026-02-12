@@ -79,7 +79,10 @@ test.describe("Search Functionality", () => {
 		await expect(page.getByText(/School Trip to London Zoo/i).first()).toBeVisible();
 
 		// Click on search result
-		await page.getByRole("button", { name: /London Zoo/i }).first().click();
+		await page
+			.getByRole("button", { name: /London Zoo/i })
+			.first()
+			.click();
 
 		// Should navigate to messages page
 		await expect(page).toHaveURL(/\/dashboard\/messages/);
@@ -136,7 +139,10 @@ test.describe("Search Functionality", () => {
 		});
 
 		// Click result
-		await page.getByRole("button", { name: /Sports Day/i }).first().click();
+		await page
+			.getByRole("button", { name: /Sports Day/i })
+			.first()
+			.click();
 
 		// Should navigate to attendance page (where calendar is)
 		await expect(page).toHaveURL(/\/dashboard\/attendance/);
@@ -189,12 +195,15 @@ test.describe("Search Functionality", () => {
 		await searchInput.fill("Uniform");
 
 		// Wait for results
-		await expect(
-			page.getByRole("button", { name: /School Uniform/i }).first(),
-		).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("button", { name: /School Uniform/i }).first()).toBeVisible({
+			timeout: 10000,
+		});
 
 		// Click result
-		await page.getByRole("button", { name: /School Uniform/i }).first().click();
+		await page
+			.getByRole("button", { name: /School Uniform/i })
+			.first()
+			.click();
 
 		// Should navigate to payments page
 		await expect(page).toHaveURL(/\/dashboard\/payments/);

@@ -131,7 +131,10 @@ test.describe("Parent Attendance Journey", () => {
 		// Step 4: Fill out absence form
 		// The form should appear (AbsenceReportForm component)
 		await expect(
-			page.getByText(/report.*absence|absence.*report/i).or(page.getByRole("heading", { name: /absence/i })).first(),
+			page
+				.getByText(/report.*absence|absence.*report/i)
+				.or(page.getByRole("heading", { name: /absence/i }))
+				.first(),
 		).toBeVisible({ timeout: 5000 });
 
 		// Select date range (today and tomorrow)
@@ -156,11 +159,15 @@ test.describe("Parent Attendance Journey", () => {
 
 		// Step 5: Verify success
 		await expect(
-			page.getByText(/success|submitted|reported/i).or(page.getByRole("button", { name: /Report Absence/i })),
+			page
+				.getByText(/success|submitted|reported/i)
+				.or(page.getByRole("button", { name: /Report Absence/i })),
 		).toBeVisible({ timeout: 10000 });
 
 		// Form should close (Report Absence button reappears)
-		await expect(page.getByRole("button", { name: /Report Absence/i })).toBeVisible({ timeout: 5000 });
+		await expect(page.getByRole("button", { name: /Report Absence/i })).toBeVisible({
+			timeout: 5000,
+		});
 	});
 
 	test("parent with multiple children should see all attendance records", async ({ page }) => {
@@ -217,11 +224,19 @@ test.describe("Parent Attendance Journey", () => {
 		await expect(page.getByText(/Sophia Williams/i)).toBeVisible({ timeout: 10000 });
 
 		// Check if there's a tab or button for second child
-		const liamTab = page.getByRole("button", { name: /Liam/i }).or(page.getByText(/Liam Williams/i)).first();
+		const liamTab = page
+			.getByRole("button", { name: /Liam/i })
+			.or(page.getByText(/Liam Williams/i))
+			.first();
 		await expect(liamTab).toBeVisible({ timeout: 5000 });
 
 		// Click to switch to second child (if tabs exist)
-		if (await page.getByRole("button", { name: /Liam/i }).isVisible({ timeout: 2000 }).catch(() => false)) {
+		if (
+			await page
+				.getByRole("button", { name: /Liam/i })
+				.isVisible({ timeout: 2000 })
+				.catch(() => false)
+		) {
 			await page.getByRole("button", { name: /Liam/i }).click();
 
 			// Should now show Liam's attendance

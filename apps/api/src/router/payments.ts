@@ -422,7 +422,7 @@ export const paymentsRouter = router({
 				},
 			});
 
-				return {
+			return {
 				success: true,
 				paymentItemId: paymentItem.id,
 				recipientCount: targetChildIds.length,

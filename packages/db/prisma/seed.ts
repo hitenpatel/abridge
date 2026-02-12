@@ -1,8 +1,12 @@
 import { type AttendanceMark, PrismaClient, type SchoolSession } from "@prisma/client";
+import { hashPassword } from "better-auth/crypto";
 
 const prisma = new PrismaClient();
 
+const SEED_PASSWORD = "password123";
+
 async function main() {
+	const hashedPassword = await hashPassword(SEED_PASSWORD);
 	// 1. School
 	const school = await prisma.school.upsert({
 		where: { urn: "123456" },
@@ -30,12 +34,46 @@ async function main() {
 		},
 	});
 
+	// Create credential account for parent so they can login with email/password
+	await prisma.account.upsert({
+		where: {
+			providerId_accountId: {
+				providerId: "credential",
+				accountId: parent.id,
+			},
+		},
+		update: { password: hashedPassword },
+		create: {
+			providerId: "credential",
+			accountId: parent.id,
+			userId: parent.id,
+			password: hashedPassword,
+		},
+	});
+
 	const admin = await prisma.user.upsert({
 		where: { email: "claire@oakwood.sch.uk" },
 		update: { name: "Claire Thompson" },
 		create: {
 			email: "claire@oakwood.sch.uk",
 			name: "Claire Thompson",
+		},
+	});
+
+	// Create credential account for admin so they can login with email/password
+	await prisma.account.upsert({
+		where: {
+			providerId_accountId: {
+				providerId: "credential",
+				accountId: admin.id,
+			},
+		},
+		update: { password: hashedPassword },
+		create: {
+			providerId: "credential",
+			accountId: admin.id,
+			userId: admin.id,
+			password: hashedPassword,
 		},
 	});
 
@@ -211,6 +249,9 @@ async function main() {
 	}
 
 	console.log("Seed data created successfully");
+	console.log(
+		`\nLogin credentials:\n  Parent: sarah@example.com / ${SEED_PASSWORD}\n  Admin:  claire@oakwood.sch.uk / ${SEED_PASSWORD}`,
+	);
 }
 
 main()

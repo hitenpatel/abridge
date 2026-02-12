@@ -6,12 +6,8 @@ jest.mock("expo-secure-store", () => ({
 
 jest.mock("expo-notifications", () => ({
 	setNotificationHandler: jest.fn(),
-	requestPermissionsAsync: jest.fn(() =>
-		Promise.resolve({ status: "granted" }),
-	),
-	getExpoPushTokenAsync: jest.fn(() =>
-		Promise.resolve({ data: "test-token" }),
-	),
+	requestPermissionsAsync: jest.fn(() => Promise.resolve({ status: "granted" })),
+	getExpoPushTokenAsync: jest.fn(() => Promise.resolve({ data: "test-token" })),
 }));
 
 jest.mock("expo-constants", () => ({

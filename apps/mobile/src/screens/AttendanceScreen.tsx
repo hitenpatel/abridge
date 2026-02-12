@@ -13,6 +13,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { theme } from "../lib/theme";
 import { trpc } from "../lib/trpc";
 
 interface Child {
@@ -171,7 +172,7 @@ export const AttendanceScreen: React.FC = () => {
 	if (isLoadingChildren) {
 		return (
 			<View style={styles.loadingContainer}>
-				<ActivityIndicator size="large" color="#1d4ed8" />
+				<ActivityIndicator size="large" color={theme.colors.primary} />
 			</View>
 		);
 	}
@@ -213,7 +214,7 @@ export const AttendanceScreen: React.FC = () => {
 
 			{/* Attendance List */}
 			{isLoadingAttendance ? (
-				<ActivityIndicator size="large" color="#1d4ed8" style={{ marginTop: 20 }} />
+				<ActivityIndicator size="large" color={theme.colors.primary} style={{ marginTop: 20 }} />
 			) : (
 				<FlatList
 					data={attendanceRecords}
@@ -235,7 +236,7 @@ export const AttendanceScreen: React.FC = () => {
 					<View style={styles.modalHeader}>
 						<Text style={styles.modalTitle}>Report Absence</Text>
 						<TouchableOpacity onPress={() => setIsModalVisible(false)}>
-							<X color="#000" size={24} />
+							<X color={theme.colors.text} size={24} />
 						</TouchableOpacity>
 					</View>
 
@@ -272,7 +273,7 @@ export const AttendanceScreen: React.FC = () => {
 							disabled={reportAbsenceMutation.isPending}
 						>
 							{reportAbsenceMutation.isPending ? (
-								<ActivityIndicator color="#fff" />
+								<ActivityIndicator color={theme.colors.card} />
 							) : (
 								<Text style={styles.submitButtonText}>Submit Report</Text>
 							)}
@@ -287,7 +288,7 @@ export const AttendanceScreen: React.FC = () => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#f9fafb",
+		backgroundColor: theme.colors.background,
 	},
 	loadingContainer: {
 		flex: 1,
@@ -297,8 +298,8 @@ const styles = StyleSheet.create({
 	childSelectorContainer: {
 		paddingVertical: 12,
 		borderBottomWidth: 1,
-		borderBottomColor: "#e5e7eb",
-		backgroundColor: "#fff",
+		borderBottomColor: theme.colors.border,
+		backgroundColor: theme.colors.card,
 	},
 	childSelectorContent: {
 		paddingHorizontal: 16,
@@ -308,36 +309,36 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		paddingVertical: 8,
 		borderRadius: 20,
-		backgroundColor: "#f3f4f6",
+		backgroundColor: theme.colors.secondary,
 		borderWidth: 1,
-		borderColor: "#e5e7eb",
+		borderColor: theme.colors.border,
 	},
 	childChipSelected: {
-		backgroundColor: "#1d4ed8",
-		borderColor: "#1d4ed8",
+		backgroundColor: theme.colors.primary,
+		borderColor: theme.colors.primary,
 	},
 	childChipText: {
 		fontSize: 14,
 		fontWeight: "500",
-		color: "#374151",
+		color: theme.colors.text,
 	},
 	childChipTextSelected: {
-		color: "#fff",
+		color: theme.colors.card,
 	},
 	actionContainer: {
 		padding: 16,
-		backgroundColor: "#fff",
+		backgroundColor: theme.colors.card,
 		borderBottomWidth: 1,
-		borderBottomColor: "#e5e7eb",
+		borderBottomColor: theme.colors.border,
 	},
 	reportButton: {
-		backgroundColor: "#1d4ed8",
+		backgroundColor: theme.colors.primary,
 		paddingVertical: 12,
 		borderRadius: 8,
 		alignItems: "center",
 	},
 	reportButtonText: {
-		color: "#fff",
+		color: theme.colors.card,
 		fontSize: 16,
 		fontWeight: "600",
 	},
@@ -346,7 +347,7 @@ const styles = StyleSheet.create({
 		gap: 12,
 	},
 	recordCard: {
-		backgroundColor: "#fff",
+		backgroundColor: theme.colors.card,
 		padding: 16,
 		borderRadius: 12,
 		flexDirection: "row",
@@ -361,11 +362,11 @@ const styles = StyleSheet.create({
 	recordDate: {
 		fontSize: 16,
 		fontWeight: "600",
-		color: "#111827",
+		color: theme.colors.text,
 	},
 	recordSession: {
 		fontSize: 14,
-		color: "#6b7280",
+		color: theme.colors.textMuted,
 		marginTop: 2,
 	},
 	statusBadge: {
@@ -374,42 +375,42 @@ const styles = StyleSheet.create({
 		borderRadius: 12,
 	},
 	statusPresent: {
-		backgroundColor: "#dcfce7",
+		backgroundColor: theme.colors.present,
 	},
 	statusAbsentUnauthorised: {
-		backgroundColor: "#fee2e2",
+		backgroundColor: theme.colors.absent,
 	},
 	statusAbsentAuthorised: {
-		backgroundColor: "#ffedd5",
+		backgroundColor: theme.colors.warning,
 	},
 	statusLate: {
-		backgroundColor: "#fef3c7",
+		backgroundColor: theme.colors.late,
 	},
 	statusText: {
 		fontSize: 12,
 		fontWeight: "600",
 	},
 	statusTextPresent: {
-		color: "#166534",
+		color: theme.colors.presentText,
 	},
 	statusTextAbsentUnauthorised: {
-		color: "#991b1b",
+		color: theme.colors.absentText,
 	},
 	statusTextAbsentAuthorised: {
-		color: "#9a3412",
+		color: theme.colors.lateText,
 	},
 	statusTextLate: {
-		color: "#92400e",
+		color: theme.colors.lateText,
 	},
 	emptyText: {
 		textAlign: "center",
-		color: "#6b7280",
+		color: theme.colors.textMuted,
 		marginTop: 40,
 	},
 	// Modal Styles
 	modalContainer: {
 		flex: 1,
-		backgroundColor: "#fff",
+		backgroundColor: theme.colors.card,
 		paddingTop: 20,
 	},
 	modalHeader: {
@@ -419,7 +420,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 		paddingBottom: 20,
 		borderBottomWidth: 1,
-		borderBottomColor: "#e5e7eb",
+		borderBottomColor: theme.colors.border,
 	},
 	modalTitle: {
 		fontSize: 18,
@@ -431,13 +432,13 @@ const styles = StyleSheet.create({
 	label: {
 		fontSize: 14,
 		fontWeight: "500",
-		color: "#374151",
+		color: theme.colors.text,
 		marginBottom: 6,
 		marginTop: 16,
 	},
 	input: {
 		borderWidth: 1,
-		borderColor: "#d1d5db",
+		borderColor: theme.colors.border,
 		borderRadius: 8,
 		paddingHorizontal: 12,
 		paddingVertical: 10,
@@ -448,14 +449,14 @@ const styles = StyleSheet.create({
 		textAlignVertical: "top",
 	},
 	submitButton: {
-		backgroundColor: "#1d4ed8",
+		backgroundColor: theme.colors.primary,
 		paddingVertical: 14,
 		borderRadius: 8,
 		alignItems: "center",
 		marginTop: 32,
 	},
 	submitButtonText: {
-		color: "#fff",
+		color: theme.colors.card,
 		fontSize: 16,
 		fontWeight: "600",
 	},

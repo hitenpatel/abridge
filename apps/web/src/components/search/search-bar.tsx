@@ -97,13 +97,13 @@ export function SearchBar() {
 	const getIcon = (index: string) => {
 		switch (index) {
 			case "messages":
-				return <Mail className="h-4 w-4 text-blue-500" />;
+				return <Mail className="h-4 w-4 text-info" />;
 			case "events":
-				return <Calendar className="h-4 w-4 text-green-500" />;
+				return <Calendar className="h-4 w-4 text-success" />;
 			case "payment_items":
-				return <CreditCard className="h-4 w-4 text-purple-500" />;
+				return <CreditCard className="h-4 w-4 text-primary" />;
 			default:
-				return <FileText className="h-4 w-4 text-gray-500" />;
+				return <FileText className="h-4 w-4 text-muted-foreground" />;
 		}
 	};
 
@@ -119,7 +119,7 @@ export function SearchBar() {
 		<div ref={containerRef} className="relative w-full max-w-md">
 			<div className="relative">
 				<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-					<Search className="h-5 w-5 text-gray-400" />
+					<Search className="h-5 w-5 text-muted-foreground" />
 				</div>
 				<Input
 					type="text"
@@ -133,13 +133,13 @@ export function SearchBar() {
 				/>
 				{isLoading && (
 					<div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-						<Loader2 className="h-5 w-5 text-gray-400 animate-spin" />
+						<Loader2 className="h-5 w-5 text-muted-foreground animate-spin" />
 					</div>
 				)}
 			</div>
 
 			{isOpen && query.length > 0 && (
-				<div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-96 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+				<div className="absolute z-10 mt-1 w-full bg-popover shadow-lg max-h-96 rounded-md py-1 text-base ring-1 ring-border overflow-auto focus:outline-none sm:text-sm">
 					{results && results.length > 0
 						? results.map((result) => {
 								const source = result.source as {
@@ -156,16 +156,16 @@ export function SearchBar() {
 									<button
 										type="button"
 										key={result.id}
-										className="w-full text-left cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-gray-100 group focus:outline-none focus:bg-gray-100"
+										className="w-full text-left cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-accent group focus:outline-none focus:bg-accent"
 										onClick={() => handleSelect(result)}
 									>
 										<div className="flex items-start">
 											<div className="flex-shrink-0 mt-0.5 mr-3">{getIcon(result.index)}</div>
 											<div className="flex-1 min-w-0">
-												<div className="text-sm font-medium text-gray-900 truncate">
+												<div className="text-sm font-medium text-foreground truncate">
 													{renderHighlight(title, highlight.subject || highlight.title)}
 												</div>
-												<div className="text-sm text-gray-500 line-clamp-2">
+												<div className="text-sm text-muted-foreground line-clamp-2">
 													{renderHighlight(body, highlight.body || highlight.description)}
 												</div>
 											</div>
@@ -174,7 +174,7 @@ export function SearchBar() {
 								);
 							})
 						: !isLoading && (
-								<div className="cursor-default select-none relative py-2 pl-3 pr-9 text-gray-700">
+								<div className="cursor-default select-none relative py-2 pl-3 pr-9 text-muted-foreground">
 									No results found.
 								</div>
 							)}

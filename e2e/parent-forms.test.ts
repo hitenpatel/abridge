@@ -131,7 +131,10 @@ test.describe("Parent Forms Journey", () => {
 		await expect(page.getByText("Emergency Contact Form").first()).toBeVisible({ timeout: 10000 });
 
 		// Click on the form link (it's a Link component with the form title)
-		await page.getByRole("link", { name: /Emergency Contact Form/i }).first().click();
+		await page
+			.getByRole("link", { name: /Emergency Contact Form/i })
+			.first()
+			.click();
 
 		// Step 4: Verify form detail page loads
 		// Should navigate to /dashboard/forms/[formId]?childId=[childId]

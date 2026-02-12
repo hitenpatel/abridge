@@ -26,7 +26,9 @@ export interface FormReceiptData {
  * Generate a UC-compliant payment receipt PDF
  * Format follows UK Universal Credit requirements
  */
-export function generatePaymentReceiptPDF(data: PaymentReceiptData): InstanceType<typeof PDFDocument> {
+export function generatePaymentReceiptPDF(
+	data: PaymentReceiptData,
+): InstanceType<typeof PDFDocument> {
 	const doc = new PDFDocument({
 		size: "A4",
 		margins: { top: 50, bottom: 50, left: 50, right: 50 },

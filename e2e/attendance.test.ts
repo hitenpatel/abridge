@@ -22,9 +22,9 @@ test.describe("Attendance Page", () => {
 
 		// For a parent with no children, the page shows "No children found"
 		// For a parent with children, it shows "Attendance" heading
-		await expect(
-			page.getByText(/Attendance|No children found/i).first(),
-		).toBeVisible({ timeout: 10000 });
+		await expect(page.getByText(/Attendance|No children found/i).first()).toBeVisible({
+			timeout: 10000,
+		});
 	});
 
 	test("should show empty state when no children linked", async ({ page }) => {

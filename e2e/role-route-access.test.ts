@@ -34,9 +34,9 @@ test.describe("Role-based Route Access", () => {
 		// Wait for admin role to sync
 		await expect(async () => {
 			await page.reload();
-			await expect(
-				page.getByRole("link", { name: /Staff Management/i }).first(),
-			).toBeVisible({ timeout: 3000 });
+			await expect(page.getByRole("link", { name: /Staff Management/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
 		}).toPass({ timeout: 30000 });
 
 		// Admin nav routes to test (staff nav + admin nav)
@@ -111,9 +111,9 @@ test.describe("Role-based Route Access", () => {
 		// Wait for admin role to sync
 		await expect(async () => {
 			await page.reload();
-			await expect(
-				page.getByRole("link", { name: /Staff Management/i }).first(),
-			).toBeVisible({ timeout: 3000 });
+			await expect(page.getByRole("link", { name: /Staff Management/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
 		}).toPass({ timeout: 30000 });
 
 		// Click each nav item and verify no 404
@@ -133,7 +133,10 @@ test.describe("Role-based Route Access", () => {
 		await expect(page.getByText("404")).not.toBeVisible({ timeout: 3000 });
 
 		// Staff Management (admin only)
-		await page.getByRole("link", { name: /Staff Management/i }).first().click();
+		await page
+			.getByRole("link", { name: /Staff Management/i })
+			.first()
+			.click();
 		await expect(page).toHaveURL(/\/dashboard\/staff/);
 		await expect(page.getByRole("heading", { name: /Staff Management/i })).toBeVisible();
 	});

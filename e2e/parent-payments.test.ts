@@ -75,7 +75,9 @@ test.describe("Parent Payments Journey", () => {
 		await expect(page).toHaveURL(/\/dashboard\/payments/);
 
 		// Step 4: Verify outstanding payments section is visible
-		await expect(page.getByRole("heading", { name: "Outstanding Payments", exact: true })).toBeVisible();
+		await expect(
+			page.getByRole("heading", { name: "Outstanding Payments", exact: true }),
+		).toBeVisible();
 
 		// Step 5: Verify payment items appear
 		await expect(page.getByText("School Trip to London").first()).toBeVisible({ timeout: 10000 });
@@ -249,8 +251,8 @@ test.describe("Parent Payments Journey", () => {
 		await expect(page).toHaveURL(/\/dashboard\/payments/);
 
 		// Step 4: Verify empty state message
-		await expect(
-			page.getByText(/no outstanding|no payments|all paid|up to date/i),
-		).toBeVisible({ timeout: 10000 });
+		await expect(page.getByText(/no outstanding|no payments|all paid|up to date/i)).toBeVisible({
+			timeout: 10000,
+		});
 	});
 });

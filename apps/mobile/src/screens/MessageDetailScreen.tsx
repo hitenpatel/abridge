@@ -2,6 +2,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useCallback } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import type { RootStackParamList } from "../../App";
+import { theme } from "../lib/theme";
 import { trpc } from "../lib/trpc";
 
 type MessageDetailScreenProps = NativeStackScreenProps<RootStackParamList, "MessageDetail">;
@@ -9,22 +10,22 @@ type MessageDetailScreenProps = NativeStackScreenProps<RootStackParamList, "Mess
 const getCategoryColor = (category: string): string => {
 	switch (category) {
 		case "URGENT":
-			return "#dc2626";
+			return theme.colors.absentText;
 		case "FYI":
-			return "#2563eb";
+			return theme.colors.primary;
 		default:
-			return "#6b7280";
+			return theme.colors.textMuted;
 	}
 };
 
 const getCategoryBackgroundColor = (category: string): string => {
 	switch (category) {
 		case "URGENT":
-			return "#fef2f2";
+			return theme.colors.absent;
 		case "FYI":
-			return "#eff6ff";
+			return theme.colors.brandLight;
 		default:
-			return "#f3f4f6";
+			return theme.colors.secondary;
 	}
 };
 
@@ -121,7 +122,7 @@ export const MessageDetailScreen = ({ route }: MessageDetailScreenProps) => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#fff",
+		backgroundColor: theme.colors.card,
 	},
 	content: {
 		padding: 20,
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
 	subject: {
 		fontSize: 24,
 		fontWeight: "700",
-		color: "#111827",
+		color: theme.colors.text,
 		lineHeight: 32,
 		marginBottom: 12,
 	},
@@ -157,19 +158,19 @@ const styles = StyleSheet.create({
 	schoolName: {
 		fontSize: 14,
 		fontWeight: "600",
-		color: "#1d4ed8",
+		color: theme.colors.primary,
 	},
 	separator: {
 		marginHorizontal: 8,
-		color: "#d1d5db",
+		color: theme.colors.border,
 	},
 	date: {
 		fontSize: 14,
-		color: "#6b7280",
+		color: theme.colors.textMuted,
 	},
 	divider: {
 		height: 1,
-		backgroundColor: "#e5e7eb",
+		backgroundColor: theme.colors.border,
 		marginVertical: 20,
 	},
 	bodyContainer: {
@@ -177,18 +178,18 @@ const styles = StyleSheet.create({
 	},
 	body: {
 		fontSize: 16,
-		color: "#374151",
+		color: theme.colors.text,
 		lineHeight: 26,
 	},
 	readStatusContainer: {
 		marginTop: 24,
 		paddingTop: 16,
 		borderTopWidth: 1,
-		borderTopColor: "#f3f4f6",
+		borderTopColor: theme.colors.secondary,
 	},
 	readStatusText: {
 		fontSize: 12,
-		color: "#9ca3af",
+		color: theme.colors.inactiveTab,
 		textAlign: "center",
 	},
 });

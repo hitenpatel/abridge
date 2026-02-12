@@ -1,5 +1,6 @@
 import type React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { theme } from "../lib/theme";
 
 export interface MessageItem {
 	id: string;
@@ -93,21 +94,21 @@ export const MessageCard: React.FC<MessageCardProps> = ({ message, onPress }) =>
 function getCategoryStyle(category: string): { backgroundColor: string } {
 	switch (category.toLowerCase()) {
 		case "urgent":
-			return { backgroundColor: "#fee2e2" };
+			return { backgroundColor: theme.colors.absent };
 		case "announcement":
-			return { backgroundColor: "#dbeafe" };
+			return { backgroundColor: theme.colors.brandLight };
 		case "reminder":
-			return { backgroundColor: "#fef3c7" };
+			return { backgroundColor: theme.colors.late };
 		case "newsletter":
-			return { backgroundColor: "#d1fae5" };
+			return { backgroundColor: theme.colors.present };
 		default:
-			return { backgroundColor: "#f3f4f6" };
+			return { backgroundColor: theme.colors.secondary };
 	}
 }
 
 const styles = StyleSheet.create({
 	card: {
-		backgroundColor: "#fff",
+		backgroundColor: theme.colors.card,
 		borderRadius: 12,
 		padding: 16,
 		marginHorizontal: 16,
@@ -134,26 +135,26 @@ const styles = StyleSheet.create({
 		width: 8,
 		height: 8,
 		borderRadius: 4,
-		backgroundColor: "#ef4444",
+		backgroundColor: theme.colors.error,
 		marginRight: 8,
 	},
 	subject: {
 		fontSize: 16,
 		fontWeight: "500",
-		color: "#374151",
+		color: theme.colors.text,
 		flex: 1,
 	},
 	subjectUnread: {
 		fontWeight: "700",
-		color: "#111827",
+		color: theme.colors.text,
 	},
 	date: {
 		fontSize: 13,
-		color: "#9ca3af",
+		color: theme.colors.inactiveTab,
 	},
 	bodyPreview: {
 		fontSize: 14,
-		color: "#6b7280",
+		color: theme.colors.textMuted,
 		lineHeight: 20,
 		marginBottom: 12,
 	},
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
 	},
 	schoolName: {
 		fontSize: 13,
-		color: "#1d4ed8",
+		color: theme.colors.primary,
 		fontWeight: "500",
 	},
 	categoryBadge: {
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
 	categoryText: {
 		fontSize: 11,
 		fontWeight: "600",
-		color: "#374151",
+		color: theme.colors.text,
 		textTransform: "capitalize",
 	},
 });

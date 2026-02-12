@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
 import type { RootStackParamList, MessageItem as RouteMessageItem, TabParamList } from "../../App";
 import { MessageCard, type MessageItem } from "../components/MessageCard";
+import { theme } from "../lib/theme";
 import { trpc } from "../lib/trpc";
 
 interface MessagesScreenProps {
@@ -67,7 +68,7 @@ export const MessagesScreen: React.FC<MessagesScreenProps> = ({ navigation }) =>
 		if (!isFetchingNextPage) return null;
 		return (
 			<View style={styles.footerLoader}>
-				<ActivityIndicator size="small" color="#1d4ed8" />
+				<ActivityIndicator size="small" color={theme.colors.primary} />
 			</View>
 		);
 	}, [isFetchingNextPage]);
@@ -85,7 +86,7 @@ export const MessagesScreen: React.FC<MessagesScreenProps> = ({ navigation }) =>
 	if (isLoading) {
 		return (
 			<View style={styles.loadingContainer}>
-				<ActivityIndicator size="large" color="#1d4ed8" />
+				<ActivityIndicator size="large" color={theme.colors.primary} />
 				<Text style={styles.loadingText}>Loading messages...</Text>
 			</View>
 		);
@@ -108,7 +109,11 @@ export const MessagesScreen: React.FC<MessagesScreenProps> = ({ navigation }) =>
 				renderItem={renderItem}
 				contentContainerStyle={styles.listContent}
 				refreshControl={
-					<RefreshControl refreshing={isRefetching} onRefresh={handleRefresh} tintColor="#1d4ed8" />
+					<RefreshControl
+						refreshing={isRefetching}
+						onRefresh={handleRefresh}
+						tintColor={theme.colors.primary}
+					/>
 				}
 				onEndReached={handleLoadMore}
 				onEndReachedThreshold={0.3}
@@ -123,7 +128,7 @@ export const MessagesScreen: React.FC<MessagesScreenProps> = ({ navigation }) =>
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#f9fafb",
+		backgroundColor: theme.colors.background,
 	},
 	listContent: {
 		paddingVertical: 8,
@@ -133,29 +138,29 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		backgroundColor: "#f9fafb",
+		backgroundColor: theme.colors.background,
 	},
 	loadingText: {
 		marginTop: 12,
 		fontSize: 16,
-		color: "#6b7280",
+		color: theme.colors.textMuted,
 	},
 	errorContainer: {
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		backgroundColor: "#f9fafb",
+		backgroundColor: theme.colors.background,
 		padding: 20,
 	},
 	errorText: {
 		fontSize: 18,
 		fontWeight: "600",
-		color: "#ef4444",
+		color: theme.colors.error,
 	},
 	errorSubtext: {
 		marginTop: 8,
 		fontSize: 14,
-		color: "#6b7280",
+		color: theme.colors.textMuted,
 		textAlign: "center",
 	},
 	emptyContainer: {
@@ -167,12 +172,12 @@ const styles = StyleSheet.create({
 	emptyText: {
 		fontSize: 18,
 		fontWeight: "600",
-		color: "#374151",
+		color: theme.colors.text,
 	},
 	emptySubtext: {
 		marginTop: 8,
 		fontSize: 14,
-		color: "#9ca3af",
+		color: theme.colors.inactiveTab,
 	},
 	footerLoader: {
 		paddingVertical: 20,

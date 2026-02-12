@@ -28,6 +28,8 @@ schoolconnect/
 
 ## 🚀 Getting Started
 
+For a detailed guide on building and testing locally, please refer to the [Development Guide](docs/DEVELOPMENT.md).
+
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) (v20+)

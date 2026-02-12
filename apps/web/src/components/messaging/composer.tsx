@@ -1,12 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const messageSchema = z.object({
@@ -48,10 +52,12 @@ export function MessageComposer({ schoolId }: MessageComposerProps) {
 		onSuccess: () => {
 			reset();
 			utils.messaging.listSent.invalidate();
+			toast("Message sent successfully");
 			router.push("/dashboard/messages");
 		},
 		onError: (err) => {
 			setError(err.message);
+			toast("Failed to send message");
 		},
 	});
 
@@ -61,83 +67,80 @@ export function MessageComposer({ schoolId }: MessageComposerProps) {
 	};
 
 	return (
-		<form
-			onSubmit={handleSubmit(onSubmit)}
-			className="space-y-6 bg-white p-6 rounded-lg shadow border border-gray-200"
-		>
-			{error && (
-				<div className="bg-red-50 text-red-600 p-3 rounded text-sm border border-red-200">
-					{error}
-				</div>
-			)}
+		<Card>
+			<CardContent className="pt-6">
+				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+					{error && (
+						<div className="bg-destructive/10 text-destructive p-3 rounded text-sm border border-destructive/20">
+							{error}
+						</div>
+					)}
 
-			<div>
-				<label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
-					Subject
-				</label>
-				<Input
-					id="subject"
-					placeholder="Enter subject"
-					{...register("subject")}
-					className={errors.subject ? "border-red-500" : ""}
-				/>
-				{errors.subject && <p className="text-red-500 text-xs mt-1">{errors.subject.message}</p>}
-			</div>
+					<div>
+						<Label htmlFor="subject">Subject</Label>
+						<Input
+							id="subject"
+							placeholder="Enter subject"
+							{...register("subject")}
+							className={errors.subject ? "border-destructive" : ""}
+						/>
+						{errors.subject && (
+							<p className="text-destructive text-xs mt-1">{errors.subject.message}</p>
+						)}
+					</div>
 
-			<div>
-				<label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
-					Category
-				</label>
-				<select
-					id="category"
-					{...register("category")}
-					className="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white"
-				>
-					<option value="STANDARD">Standard</option>
-					<option value="URGENT">Urgent</option>
-					<option value="FYI">FYI</option>
-				</select>
-				{errors.category && <p className="text-red-500 text-xs mt-1">{errors.category.message}</p>}
-			</div>
+					<div>
+						<Label htmlFor="category">Category</Label>
+						<select
+							id="category"
+							{...register("category")}
+							className="w-full border border-border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-ring bg-card"
+						>
+							<option value="STANDARD">Standard</option>
+							<option value="URGENT">Urgent</option>
+							<option value="FYI">FYI</option>
+						</select>
+						{errors.category && (
+							<p className="text-destructive text-xs mt-1">{errors.category.message}</p>
+						)}
+					</div>
 
-			<div>
-				<label htmlFor="body" className="block text-sm font-medium text-gray-700 mb-1">
-					Message Body
-				</label>
-				<textarea
-					id="body"
-					rows={6}
-					{...register("body")}
-					className={`w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 ${
-						errors.body ? "border-red-500" : ""
-					}`}
-					placeholder="Type your message here..."
-				/>
-				{errors.body && <p className="text-red-500 text-xs mt-1">{errors.body.message}</p>}
-			</div>
+					<div>
+						<Label htmlFor="body">Message Body</Label>
+						<Textarea
+							id="body"
+							rows={6}
+							{...register("body")}
+							className={errors.body ? "border-destructive" : ""}
+							placeholder="Type your message here..."
+						/>
+						{errors.body && <p className="text-destructive text-xs mt-1">{errors.body.message}</p>}
+					</div>
 
-			<div className="flex items-center space-x-2">
-				<input
-					type="checkbox"
-					id="allChildren"
-					{...register("allChildren")}
-					className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-				/>
-				<label htmlFor="allChildren" className="text-sm text-gray-700">
-					Send to All Children
-				</label>
-			</div>
-			{/* MVP limitation: Don't implement specific child selection yet. */}
+					<div className="flex items-center space-x-2">
+						<input
+							type="checkbox"
+							id="allChildren"
+							{...register("allChildren")}
+							className="h-4 w-4 text-primary focus:ring-ring border-border rounded"
+						/>
+						<Label htmlFor="allChildren" className="text-sm font-normal">
+							Send to All Children
+						</Label>
+					</div>
+					{/* MVP limitation: Don't implement specific child selection yet. */}
 
-			<div className="pt-2">
-				<Button
-					type="submit"
-					disabled={isSubmitting || sendMutation.isPending}
-					className="w-full sm:w-auto"
-				>
-					{isSubmitting || sendMutation.isPending ? "Sending..." : "Send Message"}
-				</Button>
-			</div>
-		</form>
+					<div className="pt-2">
+						<Button
+							type="submit"
+							disabled={isSubmitting || sendMutation.isPending}
+							className="w-full sm:w-auto"
+						>
+							{isSubmitting || sendMutation.isPending ? "Sending..." : "Send Message"}
+						</Button>
+					</div>
+				</form>
+			</CardContent>
+		</Card>
 	);
 }

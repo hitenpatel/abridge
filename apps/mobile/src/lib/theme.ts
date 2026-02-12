@@ -1,24 +1,33 @@
 export const theme = {
 	colors: {
-		primary: "#A02CAF",
-		secondary: "#6EDFB4",
-		background: "#F9FAFB",
+		primary: "#4F46E5",
+		secondary: "#E2E8F0",
+		background: "#F8FAFC",
 		card: "#FFFFFF",
-		text: "#1F2937",
-		textMuted: "#6B7280",
-		border: "#E5E7EB",
+		text: "#0F172A",
+		textMuted: "#64748B",
+		border: "#E2E8F0",
 		error: "#EF4444",
-		success: "#10B981",
+		success: "#22C55E",
 		warning: "#F59E0B",
+		info: "#0EA5E9",
+
+		// Semantic attendance colors
+		present: "#DCFCE7",
+		presentText: "#16A34A",
+		late: "#FEF3C7",
+		lateText: "#D97706",
+		absent: "#FEE2E2",
+		absentText: "#DC2626",
 
 		// Brand Specific
-		brandDark: "#562C59",
-		brandLight: "#F6EBFA",
+		brandDark: "#312E81",
+		brandLight: "#EEF2FF",
 
 		// Navigation
-		activeTab: "#A02CAF",
-		inactiveTab: "#9CA3AF",
-		headerBackground: "#A02CAF",
+		activeTab: "#4F46E5",
+		inactiveTab: "#94A3B8",
+		headerBackground: "#4F46E5",
 		headerText: "#FFFFFF",
 	},
 	spacing: {

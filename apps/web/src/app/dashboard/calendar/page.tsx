@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function CalendarPage() {
 	return (
 		<div className="max-w-4xl mx-auto">
-			<h1 className="text-2xl font-bold text-gray-900 mb-6">School Calendar</h1>
+			<h1 className="text-2xl font-bold text-foreground mb-6">School Calendar</h1>
 			<EventList />
 		</div>
 	);

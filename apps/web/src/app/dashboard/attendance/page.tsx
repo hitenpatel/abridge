@@ -3,6 +3,16 @@
 import { AbsenceReportForm } from "@/components/attendance/absence-report-form";
 import { AttendanceList } from "@/components/attendance/attendance-list";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { trpc } from "@/lib/trpc";
 import { useState } from "react";
 
@@ -12,18 +22,25 @@ export default function AttendancePage() {
 	const [isReporting, setIsReporting] = useState(false);
 
 	if (isLoading) {
-		return <div className="p-8 text-center">Loading...</div>;
+		return (
+			<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+				<Skeleton className="h-8 w-48" />
+				<Skeleton className="h-64 w-full" />
+			</div>
+		);
 	}
 
 	if (!childrenLinks || childrenLinks.length === 0) {
 		return (
 			<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div className="text-center py-12">
-					<h3 className="mt-2 text-sm font-semibold text-gray-900">No children found</h3>
-					<p className="mt-1 text-sm text-gray-500">
-						You need to have children linked to your account to view attendance.
-					</p>
-				</div>
+				<Card>
+					<CardContent className="text-center py-12">
+						<h3 className="mt-2 text-sm font-semibold text-foreground">No children found</h3>
+						<p className="mt-1 text-sm text-muted-foreground">
+							You need to have children linked to your account to view attendance.
+						</p>
+					</CardContent>
+				</Card>
 			</div>
 		);
 	}
@@ -39,7 +56,7 @@ export default function AttendancePage() {
 		<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 			<div className="md:flex md:items-center md:justify-between">
 				<div className="min-w-0 flex-1">
-					<h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+					<h2 className="text-2xl font-bold leading-7 text-foreground sm:truncate sm:text-3xl sm:tracking-tight">
 						Attendance
 					</h2>
 				</div>
@@ -59,58 +76,38 @@ export default function AttendancePage() {
 
 			{childrenLinks.length > 1 && (
 				<div className="sm:hidden">
-					<label htmlFor="tabs" className="sr-only">
-						Select a child
-					</label>
-					<select
-						id="tabs"
-						name="tabs"
-						className="block w-full rounded-md border-gray-300 focus:border-primary-500 focus:ring-primary-500"
-						value={activeChildId}
-						onChange={(e) => setSelectedChildId(e.target.value)}
-					>
-						{childrenLinks.map((link) => (
-							<option key={link.childId} value={link.childId}>
-								{link.child.firstName}
-							</option>
-						))}
-					</select>
+					<Select value={activeChildId} onValueChange={(value) => setSelectedChildId(value)}>
+						<SelectTrigger className="w-full">
+							<SelectValue placeholder="Select a child" />
+						</SelectTrigger>
+						<SelectContent>
+							{childrenLinks.map((link) => (
+								<SelectItem key={link.childId} value={link.childId}>
+									{link.child.firstName}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
 				</div>
 			)}
 
 			{childrenLinks.length > 1 && (
 				<div className="hidden sm:block">
-					<div className="border-b border-gray-200">
-						<nav className="-mb-px flex space-x-8" aria-label="Tabs">
-							{childrenLinks.map((link) => {
-								const isCurrent = link.childId === activeChildId;
-								return (
-									<button
-										key={link.childId}
-										onClick={() => setSelectedChildId(link.childId)}
-										className={`
-                        whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium
-                        ${
-													isCurrent
-														? "border-primary-500 text-primary-600"
-														: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-												}
-                      `}
-										aria-current={isCurrent ? "page" : undefined}
-										type="button"
-									>
-										{link.child.firstName} {link.child.lastName}
-									</button>
-								);
-							})}
-						</nav>
-					</div>
+					<Tabs value={activeChildId} onValueChange={(value) => setSelectedChildId(value)}>
+						<TabsList>
+							{childrenLinks.map((link) => (
+								<TabsTrigger key={link.childId} value={link.childId}>
+									{link.child.firstName} {link.child.lastName}
+								</TabsTrigger>
+							))}
+						</TabsList>
+					</Tabs>
 				</div>
 			)}
 
 			{/* For single child, maybe show the name as a subtitle? */}
 			{childrenLinks.length === 1 && activeChild && (
-				<p className="text-sm text-gray-500">
+				<p className="text-sm text-muted-foreground">
 					Viewing attendance for {activeChild.firstName} {activeChild.lastName}
 				</p>
 			)}

@@ -36,9 +36,7 @@ test.describe("Calendar Page", () => {
 		await page.waitForTimeout(2000);
 
 		// Filter out common non-critical errors
-		const criticalErrors = errors.filter(
-			(e) => !e.includes("favicon") && !e.includes("hydration"),
-		);
+		const criticalErrors = errors.filter((e) => !e.includes("favicon") && !e.includes("hydration"));
 		// We don't assert zero errors because API calls may fail gracefully in test env
 	});
 });

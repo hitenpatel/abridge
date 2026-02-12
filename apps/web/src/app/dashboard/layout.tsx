@@ -1,7 +1,18 @@
 "use client";
 
 import { SearchBar } from "@/components/search/search-bar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
+import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import {
@@ -9,17 +20,17 @@ import {
 	CreditCard,
 	FileText,
 	LayoutDashboard,
+	LogOut,
 	type LucideIcon,
 	Menu,
 	MessageSquare,
 	School,
 	ShieldCheck,
-	User,
 	Users,
 	X,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface NavItem {
@@ -30,6 +41,7 @@ interface NavItem {
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
 	const pathname = usePathname();
+	const router = useRouter();
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
 	const { data: session } = trpc.auth.getSession.useQuery();
@@ -70,6 +82,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 		navItems = parentNav;
 	}
 
+	const userInitials = session?.name
+		? session.name
+				.split(" ")
+				.map((n: string) => n[0])
+				.join("")
+				.toUpperCase()
+				.slice(0, 2)
+		: "U";
+
+	const handleSignOut = async () => {
+		await authClient.signOut();
+		router.push("/login");
+	};
+
 	const NavContent = ({ onClick }: { onClick?: () => void }) => (
 		<nav className="flex-1 px-4 py-6 space-y-1">
 			{navItems.map((item) => {
@@ -80,6 +106,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 						key={item.href}
 						href={item.href}
 						onClick={onClick}
+						aria-current={isActive ? "page" : undefined}
 						className={cn(
 							"flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
 							isActive
@@ -104,24 +131,44 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 						<div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
 							<School className="w-5 h-5 text-white" />
 						</div>
-						<span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-							SchoolConnect
-						</span>
+						<span className="text-xl font-bold text-foreground font-heading">SchoolConnect</span>
 					</div>
 				</div>
 				<NavContent />
 				<div className="p-4 border-t border-border">
-					<div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-muted/50">
-						<div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-							<User className="w-4 h-4 text-primary" />
-						</div>
-						<div className="flex-1 min-w-0">
-							<p className="text-sm font-medium truncate">{session?.name || "User"}</p>
-							<p className="text-xs text-muted-foreground truncate">
-								{userRole?.staffRole ? `Staff (${userRole.staffRole})` : "Parent"}
-							</p>
-						</div>
-					</div>
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<button
+								type="button"
+								className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent w-full text-left transition-colors"
+							>
+								<Avatar className="h-8 w-8">
+									<AvatarFallback className="bg-primary/10 text-primary text-xs">
+										{userInitials}
+									</AvatarFallback>
+								</Avatar>
+								<div className="flex-1 min-w-0">
+									<p className="text-sm font-medium truncate">{session?.name || "User"}</p>
+									<p className="text-xs text-muted-foreground truncate">
+										{userRole?.staffRole ? `Staff (${userRole.staffRole})` : "Parent"}
+									</p>
+								</div>
+							</button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end" className="w-56">
+							<DropdownMenuLabel>
+								<p className="font-medium">{session?.name || "User"}</p>
+								<p className="text-xs text-muted-foreground font-normal">
+									{userRole?.staffRole ? `Staff (${userRole.staffRole})` : "Parent"}
+								</p>
+							</DropdownMenuLabel>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem onClick={handleSignOut}>
+								<LogOut className="mr-2 h-4 w-4" />
+								Sign Out
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
 				</div>
 			</aside>
 
@@ -155,9 +202,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 							<div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
 								<School className="w-5 h-5 text-white" />
 							</div>
-							<span className="text-lg font-bold">SchoolConnect</span>
+							<span className="text-lg font-bold font-heading">SchoolConnect</span>
 						</div>
-						<Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)}>
+						<Button
+							variant="ghost"
+							size="icon"
+							onClick={() => setIsMobileMenuOpen(false)}
+							aria-label="Close menu"
+						>
 							<X className="w-5 h-5" />
 						</Button>
 					</div>
@@ -173,6 +225,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 						size="icon"
 						className="lg:hidden -ml-2"
 						onClick={() => setIsMobileMenuOpen(true)}
+						aria-label="Open menu"
 					>
 						<Menu className="w-5 h-5" />
 					</Button>
@@ -191,7 +244,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 				</header>
 
 				{/* Main Content */}
-				<main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+				<main id="main-content" className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
 					<div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
 						{children}
 					</div>

@@ -1,5 +1,5 @@
-import React from "react";
-import { render, type RenderOptions } from "@testing-library/react-native";
+import { type RenderOptions, render } from "@testing-library/react-native";
+import type React from "react";
 
 // Minimal wrapper - screens are tested without providers since we mock tRPC
 export function renderScreen(ui: React.ReactElement, options?: RenderOptions) {

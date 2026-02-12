@@ -1,8 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
-import { Download, Loader2, Printer, X } from "lucide-react";
+import { Download, Loader2, Printer } from "lucide-react";
 
 interface ReceiptViewProps {
 	paymentId: string;
@@ -23,90 +30,86 @@ export function ReceiptView({ paymentId, onClose }: ReceiptViewProps) {
 	if (!paymentId) return null;
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 overflow-y-auto">
-			<div className="bg-white rounded-lg shadow-xl w-full max-w-2xl relative">
-				<div className="absolute top-4 right-4 print:hidden">
-					<button
-						type="button"
-						onClick={onClose}
-						className="text-gray-400 hover:text-gray-600 transition-colors"
-					>
-						<X className="h-6 w-6" />
-					</button>
-				</div>
-
-				<div className="p-8" id="receipt-content">
+		<Dialog open={!!paymentId} onOpenChange={(open) => !open && onClose()}>
+			<DialogContent className="max-w-2xl">
+				<div id="receipt-content">
 					{isLoading ? (
 						<div className="flex flex-col items-center justify-center py-12">
 							<Loader2 className="h-8 w-8 text-primary-600 animate-spin mb-4" />
-							<p className="text-gray-500">Generating receipt...</p>
+							<p className="text-muted-foreground">Generating receipt...</p>
 						</div>
 					) : isError ? (
 						<div className="text-center py-12">
-							<p className="text-red-500">Error loading receipt. Please try again.</p>
+							<p className="text-destructive">Error loading receipt. Please try again.</p>
 							<Button variant="outline" className="mt-4" onClick={onClose}>
 								Close
 							</Button>
 						</div>
 					) : receipt ? (
 						<>
-							<div className="flex justify-between items-start mb-8 border-b pb-6">
-								<div>
-									<h2 className="text-2xl font-bold text-gray-900">{receipt.providerName}</h2>
-									<p className="text-sm text-gray-600 max-w-xs">{receipt.providerAddress}</p>
-									<p className="text-sm text-gray-600 mt-1">URN: {receipt.ofstedUrn}</p>
+							<DialogHeader>
+								<div className="flex justify-between items-start mb-8 border-b border-border pb-6">
+									<div>
+										<DialogTitle className="text-2xl">{receipt.providerName}</DialogTitle>
+										<p className="text-sm text-muted-foreground max-w-xs">
+											{receipt.providerAddress}
+										</p>
+										<p className="text-sm text-muted-foreground mt-1">URN: {receipt.ofstedUrn}</p>
+									</div>
+									<div className="text-right">
+										<h3 className="text-lg font-bold text-foreground uppercase">Receipt</h3>
+										<p className="text-sm text-muted-foreground">#{receipt.receiptNumber}</p>
+										<p className="text-sm text-muted-foreground mt-1">
+											{new Date(receipt.paymentDate).toLocaleDateString()}
+										</p>
+									</div>
 								</div>
-								<div className="text-right">
-									<h3 className="text-lg font-bold text-gray-900 uppercase">Receipt</h3>
-									<p className="text-sm text-gray-600">#{receipt.receiptNumber}</p>
-									<p className="text-sm text-gray-600 mt-1">
-										{new Date(receipt.paymentDate).toLocaleDateString()}
-									</p>
-								</div>
-							</div>
+							</DialogHeader>
 
 							<div className="mb-8">
-								<h4 className="text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">
+								<h4 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-2">
 									Customer Details
 								</h4>
-								<p className="text-gray-900">{receipt.parentName}</p>
+								<p className="text-foreground">{receipt.parentName}</p>
 							</div>
 
 							<div className="mb-8">
 								<table className="min-w-full">
 									<thead>
-										<tr className="border-b">
-											<th className="py-3 text-left text-sm font-bold text-gray-700 uppercase">
+										<tr className="border-b border-border">
+											<th className="py-3 text-left text-sm font-bold text-muted-foreground uppercase">
 												Item Description
 											</th>
-											<th className="py-3 text-left text-sm font-bold text-gray-700 uppercase">
+											<th className="py-3 text-left text-sm font-bold text-muted-foreground uppercase">
 												Child
 											</th>
-											<th className="py-3 text-right text-sm font-bold text-gray-700 uppercase">
+											<th className="py-3 text-right text-sm font-bold text-muted-foreground uppercase">
 												Amount
 											</th>
 										</tr>
 									</thead>
-									<tbody className="divide-y">
+									<tbody className="divide-y divide-border">
 										{receipt.items.map((item, index) => (
 											<tr key={`${item.name}-${index}`}>
-												<td className="py-4 text-sm text-gray-900">{item.name}</td>
-												<td className="py-4 text-sm text-gray-600">{item.childName || "-"}</td>
-												<td className="py-4 text-right text-sm text-gray-900 font-medium">
+												<td className="py-4 text-sm text-foreground">{item.name}</td>
+												<td className="py-4 text-sm text-muted-foreground">
+													{item.childName || "-"}
+												</td>
+												<td className="py-4 text-right text-sm text-foreground font-medium">
 													£{(item.amount / 100).toFixed(2)}
 												</td>
 											</tr>
 										))}
 									</tbody>
 									<tfoot>
-										<tr className="border-t-2 border-gray-900">
+										<tr className="border-t-2 border-foreground">
 											<td
 												colSpan={2}
-												className="py-4 text-base font-bold text-gray-900 text-right pr-4"
+												className="py-4 text-base font-bold text-foreground text-right pr-4"
 											>
 												Total Paid
 											</td>
-											<td className="py-4 text-lg font-bold text-gray-900 text-right">
+											<td className="py-4 text-lg font-bold text-foreground text-right">
 												£{(receipt.totalAmount / 100).toFixed(2)}
 											</td>
 										</tr>
@@ -114,12 +117,12 @@ export function ReceiptView({ paymentId, onClose }: ReceiptViewProps) {
 								</table>
 							</div>
 
-							<div className="text-center text-xs text-gray-500 mt-12 border-t pt-6">
+							<div className="text-center text-xs text-muted-foreground mt-12 border-t border-border pt-6">
 								<p>This is an official receipt for childcare payments.</p>
 								<p className="mt-1">Generated by SchoolConnect Payments</p>
 							</div>
 
-							<div className="mt-8 flex justify-end gap-3 print:hidden">
+							<DialogFooter className="mt-8 print:hidden">
 								<Button variant="outline" onClick={handlePrint}>
 									<Printer className="h-4 w-4 mr-2" />
 									Print
@@ -131,28 +134,28 @@ export function ReceiptView({ paymentId, onClose }: ReceiptViewProps) {
 								<Button variant="outline" onClick={onClose}>
 									Close
 								</Button>
-							</div>
+							</DialogFooter>
 						</>
 					) : null}
 				</div>
-			</div>
 
-			<style jsx global>{`
-				@media print {
-					body * {
-						visibility: hidden;
+				<style jsx global>{`
+					@media print {
+						body * {
+							visibility: hidden;
+						}
+						#receipt-content, #receipt-content * {
+							visibility: visible;
+						}
+						#receipt-content {
+							position: absolute;
+							left: 0;
+							top: 0;
+							width: 100%;
+						}
 					}
-					#receipt-content, #receipt-content * {
-						visibility: visible;
-					}
-					#receipt-content {
-						position: absolute;
-						left: 0;
-						top: 0;
-						width: 100%;
-					}
-				}
-			`}</style>
-		</div>
+				`}</style>
+			</DialogContent>
+		</Dialog>
 	);
 }

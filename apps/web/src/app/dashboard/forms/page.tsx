@@ -1,5 +1,8 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
 import { CheckCircle, ChevronRight, Clock, FileText } from "lucide-react";
 import Link from "next/link";
@@ -13,9 +16,9 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 
 	if (isPendingLoading || isCompletedLoading) {
 		return (
-			<div className="animate-pulse space-y-4">
-				<div className="h-8 bg-gray-200 rounded w-1/4" />
-				<div className="h-20 bg-gray-100 rounded" />
+			<div className="space-y-4">
+				<Skeleton className="h-8 w-1/4" />
+				<Skeleton className="h-20 w-full" />
 			</div>
 		);
 	}
@@ -27,13 +30,13 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 
 	return (
 		<div className="space-y-6 mb-10">
-			<div className="flex items-center gap-2 border-b border-gray-100 pb-2">
-				<h2 className="text-xl font-semibold text-gray-900">{childName}</h2>
+			<div className="flex items-center gap-2 border-b border-border pb-2">
+				<h2 className="text-xl font-semibold text-foreground">{childName}</h2>
 			</div>
 
 			{pendingForms && pendingForms.length > 0 && (
 				<div className="space-y-3">
-					<h3 className="text-sm font-medium text-amber-600 flex items-center gap-1">
+					<h3 className="text-sm font-medium text-warning flex items-center gap-1">
 						<Clock className="h-4 w-4" />
 						Action Required
 					</h3>
@@ -42,23 +45,29 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 							<Link
 								key={template.id}
 								href={`/dashboard/forms/${template.id}?childId=${childId}`}
-								className="group flex items-center justify-between p-4 bg-white border border-amber-100 rounded-lg shadow-sm hover:border-amber-300 transition-colors"
+								className="group"
 							>
-								<div className="flex items-center gap-3">
-									<div className="p-2 bg-amber-50 rounded-lg">
-										<FileText className="h-5 w-5 text-amber-600" />
-									</div>
-									<div>
-										<h4 className="font-medium text-gray-900">{template.title}</h4>
-										{template.description && (
-											<p className="text-sm text-gray-500 line-clamp-1">{template.description}</p>
-										)}
-									</div>
-								</div>
-								<div className="flex items-center gap-2 text-amber-600 font-medium text-sm">
-									Complete
-									<ChevronRight className="h-4 w-4" />
-								</div>
+								<Card className="hover:border-warning transition-colors border-warning/30">
+									<CardContent className="flex items-center justify-between p-4">
+										<div className="flex items-center gap-3">
+											<div className="p-2 bg-warning/10 rounded-lg">
+												<FileText className="h-5 w-5 text-warning" />
+											</div>
+											<div>
+												<h4 className="font-medium text-foreground">{template.title}</h4>
+												{template.description && (
+													<p className="text-sm text-muted-foreground line-clamp-1">
+														{template.description}
+													</p>
+												)}
+											</div>
+										</div>
+										<div className="flex items-center gap-2 text-warning font-medium text-sm">
+											Complete
+											<ChevronRight className="h-4 w-4" />
+										</div>
+									</CardContent>
+								</Card>
 							</Link>
 						))}
 					</div>
@@ -67,32 +76,31 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 
 			{completedForms && completedForms.length > 0 && (
 				<div className="space-y-3">
-					<h3 className="text-sm font-medium text-emerald-600 flex items-center gap-1">
+					<h3 className="text-sm font-medium text-success flex items-center gap-1">
 						<CheckCircle className="h-4 w-4" />
 						Completed
 					</h3>
 					<div className="grid gap-3">
 						{/* biome-ignore lint/suspicious/noExplicitAny: UI component */}
 						{completedForms.map((response: any) => (
-							<div
-								key={response.id}
-								className="flex items-center justify-between p-4 bg-gray-50 border border-gray-100 rounded-lg opacity-75"
-							>
-								<div className="flex items-center gap-3">
-									<div className="p-2 bg-gray-100 rounded-lg">
-										<FileText className="h-5 w-5 text-gray-400" />
+							<Card key={response.id} className="opacity-75">
+								<CardContent className="flex items-center justify-between p-4">
+									<div className="flex items-center gap-3">
+										<div className="p-2 bg-muted rounded-lg">
+											<FileText className="h-5 w-5 text-muted-foreground" />
+										</div>
+										<div>
+											<h4 className="font-medium text-muted-foreground">
+												{response.template.title}
+											</h4>
+											<p className="text-xs text-muted-foreground">
+												Submitted on {new Date(response.submittedAt).toLocaleDateString()}
+											</p>
+										</div>
 									</div>
-									<div>
-										<h4 className="font-medium text-gray-700">{response.template.title}</h4>
-										<p className="text-xs text-gray-400">
-											Submitted on {new Date(response.submittedAt).toLocaleDateString()}
-										</p>
-									</div>
-								</div>
-								<div className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
-									Submitted
-								</div>
-							</div>
+									<Badge variant="success">Submitted</Badge>
+								</CardContent>
+							</Card>
 						))}
 					</div>
 				</div>
@@ -107,10 +115,10 @@ export default function FormsPage() {
 	if (isLoading) {
 		return (
 			<div className="p-8 max-w-5xl mx-auto space-y-8">
-				<div className="animate-pulse h-10 bg-gray-200 rounded w-1/4" />
+				<Skeleton className="h-10 w-1/4" />
 				<div className="space-y-4">
-					<div className="h-32 bg-gray-100 rounded" />
-					<div className="h-32 bg-gray-100 rounded" />
+					<Skeleton className="h-32 w-full" />
+					<Skeleton className="h-32 w-full" />
 				</div>
 			</div>
 		);
@@ -118,7 +126,7 @@ export default function FormsPage() {
 
 	if (error) {
 		return (
-			<div className="p-8 max-w-5xl mx-auto text-center text-red-500">
+			<div className="p-8 max-w-5xl mx-auto text-center text-destructive">
 				Error loading forms: {error.message}
 			</div>
 		);
@@ -129,8 +137,8 @@ export default function FormsPage() {
 	return (
 		<div className="p-8 max-w-5xl mx-auto">
 			<div className="mb-8">
-				<h1 className="text-3xl font-bold text-gray-900">Forms & Consent</h1>
-				<p className="text-gray-500 mt-1">
+				<h1 className="text-3xl font-bold text-foreground">Forms & Consent</h1>
+				<p className="text-muted-foreground mt-1">
 					Review and sign important documents from your children&apos;s school.
 				</p>
 			</div>
@@ -144,9 +152,9 @@ export default function FormsPage() {
 					/>
 				))
 			) : (
-				<div className="bg-gray-50 rounded-lg p-12 text-center border border-dashed border-gray-300">
-					<FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-					<p className="text-gray-500">No forms available at this time.</p>
+				<div className="bg-muted rounded-lg p-12 text-center border border-dashed border-border">
+					<FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+					<p className="text-muted-foreground">No forms available at this time.</p>
 				</div>
 			)}
 		</div>

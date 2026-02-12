@@ -1,6 +1,16 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
 import { trpc } from "@/lib/trpc";
 import { useState } from "react";
 
@@ -8,10 +18,10 @@ interface MessageListProps {
 	schoolId: string;
 }
 
-const BADGE_COLORS: Record<string, string> = {
-	URGENT: "bg-red-100 text-red-800",
-	STANDARD: "bg-blue-100 text-blue-800",
-	FYI: "bg-gray-100 text-gray-800",
+const BADGE_VARIANT: Record<string, "destructive" | "info" | "secondary"> = {
+	URGENT: "destructive",
+	STANDARD: "info",
+	FYI: "secondary",
 };
 
 export function MessageList({ schoolId }: MessageListProps) {
@@ -25,69 +35,57 @@ export function MessageList({ schoolId }: MessageListProps) {
 	});
 
 	if (isLoading) {
-		return <div className="p-4 text-center text-gray-500">Loading messages...</div>;
+		return <div className="p-4 text-center text-muted-foreground">Loading messages...</div>;
 	}
 
 	if (isError) {
-		return <div className="p-4 text-center text-red-500">Failed to load messages.</div>;
+		return <div className="p-4 text-center text-destructive">Failed to load messages.</div>;
 	}
 
 	if (!data || data.data.length === 0) {
-		return <div className="p-4 text-center text-gray-500">No messages sent yet.</div>;
+		return <div className="p-4 text-center text-muted-foreground">No messages sent yet.</div>;
 	}
 
 	return (
 		<div className="space-y-4">
-			<div className="overflow-x-auto bg-white shadow rounded-lg">
-				<table className="min-w-full divide-y divide-gray-200">
-					<thead className="bg-gray-50">
-						<tr>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Date
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Subject
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Category
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Recipients
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Read Status
-							</th>
-						</tr>
-					</thead>
-					<tbody className="bg-white divide-y divide-gray-200">
-						{data.data.map((message) => (
-							<tr key={message.id}>
-								<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-									{new Date(message.createdAt).toLocaleDateString()}
-								</td>
-								<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-									{message.subject}
-								</td>
-								<td className="px-6 py-4 whitespace-nowrap text-sm">
-									<span
-										className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-											BADGE_COLORS[message.category] || "bg-gray-100 text-gray-800"
-										}`}
-									>
-										{message.category}
-									</span>
-								</td>
-								<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-									{message.recipientCount}
-								</td>
-								<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-									{message.readCount} / {message.recipientCount}
-								</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
-			</div>
+			<Card>
+				<CardContent className="p-0">
+					<Table>
+						<TableHeader>
+							<TableRow>
+								<TableHead>Date</TableHead>
+								<TableHead>Subject</TableHead>
+								<TableHead>Category</TableHead>
+								<TableHead>Recipients</TableHead>
+								<TableHead>Read Status</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
+							{data.data.map((message) => (
+								<TableRow key={message.id}>
+									<TableCell className="whitespace-nowrap text-muted-foreground">
+										{new Date(message.createdAt).toLocaleDateString()}
+									</TableCell>
+									<TableCell className="whitespace-nowrap font-medium text-foreground">
+										{message.subject}
+									</TableCell>
+									<TableCell className="whitespace-nowrap">
+										<Badge variant={BADGE_VARIANT[message.category] || "secondary"}>
+											{message.category}
+										</Badge>
+									</TableCell>
+									<TableCell className="whitespace-nowrap text-muted-foreground">
+										{message.recipientCount}
+									</TableCell>
+									<TableCell className="whitespace-nowrap text-muted-foreground">
+										{message.readCount} / {message.recipientCount}
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</CardContent>
+			</Card>
 
 			<div className="flex justify-between items-center px-4">
 				<Button
@@ -97,7 +95,7 @@ export function MessageList({ schoolId }: MessageListProps) {
 				>
 					Previous
 				</Button>
-				<span className="text-sm text-gray-700">
+				<span className="text-sm text-muted-foreground">
 					Page {page} of {data.totalPages}
 				</span>
 				<Button

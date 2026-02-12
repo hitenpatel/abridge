@@ -9,10 +9,14 @@ export default function NewMessagePage() {
 	const { data: session, isLoading } = trpc.auth.getSession.useQuery();
 	const router = useRouter();
 
-	// Protect the route
+	// Protect the route - only staff can compose messages
 	useEffect(() => {
 		if (!isLoading && !session) {
 			router.push("/login");
+		}
+		if (!isLoading && session && !session.staffRole) {
+			// Parents can't send messages
+			router.push("/dashboard/messages");
 		}
 	}, [isLoading, session, router]);
 
@@ -29,8 +33,8 @@ export default function NewMessagePage() {
 	return (
 		<div className="max-w-4xl mx-auto py-8 px-4">
 			<div className="mb-8">
-				<h1 className="text-2xl font-bold text-gray-900">Compose Message</h1>
-				<p className="text-gray-600 mt-1">Send a new notification to parents.</p>
+				<h1 className="text-2xl font-bold text-foreground">Compose Message</h1>
+				<p className="text-muted-foreground mt-1">Send a new notification to parents.</p>
 			</div>
 
 			<MessageComposer schoolId={schoolId} />

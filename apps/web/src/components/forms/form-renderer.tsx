@@ -3,7 +3,11 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Textarea } from "../ui/textarea";
 import { SignaturePad } from "./signature-pad";
 
 export interface FormField {
@@ -32,6 +36,7 @@ export function FormRenderer({ template, onSubmit, isSubmitting }: FormRendererP
 	const {
 		register,
 		handleSubmit,
+		setValue,
 		formState: { errors },
 	} = useForm<Record<string, string | boolean>>();
 	const [signature, setSignature] = React.useState<string | null>(null);
@@ -54,92 +59,92 @@ export function FormRenderer({ template, onSubmit, isSubmitting }: FormRendererP
 	};
 
 	return (
-		<form
-			onSubmit={handleSubmit(onFormSubmit)}
-			className="space-y-6 bg-white p-6 rounded-lg shadow-md border border-gray-100"
-		>
-			<div className="space-y-2">
-				<h2 className="text-2xl font-bold text-gray-900">{template.title}</h2>
-				{template.description && <p className="text-gray-600">{template.description}</p>}
-			</div>
+		<Card>
+			<CardHeader>
+				<CardTitle>{template.title}</CardTitle>
+				{template.description && <p className="text-muted-foreground">{template.description}</p>}
+			</CardHeader>
+			<CardContent>
+				<form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
+					<div className="space-y-4">
+						{fields.map((field) => (
+							<div key={field.id}>
+								{field.type !== "checkbox" && (
+									<Label htmlFor={field.id} className="mb-1">
+										{field.label}
+										{field.required && <span className="text-destructive ml-1">*</span>}
+									</Label>
+								)}
 
-			<div className="space-y-4">
-				{fields.map((field) => (
-					<div key={field.id}>
-						{field.type !== "checkbox" && (
-							<label htmlFor={field.id} className="block text-sm font-medium text-gray-700 mb-1">
-								{field.label}
-								{field.required && <span className="text-red-500 ml-1">*</span>}
-							</label>
-						)}
+								{field.type === "text" && (
+									<Input
+										id={field.id}
+										{...register(field.id, { required: field.required })}
+										className="w-full"
+										placeholder={`Enter ${field.label.toLowerCase()}...`}
+									/>
+								)}
 
-						{field.type === "text" && (
-							<Input
-								id={field.id}
-								{...register(field.id, { required: field.required })}
-								className="w-full"
-								placeholder={`Enter ${field.label.toLowerCase()}...`}
-							/>
-						)}
+								{field.type === "textarea" && (
+									<Textarea
+										id={field.id}
+										{...register(field.id, { required: field.required })}
+										className="w-full"
+										rows={3}
+										placeholder={`Enter ${field.label.toLowerCase()}...`}
+									/>
+								)}
 
-						{field.type === "textarea" && (
-							<textarea
-								id={field.id}
-								{...register(field.id, { required: field.required })}
-								className="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
-								rows={3}
-								placeholder={`Enter ${field.label.toLowerCase()}...`}
-							/>
-						)}
+								{field.type === "select" && (
+									<Select onValueChange={(value) => setValue(field.id, value)}>
+										<SelectTrigger id={field.id} className="w-full">
+											<SelectValue placeholder="Select an option" />
+										</SelectTrigger>
+										<SelectContent>
+											{field.options?.map((option) => (
+												<SelectItem key={option} value={option}>
+													{option}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+								)}
 
-						{field.type === "select" && (
-							<select
-								id={field.id}
-								{...register(field.id, { required: field.required })}
-								className="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white"
-							>
-								<option value="">Select an option</option>
-								{field.options?.map((option) => (
-									<option key={option} value={option}>
-										{option}
-									</option>
-								))}
-							</select>
-						)}
+								{field.type === "checkbox" && (
+									<div className="flex items-center space-x-2">
+										<input
+											type="checkbox"
+											id={field.id}
+											{...register(field.id, { required: field.required })}
+											className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+										/>
+										<Label htmlFor={field.id}>
+											{field.label}
+											{field.required && <span className="text-destructive ml-1">*</span>}
+										</Label>
+									</div>
+								)}
 
-						{field.type === "checkbox" && (
-							<div className="flex items-center space-x-2">
-								<input
-									type="checkbox"
-									id={field.id}
-									{...register(field.id, { required: field.required })}
-									className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-								/>
-								<label htmlFor={field.id} className="text-sm font-medium text-gray-700">
-									{field.label}
-									{field.required && <span className="text-red-500 ml-1">*</span>}
-								</label>
+								{errors[field.id] && (
+									<p className="mt-1 text-sm text-destructive">This field is required</p>
+								)}
 							</div>
-						)}
-
-						{errors[field.id] && (
-							<p className="mt-1 text-sm text-red-600">This field is required</p>
-						)}
+						))}
 					</div>
-				))}
-			</div>
 
-			<div className="space-y-2 border-t pt-6">
-				<p className="block text-sm font-medium text-gray-700 mb-1">
-					Signature <span className="text-red-500 ml-1">*</span>
-				</p>
-				<SignaturePad onChange={handleSignatureChange} />
-				{signatureError && <p className="mt-1 text-sm text-red-600">{signatureError}</p>}
-			</div>
+					<div className="space-y-2 border-t pt-6">
+						<Label className="mb-1">
+							Signature <span className="text-destructive ml-1">*</span>
+						</Label>
+						<SignaturePad onChange={handleSignatureChange} />
+						{signatureError && <p className="mt-1 text-sm text-destructive">{signatureError}</p>}
+					</div>
 
-			<Button type="submit" className="w-full" disabled={isSubmitting}>
-				{isSubmitting ? "Submitting..." : "Submit Form"}
-			</Button>
-		</form>
+					<Button type="submit" className="w-full" disabled={isSubmitting}>
+						{isSubmitting ? "Submitting..." : "Submit Form"}
+					</Button>
+				</form>
+			</CardContent>
+		</Card>
 	);
 }

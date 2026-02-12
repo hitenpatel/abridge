@@ -4,82 +4,95 @@
 
 @layer base {
 	:root {
-		/* Background: Very light purple/white mix for brand feel */
-		--background: 290 30% 98%;
-		/* Foreground: Deep Purple */
-		--foreground: 296 34% 26%;
+		/* Background: Clean near-white */
+		--background: 210 20% 98%;
+		/* Foreground: Slate 900 */
+		--foreground: 222 47% 11%;
 
 		/* Card: White */
 		--card: 0 0% 100%;
-		--card-foreground: 296 34% 26%;
+		--card-foreground: 222 47% 11%;
 
 		/* Popover: White */
 		--popover: 0 0% 100%;
-		--popover-foreground: 296 34% 26%;
+		--popover-foreground: 222 47% 11%;
 
-		/* Primary: Electric Purple #A02CAF */
-		--primary: 286 60% 43%;
+		/* Primary: Indigo 600 #4F46E5 */
+		--primary: 239 84% 67%;
 		--primary-foreground: 0 0% 100%;
 
-		/* Secondary: Mint Green #6EDFB4 */
-		--secondary: 157 68% 65%;
-		--secondary-foreground: 296 34% 26%;
+		/* Secondary: Slate 100 */
+		--secondary: 210 40% 96%;
+		--secondary-foreground: 222 47% 11%;
 
-		/* Muted: Soft purple gray */
-		--muted: 290 20% 90%;
-		--muted-foreground: 296 20% 40%;
+		/* Muted: Slate 100 */
+		--muted: 210 40% 96%;
+		--muted-foreground: 215 16% 47%;
 
-		/* Accent: Mint tint */
-		--accent: 157 68% 90%;
-		--accent-foreground: 296 34% 26%;
+		/* Accent: Slate 100 */
+		--accent: 210 40% 96%;
+		--accent-foreground: 222 47% 11%;
 
-		/* Destructive: Red */
-		--destructive: 0 84.2% 60.2%;
-		--destructive-foreground: 210 40% 98%;
+		/* Destructive: Red 500 */
+		--destructive: 0 84% 60%;
+		--destructive-foreground: 0 0% 100%;
 
-		/* Border: Light purple */
-		--border: 290 20% 85%;
-		--input: 290 20% 85%;
-		--ring: 286 60% 43%;
+		/* Border: Slate 200 */
+		--border: 214 32% 91%;
+		--input: 214 32% 91%;
+		--ring: 239 84% 67%;
 
-		--radius: 0.75rem;
+		/* Semantic colors */
+		--success: 142 71% 45%;
+		--success-foreground: 0 0% 100%;
+		--warning: 38 92% 50%;
+		--warning-foreground: 0 0% 100%;
+		--info: 199 89% 48%;
+		--info-foreground: 0 0% 100%;
 
-		/* Font Outfit */
-		--font-outfit: "Outfit", sans-serif;
+		--radius: 0.5rem;
 	}
 
 	.dark {
-		/* Background: Deep Purple #562C59 (darkened) */
-		--background: 296 34% 10%;
-		--foreground: 290 20% 95%;
+		/* Background: Slate 950 */
+		--background: 222 47% 6%;
+		--foreground: 210 40% 98%;
 
-		/* Card: Slightly lighter deep purple */
-		--card: 296 34% 15%;
-		--card-foreground: 290 20% 95%;
+		/* Card: Slate 900 */
+		--card: 222 47% 11%;
+		--card-foreground: 210 40% 98%;
 
-		--popover: 296 34% 15%;
-		--popover-foreground: 290 20% 95%;
+		--popover: 222 47% 11%;
+		--popover-foreground: 210 40% 98%;
 
-		/* Primary: Slightly lighter purple for dark mode contrast */
-		--primary: 286 60% 55%;
+		/* Primary: Indigo 500 */
+		--primary: 239 84% 67%;
 		--primary-foreground: 0 0% 100%;
 
-		/* Secondary: Mint Green */
-		--secondary: 157 68% 65%;
-		--secondary-foreground: 296 34% 26%;
+		/* Secondary: Slate 800 */
+		--secondary: 217 33% 17%;
+		--secondary-foreground: 210 40% 98%;
 
-		--muted: 296 30% 25%;
-		--muted-foreground: 290 20% 70%;
+		--muted: 217 33% 17%;
+		--muted-foreground: 215 20% 65%;
 
-		--accent: 296 30% 25%;
-		--accent-foreground: 290 20% 95%;
+		--accent: 217 33% 17%;
+		--accent-foreground: 210 40% 98%;
 
-		--destructive: 0 62.8% 30.6%;
+		--destructive: 0 63% 31%;
 		--destructive-foreground: 210 40% 98%;
 
-		--border: 296 30% 25%;
-		--input: 296 30% 25%;
-		--ring: 286 60% 55%;
+		--border: 217 33% 17%;
+		--input: 217 33% 17%;
+		--ring: 239 84% 67%;
+
+		/* Semantic colors */
+		--success: 142 71% 45%;
+		--success-foreground: 0 0% 100%;
+		--warning: 38 92% 50%;
+		--warning-foreground: 0 0% 100%;
+		--info: 199 89% 48%;
+		--info-foreground: 0 0% 100%;
 	}
 }
 
@@ -92,12 +105,7 @@
 	}
 }
 
-/* Custom Utilities for "Glass" or "Modern" effects */
 @layer utilities {
-	.glass {
-		@apply bg-white/70 dark:bg-black/30 backdrop-blur-md border border-white/20;
-	}
-
 	.text-balance {
 		text-wrap: balance;
 	}

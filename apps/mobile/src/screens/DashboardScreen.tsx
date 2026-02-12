@@ -77,8 +77,8 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
 					</TouchableOpacity>
 
 					<TouchableOpacity style={styles.statCard} onPress={() => navigation.navigate("Payments")}>
-						<View style={[styles.iconBox, { backgroundColor: "#fce7f3" }]}>
-							<CreditCard size={24} color="#db2777" />
+						<View style={[styles.iconBox, { backgroundColor: theme.colors.brandLight }]}>
+							<CreditCard size={24} color={theme.colors.primary} />
 						</View>
 						<Text style={styles.statValue}>
 							{(metrics.paymentsTotal / 100).toLocaleString("en-GB", {
@@ -111,7 +111,11 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
 										{child.firstName} {child.lastName}
 									</Text>
 									<View style={styles.percentageBadge}>
-										<TrendingUp size={14} color="#15803d" style={{ marginRight: 4 }} />
+										<TrendingUp
+											size={14}
+											color={theme.colors.presentText}
+											style={{ marginRight: 4 }}
+										/>
 										<Text style={styles.percentageText}>{percentage}% Attendance</Text>
 									</View>
 								</View>
@@ -164,7 +168,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
 							<View style={styles.eventDetails}>
 								<Text style={styles.eventTitle}>{event.title}</Text>
 								<View style={styles.eventTimeRow}>
-									<Clock size={14} color="#6b7280" />
+									<Clock size={14} color={theme.colors.textMuted} />
 									<Text style={styles.eventTime}>
 										{new Date(event.startDate).toLocaleTimeString([], {
 											hour: "2-digit",
@@ -191,7 +195,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#f9fafb",
+		backgroundColor: theme.colors.background,
 	},
 	loadingContainer: {
 		flex: 1,
@@ -206,17 +210,17 @@ const styles = StyleSheet.create({
 	},
 	errorText: {
 		fontSize: 16,
-		color: "#ef4444",
+		color: theme.colors.error,
 		marginBottom: 12,
 	},
 	retryButton: {
 		paddingVertical: 8,
 		paddingHorizontal: 16,
-		backgroundColor: "#1d4ed8",
+		backgroundColor: theme.colors.primary,
 		borderRadius: 6,
 	},
 	retryText: {
-		color: "#fff",
+		color: theme.colors.card,
 		fontWeight: "600",
 	},
 	section: {
@@ -225,7 +229,7 @@ const styles = StyleSheet.create({
 	sectionTitle: {
 		fontSize: 18,
 		fontWeight: "700",
-		color: "#111827",
+		color: theme.colors.text,
 		marginBottom: 12,
 	},
 	statsGrid: {
@@ -234,11 +238,11 @@ const styles = StyleSheet.create({
 	},
 	statCard: {
 		flex: 1,
-		backgroundColor: "#fff",
+		backgroundColor: theme.colors.card,
 		padding: 16,
 		borderRadius: 12,
 		borderWidth: 1,
-		borderColor: "#e5e7eb",
+		borderColor: theme.colors.border,
 		alignItems: "center",
 	},
 	iconBox: {
@@ -249,19 +253,19 @@ const styles = StyleSheet.create({
 	statValue: {
 		fontSize: 24,
 		fontWeight: "700",
-		color: "#111827",
+		color: theme.colors.text,
 	},
 	statLabel: {
 		fontSize: 14,
-		color: "#6b7280",
+		color: theme.colors.textMuted,
 		marginTop: 2,
 	},
 	childCard: {
-		backgroundColor: "#fff",
+		backgroundColor: theme.colors.card,
 		padding: 16,
 		borderRadius: 12,
 		borderWidth: 1,
-		borderColor: "#e5e7eb",
+		borderColor: theme.colors.border,
 		marginBottom: 12,
 	},
 	childHeader: {
@@ -273,12 +277,12 @@ const styles = StyleSheet.create({
 	childName: {
 		fontSize: 16,
 		fontWeight: "600",
-		color: "#111827",
+		color: theme.colors.text,
 	},
 	percentageBadge: {
 		flexDirection: "row",
 		alignItems: "center",
-		backgroundColor: "#dcfce7",
+		backgroundColor: theme.colors.present,
 		paddingHorizontal: 8,
 		paddingVertical: 4,
 		borderRadius: 12,
@@ -286,7 +290,7 @@ const styles = StyleSheet.create({
 	percentageText: {
 		fontSize: 12,
 		fontWeight: "600",
-		color: "#15803d",
+		color: theme.colors.presentText,
 	},
 	attendanceRow: {
 		flexDirection: "row",
@@ -295,7 +299,7 @@ const styles = StyleSheet.create({
 	attendanceBadge: {
 		flexDirection: "row",
 		alignItems: "center",
-		backgroundColor: "#f3f4f6",
+		backgroundColor: theme.colors.secondary,
 		paddingHorizontal: 8,
 		paddingVertical: 4,
 		borderRadius: 6,
@@ -304,36 +308,36 @@ const styles = StyleSheet.create({
 	attendanceSession: {
 		fontSize: 12,
 		fontWeight: "600",
-		color: "#4b5563",
+		color: theme.colors.textMuted,
 	},
 	attendanceMark: {
 		fontSize: 12,
 		fontWeight: "700",
 	},
-	textGreen: { color: "#16a34a" },
-	textYellow: { color: "#ca8a04" },
-	textRed: { color: "#dc2626" },
+	textGreen: { color: theme.colors.presentText },
+	textYellow: { color: theme.colors.lateText },
+	textRed: { color: theme.colors.absentText },
 	noAttendanceText: {
 		fontSize: 14,
-		color: "#9ca3af",
+		color: theme.colors.inactiveTab,
 		fontStyle: "italic",
 	},
 	emptyText: {
 		fontSize: 14,
-		color: "#6b7280",
+		color: theme.colors.textMuted,
 		fontStyle: "italic",
 	},
 	eventCard: {
 		flexDirection: "row",
-		backgroundColor: "#fff",
+		backgroundColor: theme.colors.card,
 		padding: 12,
 		borderRadius: 12,
 		borderWidth: 1,
-		borderColor: "#e5e7eb",
+		borderColor: theme.colors.border,
 		marginBottom: 8,
 	},
 	eventDateBox: {
-		backgroundColor: "#eff6ff",
+		backgroundColor: theme.colors.brandLight,
 		padding: 10,
 		borderRadius: 8,
 		alignItems: "center",
@@ -344,12 +348,12 @@ const styles = StyleSheet.create({
 	eventDay: {
 		fontSize: 18,
 		fontWeight: "700",
-		color: "#1d4ed8",
+		color: theme.colors.primary,
 	},
 	eventMonth: {
 		fontSize: 12,
 		fontWeight: "600",
-		color: "#1d4ed8",
+		color: theme.colors.primary,
 		textTransform: "uppercase",
 	},
 	eventDetails: {
@@ -359,7 +363,7 @@ const styles = StyleSheet.create({
 	eventTitle: {
 		fontSize: 15,
 		fontWeight: "600",
-		color: "#111827",
+		color: theme.colors.text,
 		marginBottom: 4,
 	},
 	eventTimeRow: {
@@ -370,11 +374,11 @@ const styles = StyleSheet.create({
 	},
 	eventTime: {
 		fontSize: 12,
-		color: "#6b7280",
+		color: theme.colors.textMuted,
 	},
 	categoryBadge: {
 		alignSelf: "flex-start",
-		backgroundColor: "#f3f4f6",
+		backgroundColor: theme.colors.secondary,
 		paddingHorizontal: 6,
 		paddingVertical: 2,
 		borderRadius: 4,
@@ -382,7 +386,7 @@ const styles = StyleSheet.create({
 	categoryText: {
 		fontSize: 10,
 		fontWeight: "600",
-		color: "#4b5563",
+		color: theme.colors.textMuted,
 		textTransform: "uppercase",
 	},
 });

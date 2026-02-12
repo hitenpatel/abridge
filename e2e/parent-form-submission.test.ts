@@ -26,11 +26,9 @@ async function drawSignature(page: import("@playwright/test").Page) {
 	await page.mouse.move(startX, startY);
 	await page.mouse.down();
 	for (let i = 1; i <= 8; i++) {
-		await page.mouse.move(
-			startX + i * (box.width * 0.08),
-			startY + (i % 2 === 0 ? 15 : -15),
-			{ steps: 3 },
-		);
+		await page.mouse.move(startX + i * (box.width * 0.08), startY + (i % 2 === 0 ? 15 : -15), {
+			steps: 3,
+		});
 	}
 	await page.mouse.up();
 	await page.waitForTimeout(300);
@@ -42,18 +40,13 @@ async function drawSignature(page: import("@playwright/test").Page) {
 
 		// Walk the React fiber tree to find the onChange prop
 		const fiberKey = Object.keys(canvasEl).find(
-			(k) =>
-				k.startsWith("__reactFiber$") ||
-				k.startsWith("__reactInternalInstance$"),
+			(k) => k.startsWith("__reactFiber$") || k.startsWith("__reactInternalInstance$"),
 		);
 		if (!fiberKey) return false;
 
 		let fiber = (canvasEl as any)[fiberKey];
 		while (fiber) {
-			if (
-				fiber.memoizedProps &&
-				typeof fiber.memoizedProps.onChange === "function"
-			) {
+			if (fiber.memoizedProps && typeof fiber.memoizedProps.onChange === "function") {
 				// Check if signature is already set by checking parent FormRenderer state
 				// If onChange exists, the parent is SignaturePad which calls onChange(dataUrl)
 				// Generate a minimal signature data URL
@@ -69,9 +62,7 @@ async function drawSignature(page: import("@playwright/test").Page) {
 					ctx.lineWidth = 2;
 					ctx.stroke();
 				}
-				fiber.memoizedProps.onChange(
-					tempCanvas.toDataURL("image/png"),
-				);
+				fiber.memoizedProps.onChange(tempCanvas.toDataURL("image/png"));
 				return true;
 			}
 			fiber = fiber.return;
@@ -142,14 +133,21 @@ test.describe("Parent Form Submission Journey", () => {
 		await expect(page).toHaveURL(/\/dashboard\/forms/);
 
 		// Wait for form to appear and click it
-		await expect(page.getByText("Medical Information Form").first()).toBeVisible({ timeout: 10000 });
-		await page.getByRole("link", { name: /Medical Information Form/i }).first().click();
+		await expect(page.getByText("Medical Information Form").first()).toBeVisible({
+			timeout: 10000,
+		});
+		await page
+			.getByRole("link", { name: /Medical Information Form/i })
+			.first()
+			.click();
 
 		// Should navigate to form detail page
 		await expect(page).toHaveURL(/\/dashboard\/forms\/[a-zA-Z0-9_-]+\?childId=/);
 
 		// Step 4: Fill out the form fields
-		await expect(page.getByRole("heading", { name: /Medical Information Form/i }).first()).toBeVisible();
+		await expect(
+			page.getByRole("heading", { name: /Medical Information Form/i }).first(),
+		).toBeVisible();
 
 		await page.getByLabel(/allergies/i).fill("Peanuts, shellfish");
 		await page.getByLabel(/medications/i).fill("None");
@@ -164,7 +162,9 @@ test.describe("Parent Form Submission Journey", () => {
 		await page.getByRole("button", { name: /Submit Form/i }).click();
 
 		// Step 7: Verify submission success
-		await expect(page.getByRole("heading", { name: /Form Submitted/i })).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: /Form Submitted/i })).toBeVisible({
+			timeout: 10000,
+		});
 		await expect(page.getByText(/Thank you for completing/i)).toBeVisible();
 		await expect(page.getByText(/Medical Information Form/i)).toBeVisible();
 	});
@@ -212,7 +212,10 @@ test.describe("Parent Form Submission Journey", () => {
 		await page.reload();
 		await page.getByRole("link", { name: "Forms", exact: true }).first().click();
 		await expect(page.getByText("Quick Consent Form").first()).toBeVisible({ timeout: 10000 });
-		await page.getByRole("link", { name: /Quick Consent Form/i }).first().click();
+		await page
+			.getByRole("link", { name: /Quick Consent Form/i })
+			.first()
+			.click();
 
 		// Step 4: Fill form but DON'T sign
 		await page.getByLabel(/allergies/i).fill("None");
@@ -280,11 +283,16 @@ test.describe("Parent Form Submission Journey", () => {
 		await page.reload();
 		await page.getByRole("link", { name: "Forms", exact: true }).first().click();
 		await expect(page.getByText("Family Consent Form").first()).toBeVisible({ timeout: 10000 });
-		await page.getByRole("link", { name: /Family Consent Form/i }).first().click();
+		await page
+			.getByRole("link", { name: /Family Consent Form/i })
+			.first()
+			.click();
 
 		// Step 4: Verify "Apply to all children" option appears
 		await expect(page.getByText(/Apply to all children/i)).toBeVisible({ timeout: 5000 });
-		await expect(page.getByText(/1 other child/i).or(page.getByText(/other children/i))).toBeVisible();
+		await expect(
+			page.getByText(/1 other child/i).or(page.getByText(/other children/i)),
+		).toBeVisible();
 
 		// Step 5: Check the "Apply to all" checkbox
 		await page.getByLabel(/Yes, submit for all my children/i).check();
@@ -302,7 +310,9 @@ test.describe("Parent Form Submission Journey", () => {
 		await page.getByRole("button", { name: /Submit Form/i }).click();
 
 		// Step 7: Verify success message mentions all children
-		await expect(page.getByRole("heading", { name: /Form Submitted/i })).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: /Form Submitted/i })).toBeVisible({
+			timeout: 10000,
+		});
 		await expect(page.getByText(/for all your children/i)).toBeVisible();
 	});
 });

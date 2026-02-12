@@ -63,7 +63,7 @@ export const LoginScreen = () => {
 				/>
 				<TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
 					{loading ? (
-						<ActivityIndicator color="#fff" />
+						<ActivityIndicator color={theme.colors.card} />
 					) : (
 						<Text style={styles.buttonText}>Login</Text>
 					)}
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		padding: 20,
-		backgroundColor: "#fff",
+		backgroundColor: theme.colors.card,
 	},
 	title: {
 		fontSize: 28,
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 	},
 	buttonText: {
-		color: "#fff",
+		color: theme.colors.headerText,
 		fontSize: 18,
 		fontWeight: "600",
 	},

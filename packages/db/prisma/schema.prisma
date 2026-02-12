@@ -96,8 +96,8 @@ model Session {
 
 model Account {
   id                    String    @id @default(cuid())
-  accountId             String    @map("providerAccountId")
-  providerId            String    @map("provider")
+  accountId             String
+  providerId            String
   userId                String
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?

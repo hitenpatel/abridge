@@ -15,8 +15,8 @@ export default function NewPaymentItemPage() {
 				>
 					&larr; Back to Payments
 				</Link>
-				<h1 className="text-2xl font-bold text-gray-900">Create Payment Item</h1>
-				<p className="text-gray-600">Assign a new fee or contribution to students.</p>
+				<h1 className="text-2xl font-bold text-foreground">Create Payment Item</h1>
+				<p className="text-muted-foreground">Assign a new fee or contribution to students.</p>
 			</div>
 
 			<PaymentItemForm schoolId={schoolId} />

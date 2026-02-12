@@ -1,3 +1,5 @@
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Calendar } from "lucide-react";
 
 interface Child {
@@ -28,24 +30,24 @@ export function TodayOverview({
 	todayAttendance,
 	attendancePercentage,
 }: TodayOverviewProps) {
-	const getMarkColor = (mark: string) => {
+	const getMarkVariant = (mark: string) => {
 		switch (mark) {
 			case "PRESENT":
-				return "bg-green-100 text-green-700 border-green-200";
+				return "success" as const;
 			case "LATE":
-				return "bg-yellow-100 text-yellow-700 border-yellow-200";
+				return "warning" as const;
 			case "ABSENT_UNAUTHORISED":
 			case "ABSENT_AUTHORISED":
-				return "bg-red-100 text-red-700 border-red-200";
+				return "destructive" as const;
 			default:
-				return "bg-gray-100 text-gray-700 border-gray-200";
+				return "secondary" as const;
 		}
 	};
 
 	const getPercentageColor = (percentage: number) => {
-		if (percentage >= 95) return "text-green-600";
-		if (percentage >= 90) return "text-yellow-600";
-		return "text-red-600";
+		if (percentage >= 95) return "text-success";
+		if (percentage >= 90) return "text-warning";
+		return "text-destructive";
 	};
 
 	const getMarkLabel = (mark: string) => {
@@ -56,13 +58,13 @@ export function TodayOverview({
 	};
 
 	return (
-		<div className="bg-white rounded-lg shadow border border-gray-100 overflow-hidden h-full">
-			<div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-				<h3 className="font-semibold text-gray-900 flex items-center gap-2">
-					<Calendar className="h-5 w-5 text-gray-500" />
+		<Card className="overflow-hidden h-full">
+			<div className="p-4 border-b border-border flex items-center justify-between bg-muted/50">
+				<h3 className="font-semibold text-foreground flex items-center gap-2">
+					<Calendar className="h-5 w-5 text-muted-foreground" />
 					Today's Overview
 				</h3>
-				<span className="text-xs text-gray-500 font-medium bg-white px-2 py-1 rounded border border-gray-200">
+				<span className="text-xs text-muted-foreground font-medium bg-card px-2 py-1 rounded border border-border">
 					{new Date().toLocaleDateString("en-GB", {
 						weekday: "short",
 						day: "numeric",
@@ -70,7 +72,7 @@ export function TodayOverview({
 					})}
 				</span>
 			</div>
-			<div className="divide-y divide-gray-100">
+			<div className="divide-y divide-border">
 				{childrenData.map((child) => {
 					const childAttendance = todayAttendance.filter((a) => a.childId === child.id);
 					const amMark = childAttendance.find((a) => a.session === "AM")?.mark;
@@ -81,27 +83,27 @@ export function TodayOverview({
 					return (
 						<div
 							key={child.id}
-							className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+							className="p-4 flex items-center justify-between hover:bg-muted transition-colors"
 						>
 							<div>
-								<p className="font-semibold text-gray-900 text-sm">
+								<p className="font-semibold text-foreground text-sm">
 									{child.firstName} {child.lastName}
 								</p>
 								<div className="flex gap-2 mt-2">
-									<span
-										className={`text-xs px-2.5 py-0.5 rounded-full font-medium border ${amMark ? getMarkColor(amMark) : "bg-gray-50 text-gray-400 border-gray-200"}`}
-									>
-										AM: {amMark ? getMarkLabel(amMark) : "—"}
-									</span>
-									<span
-										className={`text-xs px-2.5 py-0.5 rounded-full font-medium border ${pmMark ? getMarkColor(pmMark) : "bg-gray-50 text-gray-400 border-gray-200"}`}
-									>
-										PM: {pmMark ? getMarkLabel(pmMark) : "—"}
-									</span>
+									{amMark ? (
+										<Badge variant={getMarkVariant(amMark)}>AM: {getMarkLabel(amMark)}</Badge>
+									) : (
+										<Badge variant="secondary">AM: —</Badge>
+									)}
+									{pmMark ? (
+										<Badge variant={getMarkVariant(pmMark)}>PM: {getMarkLabel(pmMark)}</Badge>
+									) : (
+										<Badge variant="secondary">PM: —</Badge>
+									)}
 								</div>
 							</div>
 							<div className="text-right">
-								<p className="text-[10px] uppercase tracking-wider text-gray-500 mb-1 font-semibold">
+								<p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1 font-semibold">
 									Attendance
 								</p>
 								<p className={`text-xl font-bold ${getPercentageColor(percentage)}`}>
@@ -112,9 +114,9 @@ export function TodayOverview({
 					);
 				})}
 				{childrenData.length === 0 && (
-					<div className="p-8 text-center text-gray-500 italic">No children found.</div>
+					<div className="p-8 text-center text-muted-foreground italic">No children found.</div>
 				)}
 			</div>
-		</div>
+		</Card>
 	);
 }

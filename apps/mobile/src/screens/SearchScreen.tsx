@@ -13,6 +13,7 @@ import {
 	View,
 } from "react-native";
 import type { MessageItem, RootStackParamList } from "../../App";
+import { theme } from "../lib/theme";
 import { type RouterOutputs, trpc } from "../lib/trpc";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Search">;
@@ -41,7 +42,7 @@ export const SearchScreen: React.FC = () => {
 
 	const renderIcon = (index: string) => {
 		const size = 20;
-		const color = "#6b7280";
+		const color = theme.colors.textMuted;
 		switch (index) {
 			case "messages":
 				return <MessageSquare size={size} color={color} />;
@@ -96,7 +97,7 @@ export const SearchScreen: React.FC = () => {
 	return (
 		<View style={styles.container}>
 			<View style={styles.searchContainer}>
-				<SearchIcon size={20} color="#9ca3af" style={styles.searchIcon} />
+				<SearchIcon size={20} color={theme.colors.inactiveTab} style={styles.searchIcon} />
 				<TextInput
 					style={styles.input}
 					placeholder="Search messages, events, payments..."
@@ -109,7 +110,7 @@ export const SearchScreen: React.FC = () => {
 
 			{isLoading && (
 				<View style={styles.centerContainer}>
-					<ActivityIndicator size="large" color="#1d4ed8" />
+					<ActivityIndicator size="large" color={theme.colors.primary} />
 				</View>
 			)}
 
@@ -144,17 +145,17 @@ export const SearchScreen: React.FC = () => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#f9fafb",
+		backgroundColor: theme.colors.background,
 	},
 	searchContainer: {
 		flexDirection: "row",
 		alignItems: "center",
-		backgroundColor: "#fff",
+		backgroundColor: theme.colors.card,
 		margin: 16,
 		paddingHorizontal: 12,
 		borderRadius: 8,
 		borderWidth: 1,
-		borderColor: "#e5e7eb",
+		borderColor: theme.colors.border,
 		height: 48,
 	},
 	searchIcon: {
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		height: "100%",
 		fontSize: 16,
-		color: "#1f2937",
+		color: theme.colors.text,
 	},
 	listContent: {
 		paddingHorizontal: 16,
@@ -172,18 +173,18 @@ const styles = StyleSheet.create({
 	},
 	resultItem: {
 		flexDirection: "row",
-		backgroundColor: "#fff",
+		backgroundColor: theme.colors.card,
 		padding: 16,
 		borderRadius: 8,
 		marginBottom: 12,
 		borderWidth: 1,
-		borderColor: "#e5e7eb",
+		borderColor: theme.colors.border,
 	},
 	iconContainer: {
 		width: 40,
 		height: 40,
 		borderRadius: 20,
-		backgroundColor: "#f3f4f6",
+		backgroundColor: theme.colors.secondary,
 		justifyContent: "center",
 		alignItems: "center",
 		marginRight: 12,
@@ -194,18 +195,18 @@ const styles = StyleSheet.create({
 	resultTitle: {
 		fontSize: 16,
 		fontWeight: "600",
-		color: "#111827",
+		color: theme.colors.text,
 		marginBottom: 4,
 	},
 	resultSnippet: {
 		fontSize: 14,
-		color: "#4b5563",
+		color: theme.colors.textMuted,
 		marginBottom: 4,
 	},
 	resultCategory: {
 		fontSize: 12,
 		fontWeight: "500",
-		color: "#1d4ed8",
+		color: theme.colors.primary,
 		textTransform: "capitalize",
 	},
 	centerContainer: {
@@ -216,17 +217,17 @@ const styles = StyleSheet.create({
 	},
 	emptyText: {
 		fontSize: 16,
-		color: "#6b7280",
+		color: theme.colors.textMuted,
 		textAlign: "center",
 	},
 	hintText: {
 		fontSize: 16,
-		color: "#9ca3af",
+		color: theme.colors.inactiveTab,
 		textAlign: "center",
 	},
 	errorText: {
 		fontSize: 16,
-		color: "#ef4444",
+		color: theme.colors.error,
 		textAlign: "center",
 	},
 });

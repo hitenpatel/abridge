@@ -10,6 +10,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { theme } from "../lib/theme";
 import { trpc } from "../lib/trpc";
 
 export function PaymentsScreen() {
@@ -38,7 +39,7 @@ export function PaymentsScreen() {
 	if (isLoading) {
 		return (
 			<View style={styles.centered}>
-				<ActivityIndicator size="large" color="#1d4ed8" />
+				<ActivityIndicator size="large" color={theme.colors.primary} />
 			</View>
 		);
 	}
@@ -76,12 +77,12 @@ export function PaymentsScreen() {
 
 			<View style={styles.metaContainer}>
 				<View style={styles.metaRow}>
-					<User size={14} color="#6b7280" />
+					<User size={14} color={theme.colors.textMuted} />
 					<Text style={styles.metaText}>{item.childName}</Text>
 				</View>
 				{item.dueDate && (
 					<View style={styles.metaRow}>
-						<Calendar size={14} color="#6b7280" />
+						<Calendar size={14} color={theme.colors.textMuted} />
 						<Text style={styles.metaText}>Due: {new Date(item.dueDate).toLocaleDateString()}</Text>
 					</View>
 				)}
@@ -95,7 +96,7 @@ export function PaymentsScreen() {
 				<Text style={styles.payButtonText}>
 					{createSession.isPending ? "Connecting..." : "Pay Now"}
 				</Text>
-				<ChevronRight size={18} color="#fff" />
+				<ChevronRight size={18} color={theme.colors.card} />
 			</TouchableOpacity>
 		</View>
 	);
@@ -110,7 +111,7 @@ export function PaymentsScreen() {
 				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
 				ListEmptyComponent={
 					<View style={styles.emptyContainer}>
-						<CreditCard size={48} color="#9ca3af" />
+						<CreditCard size={48} color={theme.colors.inactiveTab} />
 						<Text style={styles.emptyTitle}>No outstanding payments</Text>
 						<Text style={styles.emptySubtitle}>You're all caught up!</Text>
 					</View>
@@ -123,7 +124,7 @@ export function PaymentsScreen() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#f3f4f6",
+		backgroundColor: theme.colors.secondary,
 	},
 	centered: {
 		flex: 1,
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
 		padding: 16,
 	},
 	card: {
-		backgroundColor: "#fff",
+		backgroundColor: theme.colors.card,
 		borderRadius: 12,
 		padding: 16,
 		marginBottom: 16,
@@ -151,13 +152,13 @@ const styles = StyleSheet.create({
 		marginBottom: 8,
 	},
 	categoryBadge: {
-		backgroundColor: "#eff6ff",
+		backgroundColor: theme.colors.brandLight,
 		paddingHorizontal: 8,
 		paddingVertical: 4,
 		borderRadius: 6,
 	},
 	categoryText: {
-		color: "#1d4ed8",
+		color: theme.colors.primary,
 		fontSize: 10,
 		fontWeight: "700",
 		textTransform: "uppercase",
@@ -165,12 +166,12 @@ const styles = StyleSheet.create({
 	amountText: {
 		fontSize: 18,
 		fontWeight: "700",
-		color: "#111827",
+		color: theme.colors.text,
 	},
 	titleText: {
 		fontSize: 16,
 		fontWeight: "600",
-		color: "#111827",
+		color: theme.colors.text,
 		marginBottom: 12,
 	},
 	metaContainer: {
@@ -183,11 +184,11 @@ const styles = StyleSheet.create({
 	},
 	metaText: {
 		fontSize: 14,
-		color: "#6b7280",
+		color: theme.colors.textMuted,
 		marginLeft: 6,
 	},
 	payButton: {
-		backgroundColor: "#1d4ed8",
+		backgroundColor: theme.colors.primary,
 		flexDirection: "row",
 		justifyContent: "center",
 		alignItems: "center",
@@ -195,13 +196,13 @@ const styles = StyleSheet.create({
 		borderRadius: 8,
 	},
 	payButtonText: {
-		color: "#fff",
+		color: theme.colors.card,
 		fontSize: 16,
 		fontWeight: "600",
 		marginRight: 4,
 	},
 	errorText: {
-		color: "#ef4444",
+		color: theme.colors.error,
 		fontSize: 16,
 	},
 	emptyContainer: {
@@ -211,12 +212,12 @@ const styles = StyleSheet.create({
 	emptyTitle: {
 		fontSize: 18,
 		fontWeight: "600",
-		color: "#374151",
+		color: theme.colors.text,
 		marginTop: 16,
 	},
 	emptySubtitle: {
 		fontSize: 14,
-		color: "#6b7280",
+		color: theme.colors.textMuted,
 		marginTop: 4,
 	},
 });

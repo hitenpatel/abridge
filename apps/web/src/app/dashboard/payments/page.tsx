@@ -19,7 +19,7 @@ export default function PaymentsDashboardPage() {
 			{/* Parent View */}
 			<section>
 				<div className="flex justify-between items-center mb-4">
-					<h2 className="text-xl font-bold text-gray-900">Outstanding Payments</h2>
+					<h2 className="text-xl font-bold text-foreground">Outstanding Payments</h2>
 					<Link
 						href="/dashboard/payments/history"
 						className="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
@@ -30,14 +30,14 @@ export default function PaymentsDashboardPage() {
 				<OutstandingPayments />
 			</section>
 
-			<hr className="border-gray-200" />
+			<hr className="border-border" />
 
 			{/* Staff View */}
 			<section>
 				<div className="flex justify-between items-center mb-6">
 					<div>
-						<h2 className="text-xl font-bold text-gray-900">Manage School Payments</h2>
-						<p className="text-sm text-gray-600">
+						<h2 className="text-xl font-bold text-foreground">Manage School Payments</h2>
+						<p className="text-sm text-muted-foreground">
 							Create and monitor payment items for this school.
 						</p>
 					</div>

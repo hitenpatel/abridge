@@ -13,6 +13,7 @@ import {
 	View,
 } from "react-native";
 import type { RootStackParamList, TabParamList } from "../../App";
+import { theme } from "../lib/theme";
 import { trpc } from "../lib/trpc";
 
 type CalendarScreenNavigationProp = CompositeNavigationProp<
@@ -25,11 +26,11 @@ interface CalendarScreenProps {
 }
 
 const CATEGORY_STYLES: Record<string, { bg: string; text: string }> = {
-	TERM_DATE: { bg: "#dbeafe", text: "#1e40af" }, // blue
-	INSET_DAY: { bg: "#ffedd5", text: "#9a3412" }, // orange
-	EVENT: { bg: "#dcfce7", text: "#166534" }, // green
-	DEADLINE: { bg: "#fee2e2", text: "#991b1b" }, // red
-	CLUB: { bg: "#f3e8ff", text: "#6b21a8" }, // purple
+	TERM_DATE: { bg: theme.colors.brandLight, text: theme.colors.brandDark }, // blue
+	INSET_DAY: { bg: theme.colors.late, text: theme.colors.lateText }, // orange
+	EVENT: { bg: theme.colors.present, text: theme.colors.presentText }, // green
+	DEADLINE: { bg: theme.colors.absent, text: theme.colors.absentText }, // red
+	CLUB: { bg: theme.colors.brandLight, text: theme.colors.brandDark }, // purple
 };
 
 export const CalendarScreen: React.FC<CalendarScreenProps> = ({ navigation }) => {
@@ -71,7 +72,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ navigation }) =>
 	if (isLoading) {
 		return (
 			<View style={styles.loadingContainer}>
-				<ActivityIndicator size="large" color="#1d4ed8" />
+				<ActivityIndicator size="large" color={theme.colors.primary} />
 			</View>
 		);
 	}
@@ -91,31 +92,35 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ navigation }) =>
 		<ScrollView
 			style={styles.container}
 			refreshControl={
-				<RefreshControl refreshing={isRefetching} onRefresh={onRefresh} tintColor="#1d4ed8" />
+				<RefreshControl
+					refreshing={isRefetching}
+					onRefresh={onRefresh}
+					tintColor={theme.colors.primary}
+				/>
 			}
 		>
 			<View style={styles.header}>
 				<TouchableOpacity onPress={handlePreviousMonth} style={styles.navButton}>
-					<ChevronLeft size={24} color="#374151" />
+					<ChevronLeft size={24} color={theme.colors.text} />
 				</TouchableOpacity>
 				<Text style={styles.monthTitle}>{formattedMonth}</Text>
 				<TouchableOpacity onPress={handleNextMonth} style={styles.navButton}>
-					<ChevronRight size={24} color="#374151" />
+					<ChevronRight size={24} color={theme.colors.text} />
 				</TouchableOpacity>
 			</View>
 
 			<View style={styles.eventsList}>
 				{!events || events.length === 0 ? (
 					<View style={styles.emptyContainer}>
-						<CalendarIcon size={48} color="#9ca3af" style={styles.emptyIcon} />
+						<CalendarIcon size={48} color={theme.colors.inactiveTab} style={styles.emptyIcon} />
 						<Text style={styles.emptyText}>No events found for this month</Text>
 					</View>
 				) : (
 					events.map((event) => {
 						const eventDate = new Date(event.startDate);
 						const categoryStyle = CATEGORY_STYLES[event.category] || {
-							bg: "#f3f4f6",
-							text: "#374151",
+							bg: theme.colors.secondary,
+							text: theme.colors.text,
 						};
 
 						return (
@@ -135,7 +140,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ navigation }) =>
 										<View style={styles.eventTimeRow}>
 											{!event.allDay && (
 												<>
-													<Clock size={14} color="#6b7280" />
+													<Clock size={14} color={theme.colors.textMuted} />
 													<Text style={styles.eventTime}>
 														{eventDate.toLocaleTimeString([], {
 															hour: "2-digit",
@@ -172,7 +177,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ navigation }) =>
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#f9fafb",
+		backgroundColor: theme.colors.background,
 	},
 	loadingContainer: {
 		flex: 1,
@@ -187,17 +192,17 @@ const styles = StyleSheet.create({
 	},
 	errorText: {
 		fontSize: 16,
-		color: "#ef4444",
+		color: theme.colors.error,
 		marginBottom: 12,
 	},
 	retryButton: {
 		paddingVertical: 8,
 		paddingHorizontal: 16,
-		backgroundColor: "#1d4ed8",
+		backgroundColor: theme.colors.primary,
 		borderRadius: 6,
 	},
 	retryText: {
-		color: "#fff",
+		color: theme.colors.card,
 		fontWeight: "600",
 	},
 	header: {
@@ -205,14 +210,14 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "space-between",
 		padding: 16,
-		backgroundColor: "#fff",
+		backgroundColor: theme.colors.card,
 		borderBottomWidth: 1,
-		borderBottomColor: "#e5e7eb",
+		borderBottomColor: theme.colors.border,
 	},
 	monthTitle: {
 		fontSize: 18,
 		fontWeight: "700",
-		color: "#111827",
+		color: theme.colors.text,
 	},
 	navButton: {
 		padding: 8,
@@ -230,16 +235,16 @@ const styles = StyleSheet.create({
 	},
 	emptyText: {
 		fontSize: 16,
-		color: "#6b7280",
+		color: theme.colors.textMuted,
 		fontStyle: "italic",
 	},
 	eventCard: {
 		flexDirection: "row",
-		backgroundColor: "#fff",
+		backgroundColor: theme.colors.card,
 		padding: 12,
 		borderRadius: 12,
 		borderWidth: 1,
-		borderColor: "#e5e7eb",
+		borderColor: theme.colors.border,
 		marginBottom: 12,
 		shadowColor: "#000",
 		shadowOffset: { width: 0, height: 1 },
@@ -248,7 +253,7 @@ const styles = StyleSheet.create({
 		elevation: 2,
 	},
 	eventDateBox: {
-		backgroundColor: "#eff6ff",
+		backgroundColor: theme.colors.brandLight,
 		padding: 10,
 		borderRadius: 8,
 		alignItems: "center",
@@ -260,12 +265,12 @@ const styles = StyleSheet.create({
 	eventDay: {
 		fontSize: 18,
 		fontWeight: "700",
-		color: "#1d4ed8",
+		color: theme.colors.primary,
 	},
 	eventMonth: {
 		fontSize: 12,
 		fontWeight: "600",
-		color: "#1d4ed8",
+		color: theme.colors.primary,
 		textTransform: "uppercase",
 	},
 	eventDetails: {
@@ -281,7 +286,7 @@ const styles = StyleSheet.create({
 	eventTitle: {
 		fontSize: 16,
 		fontWeight: "600",
-		color: "#111827",
+		color: theme.colors.text,
 		flex: 1,
 	},
 	eventMeta: {
@@ -297,7 +302,7 @@ const styles = StyleSheet.create({
 	},
 	eventTime: {
 		fontSize: 12,
-		color: "#6b7280",
+		color: theme.colors.textMuted,
 	},
 	categoryBadge: {
 		paddingHorizontal: 8,
@@ -311,7 +316,7 @@ const styles = StyleSheet.create({
 	},
 	eventBody: {
 		fontSize: 14,
-		color: "#4b5563",
+		color: theme.colors.textMuted,
 		lineHeight: 20,
 	},
 });

@@ -83,9 +83,9 @@ test.describe("Error Cases & Validation", () => {
 		await page.getByRole("button", { name: /Register/i }).click();
 
 		// Should show error about duplicate email
-		await expect(
-			page.getByText(/already|exists|registered|email.*use|taken/i),
-		).toBeVisible({ timeout: 5000 });
+		await expect(page.getByText(/already|exists|registered|email.*use|taken/i)).toBeVisible({
+			timeout: 5000,
+		});
 
 		// Should still be on register page or not redirected to dashboard
 		await expect(async () => {
@@ -115,7 +115,10 @@ test.describe("Error Cases & Validation", () => {
 		// Should show access denied or redirect
 		await expect(async () => {
 			// Should either show "Access Denied" message or redirect away from /staff
-			const hasAccessDenied = await page.getByText(/access denied|not authorized/i).isVisible().catch(() => false);
+			const hasAccessDenied = await page
+				.getByText(/access denied|not authorized/i)
+				.isVisible()
+				.catch(() => false);
 			const isOnStaffPage = page.url().includes("/dashboard/staff");
 
 			// Either show error message OR redirect away

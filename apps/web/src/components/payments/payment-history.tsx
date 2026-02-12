@@ -1,6 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
 import { trpc } from "@/lib/trpc";
 import { ChevronLeft, ChevronRight, Download, Receipt } from "lucide-react";
 import { useState } from "react";
@@ -16,61 +25,51 @@ export function PaymentHistory() {
 	});
 
 	if (isLoading)
-		return <div className="text-center py-8 text-gray-500">Loading payment history...</div>;
+		return <div className="text-center py-8 text-muted-foreground">Loading payment history...</div>;
 	if (isError)
-		return <div className="text-center py-8 text-red-500">Error loading payment history.</div>;
+		return <div className="text-center py-8 text-destructive">Error loading payment history.</div>;
 
 	if (!data || data.data.length === 0) {
 		return (
-			<div className="text-center py-12 bg-white rounded-lg border-2 border-dashed border-gray-300">
-				<Receipt className="mx-auto h-12 w-12 text-gray-400" />
-				<h3 className="mt-2 text-sm font-medium text-gray-900">No payment history</h3>
-				<p className="mt-1 text-sm text-gray-500">You haven't made any payments yet.</p>
+			<div className="text-center py-12 bg-card rounded-lg border-2 border-dashed border-border">
+				<Receipt className="mx-auto h-12 w-12 text-muted-foreground" />
+				<h3 className="mt-2 text-sm font-medium text-foreground">No payment history</h3>
+				<p className="mt-1 text-sm text-muted-foreground">You haven't made any payments yet.</p>
 			</div>
 		);
 	}
 
 	return (
 		<div className="space-y-4">
-			<div className="bg-white shadow overflow-hidden sm:rounded-lg border">
-				<table className="min-w-full divide-y divide-gray-200">
-					<thead className="bg-gray-50">
-						<tr>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Date
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Receipt #
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Items
-							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Amount
-							</th>
-							<th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-								Action
-							</th>
-						</tr>
-					</thead>
-					<tbody className="bg-white divide-y divide-gray-200">
+			<Card className="overflow-hidden">
+				<Table>
+					<TableHeader>
+						<TableRow>
+							<TableHead>Date</TableHead>
+							<TableHead>Receipt #</TableHead>
+							<TableHead>Items</TableHead>
+							<TableHead>Amount</TableHead>
+							<TableHead className="text-right">Action</TableHead>
+						</TableRow>
+					</TableHeader>
+					<TableBody>
 						{data.data.map((payment) => (
-							<tr key={payment.id}>
-								<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+							<TableRow key={payment.id}>
+								<TableCell className="whitespace-nowrap text-foreground">
 									{new Date(payment.completedAt || payment.createdAt).toLocaleDateString()}
-								</td>
-								<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+								</TableCell>
+								<TableCell className="whitespace-nowrap text-muted-foreground">
 									{payment.receiptNumber || payment.id.slice(0, 8)}
-								</td>
-								<td className="px-6 py-4 text-sm text-gray-500">
+								</TableCell>
+								<TableCell className="text-muted-foreground">
 									<div className="max-w-xs truncate">
 										{payment.lineItems.map((li) => li.paymentItem.title).join(", ")}
 									</div>
-								</td>
-								<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+								</TableCell>
+								<TableCell className="whitespace-nowrap font-medium text-foreground">
 									£{(payment.totalAmount / 100).toFixed(2)}
-								</td>
-								<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+								</TableCell>
+								<TableCell className="whitespace-nowrap text-right">
 									<div className="flex gap-2 justify-end">
 										<Button
 											variant="outline"
@@ -94,15 +93,15 @@ export function PaymentHistory() {
 											</Button>
 										)}
 									</div>
-								</td>
-							</tr>
+								</TableCell>
+							</TableRow>
 						))}
-					</tbody>
-				</table>
-			</div>
+					</TableBody>
+				</Table>
+			</Card>
 
 			{data.totalPages > 1 && (
-				<div className="flex items-center justify-between px-4 py-3 bg-white border rounded-lg sm:px-6">
+				<Card className="flex items-center justify-between px-4 py-3 sm:px-6">
 					<div className="flex justify-between flex-1 sm:hidden">
 						<Button
 							variant="outline"
@@ -121,7 +120,7 @@ export function PaymentHistory() {
 					</div>
 					<div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
 						<div>
-							<p className="text-sm text-gray-700">
+							<p className="text-sm text-muted-foreground">
 								Showing page <span className="font-medium">{page}</span> of{" "}
 								<span className="font-medium">{data.totalPages}</span>
 							</p>
@@ -145,7 +144,7 @@ export function PaymentHistory() {
 							</Button>
 						</div>
 					</div>
-				</div>
+				</Card>
 			)}
 
 			{selectedPaymentId && (

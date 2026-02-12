@@ -25,9 +25,7 @@ test.describe("Payments Page", () => {
 		await expect(page.getByRole("link", { name: /View Payment History/i })).toBeVisible();
 
 		// Staff view section (visible to all but functional for staff)
-		await expect(
-			page.getByRole("heading", { name: "Manage School Payments" }),
-		).toBeVisible();
+		await expect(page.getByRole("heading", { name: "Manage School Payments" })).toBeVisible();
 	});
 
 	test("should have link to payment history", async ({ page }) => {

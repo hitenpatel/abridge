@@ -58,7 +58,7 @@ export const calendarRouter = router({
 				},
 			});
 
-				return { success: true, eventId: event.id };
+			return { success: true, eventId: event.id };
 		}),
 
 	deleteEvent: schoolStaffProcedure

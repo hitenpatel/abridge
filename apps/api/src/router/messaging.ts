@@ -67,7 +67,7 @@ export const messagingRouter = router({
 				},
 			});
 
-				// 3. Find parents to notify (async)
+			// 3. Find parents to notify (async)
 			// Don't await this if we want fast response, but for MVP safer to await
 			// or fire-and-forget properly.
 			(async () => {

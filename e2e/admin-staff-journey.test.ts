@@ -40,12 +40,15 @@ test.describe("Admin & Staff Management Journey", () => {
 		// The admin role may take a reload to sync
 		await expect(async () => {
 			await page.reload();
-			await expect(
-				page.getByRole("link", { name: /Staff Management/i }).first(),
-			).toBeVisible({ timeout: 3000 });
+			await expect(page.getByRole("link", { name: /Staff Management/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
 		}).toPass({ timeout: 30000 });
 
-		await page.getByRole("link", { name: /Staff Management/i }).first().click();
+		await page
+			.getByRole("link", { name: /Staff Management/i })
+			.first()
+			.click();
 
 		// === Step 4: Verify Staff Management Page ===
 		await expect(page.getByRole("heading", { name: /Staff Management/i })).toBeVisible();
@@ -88,11 +91,14 @@ test.describe("Admin & Staff Management Journey", () => {
 		// Navigate to Staff Management
 		await expect(async () => {
 			await page.reload();
-			await expect(
-				page.getByRole("link", { name: /Staff Management/i }).first(),
-			).toBeVisible({ timeout: 3000 });
+			await expect(page.getByRole("link", { name: /Staff Management/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
 		}).toPass({ timeout: 30000 });
-		await page.getByRole("link", { name: /Staff Management/i }).first().click();
+		await page
+			.getByRole("link", { name: /Staff Management/i })
+			.first()
+			.click();
 
 		// Invite teacher
 		await page.getByRole("button", { name: "Invite", exact: true }).click();
@@ -131,9 +137,7 @@ test.describe("Admin & Staff Management Journey", () => {
 		// Teacher should see staff role indicator (their invite was auto-accepted on signup)
 		await expect(async () => {
 			await page.reload();
-			await expect(
-				page.getByText("Staff (TEACHER)").first(),
-			).toBeVisible({ timeout: 3000 });
+			await expect(page.getByText("Staff (TEACHER)").first()).toBeVisible({ timeout: 3000 });
 		}).toPass({ timeout: 30000 });
 	});
 
@@ -157,9 +161,9 @@ test.describe("Admin & Staff Management Journey", () => {
 		// Wait for admin role to load
 		await expect(async () => {
 			await page.reload();
-			await expect(
-				page.getByRole("link", { name: /Staff Management/i }).first(),
-			).toBeVisible({ timeout: 3000 });
+			await expect(page.getByRole("link", { name: /Staff Management/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
 		}).toPass({ timeout: 30000 });
 
 		// Admin should see staff navigation

@@ -1,6 +1,8 @@
 "use client";
 
 import { FormRenderer, type FormTemplate } from "@/components/forms/form-renderer";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 import { ArrowLeft, CheckCircle2, Users } from "lucide-react";
@@ -72,7 +74,7 @@ export default function SingleFormPage() {
 	if (isTemplateLoading) {
 		return (
 			<div className="flex min-h-screen items-center justify-center">
-				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
+				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
 			</div>
 		);
 	}
@@ -80,8 +82,8 @@ export default function SingleFormPage() {
 	if (!template || !initialChildId || !currentChild) {
 		return (
 			<div className="p-8 max-w-2xl mx-auto text-center">
-				<h2 className="text-2xl font-bold text-gray-900 mb-4">Form Not Found</h2>
-				<p className="text-gray-500 mb-6">
+				<h2 className="text-2xl font-bold text-foreground mb-4">Form Not Found</h2>
+				<p className="text-muted-foreground mb-6">
 					The form you are looking for does not exist or you do not have permission to view it.
 				</p>
 				<Link href="/dashboard/forms">
@@ -94,12 +96,12 @@ export default function SingleFormPage() {
 	if (isSubmitted) {
 		return (
 			<div className="p-8 max-w-2xl mx-auto text-center space-y-6">
-				<div className="bg-emerald-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto">
-					<CheckCircle2 className="h-10 w-10 text-emerald-600" />
+				<div className="bg-success/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto">
+					<CheckCircle2 className="h-10 w-10 text-success" />
 				</div>
 				<div className="space-y-2">
-					<h2 className="text-3xl font-bold text-gray-900">Form Submitted!</h2>
-					<p className="text-gray-500">
+					<h2 className="text-3xl font-bold text-foreground">Form Submitted!</h2>
+					<p className="text-muted-foreground">
 						Thank you for completing the <strong>{template.title}</strong> form
 						{applyToAll ? " for all your children." : ` for ${currentChild.firstName}.`}
 					</p>
@@ -118,7 +120,7 @@ export default function SingleFormPage() {
 			<div className="mb-6">
 				<Link
 					href="/dashboard/forms"
-					className="text-sm text-gray-500 hover:text-gray-900 flex items-center gap-1 transition-colors"
+					className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
 				>
 					<ArrowLeft className="h-4 w-4" />
 					Back to all forms
@@ -127,18 +129,18 @@ export default function SingleFormPage() {
 
 			<div className="mb-8">
 				<div className="flex items-center gap-2 mb-2">
-					<span className="bg-primary-50 text-primary-700 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">
-						Form for {currentChild.firstName}
-					</span>
+					<Badge variant="info">Form for {currentChild.firstName}</Badge>
 				</div>
-				<h1 className="text-3xl font-bold text-gray-900">{template.title}</h1>
-				{template.description && <p className="text-gray-500 mt-2">{template.description}</p>}
+				<h1 className="text-3xl font-bold text-foreground">{template.title}</h1>
+				{template.description && (
+					<p className="text-muted-foreground mt-2">{template.description}</p>
+				)}
 			</div>
 
 			{error && (
-				<div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
-					{error}
-				</div>
+				<Alert variant="destructive" className="mb-6">
+					<AlertDescription>{error}</AlertDescription>
+				</Alert>
 			)}
 
 			<div className="grid gap-8">
@@ -149,13 +151,13 @@ export default function SingleFormPage() {
 				/>
 
 				{children.length > 1 && (
-					<div className="bg-blue-50 border border-blue-100 p-4 rounded-lg flex items-start gap-3">
-						<div className="p-2 bg-blue-100 rounded-lg">
-							<Users className="h-5 w-5 text-blue-600" />
+					<div className="bg-info/10 border border-info/20 p-4 rounded-lg flex items-start gap-3">
+						<div className="p-2 bg-info/20 rounded-lg">
+							<Users className="h-5 w-5 text-info" />
 						</div>
 						<div className="flex-1">
-							<h4 className="font-semibold text-blue-900">Apply to all children?</h4>
-							<p className="text-sm text-blue-700 mb-3">
+							<h4 className="font-semibold text-foreground">Apply to all children?</h4>
+							<p className="text-sm text-muted-foreground mb-3">
 								You have {otherChildren.length} other{" "}
 								{otherChildren.length === 1 ? "child" : "children"} at this school. Would you like
 								to submit this same response for them as well?
@@ -165,9 +167,9 @@ export default function SingleFormPage() {
 									type="checkbox"
 									checked={applyToAll}
 									onChange={(e) => setApplyToAll(e.target.checked)}
-									className="h-4 w-4 rounded border-blue-300 text-blue-600 focus:ring-blue-500"
+									className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
 								/>
-								<span className="text-sm font-medium text-blue-800">
+								<span className="text-sm font-medium text-foreground">
 									Yes, submit for all my children
 								</span>
 							</label>

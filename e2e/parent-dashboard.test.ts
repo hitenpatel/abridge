@@ -45,9 +45,9 @@ test.describe("Parent Dashboard Journey", () => {
 
 		await expect(page).toHaveURL(/\/dashboard\/attendance/);
 		// Page may show "Attendance" heading or "No children found" message
-		await expect(
-			page.getByText(/Attendance|No children found/i).first(),
-		).toBeVisible({ timeout: 10000 });
+		await expect(page.getByText(/Attendance|No children found/i).first()).toBeVisible({
+			timeout: 10000,
+		});
 	});
 
 	test("should navigate to calendar page", async ({ page }) => {
