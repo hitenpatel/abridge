@@ -55,6 +55,11 @@ npx pnpm --filter @schoolconnect/db db:generate
 
 School-scoped procedures auto-require `schoolId` in input and add `ctx.schoolId` + `ctx.staffMember`.
 
+## Git Commits
+
+- Do NOT add Co-Authored-By lines, attribution footers, or "Generated with" lines to commit messages
+- Keep commit messages concise: type prefix + short description (e.g., `feat: add mobile theme system`)
+
 ## Conventions
 
 - Amounts in **pence** (integer), not pounds
