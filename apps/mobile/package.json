@@ -13,6 +13,7 @@
 		"test:ci": "jest --ci --coverage --forceExit"
 	},
 	"dependencies": {
+		"@expo-google-fonts/poppins": "^0.4.1",
 		"@expo/vector-icons": "^15.0.3",
 		"@react-navigation/bottom-tabs": "^7.12.0",
 		"@react-navigation/native": "^7.1.28",

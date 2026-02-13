@@ -1,3 +1,4 @@
+import "./global.css";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
@@ -5,6 +6,13 @@ import {
 	type NativeStackNavigationProp,
 	createNativeStackNavigator,
 } from "@react-navigation/native-stack";
+import {
+	Poppins_400Regular,
+	Poppins_500Medium,
+	Poppins_600SemiBold,
+	Poppins_700Bold,
+	useFonts,
+} from "@expo-google-fonts/poppins";
 import * as Notifications from "expo-notifications";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -19,13 +27,14 @@ import React from "react";
 import {
 	ActivityIndicator,
 	SafeAreaView,
-	StyleSheet,
 	Text,
 	TouchableOpacity,
 	View,
 } from "react-native";
 import { authClient } from "./src/lib/auth-client";
 import { TRPCProvider } from "./src/lib/provider";
+import { ThemeProvider } from "./src/lib/theme-provider";
+import { useTheme } from "./src/lib/use-theme";
 import { trpc } from "./src/lib/trpc";
 import { AttendanceScreen } from "./src/screens/AttendanceScreen";
 import { CalendarScreen } from "./src/screens/CalendarScreen";
@@ -77,39 +86,41 @@ const Tab = createBottomTabNavigator<TabParamList>();
 
 function HeaderRight() {
 	const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+	const { isDark } = useTheme();
+	const color = isDark ? "#E5E7EB" : "#2D3748";
 
 	return (
-		<View style={{ flexDirection: "row", alignItems: "center", marginRight: 16 }}>
+		<View className="flex-row items-center mr-4">
 			<TouchableOpacity
 				onPress={() => {
 					navigation.navigate("Search");
 				}}
-				style={{ marginRight: 16 }}
+				className="mr-4"
 			>
-				<Search size={20} color="#fff" />
+				<Search size={20} color={color} />
 			</TouchableOpacity>
 			<TouchableOpacity
 				onPress={async () => {
 					await authClient.signOut();
 				}}
 			>
-				<Text style={styles.logoutLink}>Logout</Text>
+				<Text className="text-foreground text-sm font-medium">Logout</Text>
 			</TouchableOpacity>
 		</View>
 	);
 }
 
-import { theme } from "./src/lib/theme";
-
 function TabNavigator() {
+	const { isDark } = useTheme();
 	return (
 		<Tab.Navigator
 			screenOptions={{
-				headerStyle: { backgroundColor: theme.colors.headerBackground },
-				headerTintColor: theme.colors.headerText,
+				headerStyle: { backgroundColor: isDark ? "#1E1E1E" : "#FFFFFF" },
+				headerTintColor: isDark ? "#E5E7EB" : "#2D3748",
 				headerTitleStyle: { fontWeight: "600" },
-				tabBarActiveTintColor: theme.colors.activeTab,
-				tabBarInactiveTintColor: theme.colors.inactiveTab,
+				tabBarStyle: { backgroundColor: isDark ? "#1E1E1E" : "#FFFFFF" },
+				tabBarActiveTintColor: "#FF7D45",
+				tabBarInactiveTintColor: "#6B7280",
 			}}
 		>
 			<Tab.Screen
@@ -163,6 +174,7 @@ function TabNavigator() {
 
 function AuthenticatedApp() {
 	const updatePushToken = trpc.user.updatePushToken.useMutation();
+	const { isDark } = useTheme();
 
 	React.useEffect(() => {
 		const registerForPushNotifications = async () => {
@@ -192,8 +204,8 @@ function AuthenticatedApp() {
 		<NavigationContainer>
 			<Stack.Navigator
 				screenOptions={{
-					headerStyle: { backgroundColor: theme.colors.headerBackground },
-					headerTintColor: theme.colors.headerText,
+					headerStyle: { backgroundColor: isDark ? "#1E1E1E" : "#FFFFFF" },
+					headerTintColor: isDark ? "#E5E7EB" : "#2D3748",
 					headerTitleStyle: { fontWeight: "600" },
 				}}
 			>
@@ -224,52 +236,58 @@ function AuthenticatedApp() {
 	);
 }
 
-export default function App() {
+function AppContent() {
 	const { data: session, isPending } = authClient.useSession();
+	const { isDark, colorScheme } = useTheme();
 
 	if (isPending) {
 		return (
-			<View style={styles.container}>
-				<ActivityIndicator size="large" color={theme.colors.primary} />
-				<Text style={styles.loadingText}>Loading...</Text>
+			<View className="flex-1 bg-background items-center justify-center">
+				<ActivityIndicator size="large" color="#FF7D45" />
+				<Text className="mt-3 text-base text-muted-foreground font-sans">Loading...</Text>
 			</View>
 		);
 	}
 
 	if (!session) {
 		return (
-			<TRPCProvider>
-				<SafeAreaView style={{ flex: 1 }}>
-					<LoginScreen />
-					<StatusBar style="auto" />
-				</SafeAreaView>
-			</TRPCProvider>
+			<SafeAreaView className={`flex-1 ${colorScheme}`}>
+				<LoginScreen />
+				<StatusBar style="auto" />
+			</SafeAreaView>
+		);
+	}
+
+	return (
+		<View className={`flex-1 ${colorScheme}`}>
+			<AuthenticatedApp />
+			<StatusBar style={isDark ? "light" : "dark"} />
+		</View>
+	);
+}
+
+export default function App() {
+	const [fontsLoaded] = useFonts({
+		Poppins_400Regular,
+		Poppins_500Medium,
+		Poppins_600SemiBold,
+		Poppins_700Bold,
+	});
+
+	if (!fontsLoaded) {
+		return (
+			<View className="flex-1 bg-background items-center justify-center">
+				<ActivityIndicator size="large" color="#FF7D45" />
+			</View>
 		);
 	}
 
 	return (
 		<TRPCProvider>
-			<AuthenticatedApp />
-			<StatusBar style="light" />
+			<ThemeProvider>
+				<AppContent />
+			</ThemeProvider>
 		</TRPCProvider>
 	);
 }
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#f9fafb",
-		alignItems: "center",
-		justifyContent: "center",
-	},
-	loadingText: {
-		marginTop: 12,
-		fontSize: 16,
-		color: "#6b7280",
-	},
-	logoutLink: {
-		color: "#fff",
-		fontSize: 14,
-		fontWeight: "500",
-	},
-});
