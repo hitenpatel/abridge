@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
-import { CheckCircle, ChevronRight, Clock, FileText } from "lucide-react";
 import Link from "next/link";
 
 function ChildFormsList({ childId, childName }: { childId: string; childName: string }) {
@@ -37,7 +36,7 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 			{pendingForms && pendingForms.length > 0 && (
 				<div className="space-y-3">
 					<h3 className="text-sm font-medium text-warning flex items-center gap-1">
-						<Clock className="h-4 w-4" />
+						<span className="material-symbols-rounded text-base">schedule</span>
 						Action Required
 					</h3>
 					<div className="grid gap-3">
@@ -50,8 +49,8 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 								<Card className="hover:border-warning transition-colors border-warning/30">
 									<CardContent className="flex items-center justify-between p-4">
 										<div className="flex items-center gap-3">
-											<div className="p-2 bg-warning/10 rounded-lg">
-												<FileText className="h-5 w-5 text-warning" />
+											<div className="p-2 bg-warning/10 rounded-xl">
+												<span className="material-symbols-rounded text-warning">description</span>
 											</div>
 											<div>
 												<h4 className="font-medium text-foreground">{template.title}</h4>
@@ -64,7 +63,7 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 										</div>
 										<div className="flex items-center gap-2 text-warning font-medium text-sm">
 											Complete
-											<ChevronRight className="h-4 w-4" />
+											<span className="material-symbols-rounded text-base">chevron_right</span>
 										</div>
 									</CardContent>
 								</Card>
@@ -77,7 +76,7 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 			{completedForms && completedForms.length > 0 && (
 				<div className="space-y-3">
 					<h3 className="text-sm font-medium text-success flex items-center gap-1">
-						<CheckCircle className="h-4 w-4" />
+						<span className="material-symbols-rounded text-base">check_circle</span>
 						Completed
 					</h3>
 					<div className="grid gap-3">
