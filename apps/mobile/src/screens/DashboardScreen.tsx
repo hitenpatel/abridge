@@ -1,19 +1,11 @@
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import type { CompositeNavigationProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { AlertCircle, Calendar, Clock, CreditCard, Mail, TrendingUp } from "lucide-react-native";
+import { Clock, CreditCard, Mail, TrendingUp } from "lucide-react-native";
 import React from "react";
-import {
-	ActivityIndicator,
-	RefreshControl,
-	ScrollView,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import { Pressable, RefreshControl, ScrollView, View } from "react-native";
 import type { RootStackParamList, TabParamList } from "../../App";
-import { theme } from "../lib/theme";
+import { Badge, Body, Button, Card, H1, H2, Muted, Skeleton } from "../components/ui";
 import { trpc } from "../lib/trpc";
 
 interface DashboardScreenProps {
@@ -32,22 +24,26 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
 
 	if (isLoading) {
 		return (
-			<View style={styles.loadingContainer}>
-				<ActivityIndicator size="large" color={theme.colors.primary} />
-			</View>
+			<ScrollView className="flex-1 bg-background">
+				<View className="p-4">
+					<H2 className="mb-3">Overview</H2>
+					<View className="flex-row gap-3 mb-6">
+						<Skeleton className="flex-1 h-32" />
+						<Skeleton className="flex-1 h-32" />
+					</View>
+					<H2 className="mb-3">My Children</H2>
+					<Skeleton className="h-24 mb-3" />
+					<Skeleton className="h-24 mb-3" />
+				</View>
+			</ScrollView>
 		);
 	}
 
 	if (isError || !data) {
 		return (
-			<View style={styles.errorContainer}>
-				<Text style={styles.errorText}>Failed to load dashboard</Text>
-				<TouchableOpacity
-					onPress={() => refetch()}
-					style={[styles.retryButton, { backgroundColor: theme.colors.primary }]}
-				>
-					<Text style={styles.retryText}>Retry</Text>
-				</TouchableOpacity>
+			<View className="flex-1 bg-background justify-center items-center px-5">
+				<Body className="text-destructive mb-3">Failed to load dashboard</Body>
+				<Button onPress={() => refetch()}>Retry</Button>
 			</View>
 		);
 	}
@@ -56,45 +52,45 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
 
 	return (
 		<ScrollView
-			style={styles.container}
+			className="flex-1 bg-background"
 			refreshControl={
-				<RefreshControl
-					refreshing={isRefetching}
-					onRefresh={onRefresh}
-					tintColor={theme.colors.primary}
-				/>
+				<RefreshControl refreshing={isRefetching} onRefresh={onRefresh} tintColor="#FF7D45" />
 			}
 		>
-			<View style={styles.section}>
-				<Text style={styles.sectionTitle}>Overview</Text>
-				<View style={styles.statsGrid}>
-					<TouchableOpacity style={styles.statCard} onPress={() => navigation.navigate("Messages")}>
-						<View style={[styles.iconBox, { backgroundColor: theme.colors.brandLight }]}>
-							<Mail size={24} color={theme.colors.primary} />
-						</View>
-						<Text style={styles.statValue}>{metrics.unreadMessages}</Text>
-						<Text style={styles.statLabel}>Unread Messages</Text>
-					</TouchableOpacity>
+			<View className="p-4">
+				<H2 className="mb-3">Overview</H2>
+				<View className="flex-row gap-3">
+					<Pressable className="flex-1" onPress={() => navigation.navigate("Messages")}>
+						<Card className="items-center active:opacity-70">
+							<View className="bg-primary/10 p-2.5 rounded-lg mb-2">
+								<Mail size={24} color="#FF7D45" />
+							</View>
+							<H1 className="text-2xl">{metrics.unreadMessages}</H1>
+							<Muted className="mt-0.5 text-center">Unread Messages</Muted>
+						</Card>
+					</Pressable>
 
-					<TouchableOpacity style={styles.statCard} onPress={() => navigation.navigate("Payments")}>
-						<View style={[styles.iconBox, { backgroundColor: theme.colors.brandLight }]}>
-							<CreditCard size={24} color={theme.colors.primary} />
-						</View>
-						<Text style={styles.statValue}>
-							{(metrics.paymentsTotal / 100).toLocaleString("en-GB", {
-								style: "currency",
-								currency: "GBP",
-							})}
-						</Text>
-						<Text style={styles.statLabel}>Outstanding</Text>
-					</TouchableOpacity>
+					<Pressable className="flex-1" onPress={() => navigation.navigate("Payments")}>
+						<Card className="items-center active:opacity-70">
+							<View className="bg-primary/10 p-2.5 rounded-lg mb-2">
+								<CreditCard size={24} color="#FF7D45" />
+							</View>
+							<H1 className="text-2xl">
+								{(metrics.paymentsTotal / 100).toLocaleString("en-GB", {
+									style: "currency",
+									currency: "GBP",
+								})}
+							</H1>
+							<Muted className="mt-0.5 text-center">Outstanding</Muted>
+						</Card>
+					</Pressable>
 				</View>
 			</View>
 
-			<View style={styles.section}>
-				<Text style={styles.sectionTitle}>My Children</Text>
+			<View className="p-4">
+				<H2 className="mb-3">My Children</H2>
 				{children.length === 0 ? (
-					<Text style={styles.emptyText}>No children linked.</Text>
+					<Muted className="italic">No children linked.</Muted>
 				) : (
 					children.map((child) => {
 						const attendance = todayAttendance
@@ -105,288 +101,88 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
 							attendancePercentage.find((p) => p.childId === child.id)?.percentage ?? 0;
 
 						return (
-							<View key={child.id} style={styles.childCard}>
-								<View style={styles.childHeader}>
-									<Text style={styles.childName}>
+							<Card key={child.id} className="mb-3">
+								<View className="flex-row justify-between items-center mb-3">
+									<Body className="font-semibold">
 										{child.firstName} {child.lastName}
-									</Text>
-									<View style={styles.percentageBadge}>
-										<TrendingUp
-											size={14}
-											color={theme.colors.presentText}
-											style={{ marginRight: 4 }}
-										/>
-										<Text style={styles.percentageText}>{percentage}% Attendance</Text>
+									</Body>
+									<View className="flex-row items-center bg-present rounded-full px-2 py-1">
+										<TrendingUp size={14} color="#16A34A" className="mr-1" />
+										<Body className="text-xs font-semibold text-present-text">
+											{percentage}% Attendance
+										</Body>
 									</View>
 								</View>
 
-								<View style={styles.attendanceRow}>
+								<View className="flex-row gap-3">
 									{attendance.length > 0 ? (
 										attendance.map((record) => (
 											<View
 												key={`${record.childId}-${record.session}`}
-												style={styles.attendanceBadge}
+												className="flex-row items-center bg-secondary rounded-md px-2 py-1 gap-1.5"
 											>
-												<Text style={styles.attendanceSession}>{record.session}</Text>
-												<Text
-													style={[
-														styles.attendanceMark,
+												<Muted className="text-xs font-semibold">{record.session}</Muted>
+												<Body
+													className={`text-xs font-bold ${
 														record.mark === "PRESENT"
-															? styles.textGreen
+															? "text-present-text"
 															: record.mark === "LATE"
-																? styles.textYellow
-																: styles.textRed,
-													]}
+																? "text-late-text"
+																: "text-absent-text"
+													}`}
 												>
 													{record.mark}
-												</Text>
+												</Body>
 											</View>
 										))
 									) : (
-										<Text style={styles.noAttendanceText}>No attendance recorded today</Text>
+										<Muted className="text-sm italic">No attendance recorded today</Muted>
 									)}
 								</View>
-							</View>
+							</Card>
 						);
 					})
 				)}
 			</View>
 
-			<View style={styles.section}>
-				<Text style={styles.sectionTitle}>Upcoming Events</Text>
+			<View className="p-4">
+				<H2 className="mb-3">Upcoming Events</H2>
 				{upcomingEvents.length === 0 ? (
-					<Text style={styles.emptyText}>No upcoming events this week.</Text>
+					<Muted className="italic">No upcoming events this week.</Muted>
 				) : (
 					upcomingEvents.map((event) => (
-						<View key={event.id} style={styles.eventCard}>
-							<View style={styles.eventDateBox}>
-								<Text style={styles.eventDay}>{new Date(event.startDate).getDate()}</Text>
-								<Text style={styles.eventMonth}>
+						<Card key={event.id} className="flex-row mb-2 p-3">
+							<View className="bg-primary/10 p-2.5 rounded-lg items-center justify-center w-12 mr-3">
+								<Body className="text-lg font-bold text-primary">
+									{new Date(event.startDate).getDate()}
+								</Body>
+								<Body className="text-xs font-semibold text-primary uppercase">
 									{new Date(event.startDate).toLocaleString("default", { month: "short" })}
-								</Text>
+								</Body>
 							</View>
-							<View style={styles.eventDetails}>
-								<Text style={styles.eventTitle}>{event.title}</Text>
-								<View style={styles.eventTimeRow}>
-									<Clock size={14} color={theme.colors.textMuted} />
-									<Text style={styles.eventTime}>
+							<View className="flex-1 justify-center">
+								<Body className="font-semibold mb-1">{event.title}</Body>
+								<View className="flex-row items-center gap-1 mb-1">
+									<Clock size={14} color="#9CA3AF" />
+									<Muted className="text-xs">
 										{new Date(event.startDate).toLocaleTimeString([], {
 											hour: "2-digit",
 											minute: "2-digit",
 										})}
-									</Text>
+									</Muted>
 								</View>
 								{event.category && (
-									<View style={styles.categoryBadge}>
-										<Text style={styles.categoryText}>{event.category}</Text>
-									</View>
+									<Badge variant="secondary" className="self-start">
+										{event.category}
+									</Badge>
 								)}
 							</View>
-						</View>
+						</Card>
 					))
 				)}
 			</View>
 
-			<View style={{ height: 20 }} />
+			<View className="h-5" />
 		</ScrollView>
 	);
 };
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: theme.colors.background,
-	},
-	loadingContainer: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-	},
-	errorContainer: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		padding: 20,
-	},
-	errorText: {
-		fontSize: 16,
-		color: theme.colors.error,
-		marginBottom: 12,
-	},
-	retryButton: {
-		paddingVertical: 8,
-		paddingHorizontal: 16,
-		backgroundColor: theme.colors.primary,
-		borderRadius: 6,
-	},
-	retryText: {
-		color: theme.colors.card,
-		fontWeight: "600",
-	},
-	section: {
-		padding: 16,
-	},
-	sectionTitle: {
-		fontSize: 18,
-		fontWeight: "700",
-		color: theme.colors.text,
-		marginBottom: 12,
-	},
-	statsGrid: {
-		flexDirection: "row",
-		gap: 12,
-	},
-	statCard: {
-		flex: 1,
-		backgroundColor: theme.colors.card,
-		padding: 16,
-		borderRadius: 12,
-		borderWidth: 1,
-		borderColor: theme.colors.border,
-		alignItems: "center",
-	},
-	iconBox: {
-		padding: 10,
-		borderRadius: 10,
-		marginBottom: 8,
-	},
-	statValue: {
-		fontSize: 24,
-		fontWeight: "700",
-		color: theme.colors.text,
-	},
-	statLabel: {
-		fontSize: 14,
-		color: theme.colors.textMuted,
-		marginTop: 2,
-	},
-	childCard: {
-		backgroundColor: theme.colors.card,
-		padding: 16,
-		borderRadius: 12,
-		borderWidth: 1,
-		borderColor: theme.colors.border,
-		marginBottom: 12,
-	},
-	childHeader: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		marginBottom: 12,
-	},
-	childName: {
-		fontSize: 16,
-		fontWeight: "600",
-		color: theme.colors.text,
-	},
-	percentageBadge: {
-		flexDirection: "row",
-		alignItems: "center",
-		backgroundColor: theme.colors.present,
-		paddingHorizontal: 8,
-		paddingVertical: 4,
-		borderRadius: 12,
-	},
-	percentageText: {
-		fontSize: 12,
-		fontWeight: "600",
-		color: theme.colors.presentText,
-	},
-	attendanceRow: {
-		flexDirection: "row",
-		gap: 12,
-	},
-	attendanceBadge: {
-		flexDirection: "row",
-		alignItems: "center",
-		backgroundColor: theme.colors.secondary,
-		paddingHorizontal: 8,
-		paddingVertical: 4,
-		borderRadius: 6,
-		gap: 6,
-	},
-	attendanceSession: {
-		fontSize: 12,
-		fontWeight: "600",
-		color: theme.colors.textMuted,
-	},
-	attendanceMark: {
-		fontSize: 12,
-		fontWeight: "700",
-	},
-	textGreen: { color: theme.colors.presentText },
-	textYellow: { color: theme.colors.lateText },
-	textRed: { color: theme.colors.absentText },
-	noAttendanceText: {
-		fontSize: 14,
-		color: theme.colors.inactiveTab,
-		fontStyle: "italic",
-	},
-	emptyText: {
-		fontSize: 14,
-		color: theme.colors.textMuted,
-		fontStyle: "italic",
-	},
-	eventCard: {
-		flexDirection: "row",
-		backgroundColor: theme.colors.card,
-		padding: 12,
-		borderRadius: 12,
-		borderWidth: 1,
-		borderColor: theme.colors.border,
-		marginBottom: 8,
-	},
-	eventDateBox: {
-		backgroundColor: theme.colors.brandLight,
-		padding: 10,
-		borderRadius: 8,
-		alignItems: "center",
-		justifyContent: "center",
-		width: 50,
-		marginRight: 12,
-	},
-	eventDay: {
-		fontSize: 18,
-		fontWeight: "700",
-		color: theme.colors.primary,
-	},
-	eventMonth: {
-		fontSize: 12,
-		fontWeight: "600",
-		color: theme.colors.primary,
-		textTransform: "uppercase",
-	},
-	eventDetails: {
-		flex: 1,
-		justifyContent: "center",
-	},
-	eventTitle: {
-		fontSize: 15,
-		fontWeight: "600",
-		color: theme.colors.text,
-		marginBottom: 4,
-	},
-	eventTimeRow: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: 4,
-		marginBottom: 4,
-	},
-	eventTime: {
-		fontSize: 12,
-		color: theme.colors.textMuted,
-	},
-	categoryBadge: {
-		alignSelf: "flex-start",
-		backgroundColor: theme.colors.secondary,
-		paddingHorizontal: 6,
-		paddingVertical: 2,
-		borderRadius: 4,
-	},
-	categoryText: {
-		fontSize: 10,
-		fontWeight: "600",
-		color: theme.colors.textMuted,
-		textTransform: "uppercase",
-	},
-});
