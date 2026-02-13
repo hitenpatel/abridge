@@ -1,15 +1,7 @@
 import React, { useState } from "react";
-import {
-	ActivityIndicator,
-	Alert,
-	StyleSheet,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, View } from "react-native";
 import { authClient } from "../lib/auth-client";
-import { theme } from "../lib/theme";
+import { Button, Card, H1, Input, Muted } from "../components/ui";
 
 export const LoginScreen = () => {
 	const [email, setEmail] = useState("");
@@ -43,70 +35,48 @@ export const LoginScreen = () => {
 	};
 
 	return (
-		<View style={styles.container}>
-			<Text style={styles.title}>SchoolConnect</Text>
-			<View style={styles.form}>
-				<TextInput
-					style={styles.input}
-					placeholder="Email"
-					value={email}
-					onChangeText={setEmail}
-					autoCapitalize="none"
-					keyboardType="email-address"
-				/>
-				<TextInput
-					style={styles.input}
-					placeholder="Password"
-					value={password}
-					onChangeText={setPassword}
-					secureTextEntry
-				/>
-				<TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-					{loading ? (
-						<ActivityIndicator color={theme.colors.card} />
-					) : (
-						<Text style={styles.buttonText}>Login</Text>
-					)}
-				</TouchableOpacity>
+		<KeyboardAvoidingView
+			behavior={Platform.OS === "ios" ? "padding" : "height"}
+			className="flex-1 bg-background"
+		>
+			<View className="flex-1 justify-center px-6">
+				{/* Brand Header */}
+				<View className="items-center mb-12">
+					<View className="w-20 h-20 rounded-full bg-primary items-center justify-center mb-4">
+						<H1 className="text-primary-foreground">A</H1>
+					</View>
+					<H1 className="text-3xl text-center mb-2">Welcome to Abridge</H1>
+					<Muted className="text-center">Sign in to continue</Muted>
+				</View>
+
+				{/* Login Card */}
+				<Card className="w-full">
+					<View className="gap-4">
+						<Input
+							placeholder="Email"
+							value={email}
+							onChangeText={setEmail}
+							autoCapitalize="none"
+							keyboardType="email-address"
+							editable={!loading}
+						/>
+						<Input
+							placeholder="Password"
+							value={password}
+							onChangeText={setPassword}
+							secureTextEntry
+							editable={!loading}
+						/>
+						<Button
+							onPress={handleLogin}
+							disabled={loading}
+							className="mt-2"
+						>
+							{loading ? "Signing in..." : "Sign In"}
+						</Button>
+					</View>
+				</Card>
 			</View>
-		</View>
+		</KeyboardAvoidingView>
 	);
 };
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: "center",
-		padding: 20,
-		backgroundColor: theme.colors.card,
-	},
-	title: {
-		fontSize: 28,
-		fontWeight: "bold",
-		textAlign: "center",
-		marginBottom: 40,
-		color: theme.colors.primary,
-	},
-	form: {
-		gap: 15,
-	},
-	input: {
-		borderWidth: 1,
-		borderColor: theme.colors.border,
-		padding: 15,
-		borderRadius: 8,
-		fontSize: 16,
-	},
-	button: {
-		backgroundColor: theme.colors.primary,
-		padding: 15,
-		borderRadius: 8,
-		alignItems: "center",
-		marginTop: 10,
-	},
-	buttonText: {
-		color: theme.colors.headerText,
-		fontSize: 18,
-		fontWeight: "600",
-	},
-});
