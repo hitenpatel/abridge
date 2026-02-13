@@ -2,20 +2,20 @@ import type { ConfigContext, ExpoConfig } from "expo/config";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
 	...config,
-	name: "SchoolConnect",
-	slug: "schoolconnect",
+	name: "Abridge",
+	slug: "abridge",
 	version: "1.0.0",
 	orientation: "portrait",
-	scheme: "schoolconnect",
+	scheme: "abridge",
 	platforms: ["ios", "android"],
 	ios: {
-		bundleIdentifier: "com.schoolconnect.app",
+		bundleIdentifier: "com.abridge.app",
 		supportsTablet: true,
 	},
 	android: {
-		package: "com.schoolconnect.app",
+		package: "com.abridge.app",
 		adaptiveIcon: {
-			backgroundColor: "#2563eb",
+			backgroundColor: "#FF7D45",
 		},
 	},
 	extra: {
