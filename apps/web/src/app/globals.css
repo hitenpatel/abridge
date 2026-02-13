@@ -4,92 +4,92 @@
 
 @layer base {
 	:root {
-		/* Background: Clean near-white */
-		--background: 210 20% 98%;
-		/* Foreground: Slate 900 */
-		--foreground: 222 47% 11%;
+		/* Background: #F7F8FA */
+		--background: 220 14% 97%;
+		/* Foreground: Slate 800 #2D3748 */
+		--foreground: 220 26% 23%;
 
 		/* Card: White */
 		--card: 0 0% 100%;
-		--card-foreground: 222 47% 11%;
+		--card-foreground: 220 26% 23%;
 
 		/* Popover: White */
 		--popover: 0 0% 100%;
-		--popover-foreground: 222 47% 11%;
+		--popover-foreground: 220 26% 23%;
 
-		/* Primary: Indigo 600 #4F46E5 */
-		--primary: 239 84% 67%;
+		/* Primary: Coral Orange #FF7D45 */
+		--primary: 17 100% 63%;
 		--primary-foreground: 0 0% 100%;
 
-		/* Secondary: Slate 100 */
-		--secondary: 210 40% 96%;
-		--secondary-foreground: 222 47% 11%;
+		/* Secondary: Sunshine Yellow #FFD54F */
+		--secondary: 45 100% 65%;
+		--secondary-foreground: 220 26% 23%;
 
-		/* Muted: Slate 100 */
-		--muted: 210 40% 96%;
-		--muted-foreground: 215 16% 47%;
+		/* Muted: Gray 100 */
+		--muted: 220 14% 96%;
+		--muted-foreground: 220 9% 46%;
 
-		/* Accent: Slate 100 */
-		--accent: 210 40% 96%;
-		--accent-foreground: 222 47% 11%;
+		/* Accent: Soft Teal #4DB6AC */
+		--accent: 174 36% 49%;
+		--accent-foreground: 0 0% 100%;
 
-		/* Destructive: Red 500 */
-		--destructive: 0 84% 60%;
+		/* Destructive: Red 400 #F87171 */
+		--destructive: 0 94% 71%;
 		--destructive-foreground: 0 0% 100%;
 
-		/* Border: Slate 200 */
-		--border: 214 32% 91%;
-		--input: 214 32% 91%;
-		--ring: 239 84% 67%;
+		/* Border: Gray 200 */
+		--border: 220 13% 91%;
+		--input: 220 13% 91%;
+		--ring: 17 100% 63%;
 
 		/* Semantic colors */
 		--success: 142 71% 45%;
 		--success-foreground: 0 0% 100%;
-		--warning: 38 92% 50%;
-		--warning-foreground: 0 0% 100%;
+		--warning: 45 96% 56%;
+		--warning-foreground: 220 26% 23%;
 		--info: 199 89% 48%;
 		--info-foreground: 0 0% 100%;
 
-		--radius: 0.5rem;
+		--radius: 0.75rem;
 	}
 
 	.dark {
-		/* Background: Slate 950 */
-		--background: 222 47% 6%;
-		--foreground: 210 40% 98%;
+		/* Background: #121212 */
+		--background: 0 0% 7%;
+		--foreground: 214 32% 91%;
 
-		/* Card: Slate 900 */
-		--card: 222 47% 11%;
-		--card-foreground: 210 40% 98%;
+		/* Card: #1E1E1E */
+		--card: 0 0% 12%;
+		--card-foreground: 214 32% 91%;
 
-		--popover: 222 47% 11%;
-		--popover-foreground: 210 40% 98%;
+		--popover: 0 0% 12%;
+		--popover-foreground: 214 32% 91%;
 
-		/* Primary: Indigo 500 */
-		--primary: 239 84% 67%;
+		/* Primary: Coral Orange (same in dark) */
+		--primary: 17 100% 63%;
 		--primary-foreground: 0 0% 100%;
 
-		/* Secondary: Slate 800 */
-		--secondary: 217 33% 17%;
-		--secondary-foreground: 210 40% 98%;
+		/* Secondary: Sunshine Yellow */
+		--secondary: 45 100% 65%;
+		--secondary-foreground: 0 0% 100%;
 
-		--muted: 217 33% 17%;
-		--muted-foreground: 215 20% 65%;
+		--muted: 0 0% 15%;
+		--muted-foreground: 218 11% 65%;
 
-		--accent: 217 33% 17%;
-		--accent-foreground: 210 40% 98%;
+		--accent: 174 36% 49%;
+		--accent-foreground: 0 0% 100%;
 
 		--destructive: 0 63% 31%;
-		--destructive-foreground: 210 40% 98%;
+		--destructive-foreground: 214 32% 91%;
 
-		--border: 217 33% 17%;
-		--input: 217 33% 17%;
-		--ring: 239 84% 67%;
+		--border: 0 0% 15%;
+		--input: 0 0% 15%;
+		--ring: 17 100% 63%;
 
 		/* Semantic colors */
 		--success: 142 71% 45%;
 		--success-foreground: 0 0% 100%;
-		--warning: 38 92% 50%;
+		--warning: 45 96% 56%;
 		--warning-foreground: 0 0% 100%;
 		--info: 199 89% 48%;
 		--info-foreground: 0 0% 100%;
@@ -109,4 +109,27 @@
 	.text-balance {
 		text-wrap: balance;
 	}
+}
+
+/* Material Symbols */
+.material-symbols-rounded {
+	font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+	width: 8px;
+}
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+::-webkit-scrollbar-thumb {
+	background: #cbd5e0;
+	border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+	background: #a0aec0;
+}
+.dark ::-webkit-scrollbar-thumb {
+	background: #4a5568;
 }

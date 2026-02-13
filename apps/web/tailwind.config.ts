@@ -53,13 +53,19 @@ const config: Config = {
 				},
 			},
 			fontFamily: {
-				sans: ["var(--font-inter)", "sans-serif"],
-				heading: ["var(--font-jakarta)", "sans-serif"],
+				sans: ["var(--font-poppins)", "sans-serif"],
 			},
 			borderRadius: {
 				lg: "var(--radius)",
 				md: "calc(var(--radius) - 2px)",
 				sm: "calc(var(--radius) - 4px)",
+				xl: "20px",
+				"2xl": "24px",
+				"3xl": "32px",
+			},
+			boxShadow: {
+				soft: "0 4px 20px -2px rgba(0, 0, 0, 0.05)",
+				glow: "0 0 15px rgba(255, 125, 69, 0.3)",
 			},
 		},
 	},
