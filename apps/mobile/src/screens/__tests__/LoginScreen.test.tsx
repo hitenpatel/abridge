@@ -20,22 +20,22 @@ describe("LoginScreen", () => {
 
 	it("renders title, email input, password input, and login button", () => {
 		render(<LoginScreen />);
-		expect(screen.getByText("SchoolConnect")).toBeTruthy();
+		expect(screen.getByText("Welcome to Abridge")).toBeTruthy();
 		expect(screen.getByPlaceholderText("Email")).toBeTruthy();
 		expect(screen.getByPlaceholderText("Password")).toBeTruthy();
-		expect(screen.getByText("Login")).toBeTruthy();
+		expect(screen.getByText("Sign In")).toBeTruthy();
 	});
 
 	it("shows error alert when fields are empty", () => {
 		render(<LoginScreen />);
-		fireEvent.press(screen.getByText("Login"));
+		fireEvent.press(screen.getByText("Sign In"));
 		expect(Alert.alert).toHaveBeenCalledWith("Error", "Please fill in all fields");
 	});
 
 	it("shows error alert when only email is provided", () => {
 		render(<LoginScreen />);
 		fireEvent.changeText(screen.getByPlaceholderText("Email"), "test@example.com");
-		fireEvent.press(screen.getByText("Login"));
+		fireEvent.press(screen.getByText("Sign In"));
 		expect(Alert.alert).toHaveBeenCalledWith("Error", "Please fill in all fields");
 	});
 
@@ -44,7 +44,7 @@ describe("LoginScreen", () => {
 		render(<LoginScreen />);
 		fireEvent.changeText(screen.getByPlaceholderText("Email"), "parent@school.com");
 		fireEvent.changeText(screen.getByPlaceholderText("Password"), "password123");
-		fireEvent.press(screen.getByText("Login"));
+		fireEvent.press(screen.getByText("Sign In"));
 		await waitFor(() => {
 			expect(mockSignIn).toHaveBeenCalledWith({
 				email: "parent@school.com",
@@ -58,7 +58,7 @@ describe("LoginScreen", () => {
 		render(<LoginScreen />);
 		fireEvent.changeText(screen.getByPlaceholderText("Email"), "parent@school.com");
 		fireEvent.changeText(screen.getByPlaceholderText("Password"), "password123");
-		fireEvent.press(screen.getByText("Login"));
+		fireEvent.press(screen.getByText("Sign In"));
 		await waitFor(() => {
 			expect(Alert.alert).toHaveBeenCalledWith("Success", "Logged in successfully");
 		});
@@ -69,7 +69,7 @@ describe("LoginScreen", () => {
 		render(<LoginScreen />);
 		fireEvent.changeText(screen.getByPlaceholderText("Email"), "wrong@email.com");
 		fireEvent.changeText(screen.getByPlaceholderText("Password"), "bad");
-		fireEvent.press(screen.getByText("Login"));
+		fireEvent.press(screen.getByText("Sign In"));
 		await waitFor(() => {
 			expect(Alert.alert).toHaveBeenCalledWith("Login Failed", "Invalid credentials");
 		});
@@ -80,7 +80,7 @@ describe("LoginScreen", () => {
 		render(<LoginScreen />);
 		fireEvent.changeText(screen.getByPlaceholderText("Email"), "test@test.com");
 		fireEvent.changeText(screen.getByPlaceholderText("Password"), "pass");
-		fireEvent.press(screen.getByText("Login"));
+		fireEvent.press(screen.getByText("Sign In"));
 		await waitFor(() => {
 			expect(Alert.alert).toHaveBeenCalledWith("Error", "An unexpected error occurred");
 		});
