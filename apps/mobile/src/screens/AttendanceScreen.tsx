@@ -1,19 +1,9 @@
 import { X } from "lucide-react-native";
 import type React from "react";
 import { useEffect, useState } from "react";
-import {
-	ActivityIndicator,
-	Alert,
-	FlatList,
-	Modal,
-	ScrollView,
-	StyleSheet,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	View,
-} from "react-native";
-import { theme } from "../lib/theme";
+import { ActivityIndicator, Alert, FlatList, Pressable, ScrollView, View } from "react-native";
+import { Badge, Body, Button, Card, H2, Input, Modal, Muted } from "../components/ui";
+import { useTheme } from "../lib/use-theme";
 import { trpc } from "../lib/trpc";
 
 interface Child {
@@ -36,6 +26,7 @@ interface AttendanceItem {
 export const AttendanceScreen: React.FC = () => {
 	const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const { isDark } = useTheme();
 
 	// Form State
 	const [startDate, setStartDate] = useState("");
@@ -119,345 +110,139 @@ export const AttendanceScreen: React.FC = () => {
 		});
 	};
 
-	const getStatusStyle = (mark: string) => {
+	const getStatusVariant = (mark: string): "default" | "success" | "warning" | "destructive" => {
 		switch (mark) {
 			case "PRESENT":
-				return styles.statusPresent;
+				return "success";
 			case "LATE":
-				return styles.statusLate;
+				return "warning";
 			case "ABSENT_AUTHORISED":
-				return styles.statusAbsentAuthorised;
+				return "warning";
 			case "ABSENT_UNAUTHORISED":
-				return styles.statusAbsentUnauthorised;
+				return "destructive";
 			default:
-				return styles.statusLate;
-		}
-	};
-
-	const getStatusTextStyle = (mark: string) => {
-		switch (mark) {
-			case "PRESENT":
-				return styles.statusTextPresent;
-			case "LATE":
-				return styles.statusTextLate;
-			case "ABSENT_AUTHORISED":
-				return styles.statusTextAbsentAuthorised;
-			case "ABSENT_UNAUTHORISED":
-				return styles.statusTextAbsentUnauthorised;
-			default:
-				return styles.statusTextLate;
+				return "warning";
 		}
 	};
 
 	const renderAttendanceItem = ({ item }: { item: AttendanceItem }) => (
-		<View style={styles.recordCard}>
+		<Card className="flex-row justify-between items-center">
 			<View>
-				<Text style={styles.recordDate}>
+				<Body className="font-semibold">
 					{new Date(item.date).toLocaleDateString("en-GB", {
 						weekday: "short",
 						day: "numeric",
 						month: "short",
 					})}
-				</Text>
-				<Text style={styles.recordSession}>{item.session} Session</Text>
+				</Body>
+				<Muted className="mt-0.5">{item.session} Session</Muted>
 			</View>
-			<View style={[styles.statusBadge, getStatusStyle(item.mark)]}>
-				<Text style={[styles.statusText, getStatusTextStyle(item.mark)]}>
-					{item.mark.replace(/_/g, " ")}
-				</Text>
-			</View>
-		</View>
+			<Badge variant={getStatusVariant(item.mark)}>{item.mark.replace(/_/g, " ")}</Badge>
+		</Card>
 	);
 
 	if (isLoadingChildren) {
 		return (
-			<View style={styles.loadingContainer}>
-				<ActivityIndicator size="large" color={theme.colors.primary} />
+			<View className="flex-1 bg-background justify-center items-center">
+				<ActivityIndicator size="large" color="#FF7D45" />
 			</View>
 		);
 	}
 
 	return (
-		<View style={styles.container}>
+		<View className="flex-1 bg-background">
 			{/* Child Selector */}
-			<View style={styles.childSelectorContainer}>
+			<View className="py-3 border-b border-border bg-card">
 				<ScrollView
 					horizontal
 					showsHorizontalScrollIndicator={false}
-					contentContainerStyle={styles.childSelectorContent}
+					contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
 				>
 					{children?.map((child) => (
-						<TouchableOpacity
+						<Pressable
 							key={child.id}
-							style={[styles.childChip, selectedChildId === child.id && styles.childChipSelected]}
+							className={`px-4 py-2 rounded-full border ${
+								selectedChildId === child.id
+									? "bg-primary border-primary"
+									: "bg-secondary border-border"
+							}`}
 							onPress={() => setSelectedChildId(child.id)}
 						>
-							<Text
-								style={[
-									styles.childChipText,
-									selectedChildId === child.id && styles.childChipTextSelected,
-								]}
+							<Body
+								className={`text-sm font-medium ${
+									selectedChildId === child.id ? "text-primary-foreground" : "text-foreground"
+								}`}
 							>
 								{child.firstName}
-							</Text>
-						</TouchableOpacity>
+							</Body>
+						</Pressable>
 					))}
 				</ScrollView>
 			</View>
 
 			{/* Report Absence Button */}
-			<View style={styles.actionContainer}>
-				<TouchableOpacity style={styles.reportButton} onPress={() => setIsModalVisible(true)}>
-					<Text style={styles.reportButtonText}>Report Absence</Text>
-				</TouchableOpacity>
+			<View className="p-4 bg-card border-b border-border">
+				<Button onPress={() => setIsModalVisible(true)}>Report Absence</Button>
 			</View>
 
 			{/* Attendance List */}
 			{isLoadingAttendance ? (
-				<ActivityIndicator size="large" color={theme.colors.primary} style={{ marginTop: 20 }} />
+				<View className="flex-1 justify-center items-center">
+					<ActivityIndicator size="large" color="#FF7D45" />
+				</View>
 			) : (
 				<FlatList
 					data={attendanceRecords}
 					renderItem={renderAttendanceItem}
 					keyExtractor={(item, index) => index.toString()}
-					contentContainerStyle={styles.listContent}
-					ListEmptyComponent={<Text style={styles.emptyText}>No attendance records found.</Text>}
+					contentContainerStyle={{ padding: 16, gap: 12 }}
+					ListEmptyComponent={
+						<Muted className="text-center mt-10">No attendance records found.</Muted>
+					}
 				/>
 			)}
 
 			{/* Modal */}
-			<Modal
-				visible={isModalVisible}
-				animationType="slide"
-				presentationStyle="pageSheet"
-				onRequestClose={() => setIsModalVisible(false)}
-			>
-				<View style={styles.modalContainer}>
-					<View style={styles.modalHeader}>
-						<Text style={styles.modalTitle}>Report Absence</Text>
-						<TouchableOpacity onPress={() => setIsModalVisible(false)}>
-							<X color={theme.colors.text} size={24} />
-						</TouchableOpacity>
+			<Modal visible={isModalVisible} onClose={() => setIsModalVisible(false)}>
+				<View className="flex-row justify-between items-center mb-5">
+					<H2>Report Absence</H2>
+					<Pressable onPress={() => setIsModalVisible(false)} className="p-1">
+						<X color={isDark ? "#E5E7EB" : "#2D3748"} size={24} />
+					</Pressable>
+				</View>
+
+				<View className="gap-4">
+					<View>
+						<Body className="font-medium mb-1.5">Start Date (YYYY-MM-DD)</Body>
+						<Input placeholder="2023-10-25" value={startDate} onChangeText={setStartDate} />
 					</View>
 
-					<View style={styles.formContainer}>
-						<Text style={styles.label}>Start Date (YYYY-MM-DD)</Text>
-						<TextInput
-							style={styles.input}
-							placeholder="2023-10-25"
-							value={startDate}
-							onChangeText={setStartDate}
-						/>
+					<View>
+						<Body className="font-medium mb-1.5">End Date (Optional, YYYY-MM-DD)</Body>
+						<Input placeholder="2023-10-26" value={endDate} onChangeText={setEndDate} />
+					</View>
 
-						<Text style={styles.label}>End Date (Optional, YYYY-MM-DD)</Text>
-						<TextInput
-							style={styles.input}
-							placeholder="2023-10-26"
-							value={endDate}
-							onChangeText={setEndDate}
-						/>
-
-						<Text style={styles.label}>Reason</Text>
-						<TextInput
-							style={[styles.input, styles.textArea]}
+					<View>
+						<Body className="font-medium mb-1.5">Reason</Body>
+						<Input
 							placeholder="Sick, Family Event, etc."
 							value={reason}
 							onChangeText={setReason}
 							multiline
 							numberOfLines={3}
+							className="h-24"
 						/>
-
-						<TouchableOpacity
-							style={styles.submitButton}
-							onPress={handleSubmitAbsence}
-							disabled={reportAbsenceMutation.isPending}
-						>
-							{reportAbsenceMutation.isPending ? (
-								<ActivityIndicator color={theme.colors.card} />
-							) : (
-								<Text style={styles.submitButtonText}>Submit Report</Text>
-							)}
-						</TouchableOpacity>
 					</View>
+
+					<Button
+						onPress={handleSubmitAbsence}
+						disabled={reportAbsenceMutation.isPending}
+						className="mt-4"
+					>
+						{reportAbsenceMutation.isPending ? "Submitting..." : "Submit Report"}
+					</Button>
 				</View>
 			</Modal>
 		</View>
 	);
 };
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: theme.colors.background,
-	},
-	loadingContainer: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-	},
-	childSelectorContainer: {
-		paddingVertical: 12,
-		borderBottomWidth: 1,
-		borderBottomColor: theme.colors.border,
-		backgroundColor: theme.colors.card,
-	},
-	childSelectorContent: {
-		paddingHorizontal: 16,
-		gap: 8,
-	},
-	childChip: {
-		paddingHorizontal: 16,
-		paddingVertical: 8,
-		borderRadius: 20,
-		backgroundColor: theme.colors.secondary,
-		borderWidth: 1,
-		borderColor: theme.colors.border,
-	},
-	childChipSelected: {
-		backgroundColor: theme.colors.primary,
-		borderColor: theme.colors.primary,
-	},
-	childChipText: {
-		fontSize: 14,
-		fontWeight: "500",
-		color: theme.colors.text,
-	},
-	childChipTextSelected: {
-		color: theme.colors.card,
-	},
-	actionContainer: {
-		padding: 16,
-		backgroundColor: theme.colors.card,
-		borderBottomWidth: 1,
-		borderBottomColor: theme.colors.border,
-	},
-	reportButton: {
-		backgroundColor: theme.colors.primary,
-		paddingVertical: 12,
-		borderRadius: 8,
-		alignItems: "center",
-	},
-	reportButtonText: {
-		color: theme.colors.card,
-		fontSize: 16,
-		fontWeight: "600",
-	},
-	listContent: {
-		padding: 16,
-		gap: 12,
-	},
-	recordCard: {
-		backgroundColor: theme.colors.card,
-		padding: 16,
-		borderRadius: 12,
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		shadowColor: "#000",
-		shadowOffset: { width: 0, height: 1 },
-		shadowOpacity: 0.05,
-		shadowRadius: 2,
-		elevation: 2,
-	},
-	recordDate: {
-		fontSize: 16,
-		fontWeight: "600",
-		color: theme.colors.text,
-	},
-	recordSession: {
-		fontSize: 14,
-		color: theme.colors.textMuted,
-		marginTop: 2,
-	},
-	statusBadge: {
-		paddingHorizontal: 10,
-		paddingVertical: 4,
-		borderRadius: 12,
-	},
-	statusPresent: {
-		backgroundColor: theme.colors.present,
-	},
-	statusAbsentUnauthorised: {
-		backgroundColor: theme.colors.absent,
-	},
-	statusAbsentAuthorised: {
-		backgroundColor: theme.colors.warning,
-	},
-	statusLate: {
-		backgroundColor: theme.colors.late,
-	},
-	statusText: {
-		fontSize: 12,
-		fontWeight: "600",
-	},
-	statusTextPresent: {
-		color: theme.colors.presentText,
-	},
-	statusTextAbsentUnauthorised: {
-		color: theme.colors.absentText,
-	},
-	statusTextAbsentAuthorised: {
-		color: theme.colors.lateText,
-	},
-	statusTextLate: {
-		color: theme.colors.lateText,
-	},
-	emptyText: {
-		textAlign: "center",
-		color: theme.colors.textMuted,
-		marginTop: 40,
-	},
-	// Modal Styles
-	modalContainer: {
-		flex: 1,
-		backgroundColor: theme.colors.card,
-		paddingTop: 20,
-	},
-	modalHeader: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		paddingHorizontal: 20,
-		paddingBottom: 20,
-		borderBottomWidth: 1,
-		borderBottomColor: theme.colors.border,
-	},
-	modalTitle: {
-		fontSize: 18,
-		fontWeight: "600",
-	},
-	formContainer: {
-		padding: 20,
-	},
-	label: {
-		fontSize: 14,
-		fontWeight: "500",
-		color: theme.colors.text,
-		marginBottom: 6,
-		marginTop: 16,
-	},
-	input: {
-		borderWidth: 1,
-		borderColor: theme.colors.border,
-		borderRadius: 8,
-		paddingHorizontal: 12,
-		paddingVertical: 10,
-		fontSize: 16,
-	},
-	textArea: {
-		height: 100,
-		textAlignVertical: "top",
-	},
-	submitButton: {
-		backgroundColor: theme.colors.primary,
-		paddingVertical: 14,
-		borderRadius: 8,
-		alignItems: "center",
-		marginTop: 32,
-	},
-	submitButtonText: {
-		color: theme.colors.card,
-		fontSize: 16,
-		fontWeight: "600",
-	},
-});
