@@ -15,10 +15,10 @@ export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({ children
 	const [queryClient] = useState(() => new QueryClient());
 	const [trpcClient] = useState(() =>
 		trpc.createClient({
-			transformer: superjson,
 			links: [
 				httpBatchLink({
 					url: getApiUrl(),
+					transformer: superjson,
 					async headers() {
 						const session = await authClient.getSession();
 						return {

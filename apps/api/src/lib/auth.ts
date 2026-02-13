@@ -87,5 +87,10 @@ export const auth = betterAuth({
 	trustedOrigins: [
 		process.env.WEB_URL || (process.env.NODE_ENV === "development" ? "http://localhost:3000" : ""),
 		process.env.MOBILE_APP_SCHEME ?? "schoolconnect://",
+		"http://192.168.1.197:8081",
 	].filter(Boolean),
+	advanced: {
+		crossSubDomainCookies: { enabled: false },
+		disableCSRFCheck: process.env.NODE_ENV !== "production",
+	},
 });

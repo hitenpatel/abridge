@@ -3,7 +3,7 @@ import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, View } from "
 import { Button, Card, H1, Input, Muted } from "../components/ui";
 import { authClient } from "../lib/auth-client";
 
-export const LoginScreen = () => {
+export const LoginScreen = ({ onLoginSuccess }: { onLoginSuccess?: () => void }) => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
@@ -16,19 +16,21 @@ export const LoginScreen = () => {
 
 		setLoading(true);
 		try {
+			console.log("Attempting login to:", authClient.$fetch.baseURL ?? "unknown");
 			const { data, error } = await authClient.signIn.email({
 				email,
 				password,
 			});
 
 			if (error) {
+				console.error("Login error:", error);
 				Alert.alert("Login Failed", error.message || "Invalid credentials");
 			} else {
-				Alert.alert("Success", "Logged in successfully");
+				onLoginSuccess?.();
 			}
 		} catch (err) {
+			console.error("Login exception:", err);
 			Alert.alert("Error", "An unexpected error occurred");
-			console.error(err);
 		} finally {
 			setLoading(false);
 		}

@@ -16,7 +16,9 @@ interface DashboardScreenProps {
 }
 
 export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) => {
-	const { data, isLoading, isError, refetch, isRefetching } = trpc.dashboard.getSummary.useQuery();
+	const { data, isLoading, isError, error, refetch, isRefetching } = trpc.dashboard.getSummary.useQuery();
+
+	console.log("Dashboard query state: isLoading=" + isLoading + " isError=" + isError + " error=" + error?.message + " dataKeys=" + (data ? Object.keys(data).join(",") : "null") + " dataStr=" + JSON.stringify(data)?.slice(0, 300));
 
 	const onRefresh = React.useCallback(() => {
 		refetch();
@@ -48,7 +50,16 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
 		);
 	}
 
-	const { children, metrics, todayAttendance, upcomingEvents, attendancePercentage } = data;
+	const { children, metrics, todayAttendance, upcomingEvents, attendancePercentage } = data ?? {};
+
+	if (!metrics) {
+		return (
+			<View className="flex-1 bg-background justify-center items-center px-5">
+				<Body className="text-destructive mb-3">Failed to load dashboard</Body>
+				<Button onPress={() => refetch()}>Retry</Button>
+			</View>
+		);
+	}
 
 	return (
 		<ScrollView

@@ -1,4 +1,16 @@
 import type { ConfigContext, ExpoConfig } from "expo/config";
+import os from "node:os";
+
+function getLocalIp(): string {
+	for (const interfaces of Object.values(os.networkInterfaces())) {
+		for (const iface of interfaces ?? []) {
+			if (iface.family === "IPv4" && !iface.internal) {
+				return iface.address;
+			}
+		}
+	}
+	return "localhost";
+}
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
 	...config,
@@ -19,6 +31,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		},
 	},
 	extra: {
-		apiUrl: process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:4000",
+		apiUrl: process.env.EXPO_PUBLIC_API_URL ?? `http://${getLocalIp()}:4000`,
 	},
 });

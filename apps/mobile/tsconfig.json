@@ -1,12 +1,21 @@
 {
-	"extends": "@schoolconnect/tsconfig/react-native.json",
-	"compilerOptions": {
-		"declaration": false,
-		"declarationMap": false,
-		"paths": {
-			"@/*": ["./src/*"],
-			"@schoolconnect/api/*": ["../api/src/*"]
-		}
-	},
-	"include": ["**/*.ts", "**/*.tsx", "../../apps/api/src/router/index.ts"]
+  "extends": "@schoolconnect/tsconfig/react-native.json",
+  "compilerOptions": {
+    "declaration": false,
+    "declarationMap": false,
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@schoolconnect/api/*": [
+        "../api/src/*"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "../../apps/api/src/router/index.ts",
+    "nativewind-env.d.ts"
+  ]
 }

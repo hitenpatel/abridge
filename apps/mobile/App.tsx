@@ -13,6 +13,7 @@ import {
 	type NativeStackNavigationProp,
 	createNativeStackNavigator,
 } from "@react-navigation/native-stack";
+import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -82,6 +83,7 @@ const Tab = createBottomTabNavigator<TabParamList>();
 function HeaderRight() {
 	const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 	const { isDark } = useTheme();
+	const logout = useLogout();
 	const color = isDark ? "#E5E7EB" : "#2D3748";
 
 	return (
@@ -94,11 +96,7 @@ function HeaderRight() {
 			>
 				<Search size={20} color={color} />
 			</TouchableOpacity>
-			<TouchableOpacity
-				onPress={async () => {
-					await authClient.signOut();
-				}}
-			>
+			<TouchableOpacity onPress={logout}>
 				<Text className="text-foreground text-sm font-medium">Logout</Text>
 			</TouchableOpacity>
 		</View>
@@ -190,8 +188,13 @@ function AuthenticatedApp() {
 					return;
 				}
 
-				// Get push token
-				const tokenData = await Notifications.getExpoPushTokenAsync();
+				// Get push token (requires EAS projectId, skip in Expo Go)
+				const projectId = Constants.expoConfig?.extra?.eas?.projectId;
+				if (!projectId) {
+					console.log("Skipping push token registration (no EAS projectId)");
+					return;
+				}
+				const tokenData = await Notifications.getExpoPushTokenAsync({ projectId });
 				if (tokenData.data) {
 					await updatePushToken.mutateAsync({ pushToken: tokenData.data });
 					console.log("Push token registered successfully");
@@ -240,11 +243,28 @@ function AuthenticatedApp() {
 	);
 }
 
+const LogoutContext = React.createContext<() => void>(() => {});
+export const useLogout = () => React.useContext(LogoutContext);
+
 function AppContent() {
 	const { data: session, isPending } = authClient.useSession();
+	const [authState, setAuthState] = React.useState<"auto" | "logged-out">("auto");
 	const { isDark, colorScheme } = useTheme();
 
-	if (isPending) {
+	const handleLogout = React.useCallback(async () => {
+		try {
+			await authClient.signOut();
+		} catch (e) {
+			// Clear local state even if API call fails
+		}
+		setAuthState("logged-out");
+	}, []);
+
+	const handleLoginSuccess = React.useCallback(() => {
+		setAuthState("auto");
+	}, []);
+
+	if (isPending && authState === "auto") {
 		return (
 			<View className="flex-1 bg-background items-center justify-center">
 				<ActivityIndicator size="large" color="#FF7D45" />
@@ -253,20 +273,22 @@ function AppContent() {
 		);
 	}
 
-	if (!session) {
+	if (!session || authState === "logged-out") {
 		return (
 			<SafeAreaView className={`flex-1 ${colorScheme}`}>
-				<LoginScreen />
+				<LoginScreen onLoginSuccess={handleLoginSuccess} />
 				<StatusBar style="auto" />
 			</SafeAreaView>
 		);
 	}
 
 	return (
+		<LogoutContext.Provider value={handleLogout}>
 		<View className={`flex-1 ${colorScheme}`}>
 			<AuthenticatedApp />
 			<StatusBar style={isDark ? "light" : "dark"} />
 		</View>
+		</LogoutContext.Provider>
 	);
 }
 
