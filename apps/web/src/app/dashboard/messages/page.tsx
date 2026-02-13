@@ -1,195 +1,271 @@
 "use client";
 
-import { MessageList } from "@/components/messaging/message-list";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
 import { trpc } from "@/lib/trpc";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-
-const BADGE_VARIANT: Record<string, "destructive" | "info" | "secondary"> = {
-	URGENT: "destructive",
-	STANDARD: "info",
-	FYI: "secondary",
-};
-
-function ParentMessageList() {
-	const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
-	const utils = trpc.useUtils();
-	const { data, isLoading, isError } = trpc.messaging.listReceived.useQuery({
-		limit: 20,
-	});
-
-	const markRead = trpc.messaging.markRead.useMutation({
-		onSuccess: () => {
-			// Invalidate to refresh the list
-			utils.messaging.listReceived.invalidate();
-		},
-	});
-
-	// Mark message as read when selected
-	useEffect(() => {
-		if (selectedMessage && data) {
-			const message = data.items.find((m) => m.id === selectedMessage);
-			if (message && !message.isRead) {
-				markRead.mutate({ messageId: message.id });
-			}
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedMessage]);
-
-	if (isLoading) {
-		return (
-			<div className="space-y-4">
-				{[...Array(3)].map((_, i) => (
-					<Card key={i}>
-						<CardContent className="p-6">
-							<Skeleton className="h-6 w-3/4 mb-2" />
-							<Skeleton className="h-4 w-full mb-2" />
-							<Skeleton className="h-4 w-1/2" />
-						</CardContent>
-					</Card>
-				))}
-			</div>
-		);
-	}
-
-	if (isError) {
-		return <div className="p-4 text-center text-destructive">Failed to load messages.</div>;
-	}
-
-	if (!data || data.items.length === 0) {
-		return <div className="p-4 text-center text-muted-foreground">No messages yet.</div>;
-	}
-
-	return (
-		<div className="space-y-4">
-			<Card>
-				<CardContent className="p-0">
-					<Table>
-						<TableHeader>
-							<TableRow>
-								<TableHead>Date</TableHead>
-								<TableHead>Subject</TableHead>
-								<TableHead>Category</TableHead>
-								<TableHead>School</TableHead>
-								<TableHead>Status</TableHead>
-							</TableRow>
-						</TableHeader>
-						<TableBody>
-							{data.items.map((message) => (
-								<TableRow
-									key={message.id}
-									className="cursor-pointer hover:bg-muted"
-									onClick={() => setSelectedMessage(message.id)}
-								>
-									<TableCell className="whitespace-nowrap text-muted-foreground">
-										{new Date(message.createdAt).toLocaleDateString()}
-									</TableCell>
-									<TableCell className="whitespace-nowrap">
-										<span className={message.isRead ? "text-muted-foreground" : "font-semibold text-foreground"}>
-											{message.subject}
-										</span>
-									</TableCell>
-									<TableCell className="whitespace-nowrap">
-										<Badge variant={BADGE_VARIANT[message.category] || "secondary"}>
-											{message.category}
-										</Badge>
-									</TableCell>
-									<TableCell className="whitespace-nowrap text-muted-foreground">
-										{message.schoolName}
-									</TableCell>
-									<TableCell className="whitespace-nowrap">
-										{message.isRead ? (
-											<span className="text-muted-foreground text-sm">Read</span>
-										) : (
-											<Badge variant="info">Unread</Badge>
-										)}
-									</TableCell>
-								</TableRow>
-							))}
-						</TableBody>
-					</Table>
-				</CardContent>
-			</Card>
-
-			{selectedMessage && data && (() => {
-				const message = data.items.find((m) => m.id === selectedMessage);
-				if (!message) return null;
-
-				return (
-					<Card>
-						<CardContent className="p-6">
-							<div className="flex items-start justify-between mb-4">
-								<div>
-									<h3 className="text-xl font-semibold text-foreground mb-1">{message.subject}</h3>
-									<p className="text-sm text-muted-foreground">
-										{new Date(message.createdAt).toLocaleString()} • {message.schoolName}
-									</p>
-								</div>
-								<Badge variant={BADGE_VARIANT[message.category] || "secondary"}>
-									{message.category}
-								</Badge>
-							</div>
-							<div className="prose prose-sm max-w-none text-foreground">
-								{message.body.split("\n").map((line, i) => (
-									<p key={i}>{line}</p>
-								))}
-							</div>
-						</CardContent>
-					</Card>
-				);
-			})()}
-		</div>
-	);
-}
+import { useState } from "react";
 
 export default function MessagesPage() {
-	const { data: session, isLoading } = trpc.auth.getSession.useQuery();
-	const isStaff = !!session?.staffRole;
-	const schoolId = session?.schoolId || "school-1";
+	const { data: session, isLoading: sessionLoading } = trpc.auth.getSession.useQuery();
+	const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
+	const [messageInput, setMessageInput] = useState("");
 
-	if (isLoading) {
-		return (
-			<div className="max-w-4xl mx-auto px-4">
-				<Skeleton className="h-8 w-48 mb-6" />
-				<Skeleton className="h-64 w-full" />
-			</div>
-		);
-	}
+	const { data: messages, isLoading: messagesLoading } = trpc.messaging.listReceived.useQuery(
+		{ limit: 20 },
+		{ enabled: !!session && !session.staffRole }
+	);
 
-	if (isStaff) {
-		// Staff view: Show sent messages
+	if (sessionLoading || messagesLoading) {
 		return (
-			<div className="max-w-4xl mx-auto px-4">
-				<div className="flex justify-between items-center mb-6">
-					<h1 className="text-2xl font-bold text-foreground">Sent Messages</h1>
-					<Link href="/dashboard/messages/new">
-						<Button>Compose New</Button>
-					</Link>
+			<div className="flex h-[calc(100vh-120px)]">
+				<div className="w-80 lg:w-96 border-r p-4 space-y-4">
+					<Skeleton className="h-10 w-full" />
+					<Skeleton className="h-16 w-full" />
+					<Skeleton className="h-16 w-full" />
+					<Skeleton className="h-16 w-full" />
 				</div>
-				<MessageList schoolId={schoolId} />
+				<div className="flex-1 p-4">
+					<Skeleton className="h-full w-full" />
+				</div>
 			</div>
 		);
 	}
 
-	// Parent view: Show received messages
+	const selectedMessage = messages?.items.find((m) => m.id === selectedMessageId);
+
+	// Auto-select first message if none selected
+	if (!selectedMessageId && messages?.items && messages.items.length > 0) {
+		setSelectedMessageId(messages.items[0].id);
+	}
+
 	return (
-		<div className="max-w-4xl mx-auto px-4">
-			<div className="flex justify-between items-center mb-6">
-				<h1 className="text-2xl font-bold text-foreground">Messages</h1>
-			</div>
-			<ParentMessageList />
-		</div>
+		<main className="flex h-[calc(100vh-120px)] -mx-10 -my-10">
+			{/* Left Sidebar - Conversation List */}
+			<aside className="w-80 lg:w-96 border-r bg-card flex flex-col">
+				{/* Search */}
+				<div className="p-4 border-b">
+					<div className="relative">
+						<span className="material-symbols-rounded absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+							search
+						</span>
+						<input
+							type="text"
+							placeholder="Search messages..."
+							className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+						/>
+					</div>
+				</div>
+
+				{/* Filter Tabs */}
+				<div className="px-4 py-3 border-b">
+					<div className="flex gap-2">
+						<button
+							type="button"
+							className="px-3 py-1.5 bg-primary text-white text-xs font-semibold rounded-lg"
+						>
+							All Chats
+						</button>
+						<button
+							type="button"
+							className="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-200"
+						>
+							Unread
+						</button>
+						<button
+							type="button"
+							className="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-200"
+						>
+							Teachers
+						</button>
+					</div>
+				</div>
+
+				{/* Conversation List */}
+				<div className="flex-1 overflow-y-auto">
+					{messages?.items && messages.items.length > 0 ? (
+						messages.items.map((message) => (
+							<div
+								key={message.id}
+								onClick={() => setSelectedMessageId(message.id)}
+								className={`group flex items-center gap-3 p-3 cursor-pointer transition-colors ${
+									selectedMessageId === message.id
+										? "bg-orange-50 border-l-4 border-primary"
+										: "hover:bg-gray-50"
+								}`}
+							>
+								<div className="relative">
+									<div className="w-12 h-12 rounded-[20px] bg-primary/10 flex items-center justify-center text-primary font-bold text-lg shadow-sm">
+										{message.schoolName?.[0] || "S"}
+									</div>
+									{!message.isRead && (
+										<div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+									)}
+								</div>
+								<div className="flex-1 min-w-0">
+									<div className="flex justify-between items-baseline mb-1">
+										<h3 className="font-semibold text-gray-900 truncate text-sm">
+											{message.schoolName}
+										</h3>
+										<span className="text-xs text-gray-400">
+											{new Date(message.createdAt).toLocaleDateString(undefined, {
+												month: "short",
+												day: "numeric",
+											})}
+										</span>
+									</div>
+									<p className="text-sm text-gray-500 truncate">{message.subject}</p>
+								</div>
+								{!message.isRead && (
+									<div className="w-5 h-5 bg-primary text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-sm">
+										!
+									</div>
+								)}
+							</div>
+						))
+					) : (
+						<div className="p-8 text-center text-gray-500">
+							<span className="material-symbols-rounded text-4xl mb-2 text-gray-300">
+								inbox
+							</span>
+							<p className="text-sm">No messages yet</p>
+						</div>
+					)}
+				</div>
+			</aside>
+
+			{/* Right Panel - Message Thread */}
+			<section className="flex-1 flex flex-col bg-background">
+				{selectedMessage ? (
+					<>
+						{/* Contact Header */}
+						<div className="bg-white/80 backdrop-blur-sm border-b border-gray-100 p-4 flex justify-between items-center">
+							<div className="flex items-center gap-3">
+								<div className="relative">
+									<div className="w-10 h-10 rounded-[20px] bg-primary/10 flex items-center justify-center text-primary font-bold">
+										{selectedMessage.schoolName?.[0] || "S"}
+									</div>
+									<div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+								</div>
+								<div>
+									<h2 className="text-lg font-bold text-gray-900 leading-tight">
+										{selectedMessage.schoolName}
+									</h2>
+									<p className="text-xs text-gray-500 font-medium">
+										{selectedMessage.category} • School Message
+									</p>
+								</div>
+							</div>
+							<div className="flex items-center gap-3">
+								<button
+									type="button"
+									className="p-2 text-gray-400 hover:text-primary hover:bg-orange-50 rounded-full transition-all"
+									title="View Profile"
+								>
+									<span className="material-symbols-rounded">info</span>
+								</button>
+								<button
+									type="button"
+									className="p-2 text-gray-400 hover:text-primary hover:bg-orange-50 rounded-full transition-all"
+									title="More Options"
+								>
+									<span className="material-symbols-rounded">more_vert</span>
+								</button>
+							</div>
+						</div>
+
+						{/* Messages Area */}
+						<div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50">
+							{/* Date Separator */}
+							<div className="flex justify-center">
+								<span className="bg-gray-200 text-gray-600 text-xs px-3 py-1 rounded-full font-medium">
+									{new Date(selectedMessage.createdAt).toLocaleDateString(undefined, {
+										weekday: "long",
+										month: "short",
+										day: "numeric",
+									})}
+								</span>
+							</div>
+
+							{/* Received Message */}
+							<div className="flex gap-3 max-w-2xl">
+								<div className="w-8 h-8 rounded-[20px] bg-primary/10 flex items-center justify-center text-primary font-bold text-sm shrink-0 mt-1">
+									{selectedMessage.schoolName?.[0] || "S"}
+								</div>
+								<div className="flex flex-col gap-1">
+									<Card className="bg-white p-4 rounded-2xl rounded-bl-sm shadow-sm border border-gray-100">
+										<div className="mb-2">
+											<h3 className="font-semibold text-gray-900 mb-1">
+												{selectedMessage.subject}
+											</h3>
+											<Badge variant="secondary" className="text-xs">
+												{selectedMessage.category}
+											</Badge>
+										</div>
+										<div className="text-gray-800 text-sm leading-relaxed whitespace-pre-wrap">
+											{selectedMessage.body}
+										</div>
+									</Card>
+									<span className="text-[10px] text-gray-400 ml-1">
+										{new Date(selectedMessage.createdAt).toLocaleTimeString(undefined, {
+											hour: "numeric",
+											minute: "2-digit",
+										})}
+									</span>
+								</div>
+							</div>
+						</div>
+
+						{/* Input Area */}
+						<div className="bg-white border-t border-gray-200 p-4">
+							<div className="max-w-4xl mx-auto flex items-end gap-3">
+								<button
+									type="button"
+									className="p-3 text-gray-400 hover:text-primary hover:bg-gray-100 rounded-full transition-all flex-shrink-0"
+								>
+									<span className="material-symbols-rounded">add_circle_outline</span>
+								</button>
+								<div className="flex-1 bg-gray-50 rounded-3xl border border-gray-200 focus-within:ring-2 focus-within:ring-primary/30 focus-within:border-primary transition-all flex items-center shadow-inner">
+									<textarea
+										value={messageInput}
+										onChange={(e) => setMessageInput(e.target.value)}
+										placeholder="Type your message..."
+										rows={1}
+										className="flex-1 bg-transparent px-5 py-3.5 text-sm resize-none focus:outline-none placeholder:text-gray-400"
+									/>
+									<button
+										type="button"
+										className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+									>
+										<span className="material-symbols-rounded">sentiment_satisfied</span>
+									</button>
+								</div>
+								<button
+									type="button"
+									className="p-3 text-gray-400 hover:text-primary hover:bg-gray-100 rounded-full transition-all flex-shrink-0"
+								>
+									<span className="material-symbols-rounded">mic</span>
+								</button>
+								<button
+									type="button"
+									className="p-3 bg-primary hover:bg-orange-600 text-white rounded-full transition-all flex-shrink-0 shadow-lg"
+								>
+									<span className="material-symbols-rounded">send</span>
+								</button>
+							</div>
+						</div>
+					</>
+				) : (
+					<div className="flex-1 flex items-center justify-center text-gray-400">
+						<div className="text-center">
+							<span className="material-symbols-rounded text-6xl mb-4 text-gray-300">
+								chat_bubble_outline
+							</span>
+							<p className="text-lg">Select a conversation to view messages</p>
+						</div>
+					</div>
+				)}
+			</section>
+		</main>
 	);
 }
