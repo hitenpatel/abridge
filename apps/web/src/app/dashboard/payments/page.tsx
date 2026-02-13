@@ -52,7 +52,7 @@ export default function PaymentsDashboardPage() {
 	];
 
 	const balance = 142.5;
-	const firstName = session?.user.name?.split(" ")[0] || "Student";
+	const firstName = session?.name?.split(" ")[0] || "Student";
 
 	return (
 		<div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">

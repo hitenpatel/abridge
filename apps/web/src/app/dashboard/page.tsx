@@ -52,7 +52,7 @@ export default function DashboardPage() {
 		);
 	}
 
-	const firstName = session.user.name?.split(" ")[0] || "there";
+	const firstName = session?.name?.split(" ")[0] || "there";
 	const currentDate = new Date().toLocaleDateString("en-US", {
 		weekday: "long",
 		month: "short",
