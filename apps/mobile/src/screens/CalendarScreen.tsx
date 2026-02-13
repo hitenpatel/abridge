@@ -3,17 +3,10 @@ import type { CompositeNavigationProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock } from "lucide-react-native";
 import React, { useMemo, useState } from "react";
-import {
-	ActivityIndicator,
-	RefreshControl,
-	ScrollView,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import { Pressable, RefreshControl, ScrollView, View } from "react-native";
 import type { RootStackParamList, TabParamList } from "../../App";
-import { theme } from "../lib/theme";
+import { Badge, Body, Button, Card, EmptyState, H2, Muted, Skeleton } from "../components/ui";
+import { useTheme } from "../lib/use-theme";
 import { trpc } from "../lib/trpc";
 
 type CalendarScreenNavigationProp = CompositeNavigationProp<
@@ -25,16 +18,26 @@ interface CalendarScreenProps {
 	navigation: CalendarScreenNavigationProp;
 }
 
-const CATEGORY_STYLES: Record<string, { bg: string; text: string }> = {
-	TERM_DATE: { bg: theme.colors.brandLight, text: theme.colors.brandDark }, // blue
-	INSET_DAY: { bg: theme.colors.late, text: theme.colors.lateText }, // orange
-	EVENT: { bg: theme.colors.present, text: theme.colors.presentText }, // green
-	DEADLINE: { bg: theme.colors.absent, text: theme.colors.absentText }, // red
-	CLUB: { bg: theme.colors.brandLight, text: theme.colors.brandDark }, // purple
+const getCategoryVariant = (category: string): "default" | "destructive" | "warning" | "success" | "info" => {
+	switch (category) {
+		case "TERM_DATE":
+			return "info";
+		case "INSET_DAY":
+			return "warning";
+		case "EVENT":
+			return "success";
+		case "DEADLINE":
+			return "destructive";
+		case "CLUB":
+			return "info";
+		default:
+			return "default";
+	}
 };
 
 export const CalendarScreen: React.FC<CalendarScreenProps> = ({ navigation }) => {
 	const [currentDate, setCurrentDate] = useState(new Date());
+	const { isDark } = useTheme();
 
 	const { startDate, endDate } = useMemo(() => {
 		const year = currentDate.getFullYear();
@@ -71,252 +74,92 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ navigation }) =>
 
 	if (isLoading) {
 		return (
-			<View style={styles.loadingContainer}>
-				<ActivityIndicator size="large" color={theme.colors.primary} />
+			<View className="flex-1 bg-background">
+				<View className="p-4">
+					<Skeleton className="h-12 mb-4" />
+					<Skeleton className="h-24 mb-3" />
+					<Skeleton className="h-24 mb-3" />
+					<Skeleton className="h-24" />
+				</View>
 			</View>
 		);
 	}
 
 	if (isError) {
 		return (
-			<View style={styles.errorContainer}>
-				<Text style={styles.errorText}>Failed to load events</Text>
-				<TouchableOpacity onPress={() => refetch()} style={styles.retryButton}>
-					<Text style={styles.retryText}>Retry</Text>
-				</TouchableOpacity>
+			<View className="flex-1 bg-background justify-center items-center px-5">
+				<Body className="text-destructive mb-3">Failed to load events</Body>
+				<Button onPress={() => refetch()}>Retry</Button>
 			</View>
 		);
 	}
 
 	return (
 		<ScrollView
-			style={styles.container}
-			refreshControl={
-				<RefreshControl
-					refreshing={isRefetching}
-					onRefresh={onRefresh}
-					tintColor={theme.colors.primary}
-				/>
-			}
+			className="flex-1 bg-background"
+			refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={onRefresh} tintColor="#FF7D45" />}
 		>
-			<View style={styles.header}>
-				<TouchableOpacity onPress={handlePreviousMonth} style={styles.navButton}>
-					<ChevronLeft size={24} color={theme.colors.text} />
-				</TouchableOpacity>
-				<Text style={styles.monthTitle}>{formattedMonth}</Text>
-				<TouchableOpacity onPress={handleNextMonth} style={styles.navButton}>
-					<ChevronRight size={24} color={theme.colors.text} />
-				</TouchableOpacity>
+			<View className="flex-row items-center justify-between p-4 bg-card border-b border-border">
+				<Pressable onPress={handlePreviousMonth} className="p-2 active:opacity-70">
+					<ChevronLeft size={24} color={isDark ? "#E5E7EB" : "#2D3748"} />
+				</Pressable>
+				<H2>{formattedMonth}</H2>
+				<Pressable onPress={handleNextMonth} className="p-2 active:opacity-70">
+					<ChevronRight size={24} color={isDark ? "#E5E7EB" : "#2D3748"} />
+				</Pressable>
 			</View>
 
-			<View style={styles.eventsList}>
+			<View className="p-4">
 				{!events || events.length === 0 ? (
-					<View style={styles.emptyContainer}>
-						<CalendarIcon size={48} color={theme.colors.inactiveTab} style={styles.emptyIcon} />
-						<Text style={styles.emptyText}>No events found for this month</Text>
-					</View>
+					<EmptyState
+						icon={<CalendarIcon size={48} color="#9CA3AF" />}
+						title="No events found"
+						description="No events scheduled for this month"
+					/>
 				) : (
 					events.map((event) => {
 						const eventDate = new Date(event.startDate);
-						const categoryStyle = CATEGORY_STYLES[event.category] || {
-							bg: theme.colors.secondary,
-							text: theme.colors.text,
-						};
 
 						return (
-							<View key={event.id} style={styles.eventCard}>
-								<View style={styles.eventDateBox}>
-									<Text style={styles.eventDay}>{eventDate.getDate()}</Text>
-									<Text style={styles.eventMonth}>
+							<Card key={event.id} className="flex-row mb-3 p-3">
+								<View className="bg-primary/10 p-2.5 rounded-lg items-center justify-center w-12 h-15 mr-3">
+									<Body className="text-lg font-bold text-primary">{eventDate.getDate()}</Body>
+									<Body className="text-xs font-semibold text-primary uppercase">
 										{eventDate.toLocaleString("default", { month: "short" })}
-									</Text>
+									</Body>
 								</View>
-								<View style={styles.eventDetails}>
-									<View style={styles.eventHeader}>
-										<Text style={styles.eventTitle}>{event.title}</Text>
-									</View>
+								<View className="flex-1">
+									<Body className="font-semibold mb-1">{event.title}</Body>
 
-									<View style={styles.eventMeta}>
-										<View style={styles.eventTimeRow}>
-											{!event.allDay && (
-												<>
-													<Clock size={14} color={theme.colors.textMuted} />
-													<Text style={styles.eventTime}>
-														{eventDate.toLocaleTimeString([], {
-															hour: "2-digit",
-															minute: "2-digit",
-														})}
-													</Text>
-												</>
-											)}
-										</View>
-
-										<View style={[styles.categoryBadge, { backgroundColor: categoryStyle.bg }]}>
-											<Text style={[styles.categoryText, { color: categoryStyle.text }]}>
-												{event.category.replace("_", " ")}
-											</Text>
-										</View>
+									<View className="flex-row items-center justify-between mb-1.5">
+										{!event.allDay && (
+											<View className="flex-row items-center gap-1">
+												<Clock size={14} color="#9CA3AF" />
+												<Muted className="text-xs">
+													{eventDate.toLocaleTimeString([], {
+														hour: "2-digit",
+														minute: "2-digit",
+													})}
+												</Muted>
+											</View>
+										)}
+										<Badge variant={getCategoryVariant(event.category)}>
+											{event.category.replace("_", " ")}
+										</Badge>
 									</View>
 
 									{event.body ? (
-										<Text style={styles.eventBody} numberOfLines={2}>
+										<Muted className="text-sm leading-5" numberOfLines={2}>
 											{event.body}
-										</Text>
+										</Muted>
 									) : null}
 								</View>
-							</View>
+							</Card>
 						);
 					})
 				)}
 			</View>
-			<View style={{ height: 20 }} />
+			<View className="h-5" />
 		</ScrollView>
 	);
 };
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: theme.colors.background,
-	},
-	loadingContainer: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-	},
-	errorContainer: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		padding: 20,
-	},
-	errorText: {
-		fontSize: 16,
-		color: theme.colors.error,
-		marginBottom: 12,
-	},
-	retryButton: {
-		paddingVertical: 8,
-		paddingHorizontal: 16,
-		backgroundColor: theme.colors.primary,
-		borderRadius: 6,
-	},
-	retryText: {
-		color: theme.colors.card,
-		fontWeight: "600",
-	},
-	header: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-		padding: 16,
-		backgroundColor: theme.colors.card,
-		borderBottomWidth: 1,
-		borderBottomColor: theme.colors.border,
-	},
-	monthTitle: {
-		fontSize: 18,
-		fontWeight: "700",
-		color: theme.colors.text,
-	},
-	navButton: {
-		padding: 8,
-	},
-	eventsList: {
-		padding: 16,
-	},
-	emptyContainer: {
-		alignItems: "center",
-		justifyContent: "center",
-		paddingVertical: 40,
-	},
-	emptyIcon: {
-		marginBottom: 12,
-	},
-	emptyText: {
-		fontSize: 16,
-		color: theme.colors.textMuted,
-		fontStyle: "italic",
-	},
-	eventCard: {
-		flexDirection: "row",
-		backgroundColor: theme.colors.card,
-		padding: 12,
-		borderRadius: 12,
-		borderWidth: 1,
-		borderColor: theme.colors.border,
-		marginBottom: 12,
-		shadowColor: "#000",
-		shadowOffset: { width: 0, height: 1 },
-		shadowOpacity: 0.05,
-		shadowRadius: 2,
-		elevation: 2,
-	},
-	eventDateBox: {
-		backgroundColor: theme.colors.brandLight,
-		padding: 10,
-		borderRadius: 8,
-		alignItems: "center",
-		justifyContent: "center",
-		width: 50,
-		marginRight: 12,
-		height: 60,
-	},
-	eventDay: {
-		fontSize: 18,
-		fontWeight: "700",
-		color: theme.colors.primary,
-	},
-	eventMonth: {
-		fontSize: 12,
-		fontWeight: "600",
-		color: theme.colors.primary,
-		textTransform: "uppercase",
-	},
-	eventDetails: {
-		flex: 1,
-		justifyContent: "flex-start",
-	},
-	eventHeader: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "flex-start",
-		marginBottom: 4,
-	},
-	eventTitle: {
-		fontSize: 16,
-		fontWeight: "600",
-		color: theme.colors.text,
-		flex: 1,
-	},
-	eventMeta: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-		marginBottom: 6,
-	},
-	eventTimeRow: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: 4,
-	},
-	eventTime: {
-		fontSize: 12,
-		color: theme.colors.textMuted,
-	},
-	categoryBadge: {
-		paddingHorizontal: 8,
-		paddingVertical: 2,
-		borderRadius: 4,
-	},
-	categoryText: {
-		fontSize: 10,
-		fontWeight: "700",
-		textTransform: "uppercase",
-	},
-	eventBody: {
-		fontSize: 14,
-		color: theme.colors.textMuted,
-		lineHeight: 20,
-	},
-});
