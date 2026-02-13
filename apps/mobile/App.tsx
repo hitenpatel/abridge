@@ -32,6 +32,7 @@ import {
 	View,
 } from "react-native";
 import { authClient } from "./src/lib/auth-client";
+import { hapticLight } from "./src/lib/haptics";
 import { TRPCProvider } from "./src/lib/provider";
 import { ThemeProvider } from "./src/lib/theme-provider";
 import { useTheme } from "./src/lib/use-theme";
@@ -121,6 +122,15 @@ function TabNavigator() {
 				tabBarStyle: { backgroundColor: isDark ? "#1E1E1E" : "#FFFFFF" },
 				tabBarActiveTintColor: "#FF7D45",
 				tabBarInactiveTintColor: "#6B7280",
+				tabBarButton: (props) => (
+					<TouchableOpacity
+						{...props}
+						onPress={(e) => {
+							hapticLight();
+							props.onPress?.(e);
+						}}
+					/>
+				),
 			}}
 		>
 			<Tab.Screen
