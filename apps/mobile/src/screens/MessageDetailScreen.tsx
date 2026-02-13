@@ -1,31 +1,24 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useEffect, useCallback } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useEffect } from "react";
+import { ScrollView, View } from "react-native";
 import type { RootStackParamList } from "../../App";
-import { theme } from "../lib/theme";
+import { Badge, Body, H1, Muted, Separator } from "../components/ui";
 import { trpc } from "../lib/trpc";
 
 type MessageDetailScreenProps = NativeStackScreenProps<RootStackParamList, "MessageDetail">;
 
-const getCategoryColor = (category: string): string => {
-	switch (category) {
-		case "URGENT":
-			return theme.colors.absentText;
-		case "FYI":
-			return theme.colors.primary;
+const getCategoryVariant = (category: string): "default" | "destructive" | "warning" | "success" | "info" => {
+	switch (category.toLowerCase()) {
+		case "urgent":
+			return "destructive";
+		case "announcement":
+			return "info";
+		case "reminder":
+			return "warning";
+		case "newsletter":
+			return "success";
 		default:
-			return theme.colors.textMuted;
-	}
-};
-
-const getCategoryBackgroundColor = (category: string): string => {
-	switch (category) {
-		case "URGENT":
-			return theme.colors.absent;
-		case "FYI":
-			return theme.colors.brandLight;
-		default:
-			return theme.colors.secondary;
+			return "default";
 	}
 };
 
@@ -70,126 +63,47 @@ export const MessageDetailScreen = ({ route }: MessageDetailScreenProps) => {
 	}, [message.isRead, markAsRead]);
 
 	return (
-		<ScrollView style={styles.container} contentContainerStyle={styles.content}>
-			{/* Header section */}
-			<View style={styles.header}>
-				<View
-					style={[
-						styles.categoryBadge,
-						{ backgroundColor: getCategoryBackgroundColor(message.category) },
-					]}
-				>
-					<Text style={[styles.categoryText, { color: getCategoryColor(message.category) }]}>
+		<ScrollView className="flex-1 bg-card">
+			<View className="p-5">
+				{/* Coral accent bar */}
+				<View className="h-1 w-16 bg-primary rounded-full mb-4" />
+
+				{/* Header section */}
+				<View className="mb-4">
+					<Badge variant={getCategoryVariant(message.category)} className="mb-4">
 						{message.category}
-					</Text>
+					</Badge>
+
+					<H1 className="mb-3 leading-8">{message.subject}</H1>
+
+					<View className="flex-row items-center flex-wrap">
+						<Body className="text-sm font-semibold text-primary">{message.schoolName}</Body>
+						<Muted className="mx-2">-</Muted>
+						<Muted className="text-sm">{formatFullDate(message.createdAt)}</Muted>
+					</View>
 				</View>
 
-				<Text style={styles.subject}>{message.subject}</Text>
+				{/* Divider */}
+				<Separator className="my-5" />
 
-				<View style={styles.metaContainer}>
-					<Text style={styles.schoolName}>{message.schoolName}</Text>
-					<Text style={styles.separator}>-</Text>
-					<Text style={styles.date}>{formatFullDate(message.createdAt)}</Text>
-				</View>
+				{/* Message body */}
+				<Body className="text-base leading-7">{message.body}</Body>
+
+				{/* Read status indicator */}
+				{message.readAt && (
+					<View className="mt-6 pt-4 border-t border-secondary">
+						<Muted className="text-xs text-center">
+							Read on{" "}
+							{new Date(message.readAt).toLocaleDateString([], {
+								month: "short",
+								day: "numeric",
+								hour: "2-digit",
+								minute: "2-digit",
+							})}
+						</Muted>
+					</View>
+				)}
 			</View>
-
-			{/* Divider */}
-			<View style={styles.divider} />
-
-			{/* Message body */}
-			<View style={styles.bodyContainer}>
-				<Text style={styles.body}>{message.body}</Text>
-			</View>
-
-			{/* Read status indicator (optional) */}
-			{message.readAt && (
-				<View style={styles.readStatusContainer}>
-					<Text style={styles.readStatusText}>
-						Read on{" "}
-						{new Date(message.readAt).toLocaleDateString([], {
-							month: "short",
-							day: "numeric",
-							hour: "2-digit",
-							minute: "2-digit",
-						})}
-					</Text>
-				</View>
-			)}
 		</ScrollView>
 	);
 };
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: theme.colors.card,
-	},
-	content: {
-		padding: 20,
-	},
-	header: {
-		marginBottom: 16,
-	},
-	categoryBadge: {
-		alignSelf: "flex-start",
-		paddingHorizontal: 12,
-		paddingVertical: 6,
-		borderRadius: 8,
-		marginBottom: 16,
-	},
-	categoryText: {
-		fontSize: 12,
-		fontWeight: "700",
-		textTransform: "uppercase",
-		letterSpacing: 0.5,
-	},
-	subject: {
-		fontSize: 24,
-		fontWeight: "700",
-		color: theme.colors.text,
-		lineHeight: 32,
-		marginBottom: 12,
-	},
-	metaContainer: {
-		flexDirection: "row",
-		alignItems: "center",
-		flexWrap: "wrap",
-	},
-	schoolName: {
-		fontSize: 14,
-		fontWeight: "600",
-		color: theme.colors.primary,
-	},
-	separator: {
-		marginHorizontal: 8,
-		color: theme.colors.border,
-	},
-	date: {
-		fontSize: 14,
-		color: theme.colors.textMuted,
-	},
-	divider: {
-		height: 1,
-		backgroundColor: theme.colors.border,
-		marginVertical: 20,
-	},
-	bodyContainer: {
-		flex: 1,
-	},
-	body: {
-		fontSize: 16,
-		color: theme.colors.text,
-		lineHeight: 26,
-	},
-	readStatusContainer: {
-		marginTop: 24,
-		paddingTop: 16,
-		borderTopWidth: 1,
-		borderTopColor: theme.colors.secondary,
-	},
-	readStatusText: {
-		fontSize: 12,
-		color: theme.colors.inactiveTab,
-		textAlign: "center",
-	},
-});
