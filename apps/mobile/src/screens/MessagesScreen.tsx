@@ -1,11 +1,12 @@
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import type { CompositeNavigationProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Mail } from "lucide-react-native";
 import { useCallback } from "react";
-import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, RefreshControl, View } from "react-native";
 import type { RootStackParamList, MessageItem as RouteMessageItem, TabParamList } from "../../App";
 import { MessageCard, type MessageItem } from "../components/MessageCard";
-import { theme } from "../lib/theme";
+import { Body, EmptyState, Muted, Skeleton } from "../components/ui";
 import { trpc } from "../lib/trpc";
 
 interface MessagesScreenProps {
@@ -67,8 +68,8 @@ export const MessagesScreen: React.FC<MessagesScreenProps> = ({ navigation }) =>
 	const renderFooter = useCallback(() => {
 		if (!isFetchingNextPage) return null;
 		return (
-			<View style={styles.footerLoader}>
-				<ActivityIndicator size="small" color={theme.colors.primary} />
+			<View className="py-5 items-center">
+				<ActivityIndicator size="small" color="#FF7D45" />
 			</View>
 		);
 	}, [isFetchingNextPage]);
@@ -76,44 +77,46 @@ export const MessagesScreen: React.FC<MessagesScreenProps> = ({ navigation }) =>
 	const renderEmpty = useCallback(() => {
 		if (isLoading) return null;
 		return (
-			<View style={styles.emptyContainer}>
-				<Text style={styles.emptyText}>No messages yet.</Text>
-				<Text style={styles.emptySubtext}>Pull down to refresh</Text>
-			</View>
+			<EmptyState
+				icon={<Mail size={48} color="#9CA3AF" />}
+				title="No messages yet"
+				description="Pull down to refresh"
+			/>
 		);
 	}, [isLoading]);
 
 	if (isLoading) {
 		return (
-			<View style={styles.loadingContainer}>
-				<ActivityIndicator size="large" color={theme.colors.primary} />
-				<Text style={styles.loadingText}>Loading messages...</Text>
+			<View className="flex-1 bg-background">
+				<View className="p-4 gap-3">
+					<Skeleton className="h-24" />
+					<Skeleton className="h-24" />
+					<Skeleton className="h-24" />
+					<Skeleton className="h-24" />
+				</View>
 			</View>
 		);
 	}
 
 	if (isError) {
 		return (
-			<View style={styles.errorContainer}>
-				<Text style={styles.errorText}>Failed to load messages</Text>
-				<Text style={styles.errorSubtext}>{error?.message}</Text>
+			<View className="flex-1 bg-background justify-center items-center px-5">
+				<Body className="text-lg font-semibold text-destructive">Failed to load messages</Body>
+				<Muted className="mt-2 text-center">{error?.message}</Muted>
 			</View>
 		);
 	}
 
 	return (
-		<View style={styles.container}>
+		<View className="flex-1 bg-background">
 			<FlatList
 				data={messages}
 				keyExtractor={(item) => item.id}
 				renderItem={renderItem}
-				contentContainerStyle={styles.listContent}
+				className="flex-1"
+				contentContainerStyle={{ paddingVertical: 8, flexGrow: 1 }}
 				refreshControl={
-					<RefreshControl
-						refreshing={isRefetching}
-						onRefresh={handleRefresh}
-						tintColor={theme.colors.primary}
-					/>
+					<RefreshControl refreshing={isRefetching} onRefresh={handleRefresh} tintColor="#FF7D45" />
 				}
 				onEndReached={handleLoadMore}
 				onEndReachedThreshold={0.3}
@@ -124,63 +127,3 @@ export const MessagesScreen: React.FC<MessagesScreenProps> = ({ navigation }) =>
 		</View>
 	);
 };
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: theme.colors.background,
-	},
-	listContent: {
-		paddingVertical: 8,
-		flexGrow: 1,
-	},
-	loadingContainer: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		backgroundColor: theme.colors.background,
-	},
-	loadingText: {
-		marginTop: 12,
-		fontSize: 16,
-		color: theme.colors.textMuted,
-	},
-	errorContainer: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		backgroundColor: theme.colors.background,
-		padding: 20,
-	},
-	errorText: {
-		fontSize: 18,
-		fontWeight: "600",
-		color: theme.colors.error,
-	},
-	errorSubtext: {
-		marginTop: 8,
-		fontSize: 14,
-		color: theme.colors.textMuted,
-		textAlign: "center",
-	},
-	emptyContainer: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		paddingVertical: 60,
-	},
-	emptyText: {
-		fontSize: 18,
-		fontWeight: "600",
-		color: theme.colors.text,
-	},
-	emptySubtext: {
-		marginTop: 8,
-		fontSize: 14,
-		color: theme.colors.inactiveTab,
-	},
-	footerLoader: {
-		paddingVertical: 20,
-		alignItems: "center",
-	},
-});

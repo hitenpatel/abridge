@@ -1,6 +1,6 @@
 import type React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { theme } from "../lib/theme";
+import { Pressable, Text, View } from "react-native";
+import { Badge, Body, Card, Muted } from "./ui";
 
 export interface MessageItem {
 	id: string;
@@ -64,119 +64,49 @@ function truncateBody(body: string, maxLength = 80): string {
 	return `${body.slice(0, maxLength).trim()}...`;
 }
 
-export const MessageCard: React.FC<MessageCardProps> = ({ message, onPress }) => {
-	return (
-		<TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
-			<View style={styles.header}>
-				<View style={styles.titleRow}>
-					{!message.isRead && <View style={styles.unreadBadge} />}
-					<Text style={[styles.subject, !message.isRead && styles.subjectUnread]} numberOfLines={1}>
-						{message.subject}
-					</Text>
-				</View>
-				<Text style={styles.date}>{formatDate(message.createdAt)}</Text>
-			</View>
-
-			<Text style={styles.bodyPreview} numberOfLines={2}>
-				{truncateBody(message.body)}
-			</Text>
-
-			<View style={styles.footer}>
-				<Text style={styles.schoolName}>{message.schoolName}</Text>
-				<View style={[styles.categoryBadge, getCategoryStyle(message.category)]}>
-					<Text style={styles.categoryText}>{message.category}</Text>
-				</View>
-			</View>
-		</TouchableOpacity>
-	);
-};
-
-function getCategoryStyle(category: string): { backgroundColor: string } {
+function getCategoryVariant(category: string): "default" | "destructive" | "warning" | "success" | "info" {
 	switch (category.toLowerCase()) {
 		case "urgent":
-			return { backgroundColor: theme.colors.absent };
+			return "destructive";
 		case "announcement":
-			return { backgroundColor: theme.colors.brandLight };
+			return "info";
 		case "reminder":
-			return { backgroundColor: theme.colors.late };
+			return "warning";
 		case "newsletter":
-			return { backgroundColor: theme.colors.present };
+			return "success";
 		default:
-			return { backgroundColor: theme.colors.secondary };
+			return "default";
 	}
 }
 
-const styles = StyleSheet.create({
-	card: {
-		backgroundColor: theme.colors.card,
-		borderRadius: 12,
-		padding: 16,
-		marginHorizontal: 16,
-		marginVertical: 6,
-		shadowColor: "#000",
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.1,
-		shadowRadius: 4,
-		elevation: 3,
-	},
-	header: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		marginBottom: 8,
-	},
-	titleRow: {
-		flexDirection: "row",
-		alignItems: "center",
-		flex: 1,
-		marginRight: 8,
-	},
-	unreadBadge: {
-		width: 8,
-		height: 8,
-		borderRadius: 4,
-		backgroundColor: theme.colors.error,
-		marginRight: 8,
-	},
-	subject: {
-		fontSize: 16,
-		fontWeight: "500",
-		color: theme.colors.text,
-		flex: 1,
-	},
-	subjectUnread: {
-		fontWeight: "700",
-		color: theme.colors.text,
-	},
-	date: {
-		fontSize: 13,
-		color: theme.colors.inactiveTab,
-	},
-	bodyPreview: {
-		fontSize: 14,
-		color: theme.colors.textMuted,
-		lineHeight: 20,
-		marginBottom: 12,
-	},
-	footer: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-	},
-	schoolName: {
-		fontSize: 13,
-		color: theme.colors.primary,
-		fontWeight: "500",
-	},
-	categoryBadge: {
-		paddingHorizontal: 8,
-		paddingVertical: 4,
-		borderRadius: 6,
-	},
-	categoryText: {
-		fontSize: 11,
-		fontWeight: "600",
-		color: theme.colors.text,
-		textTransform: "capitalize",
-	},
-});
+export const MessageCard: React.FC<MessageCardProps> = ({ message, onPress }) => {
+	return (
+		<Pressable onPress={onPress} className="mx-4 my-1.5">
+			<Card className="active:opacity-70">
+				<View className="flex-row justify-between items-center mb-2">
+					<View className="flex-row items-center flex-1 mr-2">
+						{!message.isRead && <View className="w-2 h-2 rounded-full bg-primary mr-2" />}
+						<Text
+							className={`flex-1 text-base font-sans ${
+								!message.isRead ? "font-bold text-foreground" : "font-medium text-foreground"
+							}`}
+							numberOfLines={1}
+						>
+							{message.subject}
+						</Text>
+					</View>
+					<Muted className="text-xs">{formatDate(message.createdAt)}</Muted>
+				</View>
+
+				<Body className="mb-3 leading-5" numberOfLines={2}>
+					{truncateBody(message.body)}
+				</Body>
+
+				<View className="flex-row justify-between items-center">
+					<Body className="text-xs text-primary font-medium">{message.schoolName}</Body>
+					<Badge variant={getCategoryVariant(message.category)}>{message.category}</Badge>
+				</View>
+			</Card>
+		</Pressable>
+	);
+};
