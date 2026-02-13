@@ -64,7 +64,9 @@ function truncateBody(body: string, maxLength = 80): string {
 	return `${body.slice(0, maxLength).trim()}...`;
 }
 
-function getCategoryVariant(category: string): "default" | "destructive" | "warning" | "success" | "info" {
+function getCategoryVariant(
+	category: string,
+): "default" | "destructive" | "warning" | "success" | "info" {
 	switch (category.toLowerCase()) {
 		case "urgent":
 			return "destructive";

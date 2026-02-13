@@ -1,5 +1,5 @@
 import { ChevronRight } from "lucide-react-native";
-import React from "react";
+import type React from "react";
 import { Pressable, type PressableProps, View } from "react-native";
 import { Body, Muted } from "./typography";
 

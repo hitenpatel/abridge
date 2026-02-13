@@ -1,5 +1,6 @@
 import * as SecureStore from "expo-secure-store";
-import React, { createContext, useCallback, useEffect, useState } from "react";
+import type React from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 import { useColorScheme as useSystemColorScheme } from "react-native";
 
 type ColorScheme = "light" | "dark" | "system";
@@ -39,8 +40,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 		SecureStore.setItemAsync(THEME_KEY, scheme);
 	}, []);
 
-	const colorScheme =
-		preference === "system" ? (systemScheme ?? "light") : preference;
+	const colorScheme = preference === "system" ? (systemScheme ?? "light") : preference;
 
 	if (!loaded) return null;
 

@@ -1,10 +1,5 @@
-import React from "react";
-import {
-	Modal as RNModal,
-	type ModalProps as RNModalProps,
-	Pressable,
-	View,
-} from "react-native";
+import type React from "react";
+import { Pressable, Modal as RNModal, type ModalProps as RNModalProps, View } from "react-native";
 
 interface ModalProps extends RNModalProps {
 	visible: boolean;
@@ -24,9 +19,7 @@ export function Modal({ visible, onClose, children, className = "", ...props }: 
 		>
 			<View className="flex-1 justify-end bg-black/50">
 				<Pressable className="flex-1" onPress={onClose} />
-				<View className={`bg-card rounded-t-3xl p-6 ${className}`}>
-					{children}
-				</View>
+				<View className={`bg-card rounded-t-3xl p-6 ${className}`}>{children}</View>
 			</View>
 		</RNModal>
 	);

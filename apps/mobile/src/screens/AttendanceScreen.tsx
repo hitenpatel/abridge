@@ -3,8 +3,8 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Pressable, ScrollView, View } from "react-native";
 import { Badge, Body, Button, Card, H2, Input, Modal, Muted } from "../components/ui";
-import { useTheme } from "../lib/use-theme";
 import { trpc } from "../lib/trpc";
+import { useTheme } from "../lib/use-theme";
 
 interface Child {
 	id: string;

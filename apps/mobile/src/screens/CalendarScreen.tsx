@@ -6,8 +6,8 @@ import React, { useMemo, useState } from "react";
 import { Pressable, RefreshControl, ScrollView, View } from "react-native";
 import type { RootStackParamList, TabParamList } from "../../App";
 import { Badge, Body, Button, Card, EmptyState, H2, Muted, Skeleton } from "../components/ui";
-import { useTheme } from "../lib/use-theme";
 import { trpc } from "../lib/trpc";
+import { useTheme } from "../lib/use-theme";
 
 type CalendarScreenNavigationProp = CompositeNavigationProp<
 	BottomTabNavigationProp<TabParamList, "Calendar">,
@@ -18,7 +18,9 @@ interface CalendarScreenProps {
 	navigation: CalendarScreenNavigationProp;
 }
 
-const getCategoryVariant = (category: string): "default" | "destructive" | "warning" | "success" | "info" => {
+const getCategoryVariant = (
+	category: string,
+): "default" | "destructive" | "warning" | "success" | "info" => {
 	switch (category) {
 		case "TERM_DATE":
 			return "info";
@@ -97,7 +99,9 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ navigation }) =>
 	return (
 		<ScrollView
 			className="flex-1 bg-background"
-			refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={onRefresh} tintColor="#FF7D45" />}
+			refreshControl={
+				<RefreshControl refreshing={isRefetching} onRefresh={onRefresh} tintColor="#FF7D45" />
+			}
 		>
 			<View className="flex-row items-center justify-between p-4 bg-card border-b border-border">
 				<Pressable onPress={handlePreviousMonth} className="p-2 active:opacity-70">

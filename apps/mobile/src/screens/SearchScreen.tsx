@@ -83,7 +83,9 @@ export const SearchScreen: React.FC = () => {
 					<View className="flex-1">
 						<Body className="font-semibold mb-1">{title}</Body>
 						<Muted className="text-sm mb-1">{snippet}</Muted>
-						<Small className="font-medium text-primary capitalize">{source.category as string}</Small>
+						<Small className="font-medium text-primary capitalize">
+							{source.category as string}
+						</Small>
 					</View>
 				</Card>
 			</Pressable>

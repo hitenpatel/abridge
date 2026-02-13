@@ -23,7 +23,7 @@ export function Skeleton({ className = "", width, height, ...props }: SkeletonPr
 					duration: 800,
 					useNativeDriver: true,
 				}),
-			])
+			]),
 		);
 		animation.start();
 		return () => animation.stop();

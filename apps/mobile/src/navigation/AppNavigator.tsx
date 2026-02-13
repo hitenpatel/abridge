@@ -1,6 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { theme } from "../lib/theme";
+import { colors } from "@schoolconnect/ui-config";
+import { useTheme } from "../lib/use-theme";
 import { LoginScreen } from "../screens/LoginScreen";
 import { MessageDetailScreen } from "../screens/MessageDetailScreen";
 import { MessagesScreen } from "../screens/MessagesScreen";
@@ -31,14 +32,16 @@ interface AppNavigatorProps {
 }
 
 export const AppNavigator = ({ isAuthenticated }: AppNavigatorProps) => {
+	const { isDark } = useTheme();
+
 	return (
 		<NavigationContainer>
 			<Stack.Navigator
 				screenOptions={{
 					headerStyle: {
-						backgroundColor: theme.colors.headerBackground,
+						backgroundColor: isDark ? colors.dark.card : colors.light.card,
 					},
-					headerTintColor: theme.colors.headerText,
+					headerTintColor: isDark ? colors.dark.foreground : colors.light.foreground,
 					headerTitleStyle: {
 						fontWeight: "600",
 					},

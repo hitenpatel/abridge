@@ -1,7 +1,7 @@
-import React from "react";
+import type React from "react";
 import { View, type ViewProps } from "react-native";
-import { Body, H2, Muted } from "./typography";
 import { Button } from "./button";
+import { Body, H2, Muted } from "./typography";
 
 interface EmptyStateProps extends ViewProps {
 	icon?: React.ReactNode;
@@ -26,9 +26,7 @@ export function EmptyState({
 			{icon && <View className="mb-4">{icon}</View>}
 			<H2 className="text-center mb-2">{title}</H2>
 			{description && <Muted className="text-center mb-6">{description}</Muted>}
-			{actionLabel && onAction && (
-				<Button onPress={onAction}>{actionLabel}</Button>
-			)}
+			{actionLabel && onAction && <Button onPress={onAction}>{actionLabel}</Button>}
 		</View>
 	);
 }

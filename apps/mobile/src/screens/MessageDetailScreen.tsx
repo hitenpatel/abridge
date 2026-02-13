@@ -7,7 +7,9 @@ import { trpc } from "../lib/trpc";
 
 type MessageDetailScreenProps = NativeStackScreenProps<RootStackParamList, "MessageDetail">;
 
-const getCategoryVariant = (category: string): "default" | "destructive" | "warning" | "success" | "info" => {
+const getCategoryVariant = (
+	category: string,
+): "default" | "destructive" | "warning" | "success" | "info" => {
 	switch (category.toLowerCase()) {
 		case "urgent":
 			return "destructive";

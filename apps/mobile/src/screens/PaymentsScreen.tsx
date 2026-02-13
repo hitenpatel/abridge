@@ -103,7 +103,9 @@ export function PaymentsScreen() {
 				renderItem={renderItem}
 				keyExtractor={(item) => `${item.id}-${item.childId}`}
 				contentContainerStyle={{ padding: 16 }}
-				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FF7D45" />}
+				refreshControl={
+					<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FF7D45" />
+				}
 				ListEmptyComponent={
 					<EmptyState
 						icon={<CreditCard size={48} color="#9CA3AF" />}

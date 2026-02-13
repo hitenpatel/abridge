@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, View } from "react-native";
-import { authClient } from "../lib/auth-client";
 import { Button, Card, H1, Input, Muted } from "../components/ui";
+import { authClient } from "../lib/auth-client";
 
 export const LoginScreen = () => {
 	const [email, setEmail] = useState("");
@@ -67,11 +67,7 @@ export const LoginScreen = () => {
 							secureTextEntry
 							editable={!loading}
 						/>
-						<Button
-							onPress={handleLogin}
-							disabled={loading}
-							className="mt-2"
-						>
+						<Button onPress={handleLogin} disabled={loading} className="mt-2">
 							{loading ? "Signing in..." : "Sign In"}
 						</Button>
 					</View>

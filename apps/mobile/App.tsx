@@ -1,11 +1,4 @@
 import "./global.css";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
-import { useNavigation } from "@react-navigation/native";
-import {
-	type NativeStackNavigationProp,
-	createNativeStackNavigator,
-} from "@react-navigation/native-stack";
 import {
 	Poppins_400Regular,
 	Poppins_500Medium,
@@ -13,6 +6,13 @@ import {
 	Poppins_700Bold,
 	useFonts,
 } from "@expo-google-fonts/poppins";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NavigationContainer } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import {
+	type NativeStackNavigationProp,
+	createNativeStackNavigator,
+} from "@react-navigation/native-stack";
 import * as Notifications from "expo-notifications";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -24,19 +24,13 @@ import {
 	Search,
 } from "lucide-react-native";
 import React from "react";
-import {
-	ActivityIndicator,
-	SafeAreaView,
-	Text,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import { ActivityIndicator, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import { authClient } from "./src/lib/auth-client";
 import { hapticLight } from "./src/lib/haptics";
 import { TRPCProvider } from "./src/lib/provider";
 import { ThemeProvider } from "./src/lib/theme-provider";
-import { useTheme } from "./src/lib/use-theme";
 import { trpc } from "./src/lib/trpc";
+import { useTheme } from "./src/lib/use-theme";
 import { AttendanceScreen } from "./src/screens/AttendanceScreen";
 import { CalendarScreen } from "./src/screens/CalendarScreen";
 import { DashboardScreen } from "./src/screens/DashboardScreen";
@@ -300,4 +294,3 @@ export default function App() {
 		</TRPCProvider>
 	);
 }
-

@@ -15,7 +15,7 @@ export const Input = React.forwardRef<TextInput, InputProps>(
 				{...props}
 			/>
 		);
-	}
+	},
 );
 
 Input.displayName = "Input";
