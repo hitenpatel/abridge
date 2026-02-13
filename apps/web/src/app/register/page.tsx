@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/lib/trpc";
-import { School, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
@@ -66,17 +65,17 @@ function RegisterForm() {
 			<CardHeader className="text-center space-y-4">
 				<div className="flex items-center justify-center gap-2 mb-2">
 					<div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-						<School className="w-5 h-5 text-white" />
+						<span className="material-symbols-rounded text-white text-[20px]">school</span>
 					</div>
-					<span className="text-xl font-bold font-heading">SchoolConnect</span>
+					<span className="text-xl font-bold font-heading">Abridge</span>
 				</div>
 				<CardTitle className="text-2xl">Create Account</CardTitle>
-				<CardDescription>Join SchoolConnect today</CardDescription>
+				<CardDescription>Join Abridge today</CardDescription>
 			</CardHeader>
 			<CardContent className="space-y-6">
 				{inviteInfo && (
 					<Alert variant="info">
-						<ShieldCheck className="w-4 h-4" />
+						<span className="material-symbols-rounded text-base">verified_user</span>
 						<AlertDescription>
 							You&apos;ve been invited to join <strong>{inviteInfo.schoolName}</strong> as a{" "}
 							<strong>{inviteInfo.role}</strong>.

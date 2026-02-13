@@ -93,11 +93,7 @@ export default function AttendancePage() {
 	const today = new Date().getDate();
 	const isToday = (day: number) => {
 		const now = new Date();
-		return (
-			day === now.getDate() &&
-			month === now.getMonth() &&
-			year === now.getFullYear()
-		);
+		return day === now.getDate() && month === now.getMonth() && year === now.getFullYear();
 	};
 
 	return (
@@ -204,10 +200,7 @@ export default function AttendancePage() {
 
 								if (isWeekend && !status) {
 									return (
-										<div
-											key={day}
-											className="h-24 p-2 rounded-xl bg-gray-50 text-gray-400"
-										>
+										<div key={day} className="h-24 p-2 rounded-xl bg-gray-50 text-gray-400">
 											<span className="text-sm font-bold">{day}</span>
 										</div>
 									);
@@ -297,17 +290,13 @@ export default function AttendancePage() {
 					{/* Absence Report Form */}
 					<Card className="p-6 md:p-8 rounded-2xl shadow-soft">
 						<h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-							<span className="material-symbols-rounded text-primary text-2xl">
-								add_moderator
-							</span>
+							<span className="material-symbols-rounded text-primary text-2xl">add_moderator</span>
 							Report Upcoming Absence
 						</h3>
 
 						<form className="space-y-6">
 							<div>
-								<label className="block text-sm font-bold text-gray-500 mb-2">
-									Select Date(s)
-								</label>
+								<label className="block text-sm font-bold text-gray-500 mb-2">Select Date(s)</label>
 								<div className="relative">
 									<span className="material-symbols-rounded absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
 										date_range
@@ -348,9 +337,7 @@ export default function AttendancePage() {
 												<div
 													className={`w-12 h-12 rounded-full bg-${reason.color}-100 text-${reason.color}-500 flex items-center justify-center mb-1`}
 												>
-													<span className="material-symbols-rounded text-2xl">
-														{reason.icon}
-													</span>
+													<span className="material-symbols-rounded text-2xl">{reason.icon}</span>
 												</div>
 												<span className="font-bold text-sm text-gray-700">{reason.label}</span>
 											</div>

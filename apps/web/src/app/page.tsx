@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, CheckCircle2, School, Shield, Zap } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
@@ -13,9 +12,9 @@ export default function Home() {
 				<div className="container mx-auto px-4 h-16 flex items-center justify-between">
 					<div className="flex items-center gap-2">
 						<div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-							<School className="w-5 h-5 text-white" />
+							<span className="material-symbols-rounded text-white text-[20px]">school</span>
 						</div>
-						<span className="text-xl font-bold text-foreground font-heading">SchoolConnect</span>
+						<span className="text-xl font-bold text-foreground font-heading">Abridge</span>
 					</div>
 					<div className="flex items-center gap-4">
 						<Link href="/login">
@@ -45,7 +44,8 @@ export default function Home() {
 						<div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
 							<Link href="/register" className="w-full sm:w-auto">
 								<Button size="lg" className="w-full h-12 text-base gap-2">
-									Start Free Trial <ArrowRight className="w-4 h-4" />
+									Start Free Trial{" "}
+									<span className="material-symbols-rounded text-base">arrow_forward</span>
 								</Button>
 							</Link>
 							<Link href="/#features" className="w-full sm:w-auto">
@@ -71,7 +71,7 @@ export default function Home() {
 							<Card className="group hover:shadow-md transition-shadow">
 								<CardContent className="p-8">
 									<div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6 text-primary">
-										<Zap className="w-6 h-6" />
+										<span className="material-symbols-rounded text-2xl">bolt</span>
 									</div>
 									<h3 className="text-xl font-semibold mb-3">Instant Updates</h3>
 									<p className="text-muted-foreground">
@@ -84,7 +84,7 @@ export default function Home() {
 							<Card className="group hover:shadow-md transition-shadow">
 								<CardContent className="p-8">
 									<div className="w-12 h-12 rounded-lg bg-info/10 flex items-center justify-center mb-6 text-info">
-										<Shield className="w-6 h-6" />
+										<span className="material-symbols-rounded text-2xl">shield</span>
 									</div>
 									<h3 className="text-xl font-semibold mb-3">Secure Payments</h3>
 									<p className="text-muted-foreground">
@@ -97,7 +97,7 @@ export default function Home() {
 							<Card className="group hover:shadow-md transition-shadow">
 								<CardContent className="p-8">
 									<div className="w-12 h-12 rounded-lg bg-warning/10 flex items-center justify-center mb-6 text-warning">
-										<CheckCircle2 className="w-6 h-6" />
+										<span className="material-symbols-rounded text-2xl">check_circle</span>
 									</div>
 									<h3 className="text-xl font-semibold mb-3">Smart Attendance</h3>
 									<p className="text-muted-foreground">
@@ -114,7 +114,7 @@ export default function Home() {
 			<footer className="border-t border-border bg-card py-12 px-4">
 				<div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
 					<p className="text-sm text-muted-foreground">
-						&copy; {new Date().getFullYear()} SchoolConnect. All rights reserved.
+						&copy; {new Date().getFullYear()} Abridge. All rights reserved.
 					</p>
 					<div className="flex gap-6 text-sm text-muted-foreground">
 						<Link href="#" className="hover:text-foreground transition-colors">

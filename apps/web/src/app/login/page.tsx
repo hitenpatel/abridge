@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
-import { School } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -41,9 +40,9 @@ export default function LoginPage() {
 				<CardHeader className="text-center space-y-4">
 					<div className="flex items-center justify-center gap-2 mb-2">
 						<div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-							<School className="w-5 h-5 text-white" />
+							<span className="material-symbols-rounded text-white text-[20px]">school</span>
 						</div>
-						<span className="text-xl font-bold font-heading">SchoolConnect</span>
+						<span className="text-xl font-bold font-heading">Abridge</span>
 					</div>
 					<CardTitle className="text-2xl">Welcome back</CardTitle>
 					<CardDescription>Sign in to your account to continue</CardDescription>

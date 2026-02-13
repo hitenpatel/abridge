@@ -120,9 +120,7 @@ export default function PaymentsDashboardPage() {
 											</h4>
 											<span
 												className={`text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide ${
-													payment.urgent
-														? "bg-red-100 text-red-600"
-														: "bg-blue-100 text-blue-600"
+													payment.urgent ? "bg-red-100 text-red-600" : "bg-blue-100 text-blue-600"
 												}`}
 											>
 												Due {payment.dueDate}
@@ -136,9 +134,7 @@ export default function PaymentsDashboardPage() {
 														person
 													</span>
 												</div>
-												<span className="text-xs font-medium text-gray-500">
-													{payment.teacher}
-												</span>
+												<span className="text-xs font-medium text-gray-500">{payment.teacher}</span>
 											</div>
 										)}
 										{payment.autoRenew && (

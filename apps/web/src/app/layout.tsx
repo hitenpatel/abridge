@@ -44,12 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 					rel="stylesheet"
 				/>
 			</head>
-			<body
-				className={cn(
-					"min-h-screen bg-background font-sans antialiased",
-					poppins.variable,
-				)}
-			>
+			<body className={cn("min-h-screen bg-background font-sans antialiased", poppins.variable)}>
 				<a
 					href="#main-content"
 					className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-primary focus:text-primary-foreground"

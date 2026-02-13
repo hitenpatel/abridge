@@ -307,9 +307,7 @@ export default function StaffManagementPage() {
 						<DialogTitle>Remove Staff Member</DialogTitle>
 						<DialogDescription>
 							Are you sure you want to remove{" "}
-							<span className="font-semibold">
-								{staffToRemove?.name || staffToRemove?.email}
-							</span>{" "}
+							<span className="font-semibold">{staffToRemove?.name || staffToRemove?.email}</span>{" "}
 							from staff? This action cannot be undone.
 						</DialogDescription>
 					</DialogHeader>

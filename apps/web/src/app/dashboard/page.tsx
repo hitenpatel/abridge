@@ -106,9 +106,7 @@ export default function DashboardPage() {
 								<div className="relative">
 									<div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-white/30 p-1 bg-white overflow-hidden shadow-md">
 										<div className="w-full h-full rounded-full bg-primary/20 flex items-center justify-center">
-											<span className="material-symbols-rounded text-4xl text-primary">
-												person
-											</span>
+											<span className="material-symbols-rounded text-4xl text-primary">person</span>
 										</div>
 									</div>
 									<div className="absolute bottom-0 right-0 w-6 h-6 bg-green-400 border-4 border-primary rounded-full" />
@@ -122,9 +120,7 @@ export default function DashboardPage() {
 											check
 										</span>
 									</div>
-									<p className="text-white/90 text-sm sm:text-base font-medium">
-										Checked in today
-									</p>
+									<p className="text-white/90 text-sm sm:text-base font-medium">Checked in today</p>
 									<div className="mt-3 flex gap-2">
 										<span className="px-3 py-1 bg-white/20 rounded-lg text-xs font-semibold backdrop-blur-sm">
 											Student
@@ -179,7 +175,10 @@ export default function DashboardPage() {
 					<div>
 						<div className="flex items-center justify-between mt-8 mb-4">
 							<h3 className="text-xl font-bold text-slate-800">Today & Upcoming</h3>
-							<Link href="/dashboard/calendar" className="text-sm font-medium text-primary hover:text-primary/80">
+							<Link
+								href="/dashboard/calendar"
+								className="text-sm font-medium text-primary hover:text-primary/80"
+							>
 								View All
 							</Link>
 						</div>
@@ -291,7 +290,9 @@ export default function DashboardPage() {
 								<div className="w-10 h-10 mb-2 rounded-full bg-green-100 flex items-center justify-center text-green-500">
 									<span className="material-symbols-rounded">eco</span>
 								</div>
-								<span className="text-xs font-semibold text-center text-gray-700">Nature Scout</span>
+								<span className="text-xs font-semibold text-center text-gray-700">
+									Nature Scout
+								</span>
 							</div>
 						</div>
 					</Card>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Abridge Desktop Home Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#FF7D45", // Warm Coral from screenshots
+              secondary: "#FFD54F", // Sunshine Yellow
+              accent: "#4DB6AC", // Soft Mint/Teal
+              slate: {
+                800: "#2D3748", // Dark text
+                900: "#1A202C", // Darker text
+              },
+              "background-light": "#F7F8FA",
+              "background-dark": "#121212",
+              "card-light": "#FFFFFF",
+              "card-dark": "#1E1E1E",
+              "text-light": "#2D3748",
+              "text-dark": "#E2E8F0",
+            },
+            fontFamily: {
+              display: ["Poppins", "sans-serif"],
+              sans: ["Poppins", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "12px",
+              'xl': "20px",
+              '2xl': "24px",
+              '3xl': "32px",
+            },
+            boxShadow: {
+              'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+              'glow': '0 0 15px rgba(255, 125, 69, 0.3)',
+            }
+          },
+        },
+      };
+    </script>
+<style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .material-symbols-rounded {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #4a5568;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark transition-colors duration-300 min-h-screen flex overflow-hidden">
+<aside class="w-64 h-screen bg-card-light dark:bg-card-dark border-r border-gray-100 dark:border-gray-800 flex flex-col p-6 fixed left-0 top-0 z-30 hidden lg:flex shadow-soft">
+<div class="flex items-center gap-3 mb-10 px-2">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-glow">
+<span class="material-symbols-rounded text-2xl">school</span>
+</div>
+<h1 class="text-2xl font-bold tracking-tight text-slate-800 dark:text-white">Abridge</h1>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-4 px-4 py-3 bg-primary/10 text-primary font-semibold rounded-xl transition-all group" href="#">
+<span class="material-symbols-rounded">home</span>
+                Home
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-slate-800 dark:hover:text-white font-medium rounded-xl transition-all group" href="#">
+<span class="material-symbols-rounded group-hover:text-primary transition-colors">chat_bubble</span>
+                Messages
+                <span class="ml-auto w-5 h-5 flex items-center justify-center bg-red-500 text-white text-xs font-bold rounded-full">3</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-slate-800 dark:hover:text-white font-medium rounded-xl transition-all group" href="#">
+<span class="material-symbols-rounded group-hover:text-primary transition-colors">assignment_turned_in</span>
+                Attendance
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-slate-800 dark:hover:text-white font-medium rounded-xl transition-all group" href="#">
+<span class="material-symbols-rounded group-hover:text-primary transition-colors">payments</span>
+                Payments
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-slate-800 dark:hover:text-white font-medium rounded-xl transition-all group" href="#">
+<span class="material-symbols-rounded group-hover:text-primary transition-colors">calendar_month</span>
+                Calendar
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-slate-800 dark:hover:text-white font-medium rounded-xl transition-all group" href="#">
+<span class="material-symbols-rounded group-hover:text-primary transition-colors">settings</span>
+                Settings
+            </a>
+</nav>
+<div class="mt-auto pt-6 border-t border-gray-100 dark:border-gray-800">
+<div class="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors">
+<img alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-gray-700 shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAy15KQ9kNFNkienvmnFigdzOZOJX_6bqE90ar_g243AknrPdaN10ZFiiEWSz2tSzDsEqsBHUf2bfy1BAMditwXEe45zkSNJLoiRKeezrILwfNIU0fFkUxWH1ouOEWYfmrPvmK4Te1wnvjJQGCCf8gUkTtxEMKvAGKNXET954Ium8KxrWPyAGmkH-RkWTHmW3kGTyUwJ1yX7DhNUw9xn2TlfcbScVfwqe22lOfzLCfKj8DUeAEngwgT41HB1th-tyfEHdOQTiRmI_w"/>
+<div>
+<p class="text-sm font-semibold text-slate-800 dark:text-white">Sarah W.</p>
+<p class="text-xs text-gray-500 dark:text-gray-400">Parent Account</p>
+</div>
+<span class="material-symbols-rounded ml-auto text-gray-400">expand_more</span>
+</div>
+</div>
+</aside>
+<main class="flex-1 ml-0 lg:ml-64 p-6 lg:p-10 overflow-y-auto h-screen">
+<div class="lg:hidden flex justify-between items-center mb-6">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-rounded text-lg">school</span>
+</div>
+<h1 class="text-xl font-bold text-slate-800 dark:text-white">Abridge</h1>
+</div>
+<button class="p-2 rounded-lg bg-white dark:bg-card-dark shadow-sm">
+<span class="material-symbols-rounded text-slate-800 dark:text-white">menu</span>
+</button>
+</div>
+<header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+<div>
+<p class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Wednesday, Oct 24</p>
+<div class="flex items-center gap-2">
+<h2 class="text-3xl font-bold text-slate-800 dark:text-white">Hi, Sarah!</h2>
+<span class="text-3xl animate-bounce">👋</span>
+</div>
+</div>
+<div class="flex gap-4">
+<button class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-card-dark rounded-xl shadow-soft text-sm font-medium hover:scale-105 transition-transform">
+<span class="material-symbols-rounded text-primary">add_circle</span>
+<span>Quick Update</span>
+</button>
+<button class="relative p-2 bg-white dark:bg-card-dark rounded-xl shadow-soft hover:scale-105 transition-transform">
+<span class="material-symbols-rounded text-gray-600 dark:text-gray-300">notifications</span>
+<span class="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 border-2 border-white dark:border-card-dark rounded-full"></span>
+</button>
+</div>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2 space-y-6">
+<div class="bg-gradient-to-r from-primary to-orange-400 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden group hover:shadow-glow transition-shadow duration-300">
+<div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+<div class="absolute right-20 -bottom-10 w-32 h-32 bg-yellow-300/20 rounded-full blur-2xl"></div>
+<div class="relative z-10 flex items-center gap-4 sm:gap-6">
+<div class="relative">
+<div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-white/30 p-1 bg-white overflow-hidden shadow-md">
+<img alt="Leo" class="w-full h-full object-cover rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANzascaNBijjLdltw6SWAAXGs2XAcmQoi7jeFVaVLJqOx5sUim95iX6kLNOJ-CYa9d34gh2mjOwxBYJx4CagBKKCnv_TCL0Xv8yJO9C0Z9Ihtw9bKxnEmxObU-B4RaElM8gYCCkWFn3qYzy_jAlzBchomCJhAN0EENxvz0P3dVKLgEekuUNsJ50PVsdO69lh0CQpJHP7FqFxTCeCzPRB8UrwCM8zjrBsQg4n6vZ6v3fW5k_YzVNb2_dLpFXGS-nn9rqksDa7kNSpc"/>
+</div>
+<div class="absolute bottom-0 right-0 w-6 h-6 bg-green-400 border-4 border-primary rounded-full"></div>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<h3 class="text-xl sm:text-2xl font-bold">Leo is at School</h3>
+<span class="material-symbols-rounded bg-white/20 p-1 rounded-full text-sm">check</span>
+</div>
+<p class="text-white/90 text-sm sm:text-base font-medium">Checked in at 8:15 AM</p>
+<div class="mt-3 flex gap-2">
+<span class="px-3 py-1 bg-white/20 rounded-lg text-xs font-semibold backdrop-blur-sm">2nd Grade</span>
+<span class="px-3 py-1 bg-white/20 rounded-lg text-xs font-semibold backdrop-blur-sm">Ms. Thompson</span>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+<a class="bg-card-light dark:bg-card-dark p-4 rounded-2xl shadow-soft hover:shadow-md transition-all group text-center flex flex-col items-center justify-center gap-2 border border-transparent hover:border-blue-100 dark:hover:border-blue-900" href="#">
+<div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-500 dark:text-blue-300 group-hover:scale-110 transition-transform">
+<span class="material-symbols-rounded">restaurant_menu</span>
+</div>
+<span class="text-sm font-semibold text-gray-700 dark:text-gray-200">Lunch Menu</span>
+</a>
+<a class="bg-card-light dark:bg-card-dark p-4 rounded-2xl shadow-soft hover:shadow-md transition-all group text-center flex flex-col items-center justify-center gap-2 border border-transparent hover:border-purple-100 dark:hover:border-purple-900" href="#">
+<div class="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-500 dark:text-purple-300 group-hover:scale-110 transition-transform">
+<span class="material-symbols-rounded">event</span>
+</div>
+<span class="text-sm font-semibold text-gray-700 dark:text-gray-200">Calendar</span>
+</a>
+<a class="bg-card-light dark:bg-card-dark p-4 rounded-2xl shadow-soft hover:shadow-md transition-all group text-center flex flex-col items-center justify-center gap-2 border border-transparent hover:border-green-100 dark:hover:border-green-900" href="#">
+<div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-500 dark:text-green-300 group-hover:scale-110 transition-transform">
+<span class="material-symbols-rounded">medical_services</span>
+</div>
+<span class="text-sm font-semibold text-gray-700 dark:text-gray-200">Sick Note</span>
+</a>
+<a class="bg-card-light dark:bg-card-dark p-4 rounded-2xl shadow-soft hover:shadow-md transition-all group text-center flex flex-col items-center justify-center gap-2 border border-transparent hover:border-yellow-100 dark:hover:border-yellow-900" href="#">
+<div class="w-12 h-12 rounded-full bg-secondary/20 dark:bg-yellow-900/30 flex items-center justify-center text-yellow-600 dark:text-yellow-300 group-hover:scale-110 transition-transform">
+<span class="material-symbols-rounded">emoji_events</span>
+</div>
+<span class="text-sm font-semibold text-gray-700 dark:text-gray-200">Awards</span>
+</a>
+</div>
+<div class="flex items-center justify-between mt-8 mb-4">
+<h3 class="text-xl font-bold text-slate-800 dark:text-white">Today &amp; Upcoming</h3>
+<a class="text-sm font-medium text-primary hover:text-primary/80" href="#">View All</a>
+</div>
+<div class="space-y-4">
+<div class="bg-card-light dark:bg-card-dark p-6 rounded-2xl shadow-soft border-l-4 border-secondary flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+<div class="w-12 h-12 rounded-full bg-secondary/20 flex-shrink-0 flex items-center justify-center text-yellow-600">
+<span class="material-symbols-rounded">sunny</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-1">
+<h4 class="font-bold text-slate-800 dark:text-white text-lg">Pizza Day Tomorrow</h4>
+<span class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 text-xs font-bold uppercase rounded-md">Reminder</span>
+</div>
+<p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">It's a special treat! Don't forget to pack a drink and a small snack.</p>
+</div>
+</div>
+<div class="bg-white dark:bg-card-dark p-6 rounded-2xl shadow-soft border-l-4 border-primary relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full"></div>
+<div class="flex flex-col sm:flex-row gap-4 relative z-10">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex-shrink-0 flex items-center justify-center text-primary">
+<span class="material-symbols-rounded">assignment</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-bold text-slate-800 dark:text-white text-lg">Report Card Ready</h4>
+<span class="text-xs text-gray-400 font-medium">2h ago</span>
+</div>
+<p class="text-gray-500 dark:text-gray-400 text-sm mb-4">Term 1 grades are now available for review.</p>
+<button class="w-full sm:w-auto px-6 py-2.5 bg-primary hover:bg-orange-600 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2 shadow-lg shadow-primary/30">
+                                    View Report
+                                    <span class="material-symbols-rounded text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<div class="bg-card-light dark:bg-card-dark p-6 rounded-2xl shadow-soft border-l-4 border-accent flex flex-col sm:flex-row gap-4 items-center">
+<div class="w-12 h-12 rounded-full bg-accent/20 flex-shrink-0 flex items-center justify-center text-accent">
+<span class="material-symbols-rounded">groups</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-1">
+<h4 class="font-bold text-slate-800 dark:text-white text-lg">Parent-Teacher Conf.</h4>
+<span class="text-xs text-gray-400 font-medium">Nov 12</span>
+</div>
+<div class="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm">
+<span class="material-symbols-rounded text-base">schedule</span>
+                                4:00 PM - 5:30 PM
+                            </div>
+</div>
+</div>
+<div class="bg-card-light dark:bg-card-dark p-6 rounded-2xl shadow-soft border-l-4 border-purple-400 flex flex-col sm:flex-row gap-4 items-center">
+<div class="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex-shrink-0 flex items-center justify-center text-purple-500">
+<span class="material-symbols-rounded">music_note</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-1">
+<h4 class="font-bold text-slate-800 dark:text-white text-lg">Violin Recital</h4>
+<span class="text-xs text-gray-400 font-medium">Nov 18</span>
+</div>
+<p class="text-gray-500 dark:text-gray-400 text-sm">Main Auditorium. Guests are welcome.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-6">
+<div class="bg-card-light dark:bg-card-dark p-6 rounded-3xl shadow-soft">
+<h3 class="text-lg font-bold text-slate-800 dark:text-white mb-6">This Week's Progress</h3>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between items-center mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-rounded text-gray-400 text-sm">calendar_today</span>
+<span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Attendance</span>
+</div>
+<span class="text-sm font-bold text-slate-800 dark:text-white">95%</span>
+</div>
+<div class="h-3 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 95%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-rounded text-gray-400 text-sm">handshake</span>
+<span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Participation</span>
+</div>
+<span class="text-sm font-bold text-slate-800 dark:text-white">Excellent</span>
+</div>
+<div class="h-3 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-slate-800 dark:bg-slate-500 rounded-full" style="width: 88%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-card-light dark:bg-card-dark p-6 rounded-3xl shadow-soft">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-lg font-bold text-slate-800 dark:text-white">Achievements</h3>
+<a class="text-xs font-bold text-primary hover:underline" href="#">View All</a>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="flex flex-col items-center p-3 rounded-2xl bg-orange-50 dark:bg-orange-900/10 hover:bg-orange-100 dark:hover:bg-orange-900/20 transition-colors cursor-pointer">
+<div class="w-10 h-10 mb-2 rounded-full bg-orange-100 dark:bg-orange-800 flex items-center justify-center text-orange-500 dark:text-orange-200">
+<span class="material-symbols-rounded">menu_book</span>
+</div>
+<span class="text-xs font-semibold text-center text-gray-700 dark:text-gray-300">Star Reader</span>
+</div>
+<div class="flex flex-col items-center p-3 rounded-2xl bg-pink-50 dark:bg-pink-900/10 hover:bg-pink-100 dark:hover:bg-pink-900/20 transition-colors cursor-pointer">
+<div class="w-10 h-10 mb-2 rounded-full bg-pink-100 dark:bg-pink-800 flex items-center justify-center text-pink-500 dark:text-pink-200">
+<span class="material-symbols-rounded">volunteer_activism</span>
+</div>
+<span class="text-xs font-semibold text-center text-gray-700 dark:text-gray-300">Kindness</span>
+</div>
+<div class="flex flex-col items-center p-3 rounded-2xl bg-blue-50 dark:bg-blue-900/10 hover:bg-blue-100 dark:hover:bg-blue-900/20 transition-colors cursor-pointer">
+<div class="w-10 h-10 mb-2 rounded-full bg-blue-100 dark:bg-blue-800 flex items-center justify-center text-blue-500 dark:text-blue-200">
+<span class="material-symbols-rounded">functions</span>
+</div>
+<span class="text-xs font-semibold text-center text-gray-700 dark:text-gray-300">Math Whiz</span>
+</div>
+<div class="flex flex-col items-center p-3 rounded-2xl bg-green-50 dark:bg-green-900/10 hover:bg-green-100 dark:hover:bg-green-900/20 transition-colors cursor-pointer">
+<div class="w-10 h-10 mb-2 rounded-full bg-green-100 dark:bg-green-800 flex items-center justify-center text-green-500 dark:text-green-200">
+<span class="material-symbols-rounded">eco</span>
+</div>
+<span class="text-xs font-semibold text-center text-gray-700 dark:text-gray-300">Nature Scout</span>
+</div>
+</div>
+</div>
+<div class="bg-gradient-to-br from-yellow-50 to-white dark:from-gray-800 dark:to-gray-900 p-6 rounded-3xl shadow-soft border border-yellow-100 dark:border-gray-700">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-white dark:bg-gray-800 rounded-2xl shadow-sm flex items-center justify-center text-secondary font-bold text-lg border border-yellow-100 dark:border-gray-600">
+                            14
+                        </div>
+<div class="flex-1">
+<p class="text-xs font-bold text-secondary uppercase tracking-wider mb-1">Up Next</p>
+<h4 class="font-bold text-slate-800 dark:text-white leading-tight">Science Fair Project Due</h4>
+</div>
+<button class="w-8 h-8 rounded-full bg-white dark:bg-gray-700 flex items-center justify-center text-gray-400 hover:text-primary transition-colors shadow-sm">
+<span class="material-symbols-rounded">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="bg-card-light dark:bg-card-dark p-6 rounded-3xl shadow-soft">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-lg font-bold text-slate-800 dark:text-white">Recent Payment</h3>
+</div>
+<div class="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
+<div class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400">
+<span class="material-symbols-rounded">check</span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-800 dark:text-white">Science Museum Trip</p>
+<p class="text-xs text-gray-500 dark:text-gray-400">$25.00 • Paid Today</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<nav class="lg:hidden fixed bottom-0 left-0 w-full bg-white dark:bg-card-dark border-t border-gray-100 dark:border-gray-800 flex justify-around p-4 z-40 rounded-t-3xl shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-rounded">home</span>
+<span class="text-[10px] font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500 hover:text-slate-800 dark:hover:text-white transition-colors" href="#">
+<span class="material-symbols-rounded">assignment_ind</span>
+<span class="text-[10px] font-medium">Profile</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500 hover:text-slate-800 dark:hover:text-white transition-colors" href="#">
+<span class="material-symbols-rounded">payments</span>
+<span class="text-[10px] font-medium">Payments</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500 hover:text-slate-800 dark:hover:text-white transition-colors relative" href="#">
+<span class="material-symbols-rounded">chat_bubble</span>
+<span class="text-[10px] font-medium">Chat</span>
+<span class="absolute top-0 right-3 w-2 h-2 bg-red-500 rounded-full"></span>
+</a>
+</nav>
+<script>
+        // Simple dark mode toggle logic for demonstration
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            // document.documentElement.classList.add('dark'); // Uncomment to auto-enable dark mode based on system preference
+        }
+    </script>
+
+</body></html>

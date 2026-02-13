@@ -13,7 +13,7 @@ export default function MessagesPage() {
 
 	const { data: messages, isLoading: messagesLoading } = trpc.messaging.listReceived.useQuery(
 		{ limit: 20 },
-		{ enabled: !!session && !session.staffRole }
+		{ enabled: !!session && !session.staffRole },
 	);
 
 	if (sessionLoading || messagesLoading) {
@@ -125,9 +125,7 @@ export default function MessagesPage() {
 						))
 					) : (
 						<div className="p-8 text-center text-gray-500">
-							<span className="material-symbols-rounded text-4xl mb-2 text-gray-300">
-								inbox
-							</span>
+							<span className="material-symbols-rounded text-4xl mb-2 text-gray-300">inbox</span>
 							<p className="text-sm">No messages yet</p>
 						</div>
 					)}

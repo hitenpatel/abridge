@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Abridge Mobile Chat View</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#F48C51", 
+                        secondary: "#FCD34D", 
+                        quiet: "#334155", 
+                        "background-light": "#F9FAFB", 
+                        "background-dark": "#111827", 
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#1F2937",
+                        "text-primary-light": "#1F2937",
+                        "text-primary-dark": "#F9FAFB",
+                        "text-secondary-light": "#6B7280",
+                        "text-secondary-dark": "#9CA3AF",
+                        "deep-slate-blue": "#2A3447", 
+                    },
+                    fontFamily: {
+                        display: ["Poppins", "sans-serif"],
+                        body: ["Poppins", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "1rem",
+                        'squircle': "1.2rem", 
+                        '2xl': "1.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #4b5563; 
+        }
+        .rounded-squircle {
+            border-radius: 20px; 
+        }.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }.no-scrollbar {
+            -ms-overflow-style: none;scrollbar-width: none;}
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-black text-text-primary-light dark:text-text-primary-dark min-h-screen flex justify-center items-center font-body transition-colors duration-300">
+<div class="w-[390px] h-[844px] bg-background-light dark:bg-background-dark shadow-2xl overflow-hidden relative flex flex-col rounded-[3rem] border-[8px] border-gray-900 dark:border-gray-700">
+<div class="h-6 w-full bg-deep-slate-blue/10 dark:bg-black/50 absolute top-0 z-50"></div>
+<div class="bg-deep-slate-blue text-white px-4 pt-8 pb-2 flex items-center justify-center gap-2 text-[11px] font-medium shadow-md z-40">
+<span class="material-icons text-base text-yellow-300">dark_mode</span>
+<span class="truncate">Quiet Hours: Notifications silenced until 7:00 AM</span>
+</div>
+<div class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 p-3 flex justify-between items-center sticky top-0 z-30">
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors -ml-1">
+<span class="material-icons text-2xl">arrow_back</span>
+</button>
+<div class="relative">
+<img alt="Ms. Johnson" class="w-10 h-10 rounded-squircle object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQuZj8A0Y-FqRlGzp5omYqa9rkPMEizqjyce5mEIfprfQf5m5uZyoyRFpfDB5gkIUHrowuP8lfOscRcUO2XNI6cLAv93azFFxPAmQ7e6HsIZcMrLMDovja6L8LeltXjXTVLl4nrOqk0i4-Jbwh8vsmBX3ZK_51Wam6ZO5pDfJDJkOhEQdjNZ_wKT8dRaK47BqCk4FScJ3c7kFbgFknyJKZqKABgvLrp9vyUU6nbJNEgpvN0MbA7vyZGD-s9iTJnYudhqcKnR7Vlgw"/>
+<div class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-900"></div>
+</div>
+<div>
+<h2 class="text-base font-bold text-gray-900 dark:text-white leading-tight">Ms. Johnson</h2>
+<p class="text-[10px] text-gray-500 dark:text-gray-400 font-medium">Active now</p>
+</div>
+</div>
+<div class="flex items-center">
+<button class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-primary hover:bg-orange-50 dark:hover:bg-gray-800 rounded-full transition-all" title="Call">
+<span class="material-icons text-xl">call</span>
+</button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-5 bg-slate-50 dark:bg-[#0f141f]">
+<div class="flex justify-center">
+<span class="bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-[10px] px-3 py-1 rounded-full font-medium uppercase tracking-wide">Yesterday, Oct 23</span>
+</div>
+<div class="flex gap-2 max-w-[90%]">
+<img alt="Ms. Johnson" class="w-8 h-8 rounded-squircle object-cover mt-1 self-end mb-1 shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxdf_p-7IYoo3qqjFEYagxp66C0usYOdfuxlVXLz9pKhrsYmgw8ez0D53D1dy47wFbfQN_jV0kS89sZxhO1MOJ8Oc1PUbWtbCeR2EGcYHwZL22eknrgH3O0xyZbciBbhL7LxsyTWdTdIvQ6Rc-zeUcfRgpj4MKsAmNjptflNg-1aBoe4nZjLGaToPeMwZ-AnYjEc3SSu0BrrcYIdpfP1VMdRlaoqYtIDlw7DV4Vm9KhZk6_sm_5lC2K49GDPn5i9uZAqc5WP-6P2Y"/>
+<div class="flex flex-col gap-1">
+<div class="bg-white dark:bg-gray-800 p-3 rounded-2xl rounded-bl-sm shadow-sm text-gray-800 dark:text-gray-200 text-sm leading-relaxed border border-gray-100 dark:border-gray-700">
+                        Hi Sarah! Just wanted to let you know that Leo did a fantastic job on his science presentation today. He was so confident! 🌟
+                    </div>
+<span class="text-[10px] text-gray-400 ml-1">2:30 PM</span>
+</div>
+</div>
+<div class="flex gap-2 max-w-[90%] ml-auto flex-row-reverse">
+<div class="flex flex-col gap-1 items-end">
+<div class="bg-primary text-white p-3 rounded-2xl rounded-br-sm shadow-sm shadow-orange-200 dark:shadow-none text-sm leading-relaxed">
+                        That is so wonderful to hear! Thank you for sharing that with me. He was really nervous about it this morning. 😅
+                    </div>
+<div class="flex items-center gap-1 mr-1">
+<span class="text-[10px] text-gray-400">2:35 PM</span>
+<span class="material-icons text-[12px] text-primary">done_all</span>
+</div>
+</div>
+</div>
+<div class="flex gap-2 max-w-[90%]">
+<img alt="Ms. Johnson" class="w-8 h-8 rounded-squircle object-cover mt-1 self-end mb-1 shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByZ-1SpcXgm0DuCUC0bW-53XcFNo0WHARxHuD9NMVaXTe5FzdjUkHy2w_5AXkjKBylwS0zBuOywmYZHDnjSSYICNIR7rpbLVJ8VOjKyEVcTQufFISZgCygql49YS75npd5ufrFs6c2meql3AxHECJAGmSDhXaYu9uRleKfofEC9DzuHRqSLQDLGE3ARMR2OqRs-bwvXkCTUfykTWTd83RJYSrEt2S3uvTT16f9ud-59XfrCHqQMAzD3u1Nn3EjQCodf7H0qmFmUMs"/>
+<div class="flex flex-col gap-1">
+<div class="bg-white dark:bg-gray-800 p-2.5 rounded-2xl rounded-bl-sm shadow-sm text-gray-800 dark:text-gray-200 text-sm leading-relaxed border border-gray-100 dark:border-gray-700">
+<p class="mb-2 text-xs px-1">Here is a photo I snapped during the presentation!</p>
+<div class="relative group cursor-pointer overflow-hidden rounded-xl">
+<img alt="Student Presentation" class="w-full h-40 object-cover rounded-xl border border-gray-100 dark:border-gray-600 transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXliemlpV1L0jU8pqO6tC19PwHfbJ9XZhWP-aGkrEdQrqmSEix9dtcKlSi6DFGfMbf6H2LPwkWHtBoLxHg9JRn0OgflAbJI8JUgRzQ7SsfzqMF6f5UvuzCupkUwqDBay8cusS5XLJhyELvyTETDjAjmJXp9gXFPZPyYgeYrSBS64MuH7xupLJdV130xZ3bpR91ayIe3qxshjt8B0JgPRoT0qM_U4DTHA6Ba3QHYN0TiwHz78F7iAkLNRURwl_vTRjT9sbByTzc9jE"/>
+</div>
+</div>
+<span class="text-[10px] text-gray-400 ml-1">2:36 PM</span>
+</div>
+</div>
+<div class="flex justify-center mt-6">
+<span class="bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-[10px] px-3 py-1 rounded-full font-medium uppercase tracking-wide">Today</span>
+</div>
+<div class="flex gap-2 max-w-[90%] ml-auto flex-row-reverse">
+<div class="flex flex-col gap-1 items-end">
+<div class="bg-primary text-white p-3 rounded-2xl rounded-br-sm shadow-sm shadow-orange-200 dark:shadow-none text-sm leading-relaxed">
+                        Good morning Ms. Johnson! 👋 Is the Science Fair still happening in the main gym tomorrow?
+                    </div>
+<div class="flex items-center gap-1 mr-1">
+<span class="text-[10px] text-gray-400">10:40 AM</span>
+<span class="material-icons text-[12px] text-primary">done_all</span>
+</div>
+</div>
+</div>
+<div class="flex gap-2 max-w-[90%] animate-fade-in-up">
+<img alt="Ms. Johnson" class="w-8 h-8 rounded-squircle object-cover mt-1 self-end mb-1 shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiBDupibdMU4HDzP3nL15p7sw22PUJQchg9pnxonQMtxXLa7LQXzevNVhcQYEJrBy8JUpxl0VdssxRLWFyhJ7xf8OBepfgbw-5FD5LlThD5w3R9zrSjnD5NRu7YDWMfyfGV4o44CAcYu0cDS6YcfqcrvF0r4dvzBgHkh0lVP-UrsE3jrQ0WbY9V3CWXdEUCeNJl4uGR9UPZTOtqDGe4Rl14UwdBJZ31EA2XuUKpS6M6_1Ll6CZcApLGliAWdcQi2WqWFrSs0-FHIU"/>
+<div class="flex flex-col gap-1">
+<div class="bg-white dark:bg-gray-800 p-3 rounded-2xl rounded-bl-sm shadow-sm text-gray-800 dark:text-gray-200 text-sm leading-relaxed border border-gray-100 dark:border-gray-700">
+                        Yes, absolutely! We'll start setting up at 8 AM. See you there! 🧪
+                    </div>
+<span class="text-[10px] text-gray-400 ml-1">10:42 AM</span>
+</div>
+</div>
+<div class="h-2"></div>
+</div>
+<div class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 p-3 pb-8 safe-area-bottom">
+<div class="flex items-end gap-2">
+<button class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all flex-shrink-0 touch-manipulation">
+<span class="material-icons text-2xl">add_circle_outline</span>
+</button>
+<div class="flex-1 bg-gray-100 dark:bg-gray-800 rounded-[24px] border border-transparent focus-within:border-primary/50 focus-within:bg-white dark:focus-within:bg-gray-800 transition-all flex items-center shadow-inner min-h-[48px]">
+<textarea class="w-full bg-transparent border-none text-gray-800 dark:text-gray-200 placeholder-gray-500 focus:ring-0 resize-none py-3 px-4 max-h-24 rounded-[24px] text-base leading-tight" placeholder="Message..." rows="1"></textarea>
+<button class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-full transition-colors mr-1 touch-manipulation">
+<span class="material-icons text-xl">mic</span>
+</button>
+</div>
+<button class="w-12 h-12 bg-primary hover:bg-orange-600 text-white rounded-full shadow-lg shadow-primary/40 hover:shadow-primary/50 transition-all transform active:scale-95 flex-shrink-0 flex items-center justify-center touch-manipulation">
+<span class="material-icons text-xl">send</span>
+</button>
+</div>
+</div>
+<div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gray-300 dark:bg-gray-600 rounded-full pointer-events-none"></div>
+</div>
+<style>
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in-up {
+            animation: fade-in-up 0.3s ease-out forwards;
+        }
+        .safe-area-bottom {
+            padding-bottom: max(1rem, env(safe-area-inset-bottom));
+        }
+    </style>
+
+</body></html>
