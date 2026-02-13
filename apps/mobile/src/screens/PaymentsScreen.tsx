@@ -1,16 +1,7 @@
 import { Calendar, ChevronRight, CreditCard, User } from "lucide-react-native";
 import React from "react";
-import {
-	ActivityIndicator,
-	FlatList,
-	Linking,
-	RefreshControl,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from "react-native";
-import { theme } from "../lib/theme";
+import { ActivityIndicator, FlatList, Linking, RefreshControl, View } from "react-native";
+import { Badge, Body, Button, Card, EmptyState, H1, Muted, Skeleton } from "../components/ui";
 import { trpc } from "../lib/trpc";
 
 export function PaymentsScreen() {
@@ -38,16 +29,20 @@ export function PaymentsScreen() {
 
 	if (isLoading) {
 		return (
-			<View style={styles.centered}>
-				<ActivityIndicator size="large" color={theme.colors.primary} />
+			<View className="flex-1 bg-background">
+				<View className="p-4 gap-4">
+					<Skeleton className="h-40" />
+					<Skeleton className="h-40" />
+					<Skeleton className="h-40" />
+				</View>
 			</View>
 		);
 	}
 
 	if (isError) {
 		return (
-			<View style={styles.centered}>
-				<Text style={styles.errorText}>Error loading payments.</Text>
+			<View className="flex-1 bg-background justify-center items-center">
+				<Body className="text-destructive">Error loading payments.</Body>
 			</View>
 		);
 	}
@@ -65,159 +60,58 @@ export function PaymentsScreen() {
 			childName: string;
 		};
 	}) => (
-		<View style={styles.card}>
-			<View style={styles.cardHeader}>
-				<View style={styles.categoryBadge}>
-					<Text style={styles.categoryText}>{item.category}</Text>
-				</View>
-				<Text style={styles.amountText}>£{(item.amount / 100).toFixed(2)}</Text>
+		<Card className="mb-4">
+			<View className="flex-row justify-between items-center mb-2">
+				<Badge className="bg-primary/10">
+					<Body className="text-xs font-bold text-primary uppercase">{item.category}</Body>
+				</Badge>
+				<H1 className="text-lg">£{(item.amount / 100).toFixed(2)}</H1>
 			</View>
 
-			<Text style={styles.titleText}>{item.title}</Text>
+			<Body className="font-semibold mb-3">{item.title}</Body>
 
-			<View style={styles.metaContainer}>
-				<View style={styles.metaRow}>
-					<User size={14} color={theme.colors.textMuted} />
-					<Text style={styles.metaText}>{item.childName}</Text>
+			<View className="mb-4">
+				<View className="flex-row items-center mb-1">
+					<User size={14} color="#9CA3AF" />
+					<Muted className="ml-1.5">{item.childName}</Muted>
 				</View>
 				{item.dueDate && (
-					<View style={styles.metaRow}>
-						<Calendar size={14} color={theme.colors.textMuted} />
-						<Text style={styles.metaText}>Due: {new Date(item.dueDate).toLocaleDateString()}</Text>
+					<View className="flex-row items-center">
+						<Calendar size={14} color="#9CA3AF" />
+						<Muted className="ml-1.5">Due: {new Date(item.dueDate).toLocaleDateString()}</Muted>
 					</View>
 				)}
 			</View>
 
-			<TouchableOpacity
-				style={styles.payButton}
-				onPress={() => createSession.mutate({ paymentItemId: item.id, childId: item.childId })}
-				disabled={createSession.isPending}
-			>
-				<Text style={styles.payButtonText}>
+			<View className="flex-row items-center justify-center bg-primary rounded-xl py-3 active:opacity-90">
+				<Button
+					onPress={() => createSession.mutate({ paymentItemId: item.id, childId: item.childId })}
+					disabled={createSession.isPending}
+					className="flex-1"
+				>
 					{createSession.isPending ? "Connecting..." : "Pay Now"}
-				</Text>
-				<ChevronRight size={18} color={theme.colors.card} />
-			</TouchableOpacity>
-		</View>
+				</Button>
+				<ChevronRight size={18} color="#FFFFFF" className="ml-1" />
+			</View>
+		</Card>
 	);
 
 	return (
-		<View style={styles.container}>
+		<View className="flex-1 bg-background">
 			<FlatList
 				data={payments}
 				renderItem={renderItem}
 				keyExtractor={(item) => `${item.id}-${item.childId}`}
-				contentContainerStyle={styles.listContent}
-				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+				contentContainerStyle={{ padding: 16 }}
+				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FF7D45" />}
 				ListEmptyComponent={
-					<View style={styles.emptyContainer}>
-						<CreditCard size={48} color={theme.colors.inactiveTab} />
-						<Text style={styles.emptyTitle}>No outstanding payments</Text>
-						<Text style={styles.emptySubtitle}>You're all caught up!</Text>
-					</View>
+					<EmptyState
+						icon={<CreditCard size={48} color="#9CA3AF" />}
+						title="No outstanding payments"
+						description="You're all caught up!"
+					/>
 				}
 			/>
 		</View>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: theme.colors.secondary,
-	},
-	centered: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-	},
-	listContent: {
-		padding: 16,
-	},
-	card: {
-		backgroundColor: theme.colors.card,
-		borderRadius: 12,
-		padding: 16,
-		marginBottom: 16,
-		shadowColor: "#000",
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.05,
-		shadowRadius: 4,
-		elevation: 2,
-	},
-	cardHeader: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		marginBottom: 8,
-	},
-	categoryBadge: {
-		backgroundColor: theme.colors.brandLight,
-		paddingHorizontal: 8,
-		paddingVertical: 4,
-		borderRadius: 6,
-	},
-	categoryText: {
-		color: theme.colors.primary,
-		fontSize: 10,
-		fontWeight: "700",
-		textTransform: "uppercase",
-	},
-	amountText: {
-		fontSize: 18,
-		fontWeight: "700",
-		color: theme.colors.text,
-	},
-	titleText: {
-		fontSize: 16,
-		fontWeight: "600",
-		color: theme.colors.text,
-		marginBottom: 12,
-	},
-	metaContainer: {
-		marginBottom: 16,
-	},
-	metaRow: {
-		flexDirection: "row",
-		alignItems: "center",
-		marginBottom: 4,
-	},
-	metaText: {
-		fontSize: 14,
-		color: theme.colors.textMuted,
-		marginLeft: 6,
-	},
-	payButton: {
-		backgroundColor: theme.colors.primary,
-		flexDirection: "row",
-		justifyContent: "center",
-		alignItems: "center",
-		paddingVertical: 12,
-		borderRadius: 8,
-	},
-	payButtonText: {
-		color: theme.colors.card,
-		fontSize: 16,
-		fontWeight: "600",
-		marginRight: 4,
-	},
-	errorText: {
-		color: theme.colors.error,
-		fontSize: 16,
-	},
-	emptyContainer: {
-		alignItems: "center",
-		marginTop: 64,
-	},
-	emptyTitle: {
-		fontSize: 18,
-		fontWeight: "600",
-		color: theme.colors.text,
-		marginTop: 16,
-	},
-	emptySubtitle: {
-		fontSize: 14,
-		color: theme.colors.textMuted,
-		marginTop: 4,
-	},
-});
