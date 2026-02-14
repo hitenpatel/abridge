@@ -1,25 +1,48 @@
 import { Text, type TextProps } from "react-native";
 
-export function H1({ className = "", ...props }: TextProps & { className?: string }) {
+type TypographyProps = TextProps & { className?: string };
+
+export function H1({ className = "", ...props }: TypographyProps) {
 	return (
-		<Text className={`text-2xl font-bold text-foreground font-sans ${className}`} {...props} />
+		<Text
+			className={`text-3xl font-sans-extrabold text-foreground dark:text-white tracking-tight ${className}`}
+			{...props}
+		/>
 	);
 }
 
-export function H2({ className = "", ...props }: TextProps & { className?: string }) {
+export function H2({ className = "", ...props }: TypographyProps) {
 	return (
-		<Text className={`text-lg font-semibold text-foreground font-sans ${className}`} {...props} />
+		<Text
+			className={`text-lg font-sans-bold text-foreground dark:text-white ${className}`}
+			{...props}
+		/>
 	);
 }
 
-export function Body({ className = "", ...props }: TextProps & { className?: string }) {
-	return <Text className={`text-sm text-foreground font-sans ${className}`} {...props} />;
+export function Body({ className = "", ...props }: TypographyProps) {
+	return (
+		<Text
+			className={`text-sm font-sans text-text-main dark:text-gray-200 ${className}`}
+			{...props}
+		/>
+	);
 }
 
-export function Muted({ className = "", ...props }: TextProps & { className?: string }) {
-	return <Text className={`text-sm text-muted-foreground font-sans ${className}`} {...props} />;
+export function Muted({ className = "", ...props }: TypographyProps) {
+	return (
+		<Text
+			className={`text-sm font-sans text-text-muted dark:text-gray-400 ${className}`}
+			{...props}
+		/>
+	);
 }
 
-export function Small({ className = "", ...props }: TextProps & { className?: string }) {
-	return <Text className={`text-xs text-muted-foreground font-sans ${className}`} {...props} />;
+export function Small({ className = "", ...props }: TypographyProps) {
+	return (
+		<Text
+			className={`text-xs font-sans text-text-muted dark:text-gray-500 ${className}`}
+			{...props}
+		/>
+	);
 }

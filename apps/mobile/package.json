@@ -13,7 +13,7 @@
 		"test:ci": "jest --ci --coverage --forceExit"
 	},
 	"dependencies": {
-		"@expo-google-fonts/poppins": "^0.4.1",
+		"@expo-google-fonts/plus-jakarta-sans": "^0.4.2",
 		"@expo/vector-icons": "^15.0.3",
 		"@react-navigation/bottom-tabs": "^7.12.0",
 		"@react-navigation/native": "^7.1.28",
@@ -56,16 +56,11 @@
 	},
 	"jest": {
 		"preset": "jest-expo",
-		"testMatch": [
-			"**/__tests__/**/*.test.{ts,tsx}",
-			"**/*.test.{ts,tsx}"
-		],
+		"testMatch": ["**/__tests__/**/*.test.{ts,tsx}", "**/*.test.{ts,tsx}"],
 		"transformIgnorePatterns": [
 			"node_modules/(?!(?:\\.pnpm|react-native|@react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|expo-modules-core|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg|@tanstack/.*|@trpc/.*|superjson|lucide-react-native|better-auth|jest-expo|nativewind|react-native-css-interop|class-variance-authority|expo-secure-store)/)"
 		],
-		"setupFilesAfterEnv": [
-			"@testing-library/react-native/build/matchers/extend-expect"
-		],
+		"setupFilesAfterEnv": ["@testing-library/react-native/build/matchers/extend-expect"],
 		"moduleNameMapper": {
 			"^@/(.*)$": "<rootDir>/src/$1"
 		}

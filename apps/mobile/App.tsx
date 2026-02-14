@@ -1,11 +1,12 @@
 import "./global.css";
 import {
-	Poppins_400Regular,
-	Poppins_500Medium,
-	Poppins_600SemiBold,
-	Poppins_700Bold,
+	PlusJakartaSans_400Regular,
+	PlusJakartaSans_500Medium,
+	PlusJakartaSans_600SemiBold,
+	PlusJakartaSans_700Bold,
+	PlusJakartaSans_800ExtraBold,
 	useFonts,
-} from "@expo-google-fonts/poppins";
+} from "@expo-google-fonts/plus-jakarta-sans";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
@@ -112,7 +113,7 @@ function TabNavigator() {
 				headerTintColor: isDark ? "#E5E7EB" : "#2D3748",
 				headerTitleStyle: { fontWeight: "600" },
 				tabBarStyle: { backgroundColor: isDark ? "#1E1E1E" : "#FFFFFF" },
-				tabBarActiveTintColor: "#FF7D45",
+				tabBarActiveTintColor: "#f56e3d",
 				tabBarInactiveTintColor: "#6B7280",
 				tabBarButton: (props) => (
 					<TouchableOpacity
@@ -267,7 +268,7 @@ function AppContent() {
 	if (isPending && authState === "auto") {
 		return (
 			<View className="flex-1 bg-background items-center justify-center">
-				<ActivityIndicator size="large" color="#FF7D45" />
+				<ActivityIndicator size="large" color="#f56e3d" />
 				<Text className="mt-3 text-base text-muted-foreground font-sans">Loading...</Text>
 			</View>
 		);
@@ -284,26 +285,27 @@ function AppContent() {
 
 	return (
 		<LogoutContext.Provider value={handleLogout}>
-		<View className={`flex-1 ${colorScheme}`}>
-			<AuthenticatedApp />
-			<StatusBar style={isDark ? "light" : "dark"} />
-		</View>
+			<View className={`flex-1 ${colorScheme}`}>
+				<AuthenticatedApp />
+				<StatusBar style={isDark ? "light" : "dark"} />
+			</View>
 		</LogoutContext.Provider>
 	);
 }
 
 export default function App() {
 	const [fontsLoaded] = useFonts({
-		Poppins_400Regular,
-		Poppins_500Medium,
-		Poppins_600SemiBold,
-		Poppins_700Bold,
+		PlusJakartaSans_400Regular,
+		PlusJakartaSans_500Medium,
+		PlusJakartaSans_600SemiBold,
+		PlusJakartaSans_700Bold,
+		PlusJakartaSans_800ExtraBold,
 	});
 
 	if (!fontsLoaded) {
 		return (
 			<View className="flex-1 bg-background items-center justify-center">
-				<ActivityIndicator size="large" color="#FF7D45" />
+				<ActivityIndicator size="large" color="#f56e3d" />
 			</View>
 		);
 	}
