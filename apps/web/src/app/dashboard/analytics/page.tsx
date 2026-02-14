@@ -1,0 +1,372 @@
+"use client";
+
+import { Card } from "@/components/ui/card";
+import { trpc } from "@/lib/trpc";
+import { useState } from "react";
+
+type DateRange = "today" | "week" | "month" | "term";
+
+function getDateRange(range: DateRange, termStart: Date | null): { from: Date; to: Date } {
+	const now = new Date();
+	const to = new Date(now);
+	to.setUTCHours(23, 59, 59, 999);
+
+	let from: Date;
+	switch (range) {
+		case "today":
+			from = new Date(now);
+			from.setUTCHours(0, 0, 0, 0);
+			break;
+		case "week": {
+			from = new Date(now);
+			from.setUTCDate(from.getUTCDate() - from.getUTCDay() + 1); // Monday
+			from.setUTCHours(0, 0, 0, 0);
+			break;
+		}
+		case "month":
+			from = new Date(now.getUTCFullYear(), now.getUTCMonth(), 1);
+			from.setUTCHours(0, 0, 0, 0);
+			break;
+		case "term":
+			if (termStart) {
+				from = new Date(termStart);
+			} else {
+				// Fall back to September 1st of current academic year
+				const year = now.getUTCMonth() >= 8 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
+				from = new Date(year, 8, 1);
+			}
+			from.setUTCHours(0, 0, 0, 0);
+			break;
+	}
+	return { from, to };
+}
+
+function Sparkline({ data }: { data: number[] }) {
+	if (data.length < 2) return null;
+
+	const width = 120;
+	const height = 32;
+	const max = Math.max(...data, 1);
+	const min = Math.min(...data, 0);
+	const range = max - min || 1;
+
+	const points = data
+		.map((v, i) => {
+			const x = (i / (data.length - 1)) * width;
+			const y = height - ((v - min) / range) * height;
+			return `${x},${y}`;
+		})
+		.join(" ");
+
+	return (
+		<svg width={width} height={height} className="inline-block">
+			<polyline
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="2"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				points={points}
+			/>
+		</svg>
+	);
+}
+
+function CardSkeleton() {
+	return (
+		<Card className="rounded-2xl p-6 border border-gray-100 animate-pulse">
+			<div className="flex items-center gap-3 mb-4">
+				<div className="w-10 h-10 rounded-xl bg-gray-200" />
+				<div className="h-5 w-32 bg-gray-200 rounded" />
+			</div>
+			<div className="h-8 w-20 bg-gray-200 rounded mb-2" />
+			<div className="h-4 w-48 bg-gray-200 rounded" />
+		</Card>
+	);
+}
+
+function DetailTable({
+	headers,
+	rows,
+}: {
+	headers: string[];
+	rows: (string | number)[][];
+}) {
+	return (
+		<div className="mt-4 overflow-x-auto">
+			<table className="w-full text-sm">
+				<thead>
+					<tr className="border-b border-gray-200">
+						{headers.map((h) => (
+							<th key={h} className="text-left py-2 px-3 font-semibold text-gray-500">
+								{h}
+							</th>
+						))}
+					</tr>
+				</thead>
+				<tbody>
+					{rows.map((row, i) => (
+						<tr key={i} className="border-b border-gray-50 hover:bg-gray-50">
+							{row.map((cell, j) => (
+								<td key={j} className="py-2 px-3 text-gray-700">
+									{cell}
+								</td>
+							))}
+						</tr>
+					))}
+				</tbody>
+			</table>
+		</div>
+	);
+}
+
+export default function AnalyticsPage() {
+	const [range, setRange] = useState<DateRange>("term");
+	const [expanded, setExpanded] = useState<string | null>(null);
+
+	const { data: session } = trpc.auth.getSession.useQuery();
+	const schoolId = session?.schoolId;
+
+	// Fetch term start date from analytics router
+	const { data: termStart } = trpc.analytics.termStart.useQuery(
+		{ schoolId: schoolId! },
+		{ enabled: !!schoolId },
+	);
+
+	const dates = schoolId ? getDateRange(range, termStart ? new Date(termStart) : null) : null;
+
+	const attendance = trpc.analytics.attendance.useQuery(
+		{ schoolId: schoolId!, from: dates!.from, to: dates!.to },
+		{ enabled: !!schoolId && !!dates },
+	);
+	const payments = trpc.analytics.payments.useQuery(
+		{ schoolId: schoolId!, from: dates!.from, to: dates!.to },
+		{ enabled: !!schoolId && !!dates },
+	);
+	const forms = trpc.analytics.forms.useQuery(
+		{ schoolId: schoolId!, from: dates!.from, to: dates!.to },
+		{ enabled: !!schoolId && !!dates },
+	);
+	const messages = trpc.analytics.messages.useQuery(
+		{ schoolId: schoolId!, from: dates!.from, to: dates!.to },
+		{ enabled: !!schoolId && !!dates },
+	);
+
+	const toggleExpand = (card: string) => {
+		setExpanded(expanded === card ? null : card);
+	};
+
+	const ranges: { key: DateRange; label: string }[] = [
+		{ key: "today", label: "Today" },
+		{ key: "week", label: "This Week" },
+		{ key: "month", label: "This Month" },
+		{ key: "term", label: "This Term" },
+	];
+
+	return (
+		<div className="max-w-7xl mx-auto">
+			<div className="flex items-center justify-between mb-8">
+				<div>
+					<h1 className="text-3xl font-bold text-gray-900">Analytics</h1>
+					<p className="text-gray-500 mt-1">School performance overview</p>
+				</div>
+				<div className="flex bg-white rounded-xl p-1 shadow-sm border border-gray-100">
+					{ranges.map((r) => (
+						<button
+							key={r.key}
+							type="button"
+							onClick={() => setRange(r.key)}
+							className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+								range === r.key
+									? "bg-primary text-white shadow-sm"
+									: "text-gray-500 hover:bg-gray-50"
+							}`}
+						>
+							{r.label}
+						</button>
+					))}
+				</div>
+			</div>
+
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+				{/* Attendance Card */}
+				{attendance.isLoading ? (
+					<CardSkeleton />
+				) : (
+					<Card
+						className="rounded-2xl p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow"
+						onClick={() => toggleExpand("attendance")}
+					>
+						<div className="flex items-center justify-between mb-4">
+							<div className="flex items-center gap-3">
+								<div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
+									<span className="material-symbols-rounded text-green-600">assignment_turned_in</span>
+								</div>
+								<h3 className="text-lg font-semibold text-gray-800">Attendance</h3>
+							</div>
+							<div className="text-green-600">
+								<Sparkline data={attendance.data?.trend.map((t) => t.rate) ?? []} />
+							</div>
+						</div>
+						<div className="text-3xl font-bold text-gray-900 mb-1">
+							{attendance.data?.todayRate ?? 0}%
+						</div>
+						<div className="flex items-center gap-4 text-sm text-gray-500">
+							<span>Period avg: {attendance.data?.periodRate ?? 0}%</span>
+							<span>Below 90%: {attendance.data?.belowThresholdCount ?? 0} children</span>
+						</div>
+						{expanded === "attendance" && attendance.data?.byClass.length ? (
+							<DetailTable
+								headers={["Class", "Rate", "Present", "Total"]}
+								rows={attendance.data.byClass.map((c) => [
+									c.className,
+									`${c.rate}%`,
+									c.presentCount,
+									c.totalCount,
+								])}
+							/>
+						) : null}
+						<div className="mt-3 text-xs text-gray-400 flex items-center gap-1">
+							<span className="material-symbols-rounded text-sm">
+								{expanded === "attendance" ? "expand_less" : "expand_more"}
+							</span>
+							{expanded === "attendance" ? "Collapse" : "View by class"}
+						</div>
+					</Card>
+				)}
+
+				{/* Payments Card */}
+				{payments.isLoading ? (
+					<CardSkeleton />
+				) : (
+					<Card
+						className="rounded-2xl p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow"
+						onClick={() => toggleExpand("payments")}
+					>
+						<div className="flex items-center justify-between mb-4">
+							<div className="flex items-center gap-3">
+								<div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+									<span className="material-symbols-rounded text-blue-600">payments</span>
+								</div>
+								<h3 className="text-lg font-semibold text-gray-800">Payments</h3>
+							</div>
+						</div>
+						<div className="text-3xl font-bold text-gray-900 mb-1">
+							{payments.data?.collectionRate ?? 0}%
+						</div>
+						<div className="flex items-center gap-4 text-sm text-gray-500">
+							<span>Collected: {"\u00A3"}{((payments.data?.collectedTotal ?? 0) / 100).toFixed(2)}</span>
+							<span>Outstanding: {"\u00A3"}{((payments.data?.outstandingTotal ?? 0) / 100).toFixed(2)}</span>
+						</div>
+						<div className="text-sm text-gray-500 mt-1">
+							{payments.data?.overdueCount ?? 0} overdue items
+						</div>
+						{expanded === "payments" && payments.data?.byItem.length ? (
+							<DetailTable
+								headers={["Item", "Rate", "Collected", "Total", "Amount"]}
+								rows={payments.data.byItem.map((item) => [
+									item.itemTitle,
+									`${item.collectionRate}%`,
+									item.collectedCount,
+									item.totalCount,
+									`\u00A3${(item.amount / 100).toFixed(2)}`,
+								])}
+							/>
+						) : null}
+						<div className="mt-3 text-xs text-gray-400 flex items-center gap-1">
+							<span className="material-symbols-rounded text-sm">
+								{expanded === "payments" ? "expand_less" : "expand_more"}
+							</span>
+							{expanded === "payments" ? "Collapse" : "View by item"}
+						</div>
+					</Card>
+				)}
+
+				{/* Forms Card */}
+				{forms.isLoading ? (
+					<CardSkeleton />
+				) : (
+					<Card
+						className="rounded-2xl p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow"
+						onClick={() => toggleExpand("forms")}
+					>
+						<div className="flex items-center justify-between mb-4">
+							<div className="flex items-center gap-3">
+								<div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
+									<span className="material-symbols-rounded text-purple-600">description</span>
+								</div>
+								<h3 className="text-lg font-semibold text-gray-800">Forms</h3>
+							</div>
+						</div>
+						<div className="text-3xl font-bold text-gray-900 mb-1">
+							{forms.data?.completionRate ?? 0}%
+						</div>
+						<div className="text-sm text-gray-500">
+							{forms.data?.pendingCount ?? 0} pending responses
+						</div>
+						{expanded === "forms" && forms.data?.byTemplate.length ? (
+							<DetailTable
+								headers={["Template", "Rate", "Submitted", "Total"]}
+								rows={forms.data.byTemplate.map((t) => [
+									t.templateTitle,
+									`${t.completionRate}%`,
+									t.submittedCount,
+									t.totalCount,
+								])}
+							/>
+						) : null}
+						<div className="mt-3 text-xs text-gray-400 flex items-center gap-1">
+							<span className="material-symbols-rounded text-sm">
+								{expanded === "forms" ? "expand_less" : "expand_more"}
+							</span>
+							{expanded === "forms" ? "Collapse" : "View by template"}
+						</div>
+					</Card>
+				)}
+
+				{/* Messages Card */}
+				{messages.isLoading ? (
+					<CardSkeleton />
+				) : (
+					<Card
+						className="rounded-2xl p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow"
+						onClick={() => toggleExpand("messages")}
+					>
+						<div className="flex items-center justify-between mb-4">
+							<div className="flex items-center gap-3">
+								<div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+									<span className="material-symbols-rounded text-amber-600">chat_bubble</span>
+								</div>
+								<h3 className="text-lg font-semibold text-gray-800">Messages</h3>
+							</div>
+						</div>
+						<div className="text-3xl font-bold text-gray-900 mb-1">
+							{messages.data?.sentCount ?? 0}
+						</div>
+						<div className="text-sm text-gray-500">
+							Avg read rate: {messages.data?.avgReadRate ?? 0}%
+						</div>
+						{expanded === "messages" && messages.data?.byMessage.length ? (
+							<DetailTable
+								headers={["Subject", "Sent", "Read", "Recipients", "Rate"]}
+								rows={messages.data.byMessage.map((m) => [
+									m.subject,
+									new Date(m.sentAt).toLocaleDateString(),
+									m.readCount,
+									m.recipientCount,
+									`${m.readRate}%`,
+								])}
+							/>
+						) : null}
+						<div className="mt-3 text-xs text-gray-400 flex items-center gap-1">
+							<span className="material-symbols-rounded text-sm">
+								{expanded === "messages" ? "expand_less" : "expand_more"}
+							</span>
+							{expanded === "messages" ? "Collapse" : "View by message"}
+						</div>
+					</Card>
+				)}
+			</div>
+		</div>
+	);
+}

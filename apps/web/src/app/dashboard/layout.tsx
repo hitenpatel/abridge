@@ -52,6 +52,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 		{ name: "Messages", href: "/dashboard/messages", icon: "chat_bubble" },
 		{ name: "Attendance", href: "/dashboard/attendance", icon: "assignment_turned_in" },
 		{ name: "Payments", href: "/dashboard/payments", icon: "payments" },
+		{ name: "Analytics", href: "/dashboard/analytics", icon: "analytics" },
 	];
 
 	const adminNav: NavItem[] = [
@@ -131,6 +132,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 							<button
 								type="button"
 								className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 w-full text-left transition-colors"
+								data-testid="user-menu-trigger"
 							>
 								<Avatar className="h-10 w-10">
 									<AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
@@ -154,7 +156,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 								</p>
 							</DropdownMenuLabel>
 							<DropdownMenuSeparator />
-							<DropdownMenuItem onClick={handleSignOut}>
+							<DropdownMenuItem onClick={handleSignOut} data-testid="logout-button">
 								<span className="material-symbols-rounded mr-2 text-base">logout</span>
 								Sign Out
 							</DropdownMenuItem>
