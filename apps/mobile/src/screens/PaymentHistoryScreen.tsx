@@ -37,7 +37,7 @@ export function PaymentHistoryScreen() {
 				)}
 				ListEmptyComponent={
 					<View className="flex-1 items-center justify-center py-20">
-						<MaterialIcons name="receipt_long" size={48} color="#9CA3AF" />
+						<MaterialIcons name="receipt-long" size={48} color="#9CA3AF" />
 						<Text className="text-text-muted font-sans-medium text-base mt-4">
 							No payment history
 						</Text>

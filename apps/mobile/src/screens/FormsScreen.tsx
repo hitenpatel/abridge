@@ -155,7 +155,7 @@ export function FormsScreen() {
 							style={{ opacity: 0.7 }}
 						>
 							<View className="w-12 h-12 rounded-full bg-green-100 items-center justify-center">
-								<MaterialIcons name="check_circle" size={24} color="#16A34A" />
+								<MaterialIcons name="check-circle" size={24} color="#16A34A" />
 							</View>
 							<View className="flex-1">
 								<Text className="text-base font-sans-bold text-foreground dark:text-white">

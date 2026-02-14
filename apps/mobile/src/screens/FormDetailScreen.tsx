@@ -101,7 +101,7 @@ export function FormDetailScreen({ route, navigation }: Props) {
 		return (
 			<View className="flex-1 bg-background items-center justify-center px-8">
 				<View className="w-20 h-20 bg-green-100 rounded-full items-center justify-center mb-6">
-					<MaterialIcons name="check_circle" size={48} color="#16A34A" />
+					<MaterialIcons name="check-circle" size={48} color="#16A34A" />
 				</View>
 				<Text className="text-2xl font-sans-bold text-foreground dark:text-white mb-2">
 					Form Submitted

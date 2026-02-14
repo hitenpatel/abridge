@@ -35,7 +35,7 @@ const reasons = [
 	{ key: "Sick", icon: "sick" as const, color: "#EF4444" },
 	{ key: "Appointment", icon: "event" as const, color: "#3B82F6" },
 	{ key: "Family", icon: "groups" as const, color: "#8B5CF6" },
-	{ key: "Other", icon: "more_horiz" as const, color: "#6B7280" },
+	{ key: "Other", icon: "more-horiz" as const, color: "#6B7280" },
 ];
 
 function getMarkColor(mark: string): { bg: string; text: string; label: string } {
@@ -279,7 +279,7 @@ export function AttendanceScreen() {
 											style={{ backgroundColor: markInfo.bg }}
 										>
 											<MaterialIcons
-												name={item.mark === "PRESENT" ? "check_circle" : "cancel"}
+												name={item.mark === "PRESENT" ? "check-circle" : "cancel"}
 												size={20}
 												color={markInfo.text}
 											/>
@@ -310,7 +310,7 @@ export function AttendanceScreen() {
 						</View>
 					) : (
 						<View className="items-center py-10">
-							<MaterialIcons name="event_available" size={48} color="#9CA3AF" />
+							<MaterialIcons name="event-available" size={48} color="#9CA3AF" />
 							<Text className="text-text-muted font-sans-medium text-base mt-4">
 								No records found
 							</Text>

@@ -82,7 +82,7 @@ export function ComposeMessageScreen() {
 							</Text>
 							<Text className="text-xs font-sans text-text-muted">Entire school</Text>
 						</View>
-						<MaterialIcons name="expand_more" size={24} color="#96867f" />
+						<MaterialIcons name="expand-more" size={24} color="#96867f" />
 					</View>
 				</View>
 
@@ -102,7 +102,7 @@ export function ComposeMessageScreen() {
 							}}
 						>
 							<MaterialIcons
-								name="check_circle"
+								name="check-circle"
 								size={20}
 								color={category === "STANDARD" ? "#16A34A" : "#9CA3AF"}
 							/>
@@ -124,7 +124,7 @@ export function ComposeMessageScreen() {
 							}}
 						>
 							<MaterialIcons
-								name="priority_high"
+								name="priority-high"
 								size={20}
 								color={category === "URGENT" ? "#DC2626" : "#9CA3AF"}
 							/>
@@ -166,11 +166,11 @@ export function ComposeMessageScreen() {
 					<ScrollView horizontal showsHorizontalScrollIndicator={false}>
 						<View className="flex-row gap-3">
 							<Pressable className="border-2 border-dashed border-gray-300 rounded-2xl px-5 py-3 flex-row items-center gap-2">
-								<MaterialIcons name="add_a_photo" size={20} color="#96867f" />
+								<MaterialIcons name="add-a-photo" size={20} color="#96867f" />
 								<Text className="text-sm font-sans-medium text-text-muted">Photo</Text>
 							</Pressable>
 							<Pressable className="border-2 border-dashed border-gray-300 rounded-2xl px-5 py-3 flex-row items-center gap-2">
-								<MaterialIcons name="note_add" size={20} color="#96867f" />
+								<MaterialIcons name="note-add" size={20} color="#96867f" />
 								<Text className="text-sm font-sans-medium text-text-muted">Document</Text>
 							</Pressable>
 							<Pressable className="border-2 border-dashed border-gray-300 rounded-2xl px-5 py-3 flex-row items-center gap-2">

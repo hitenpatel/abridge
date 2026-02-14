@@ -73,7 +73,7 @@ export function CalendarScreen() {
 	if (isError) {
 		return (
 			<View className="flex-1 bg-background items-center justify-center px-6">
-				<MaterialIcons name="error_outline" size={48} color="#F87171" />
+				<MaterialIcons name="error-outline" size={48} color="#F87171" />
 				<Text className="text-foreground font-sans-bold text-lg mt-4 mb-2">
 					Failed to load events
 				</Text>
@@ -97,7 +97,7 @@ export function CalendarScreen() {
 					onPress={handlePreviousMonth}
 					className="w-10 h-10 rounded-full bg-neutral-surface dark:bg-surface-dark items-center justify-center"
 				>
-					<MaterialIcons name="chevron_left" size={24} color="#5c4d47" />
+					<MaterialIcons name="chevron-left" size={24} color="#5c4d47" />
 				</Pressable>
 				<Text className="text-lg font-sans-bold text-foreground dark:text-white">
 					{formattedMonth}
@@ -106,7 +106,7 @@ export function CalendarScreen() {
 					onPress={handleNextMonth}
 					className="w-10 h-10 rounded-full bg-neutral-surface dark:bg-surface-dark items-center justify-center"
 				>
-					<MaterialIcons name="chevron_right" size={24} color="#5c4d47" />
+					<MaterialIcons name="chevron-right" size={24} color="#5c4d47" />
 				</Pressable>
 			</View>
 

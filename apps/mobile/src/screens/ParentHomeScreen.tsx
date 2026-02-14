@@ -25,7 +25,7 @@ interface ParentHomeScreenProps {
 
 const quickActions = [
 	{
-		icon: "calendar_today" as const,
+		icon: "calendar-today" as const,
 		label: "Calendar",
 		color: "#3B82F6",
 		bg: "#DBEAFE",
@@ -46,7 +46,7 @@ const quickActions = [
 		route: "Attendance" as const,
 	},
 	{
-		icon: "emoji_events" as const,
+		icon: "emoji-events" as const,
 		label: "Awards",
 		color: "#F59E0B",
 		bg: "#FEF3C7",
@@ -86,7 +86,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 	if (isError || !data) {
 		return (
 			<View className="flex-1 bg-background items-center justify-center px-6">
-				<MaterialIcons name="error_outline" size={48} color="#F87171" />
+				<MaterialIcons name="error-outline" size={48} color="#F87171" />
 				<Text className="text-foreground font-sans-bold text-lg mt-4 mb-2">Failed to load</Text>
 				<Pressable onPress={() => refetch()} className="bg-primary px-6 py-3 rounded-full">
 					<Text className="text-white font-sans-bold">Retry</Text>
@@ -250,7 +250,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 							borderColor="#14B8A6"
 							iconBg="#CCFBF1"
 							iconColor="#0D9488"
-							icon="account_balance_wallet"
+							icon="account-balance-wallet"
 							title="Payment Due"
 							subtitle={`£${(metrics.paymentsTotal / 100).toFixed(2)} outstanding`}
 							actionButton={{
@@ -271,7 +271,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 							<ProgressBar
 								label="Attendance"
 								value={firstChildPercentage}
-								icon="check_circle"
+								icon="check-circle"
 								color="#22C55E"
 							/>
 							<ProgressBar label="Participation" value={85} icon="groups" color="#3B82F6" />
@@ -285,10 +285,10 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 				</Text>
 				<ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-6">
 					<View className="flex-row gap-4">
-						<AchievementBadge icon="emoji_events" label="Star Student" bgColor="#F59E0B" />
+						<AchievementBadge icon="emoji-events" label="Star Student" bgColor="#F59E0B" />
 						<AchievementBadge icon="groups" label="Team Player" bgColor="#3B82F6" />
-						<AchievementBadge icon="auto_stories" label="Bookworm" bgColor="#8B5CF6" />
-						<AchievementBadge icon="music_note" label="Musician" bgColor="#EC4899" />
+						<AchievementBadge icon="auto-stories" label="Bookworm" bgColor="#8B5CF6" />
+						<AchievementBadge icon="music-note" label="Musician" bgColor="#EC4899" />
 					</View>
 				</ScrollView>
 			</ScrollView>

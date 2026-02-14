@@ -45,7 +45,7 @@ export function HeroCard({ childName, avatarUri, status, checkInTime }: HeroCard
 						</Text>
 					)}
 				</View>
-				<MaterialIcons name="chevron_right" size={24} color="rgba(255,255,255,0.6)" />
+				<MaterialIcons name="chevron-right" size={24} color="rgba(255,255,255,0.6)" />
 			</View>
 		</View>
 	);

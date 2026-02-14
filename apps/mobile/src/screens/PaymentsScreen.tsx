@@ -79,7 +79,7 @@ export function PaymentsScreen() {
 	if (isError) {
 		return (
 			<View className="flex-1 bg-background items-center justify-center px-6">
-				<MaterialIcons name="error_outline" size={48} color="#F87171" />
+				<MaterialIcons name="error-outline" size={48} color="#F87171" />
 				<Text className="text-foreground font-sans-bold text-lg mt-4 mb-2">
 					Error loading payments
 				</Text>
@@ -142,7 +142,7 @@ export function PaymentsScreen() {
 								style={{ borderLeftWidth: 4, borderLeftColor: "#EF4444" }}
 							>
 								<View className="w-12 h-12 rounded-full bg-red-100 items-center justify-center">
-									<MaterialIcons name="priority_high" size={24} color="#EF4444" />
+									<MaterialIcons name="priority-high" size={24} color="#EF4444" />
 								</View>
 								<View className="flex-1">
 									<Text className="text-base font-sans-bold text-foreground dark:text-white">
@@ -183,7 +183,7 @@ export function PaymentsScreen() {
 								className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 mb-3 flex-row items-center gap-3"
 							>
 								<View className="w-12 h-12 rounded-xl bg-primary/10 items-center justify-center">
-									<MaterialIcons name="receipt_long" size={24} color="#f56e3d" />
+									<MaterialIcons name="receipt-long" size={24} color="#f56e3d" />
 								</View>
 								<View className="flex-1">
 									<Text className="text-base font-sans-bold text-foreground dark:text-white">
@@ -214,7 +214,7 @@ export function PaymentsScreen() {
 				{/* Empty state */}
 				{(!payments || payments.length === 0) && (
 					<View className="items-center py-20">
-						<MaterialIcons name="account_balance_wallet" size={48} color="#9CA3AF" />
+						<MaterialIcons name="account-balance-wallet" size={48} color="#9CA3AF" />
 						<Text className="text-text-muted font-sans-medium text-base mt-4">
 							No outstanding payments
 						</Text>

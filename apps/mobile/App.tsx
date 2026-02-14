@@ -139,17 +139,17 @@ function ParentTabNavigator() {
 			<ParentTab.Screen
 				name="Messages"
 				component={MessagesScreen}
-				options={{ tabBarLabel: { icon: "chat_bubble_outline", label: "Messages" } as never }}
+				options={{ tabBarLabel: { icon: "chat-bubble-outline", label: "Messages" } as never }}
 			/>
 			<ParentTab.Screen
 				name="Attendance"
 				component={AttendanceScreen}
-				options={{ tabBarLabel: { icon: "check_circle_outline", label: "Attendance" } as never }}
+				options={{ tabBarLabel: { icon: "check-circle-outline", label: "Attendance" } as never }}
 			/>
 			<ParentTab.Screen
 				name="Payments"
 				component={PaymentsScreen}
-				options={{ tabBarLabel: { icon: "account_balance_wallet", label: "Payments" } as never }}
+				options={{ tabBarLabel: { icon: "account-balance-wallet", label: "Payments" } as never }}
 			/>
 		</ParentTab.Navigator>
 	);
@@ -169,17 +169,17 @@ function StaffTabNavigator() {
 			<StaffTab.Screen
 				name="StaffMessages"
 				component={MessagesScreen}
-				options={{ tabBarLabel: { icon: "chat_bubble_outline", label: "Messages" } as never }}
+				options={{ tabBarLabel: { icon: "chat-bubble-outline", label: "Messages" } as never }}
 			/>
 			<StaffTab.Screen
 				name="StaffAttendance"
 				component={StaffAttendanceScreen}
-				options={{ tabBarLabel: { icon: "check_circle_outline", label: "Attendance" } as never }}
+				options={{ tabBarLabel: { icon: "check-circle-outline", label: "Attendance" } as never }}
 			/>
 			<StaffTab.Screen
 				name="StaffPayments"
 				component={StaffPaymentsScreen}
-				options={{ tabBarLabel: { icon: "account_balance_wallet", label: "Payments" } as never }}
+				options={{ tabBarLabel: { icon: "account-balance-wallet", label: "Payments" } as never }}
 			/>
 		</StaffTab.Navigator>
 	);
@@ -342,6 +342,7 @@ export default function App() {
 		PlusJakartaSans_600SemiBold,
 		PlusJakartaSans_700Bold,
 		PlusJakartaSans_800ExtraBold,
+		...MaterialIcons.font,
 	});
 
 	if (!fontsLoaded) {

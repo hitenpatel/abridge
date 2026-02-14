@@ -80,7 +80,7 @@ export function StaffAttendanceScreen() {
 
 				{absentToday === 0 ? (
 					<View className="items-center py-12 bg-neutral-surface dark:bg-surface-dark rounded-2xl">
-						<MaterialIcons name="check_circle" size={40} color="#16A34A" />
+						<MaterialIcons name="check-circle" size={40} color="#16A34A" />
 						<Text className="text-text-muted font-sans-medium text-sm mt-3">
 							All students present today
 						</Text>

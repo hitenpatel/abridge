@@ -217,7 +217,7 @@ export function StaffHomeScreen() {
 						className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 flex-row items-center gap-3"
 					>
 						<View className="w-12 h-12 rounded-full bg-purple-100 items-center justify-center">
-							<MaterialIcons name="manage_accounts" size={24} color="#8B5CF6" />
+							<MaterialIcons name="manage-accounts" size={24} color="#8B5CF6" />
 						</View>
 						<View className="flex-1">
 							<Text className="text-base font-sans-bold text-foreground dark:text-white">
@@ -227,7 +227,7 @@ export function StaffHomeScreen() {
 								Manage team members and roles
 							</Text>
 						</View>
-						<MaterialIcons name="chevron_right" size={24} color="#96867f" />
+						<MaterialIcons name="chevron-right" size={24} color="#96867f" />
 					</Pressable>
 				</View>
 			)}

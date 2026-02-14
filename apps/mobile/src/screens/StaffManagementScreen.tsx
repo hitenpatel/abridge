@@ -242,7 +242,7 @@ export function StaffManagementScreen() {
 										style={{ opacity: 0.8 }}
 									>
 										<View className="w-10 h-10 rounded-full bg-gray-100 items-center justify-center">
-											<MaterialIcons name="mail_outline" size={20} color="#9CA3AF" />
+											<MaterialIcons name="mail-outline" size={20} color="#9CA3AF" />
 										</View>
 										<View className="flex-1">
 											<Text className="text-sm font-sans-bold text-foreground dark:text-white">
@@ -270,7 +270,7 @@ export function StaffManagementScreen() {
 												Alert.alert("Copied", "Invitation link copied to clipboard");
 											}}
 										>
-											<MaterialIcons name="content_copy" size={18} color="#96867f" />
+											<MaterialIcons name="content-copy" size={18} color="#96867f" />
 										</Pressable>
 									</View>
 								);
@@ -291,7 +291,7 @@ export function StaffManagementScreen() {
 					<View className="bg-white dark:bg-surface-dark rounded-2xl p-6 w-full">
 						<View className="items-center mb-4">
 							<View className="w-16 h-16 rounded-full bg-red-100 items-center justify-center mb-3">
-								<MaterialIcons name="person_remove" size={32} color="#EF4444" />
+								<MaterialIcons name="person-remove" size={32} color="#EF4444" />
 							</View>
 							<Text className="text-lg font-sans-bold text-foreground dark:text-white">
 								Remove Staff Member?

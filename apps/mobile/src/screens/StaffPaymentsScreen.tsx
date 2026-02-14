@@ -103,7 +103,7 @@ export function StaffPaymentsScreen() {
 									>
 										<View className="flex-row items-start gap-3">
 											<View className="w-12 h-12 rounded-xl bg-primary/10 items-center justify-center">
-												<MaterialIcons name="receipt_long" size={24} color="#f56e3d" />
+												<MaterialIcons name="receipt-long" size={24} color="#f56e3d" />
 											</View>
 											<View className="flex-1">
 												<Text className="text-base font-sans-bold text-foreground dark:text-white">

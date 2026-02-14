@@ -12,11 +12,11 @@ type SearchResultItem = RouterOutputs["search"]["query"][number];
 function getResultIcon(index: string): keyof typeof MaterialIcons.glyphMap {
 	switch (index) {
 		case "messages":
-			return "chat_bubble_outline";
+			return "chat-bubble-outline";
 		case "events":
 			return "event";
 		case "payment_items":
-			return "account_balance_wallet";
+			return "account-balance-wallet";
 		default:
 			return "search";
 	}
@@ -109,7 +109,7 @@ export function SearchScreen() {
 
 			{!isLoading && debouncedQuery.length > 2 && results?.length === 0 && (
 				<View className="flex-1 justify-center items-center px-6">
-					<MaterialIcons name="search_off" size={48} color="#9CA3AF" />
+					<MaterialIcons name="search-off" size={48} color="#9CA3AF" />
 					<Text className="text-text-muted font-sans-medium text-base mt-4">No results found</Text>
 					<Text className="text-text-muted font-sans text-sm mt-1">
 						No results for "{debouncedQuery}"
@@ -119,7 +119,7 @@ export function SearchScreen() {
 
 			{isError && (
 				<View className="flex-1 justify-center items-center px-6">
-					<MaterialIcons name="error_outline" size={48} color="#F87171" />
+					<MaterialIcons name="error-outline" size={48} color="#F87171" />
 					<Text className="text-foreground font-sans-bold text-base mt-4">
 						An error occurred while searching
 					</Text>

@@ -37,7 +37,7 @@ export function StudentProfileScreen({ route }: Props) {
 	if (!child) {
 		return (
 			<View className="flex-1 bg-background items-center justify-center px-6">
-				<MaterialIcons name="person_off" size={48} color="#9CA3AF" />
+				<MaterialIcons name="person-off" size={48} color="#9CA3AF" />
 				<Text className="text-text-muted font-sans-medium text-base mt-4">Student not found</Text>
 			</View>
 		);
@@ -98,9 +98,9 @@ export function StudentProfileScreen({ route }: Props) {
 					contentContainerStyle={{ paddingHorizontal: 24, gap: 12 }}
 				>
 					<AchievementBadge icon="star" label="Star Reader" bgColor="#FEF3C7" />
-					<AchievementBadge icon="emoji_events" label="Maths Whiz" bgColor="#DBEAFE" />
+					<AchievementBadge icon="emoji-events" label="Maths Whiz" bgColor="#DBEAFE" />
 					<AchievementBadge icon="palette" label="Art Star" bgColor="#EDE9FE" />
-					<AchievementBadge icon="sports_soccer" label="Sports Day" bgColor="#DCFCE7" />
+					<AchievementBadge icon="sports-soccer" label="Sports Day" bgColor="#DCFCE7" />
 				</ScrollView>
 			</View>
 
@@ -113,7 +113,7 @@ export function StudentProfileScreen({ route }: Props) {
 					<ProgressBar
 						label="Attendance"
 						value={attendance?.percentage ?? 0}
-						icon="check_circle"
+						icon="check-circle"
 						color="#10B981"
 					/>
 					<View className="h-3" />
@@ -142,7 +142,7 @@ export function StudentProfileScreen({ route }: Props) {
 								{nextEvent.title}
 							</Text>
 						</View>
-						<MaterialIcons name="chevron_right" size={24} color="#96867f" />
+						<MaterialIcons name="chevron-right" size={24} color="#96867f" />
 					</View>
 				</View>
 			)}

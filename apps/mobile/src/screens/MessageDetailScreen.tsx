@@ -99,7 +99,7 @@ export function MessageDetailScreen({ route }: MessageDetailScreenProps) {
 				{/* Read status */}
 				{message.readAt && (
 					<View className="mt-8 pt-4 border-t border-border dark:border-white/10 flex-row items-center justify-center gap-1.5">
-						<MaterialIcons name="done_all" size={14} color="#f56e3d" />
+						<MaterialIcons name="done-all" size={14} color="#f56e3d" />
 						<Text className="text-xs font-sans text-text-muted">
 							Read on{" "}
 							{new Date(message.readAt).toLocaleDateString([], {

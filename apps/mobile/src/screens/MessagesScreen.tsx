@@ -180,7 +180,7 @@ export function MessagesScreen() {
 	if (isError) {
 		return (
 			<View className="flex-1 bg-background items-center justify-center px-6">
-				<MaterialIcons name="error_outline" size={48} color="#F87171" />
+				<MaterialIcons name="error-outline" size={48} color="#F87171" />
 				<Text className="text-foreground font-sans-bold text-lg mt-4 mb-2">
 					Failed to load messages
 				</Text>
@@ -219,7 +219,7 @@ export function MessagesScreen() {
 				}
 				ListEmptyComponent={
 					<View className="flex-1 items-center justify-center py-20">
-						<MaterialIcons name="chat_bubble_outline" size={48} color="#9CA3AF" />
+						<MaterialIcons name="chat-bubble-outline" size={48} color="#9CA3AF" />
 						<Text className="text-text-muted font-sans-medium text-base mt-4">No messages yet</Text>
 						<Text className="text-text-muted font-sans text-sm mt-1">Pull down to refresh</Text>
 					</View>
