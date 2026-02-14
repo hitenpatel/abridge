@@ -18,9 +18,9 @@ describe("LoginScreen", () => {
 		jest.clearAllMocks();
 	});
 
-	it("renders title, email input, password input, and login button", () => {
+	it("renders brand name, email input, password input, and sign in button", () => {
 		render(<LoginScreen />);
-		expect(screen.getByText("Welcome to Abridge")).toBeTruthy();
+		expect(screen.getByText("Abridge")).toBeTruthy();
 		expect(screen.getByPlaceholderText("Email")).toBeTruthy();
 		expect(screen.getByPlaceholderText("Password")).toBeTruthy();
 		expect(screen.getByText("Sign In")).toBeTruthy();
@@ -53,14 +53,15 @@ describe("LoginScreen", () => {
 		});
 	});
 
-	it("shows success alert on successful login", async () => {
+	it("calls onLoginSuccess callback on successful login", async () => {
 		mockSignIn.mockResolvedValue({ data: { user: {} }, error: null });
-		render(<LoginScreen />);
+		const onLoginSuccess = jest.fn();
+		render(<LoginScreen onLoginSuccess={onLoginSuccess} />);
 		fireEvent.changeText(screen.getByPlaceholderText("Email"), "parent@school.com");
 		fireEvent.changeText(screen.getByPlaceholderText("Password"), "password123");
 		fireEvent.press(screen.getByText("Sign In"));
 		await waitFor(() => {
-			expect(Alert.alert).toHaveBeenCalledWith("Success", "Logged in successfully");
+			expect(onLoginSuccess).toHaveBeenCalled();
 		});
 	});
 
