@@ -80,9 +80,7 @@ export function ComposeMessageScreen() {
 							<Text className="text-base font-sans-bold text-foreground dark:text-white">
 								All Parents
 							</Text>
-							<Text className="text-xs font-sans text-text-muted">
-								Entire school
-							</Text>
+							<Text className="text-xs font-sans text-text-muted">Entire school</Text>
 						</View>
 						<MaterialIcons name="expand_more" size={24} color="#96867f" />
 					</View>
@@ -188,7 +186,8 @@ export function ComposeMessageScreen() {
 					<View className="bg-primary/5 rounded-xl p-4 flex-row gap-3">
 						<MaterialIcons name="info" size={20} color="#f56e3d" />
 						<Text className="text-xs font-sans text-text-muted flex-1 leading-4">
-							Parents will receive a push notification for this message. Urgent messages will be highlighted in their inbox.
+							Parents will receive a push notification for this message. Urgent messages will be
+							highlighted in their inbox.
 						</Text>
 					</View>
 				</View>

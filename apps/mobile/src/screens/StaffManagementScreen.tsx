@@ -33,13 +33,14 @@ export function StaffManagementScreen() {
 	const { data: session } = trpc.auth.getSession.useQuery();
 	const schoolId = session?.schoolId;
 
-	const { data: staff, isLoading: staffLoading, refetch: refetchStaff } = trpc.staff.list.useQuery(
-		{ schoolId: schoolId! },
-		{ enabled: !!schoolId },
-	);
+	const {
+		data: staff,
+		isLoading: staffLoading,
+		refetch: refetchStaff,
+	} = trpc.staff.list.useQuery({ schoolId: schoolId as string }, { enabled: !!schoolId });
 
 	const { data: invitations, refetch: refetchInvitations } = trpc.invitation.list.useQuery(
-		{ schoolId: schoolId! },
+		{ schoolId: schoolId as string },
 		{ enabled: !!schoolId },
 	);
 
@@ -96,17 +97,21 @@ export function StaffManagementScreen() {
 	}
 
 	const pendingInvites = Array.isArray(invitations)
-		? (invitations as Array<{ id: string; email: string; role: string; expiresAt: string; token: string; acceptedAt: string | null }>).filter(
-				(inv) => !inv.acceptedAt,
-			)
+		? (
+				invitations as Array<{
+					id: string;
+					email: string;
+					role: string;
+					expiresAt: string;
+					token: string;
+					acceptedAt: string | null;
+				}>
+			).filter((inv) => !inv.acceptedAt)
 		: [];
 
 	return (
 		<View className="flex-1 bg-background">
-			<ScrollView
-				className="flex-1"
-				contentContainerStyle={{ paddingBottom: 40 }}
-			>
+			<ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 40 }}>
 				{/* Invite Section */}
 				<View className="px-6 pt-4 mb-6">
 					<Text className="text-sm font-sans-bold uppercase tracking-wider text-text-muted mb-4">
@@ -195,22 +200,15 @@ export function StaffManagementScreen() {
 									<View className="flex-1">
 										<Text className="text-base font-sans-bold text-foreground dark:text-white">
 											{member.user.name}
-											{isSelf && (
-												<Text className="text-text-muted font-sans"> (you)</Text>
-											)}
+											{isSelf && <Text className="text-text-muted font-sans"> (you)</Text>}
 										</Text>
-										<Text className="text-xs font-sans text-text-muted">
-											{member.user.email}
-										</Text>
+										<Text className="text-xs font-sans text-text-muted">{member.user.email}</Text>
 									</View>
 									<View
 										className="rounded-full px-2.5 py-1"
 										style={{ backgroundColor: roleStyle.bg }}
 									>
-										<Text
-											className="text-xs font-sans-bold"
-											style={{ color: roleStyle.text }}
-										>
+										<Text className="text-xs font-sans-bold" style={{ color: roleStyle.text }}>
 											{member.role}
 										</Text>
 									</View>
@@ -251,17 +249,18 @@ export function StaffManagementScreen() {
 												{inv.email}
 											</Text>
 											<Text className="text-xs font-sans text-text-muted">
-												Expires {new Date(inv.expiresAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+												Expires{" "}
+												{new Date(inv.expiresAt).toLocaleDateString("en-GB", {
+													day: "numeric",
+													month: "short",
+												})}
 											</Text>
 										</View>
 										<View
 											className="rounded-full px-2.5 py-1"
 											style={{ backgroundColor: roleStyle.bg }}
 										>
-											<Text
-												className="text-xs font-sans-bold"
-												style={{ color: roleStyle.text }}
-											>
+											<Text className="text-xs font-sans-bold" style={{ color: roleStyle.text }}>
 												{inv.role}
 											</Text>
 										</View>

@@ -23,16 +23,39 @@ interface ParentHomeScreenProps {
 }
 
 const quickActions = [
-	{ icon: "calendar_today" as const, label: "Calendar", color: "#3B82F6", bg: "#DBEAFE", route: "Calendar" as const },
-	{ icon: "assignment" as const, label: "Forms", color: "#8B5CF6", bg: "#EDE9FE", route: "Forms" as const },
-	{ icon: "sick" as const, label: "Sick Note", color: "#EF4444", bg: "#FEE2E2", route: "Attendance" as const },
-	{ icon: "emoji_events" as const, label: "Awards", color: "#F59E0B", bg: "#FEF3C7", route: "StudentProfile" as const },
+	{
+		icon: "calendar_today" as const,
+		label: "Calendar",
+		color: "#3B82F6",
+		bg: "#DBEAFE",
+		route: "Calendar" as const,
+	},
+	{
+		icon: "assignment" as const,
+		label: "Forms",
+		color: "#8B5CF6",
+		bg: "#EDE9FE",
+		route: "Forms" as const,
+	},
+	{
+		icon: "sick" as const,
+		label: "Sick Note",
+		color: "#EF4444",
+		bg: "#FEE2E2",
+		route: "Attendance" as const,
+	},
+	{
+		icon: "emoji_events" as const,
+		label: "Awards",
+		color: "#F59E0B",
+		bg: "#FEF3C7",
+		route: "StudentProfile" as const,
+	},
 ];
 
 export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 	const insets = useSafeAreaInsets();
-	const { data, isLoading, isError, refetch, isRefetching } =
-		trpc.dashboard.getSummary.useQuery();
+	const { data, isLoading, isError, refetch, isRefetching } = trpc.dashboard.getSummary.useQuery();
 
 	const onRefresh = React.useCallback(() => {
 		refetch();
@@ -62,9 +85,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 		return (
 			<View className="flex-1 bg-background items-center justify-center px-6">
 				<MaterialIcons name="error_outline" size={48} color="#F87171" />
-				<Text className="text-foreground font-sans-bold text-lg mt-4 mb-2">
-					Failed to load
-				</Text>
+				<Text className="text-foreground font-sans-bold text-lg mt-4 mb-2">Failed to load</Text>
 				<Pressable onPress={() => refetch()} className="bg-primary px-6 py-3 rounded-full">
 					<Text className="text-white font-sans-bold">Retry</Text>
 				</Pressable>
@@ -88,10 +109,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 	return (
 		<View className="flex-1 bg-background">
 			{/* Header */}
-			<View
-				className="px-6 pb-4 bg-background"
-				style={{ paddingTop: insets.top + 8 }}
-			>
+			<View className="px-6 pb-4 bg-background" style={{ paddingTop: insets.top + 8 }}>
 				<View className="flex-row items-center justify-between">
 					<View>
 						<Text className="text-sm font-sans-semibold uppercase tracking-wider text-text-muted">
@@ -132,9 +150,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 						<HeroCard
 							childName={firstChild.firstName}
 							status={firstChildAttendance?.mark === "PRESENT" ? "at School" : "Home"}
-							checkInTime={
-								firstChildAttendance?.mark === "PRESENT" ? "8:45 AM" : undefined
-							}
+							checkInTime={firstChildAttendance?.mark === "PRESENT" ? "8:45 AM" : undefined}
 						/>
 					</Pressable>
 				)}
@@ -248,12 +264,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 								icon="check_circle"
 								color="#22C55E"
 							/>
-							<ProgressBar
-								label="Participation"
-								value={85}
-								icon="groups"
-								color="#3B82F6"
-							/>
+							<ProgressBar label="Participation" value={85} icon="groups" color="#3B82F6" />
 						</View>
 					</View>
 				)}

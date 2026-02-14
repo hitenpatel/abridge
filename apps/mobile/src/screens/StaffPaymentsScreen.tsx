@@ -14,7 +14,7 @@ export function StaffPaymentsScreen() {
 		refetch,
 		isRefetching,
 	} = trpc.payments.listPaymentItems.useQuery(
-		{ schoolId: schoolId! },
+		{ schoolId: schoolId as string },
 		{ enabled: !!schoolId },
 	);
 
@@ -48,12 +48,8 @@ export function StaffPaymentsScreen() {
 			>
 				{/* Header */}
 				<View className="px-6 pt-4 pb-2">
-					<Text className="text-2xl font-sans-bold text-foreground dark:text-white">
-						Payments
-					</Text>
-					<Text className="text-sm font-sans text-text-muted mt-0.5">
-						Manage payment items
-					</Text>
+					<Text className="text-2xl font-sans-bold text-foreground dark:text-white">Payments</Text>
+					<Text className="text-sm font-sans text-text-muted mt-0.5">Manage payment items</Text>
 				</View>
 
 				{/* Summary */}
@@ -149,7 +145,8 @@ export function StaffPaymentsScreen() {
 											<Text className="text-xs font-sans-bold text-green-600">
 												{item.recipientCount > 0
 													? Math.round((item.paymentCount / item.recipientCount) * 100)
-													: 0}%
+													: 0}
+												%
 											</Text>
 										</View>
 									</View>

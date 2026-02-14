@@ -101,12 +101,13 @@ export function PaymentsScreen() {
 				}
 			>
 				{/* Header */}
-				<View className="px-6 pb-4 flex-row items-center justify-between" style={{ paddingTop: insets.top + 8 }}>
+				<View
+					className="px-6 pb-4 flex-row items-center justify-between"
+					style={{ paddingTop: insets.top + 8 }}
+				>
 					<View>
 						<Text className="text-2xl font-sans-bold text-foreground dark:text-white">Wallet</Text>
-						<Text className="text-sm font-sans text-text-muted mt-0.5">
-							Manage your payments
-						</Text>
+						<Text className="text-sm font-sans text-text-muted mt-0.5">Manage your payments</Text>
 					</View>
 					<Pressable
 						onPress={() => navigation.navigate("PaymentHistory")}
@@ -147,9 +148,7 @@ export function PaymentsScreen() {
 									<Text className="text-base font-sans-bold text-foreground dark:text-white">
 										{item.title}
 									</Text>
-									<Text className="text-xs font-sans text-text-muted">
-										{item.childName}
-									</Text>
+									<Text className="text-xs font-sans text-text-muted">{item.childName}</Text>
 								</View>
 								<View className="items-end gap-1">
 									<Text className="text-lg font-sans-bold text-foreground dark:text-white">
@@ -192,7 +191,8 @@ export function PaymentsScreen() {
 									</Text>
 									<Text className="text-xs font-sans text-text-muted">
 										{item.childName}
-										{item.dueDate && ` · Due ${new Date(item.dueDate).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`}
+										{item.dueDate &&
+											` · Due ${new Date(item.dueDate).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`}
 									</Text>
 								</View>
 								<Pressable

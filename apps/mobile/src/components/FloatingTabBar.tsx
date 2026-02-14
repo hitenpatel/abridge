@@ -1,6 +1,6 @@
-import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Pressable, View, Text } from "react-native";
+import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { Pressable, Text, View } from "react-native";
 import { hapticLight } from "../lib/haptics";
 
 interface TabConfig {

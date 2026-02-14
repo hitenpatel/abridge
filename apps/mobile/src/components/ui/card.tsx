@@ -4,7 +4,10 @@ import { Body, H2, Muted } from "./typography";
 
 export function Card({ className = "", ...props }: ViewProps & { className?: string }) {
 	return (
-		<View className={`rounded-2xl bg-neutral-surface dark:bg-surface-dark border border-gray-100 p-4 ${className}`} {...props} />
+		<View
+			className={`rounded-2xl bg-neutral-surface dark:bg-surface-dark border border-gray-100 p-4 ${className}`}
+			{...props}
+		/>
 	);
 }
 

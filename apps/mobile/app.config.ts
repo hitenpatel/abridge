@@ -1,5 +1,5 @@
-import type { ConfigContext, ExpoConfig } from "expo/config";
 import os from "node:os";
+import type { ConfigContext, ExpoConfig } from "expo/config";
 
 function getLocalIp(): string {
 	for (const interfaces of Object.values(os.networkInterfaces())) {

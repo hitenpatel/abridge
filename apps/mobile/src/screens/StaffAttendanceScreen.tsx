@@ -5,12 +5,7 @@ import { Skeleton } from "../components/ui";
 import { trpc } from "../lib/trpc";
 
 export function StaffAttendanceScreen() {
-	const {
-		data: summary,
-		isLoading,
-		refetch,
-		isRefetching,
-	} = trpc.dashboard.getSummary.useQuery();
+	const { data: summary, isLoading, refetch, isRefetching } = trpc.dashboard.getSummary.useQuery();
 
 	const onRefresh = React.useCallback(() => {
 		refetch();
@@ -37,15 +32,11 @@ export function StaffAttendanceScreen() {
 	const attendancePercentage = summary?.attendancePercentage ?? [];
 
 	const totalStudents = summary?.children?.length ?? 0;
-	const presentToday = todayAttendance.filter(
-		(r: { mark: string }) => r.mark === "PRESENT",
+	const presentToday = todayAttendance.filter((r: { mark: string }) => r.mark === "PRESENT").length;
+	const absentToday = todayAttendance.filter((r: { mark: string }) =>
+		r.mark.includes("ABSENT"),
 	).length;
-	const absentToday = todayAttendance.filter(
-		(r: { mark: string }) => r.mark.includes("ABSENT"),
-	).length;
-	const lateToday = todayAttendance.filter(
-		(r: { mark: string }) => r.mark === "LATE",
-	).length;
+	const lateToday = todayAttendance.filter((r: { mark: string }) => r.mark === "LATE").length;
 
 	return (
 		<ScrollView
@@ -57,9 +48,7 @@ export function StaffAttendanceScreen() {
 		>
 			{/* Header */}
 			<View className="px-6 pt-4 pb-2">
-				<Text className="text-2xl font-sans-bold text-foreground dark:text-white">
-					Attendance
-				</Text>
+				<Text className="text-2xl font-sans-bold text-foreground dark:text-white">Attendance</Text>
 				<Text className="text-sm font-sans text-text-muted mt-0.5">
 					Today's attendance overview
 				</Text>
@@ -146,11 +135,7 @@ export function StaffAttendanceScreen() {
 							) as { id: string; firstName: string; lastName: string } | undefined;
 
 							const pctColor =
-								entry.percentage >= 95
-									? "#16A34A"
-									: entry.percentage >= 90
-										? "#F59E0B"
-										: "#EF4444";
+								entry.percentage >= 95 ? "#16A34A" : entry.percentage >= 90 ? "#F59E0B" : "#EF4444";
 
 							return (
 								<View
@@ -159,9 +144,7 @@ export function StaffAttendanceScreen() {
 								>
 									<View className="w-10 h-10 rounded-full bg-primary/10 items-center justify-center">
 										<Text className="text-sm font-sans-bold text-primary">
-											{child
-												? `${child.firstName[0]}${child.lastName[0]}`
-												: "?"}
+											{child ? `${child.firstName[0]}${child.lastName[0]}` : "?"}
 										</Text>
 									</View>
 									<View className="flex-1">
@@ -178,10 +161,7 @@ export function StaffAttendanceScreen() {
 													}}
 												/>
 											</View>
-											<Text
-												className="text-xs font-sans-bold"
-												style={{ color: pctColor }}
-											>
+											<Text className="text-xs font-sans-bold" style={{ color: pctColor }}>
 												{entry.percentage}%
 											</Text>
 										</View>

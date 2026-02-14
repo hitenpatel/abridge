@@ -9,16 +9,16 @@ interface Child {
 }
 
 interface ChildSelectorProps {
-	children: Child[];
+	items: Child[];
 	selectedChildId: string;
 	onSelect: (childId: string) => void;
 }
 
-export function ChildSelector({ children, selectedChildId, onSelect }: ChildSelectorProps) {
+export function ChildSelector({ items, selectedChildId, onSelect }: ChildSelectorProps) {
 	return (
 		<ScrollView horizontal showsHorizontalScrollIndicator={false} className="py-2">
 			<View className="flex-row gap-4 px-1">
-				{children.map((child) => (
+				{items.map((child) => (
 					<GradientAvatar
 						key={child.id}
 						uri={child.avatarUri}

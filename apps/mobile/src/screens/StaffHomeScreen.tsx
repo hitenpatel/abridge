@@ -15,16 +15,9 @@ export function StaffHomeScreen() {
 	const navigation = useNavigation<NavigationProp>();
 	const insets = useSafeAreaInsets();
 
-	const {
-		data: session,
-	} = trpc.auth.getSession.useQuery();
+	const { data: session } = trpc.auth.getSession.useQuery();
 
-	const {
-		data: summary,
-		isLoading,
-		refetch,
-		isRefetching,
-	} = trpc.dashboard.getSummary.useQuery();
+	const { data: summary, isLoading, refetch, isRefetching } = trpc.dashboard.getSummary.useQuery();
 
 	const onRefresh = React.useCallback(() => {
 		refetch();
@@ -84,8 +77,7 @@ export function StaffHomeScreen() {
 					{dateString}
 				</Text>
 				<Text className="text-3xl font-sans-extrabold text-foreground dark:text-white">
-					{greeting},{" "}
-					<Text className="text-primary">{firstName}!</Text>
+					{greeting}, <Text className="text-primary">{firstName}!</Text>
 				</Text>
 			</View>
 
@@ -96,9 +88,27 @@ export function StaffHomeScreen() {
 				className="mt-4"
 				contentContainerStyle={{ paddingHorizontal: 24, gap: 12 }}
 			>
-				<StatCard icon="email" value={unreadMessages} label="Unread" color="#3B82F6" bgColor="#DBEAFE" />
-				<StatCard icon="warning" value={attendanceAlerts} label="Absent" color="#F59E0B" bgColor="#FEF3C7" />
-				<StatCard icon="event" value={upcomingEventsCount} label="Events" color="#8B5CF6" bgColor="#EDE9FE" />
+				<StatCard
+					icon="email"
+					value={unreadMessages}
+					label="Unread"
+					color="#3B82F6"
+					bgColor="#DBEAFE"
+				/>
+				<StatCard
+					icon="warning"
+					value={attendanceAlerts}
+					label="Absent"
+					color="#F59E0B"
+					bgColor="#FEF3C7"
+				/>
+				<StatCard
+					icon="event"
+					value={upcomingEventsCount}
+					label="Events"
+					color="#8B5CF6"
+					bgColor="#EDE9FE"
+				/>
 			</ScrollView>
 
 			{/* Post Update CTA */}
@@ -182,9 +192,7 @@ export function StaffHomeScreen() {
 				) : (
 					<View className="items-center py-12">
 						<MaterialIcons name="article" size={40} color="#D1D5DB" />
-						<Text className="text-text-muted font-sans-medium text-sm mt-3">
-							No recent posts
-						</Text>
+						<Text className="text-text-muted font-sans-medium text-sm mt-3">No recent posts</Text>
 					</View>
 				)}
 			</View>

@@ -1,7 +1,16 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useState } from "react";
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import {
+	ActivityIndicator,
+	Alert,
+	KeyboardAvoidingView,
+	Platform,
+	Pressable,
+	ScrollView,
+	Text,
+	View,
+} from "react-native";
 import type { RootStackParamList } from "../../App";
 import { FormRenderer } from "../components/FormRenderer";
 import { Skeleton } from "../components/ui";
@@ -117,18 +126,13 @@ export function FormDetailScreen({ route, navigation }: Props) {
 			className="flex-1 bg-background"
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 		>
-			<ScrollView
-				className="flex-1"
-				contentContainerStyle={{ padding: 24, paddingBottom: 120 }}
-			>
+			<ScrollView className="flex-1" contentContainerStyle={{ padding: 24, paddingBottom: 120 }}>
 				{/* Form Title */}
 				<Text className="text-2xl font-sans-bold text-foreground dark:text-white mb-1">
 					{template?.title}
 				</Text>
 				{template?.description && (
-					<Text className="text-sm font-sans text-text-muted mb-6">
-						{template.description}
-					</Text>
+					<Text className="text-sm font-sans text-text-muted mb-6">{template.description}</Text>
 				)}
 
 				{/* Child Badge */}
@@ -142,12 +146,7 @@ export function FormDetailScreen({ route, navigation }: Props) {
 				)}
 
 				{/* Form Fields */}
-				<FormRenderer
-					fields={fields}
-					values={values}
-					onChange={handleChange}
-					errors={errors}
-				/>
+				<FormRenderer fields={fields} values={values} onChange={handleChange} errors={errors} />
 			</ScrollView>
 
 			{/* Submit Button */}

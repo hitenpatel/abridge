@@ -38,10 +38,7 @@ export function GradientAvatar({
 				}}
 			>
 				{uri ? (
-					<Image
-						source={{ uri }}
-						style={{ width: size, height: size, borderRadius: size / 2 }}
-					/>
+					<Image source={{ uri }} style={{ width: size, height: size, borderRadius: size / 2 }} />
 				) : (
 					<View
 						style={{ width: size, height: size, borderRadius: size / 2 }}

@@ -81,10 +81,7 @@ function FieldRenderer({
 		case "checkbox":
 			return (
 				<View>
-					<Pressable
-						onPress={() => onChange(!value)}
-						className="flex-row items-center gap-3"
-					>
+					<Pressable onPress={() => onChange(!value)} className="flex-row items-center gap-3">
 						<View
 							className={`w-6 h-6 rounded-lg border-2 items-center justify-center ${
 								value ? "bg-primary border-primary" : "border-gray-300"
@@ -122,9 +119,7 @@ function FieldRenderer({
 										value === option ? "border-primary" : "border-gray-300"
 									}`}
 								>
-									{value === option && (
-										<View className="w-2.5 h-2.5 rounded-full bg-primary" />
-									)}
+									{value === option && <View className="w-2.5 h-2.5 rounded-full bg-primary" />}
 								</View>
 								<Text className="text-base font-sans text-foreground dark:text-white">
 									{option}

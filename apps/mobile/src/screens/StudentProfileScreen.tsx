@@ -38,9 +38,7 @@ export function StudentProfileScreen({ route }: Props) {
 		return (
 			<View className="flex-1 bg-background items-center justify-center px-6">
 				<MaterialIcons name="person_off" size={48} color="#9CA3AF" />
-				<Text className="text-text-muted font-sans-medium text-base mt-4">
-					Student not found
-				</Text>
+				<Text className="text-text-muted font-sans-medium text-base mt-4">Student not found</Text>
 			</View>
 		);
 	}
@@ -65,24 +63,19 @@ export function StudentProfileScreen({ route }: Props) {
 						<Text className="text-4xl font-sans-extrabold text-white">{initials}</Text>
 					</View>
 				</View>
-				<Text className="text-3xl font-sans-bold text-foreground dark:text-white">
-					{fullName}
+				<Text className="text-3xl font-sans-bold text-foreground dark:text-white">{fullName}</Text>
+				<Text className="text-sm font-sans text-text-muted mt-1">
+					Student ID: {childId.slice(0, 8).toUpperCase()}
 				</Text>
-				<Text className="text-sm font-sans text-text-muted mt-1">Student ID: {childId.slice(0, 8).toUpperCase()}</Text>
 			</View>
 
 			{/* Info Card */}
 			<View className="mx-6 mb-6">
-				<View
-					className="rounded-2xl p-5 flex-row"
-					style={{ backgroundColor: "#f0fdfa" }}
-				>
+				<View className="rounded-2xl p-5 flex-row" style={{ backgroundColor: "#f0fdfa" }}>
 					<View className="flex-1 items-center border-r border-teal-200 pr-4">
 						<MaterialIcons name="school" size={20} color="#0d9488" />
 						<Text className="text-xs font-sans text-text-muted mt-1">Grade</Text>
-						<Text className="text-base font-sans-bold text-foreground dark:text-white">
-							Year 5
-						</Text>
+						<Text className="text-base font-sans-bold text-foreground dark:text-white">Year 5</Text>
 					</View>
 					<View className="flex-1 items-center pl-4">
 						<MaterialIcons name="person" size={20} color="#0d9488" />
@@ -99,7 +92,11 @@ export function StudentProfileScreen({ route }: Props) {
 				<Text className="text-sm font-sans-bold uppercase tracking-wider text-text-muted px-6 mb-3">
 					Achievements
 				</Text>
-				<ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 24, gap: 12 }}>
+				<ScrollView
+					horizontal
+					showsHorizontalScrollIndicator={false}
+					contentContainerStyle={{ paddingHorizontal: 24, gap: 12 }}
+				>
 					<AchievementBadge icon="star" label="Star Reader" bgColor="#FEF3C7" />
 					<AchievementBadge icon="emoji_events" label="Maths Whiz" bgColor="#DBEAFE" />
 					<AchievementBadge icon="palette" label="Art Star" bgColor="#EDE9FE" />
@@ -120,12 +117,7 @@ export function StudentProfileScreen({ route }: Props) {
 						color="#10B981"
 					/>
 					<View className="h-3" />
-					<ProgressBar
-						label="Participation"
-						value={75}
-						icon="groups"
-						color="#8B5CF6"
-					/>
+					<ProgressBar label="Participation" value={75} icon="groups" color="#8B5CF6" />
 				</View>
 			</View>
 

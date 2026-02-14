@@ -71,9 +71,7 @@ export function TimelineCard({
 							onPress={actionButton.onPress}
 							className="mt-3 self-start bg-primary/10 px-4 py-2 rounded-full"
 						>
-							<Text className="text-sm font-sans-bold text-primary">
-								{actionButton.label}
-							</Text>
+							<Text className="text-sm font-sans-bold text-primary">{actionButton.label}</Text>
 						</Pressable>
 					)}
 				</View>

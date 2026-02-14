@@ -159,9 +159,7 @@ export function AttendanceScreen() {
 							</Text>
 						</View>
 						<View className="bg-primary/10 rounded-full px-3 py-1.5">
-							<Text className="text-primary font-sans-bold text-sm">
-								{attendancePercentage}%
-							</Text>
+							<Text className="text-primary font-sans-bold text-sm">{attendancePercentage}%</Text>
 						</View>
 					</View>
 				</View>
@@ -170,7 +168,7 @@ export function AttendanceScreen() {
 				{children && children.length > 0 && (
 					<View className="px-6 mb-6">
 						<ChildSelector
-							children={children}
+							items={children}
 							selectedChildId={selectedChildId ?? ""}
 							onSelect={setSelectedChildId}
 						/>
@@ -302,10 +300,7 @@ export function AttendanceScreen() {
 											className="rounded-full px-2.5 py-1"
 											style={{ backgroundColor: markInfo.bg }}
 										>
-											<Text
-												className="text-xs font-sans-semibold"
-												style={{ color: markInfo.text }}
-											>
+											<Text className="text-xs font-sans-semibold" style={{ color: markInfo.text }}>
 												{markInfo.label}
 											</Text>
 										</View>

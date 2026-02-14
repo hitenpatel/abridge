@@ -14,7 +14,11 @@ export function FormsScreen() {
 	const navigation = useNavigation<NavigationProp>();
 
 	const { data: summary, isLoading: summaryLoading } = trpc.dashboard.getSummary.useQuery();
-	const children = (summary?.children ?? []) as Array<{ id: string; firstName: string; lastName: string }>;
+	const children = (summary?.children ?? []) as Array<{
+		id: string;
+		firstName: string;
+		lastName: string;
+	}>;
 	const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
 
 	const activeChildId = selectedChildId ?? children[0]?.id;
@@ -24,7 +28,7 @@ export function FormsScreen() {
 		isLoading: pendingLoading,
 		refetch: refetchPending,
 	} = trpc.forms.getPendingForms.useQuery(
-		{ childId: activeChildId! },
+		{ childId: activeChildId as string },
 		{ enabled: !!activeChildId },
 	);
 
@@ -33,7 +37,7 @@ export function FormsScreen() {
 		isLoading: completedLoading,
 		refetch: refetchCompleted,
 	} = trpc.forms.getCompletedForms.useQuery(
-		{ childId: activeChildId! },
+		{ childId: activeChildId as string },
 		{ enabled: !!activeChildId },
 	);
 
@@ -81,7 +85,7 @@ export function FormsScreen() {
 			{children.length > 1 && (
 				<View className="px-6 mb-4">
 					<ChildSelector
-						children={children}
+						items={children}
 						selectedChildId={activeChildId ?? ""}
 						onSelect={setSelectedChildId}
 					/>
@@ -102,9 +106,7 @@ export function FormsScreen() {
 							Action Required
 						</Text>
 						<View className="bg-red-100 rounded-full px-2 py-0.5">
-							<Text className="text-xs font-sans-bold text-red-600">
-								{pendingForms.length}
-							</Text>
+							<Text className="text-xs font-sans-bold text-red-600">{pendingForms.length}</Text>
 						</View>
 					</View>
 					{pendingForms.map((form) => (
@@ -113,7 +115,7 @@ export function FormsScreen() {
 							onPress={() =>
 								navigation.navigate("FormDetail", {
 									formId: form.id,
-									childId: activeChildId!,
+									childId: activeChildId as string,
 								})
 							}
 							className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 mb-3 flex-row items-center gap-3"
@@ -160,7 +162,12 @@ export function FormsScreen() {
 									{response.template.title}
 								</Text>
 								<Text className="text-xs font-sans text-text-muted mt-0.5">
-									Submitted {new Date(response.submittedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+									Submitted{" "}
+									{new Date(response.submittedAt).toLocaleDateString("en-GB", {
+										day: "numeric",
+										month: "short",
+										year: "numeric",
+									})}
 								</Text>
 							</View>
 							<View className="bg-green-100 rounded-full px-3 py-1">

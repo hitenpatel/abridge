@@ -19,7 +19,9 @@ export function Modal({ visible, onClose, children, className = "", ...props }: 
 		>
 			<View className="flex-1 justify-end bg-black/50">
 				<Pressable className="flex-1" onPress={onClose} />
-				<View className={`bg-neutral-surface dark:bg-surface-dark rounded-t-3xl p-6 ${className}`}>{children}</View>
+				<View className={`bg-neutral-surface dark:bg-surface-dark rounded-t-3xl p-6 ${className}`}>
+					{children}
+				</View>
 			</View>
 		</RNModal>
 	);

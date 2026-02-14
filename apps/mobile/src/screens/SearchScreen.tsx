@@ -51,10 +51,7 @@ export function SearchScreen() {
 		data: results,
 		isLoading,
 		isError,
-	} = trpc.search.query.useQuery(
-		{ query: debouncedQuery },
-		{ enabled: debouncedQuery.length > 2 },
-	);
+	} = trpc.search.query.useQuery({ query: debouncedQuery }, { enabled: debouncedQuery.length > 2 });
 
 	const handlePress = (result: SearchResultItem) => {
 		if (result.index === "messages") {
@@ -113,9 +110,7 @@ export function SearchScreen() {
 			{!isLoading && debouncedQuery.length > 2 && results?.length === 0 && (
 				<View className="flex-1 justify-center items-center px-6">
 					<MaterialIcons name="search_off" size={48} color="#9CA3AF" />
-					<Text className="text-text-muted font-sans-medium text-base mt-4">
-						No results found
-					</Text>
+					<Text className="text-text-muted font-sans-medium text-base mt-4">No results found</Text>
 					<Text className="text-text-muted font-sans text-sm mt-1">
 						No results for "{debouncedQuery}"
 					</Text>
@@ -137,10 +132,8 @@ export function SearchScreen() {
 				contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}
 				renderItem={({ item }) => {
 					const source = item.source as Record<string, unknown>;
-					const title =
-						(source.subject as string) || (source.title as string) || "No Title";
-					const body =
-						(source.body as string) || (source.description as string) || "";
+					const title = (source.subject as string) || (source.title as string) || "No Title";
+					const body = (source.body as string) || (source.description as string) || "";
 					const snippet = body.length > 100 ? `${body.substring(0, 100)}...` : body;
 					const colors = getResultColor(item.index);
 					const icon = getResultIcon(item.index);
@@ -160,10 +153,7 @@ export function SearchScreen() {
 								<Text className="text-base font-sans-bold text-foreground dark:text-white mb-1">
 									{title}
 								</Text>
-								<Text
-									className="text-sm font-sans text-text-muted mb-1"
-									numberOfLines={2}
-								>
+								<Text className="text-sm font-sans text-text-muted mb-1" numberOfLines={2}>
 									{snippet}
 								</Text>
 								<Text className="text-xs font-sans-medium text-primary capitalize">

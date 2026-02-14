@@ -263,16 +263,8 @@ function AuthenticatedApp() {
 					component={PaymentHistoryScreen}
 					options={{ title: "Payment History" }}
 				/>
-				<Stack.Screen
-					name="Calendar"
-					component={CalendarScreen}
-					options={{ title: "Calendar" }}
-				/>
-				<Stack.Screen
-					name="Forms"
-					component={FormsScreen}
-					options={{ title: "Forms & Consent" }}
-				/>
+				<Stack.Screen name="Calendar" component={CalendarScreen} options={{ title: "Calendar" }} />
+				<Stack.Screen name="Forms" component={FormsScreen} options={{ title: "Forms & Consent" }} />
 				<Stack.Screen
 					name="FormDetail"
 					component={FormDetailScreen}
@@ -283,11 +275,7 @@ function AuthenticatedApp() {
 					component={StudentProfileScreen}
 					options={{ title: "Student Profile" }}
 				/>
-				<Stack.Screen
-					name="Search"
-					component={SearchScreen}
-					options={{ title: "Search" }}
-				/>
+				<Stack.Screen name="Search" component={SearchScreen} options={{ title: "Search" }} />
 				<Stack.Screen
 					name="StaffManagement"
 					component={StaffManagementScreen}

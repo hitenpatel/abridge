@@ -1,6 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useCallback } from "react";
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -58,10 +58,7 @@ function getCategoryColor(category: string): { bg: string; text: string } {
 	}
 }
 
-function MessageRow({
-	message,
-	onPress,
-}: { message: MessageItemData; onPress: () => void }) {
+function MessageRow({ message, onPress }: { message: MessageItemData; onPress: () => void }) {
 	const categoryColor = getCategoryColor(message.category);
 
 	return (
@@ -88,9 +85,7 @@ function MessageRow({
 				<View className="flex-1">
 					<View className="flex-row items-center justify-between mb-1">
 						<View className="flex-row items-center flex-1 mr-2">
-							{!message.isRead && (
-								<View className="w-2 h-2 rounded-full bg-primary mr-2" />
-							)}
+							{!message.isRead && <View className="w-2 h-2 rounded-full bg-primary mr-2" />}
 							<Text
 								className={`flex-1 text-base ${!message.isRead ? "font-sans-bold text-foreground dark:text-white" : "font-sans-medium text-text-main dark:text-gray-200"}`}
 								numberOfLines={1}
@@ -98,7 +93,9 @@ function MessageRow({
 								{message.subject}
 							</Text>
 						</View>
-						<Text className="text-xs font-sans text-text-muted">{formatDate(message.createdAt)}</Text>
+						<Text className="text-xs font-sans text-text-muted">
+							{formatDate(message.createdAt)}
+						</Text>
 					</View>
 
 					<Text
@@ -109,9 +106,7 @@ function MessageRow({
 					</Text>
 
 					<View className="flex-row items-center justify-between">
-						<Text className="text-xs font-sans-medium text-primary">
-							{message.schoolName}
-						</Text>
+						<Text className="text-xs font-sans-medium text-primary">{message.schoolName}</Text>
 						<View
 							className="rounded-full px-2.5 py-0.5"
 							style={{ backgroundColor: categoryColor.bg }}
@@ -225,12 +220,8 @@ export function MessagesScreen() {
 				ListEmptyComponent={
 					<View className="flex-1 items-center justify-center py-20">
 						<MaterialIcons name="chat_bubble_outline" size={48} color="#9CA3AF" />
-						<Text className="text-text-muted font-sans-medium text-base mt-4">
-							No messages yet
-						</Text>
-						<Text className="text-text-muted font-sans text-sm mt-1">
-							Pull down to refresh
-						</Text>
+						<Text className="text-text-muted font-sans-medium text-base mt-4">No messages yet</Text>
+						<Text className="text-text-muted font-sans text-sm mt-1">Pull down to refresh</Text>
 					</View>
 				}
 				showsVerticalScrollIndicator={false}

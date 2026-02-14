@@ -115,9 +115,7 @@ export function CalendarScreen() {
 				{!events || events.length === 0 ? (
 					<View className="items-center py-20">
 						<MaterialIcons name="event" size={48} color="#9CA3AF" />
-						<Text className="text-text-muted font-sans-medium text-base mt-4">
-							No events found
-						</Text>
+						<Text className="text-text-muted font-sans-medium text-base mt-4">No events found</Text>
 						<Text className="text-text-muted font-sans text-sm mt-1">
 							No events scheduled for this month
 						</Text>
