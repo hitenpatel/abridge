@@ -19,6 +19,9 @@ model School {
   logoUrl          String?
   timezone         String   @default("Europe/London")
   stripeAccountId  String?  @unique
+  defaultNotifyByPush   Boolean  @default(true)
+  defaultNotifyBySms    Boolean  @default(false)
+  defaultNotifyByEmail  Boolean  @default(true)
   createdAt        DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -62,6 +65,9 @@ model User {
   image         String?
   phone         String?
   language      String    @default("en")
+  notifyByPush  Boolean   @default(true)
+  notifyBySms   Boolean   @default(false)
+  notifyByEmail Boolean   @default(true)
   quietStart    String?   // HH:mm format
   quietEnd      String?   // HH:mm format
   pushToken     String?   // Expo push token for notifications
