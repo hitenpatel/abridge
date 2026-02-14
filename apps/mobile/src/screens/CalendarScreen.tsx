@@ -1,45 +1,28 @@
-import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import type { CompositeNavigationProp } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock } from "lucide-react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
-import { Pressable, RefreshControl, ScrollView, View } from "react-native";
-import type { RootStackParamList, TabParamList } from "../../App";
-import { Badge, Body, Button, Card, EmptyState, H2, Muted, Skeleton } from "../components/ui";
+import { Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
+import { Skeleton } from "../components/ui";
 import { trpc } from "../lib/trpc";
-import { useTheme } from "../lib/use-theme";
 
-type CalendarScreenNavigationProp = CompositeNavigationProp<
-	BottomTabNavigationProp<TabParamList, "Calendar">,
-	NativeStackNavigationProp<RootStackParamList>
->;
-
-interface CalendarScreenProps {
-	navigation: CalendarScreenNavigationProp;
-}
-
-const getCategoryVariant = (
-	category: string,
-): "default" | "destructive" | "warning" | "success" | "info" => {
+function getCategoryColor(category: string): { bg: string; text: string } {
 	switch (category) {
 		case "TERM_DATE":
-			return "info";
+			return { bg: "#DBEAFE", text: "#2563EB" };
 		case "INSET_DAY":
-			return "warning";
+			return { bg: "#FEF3C7", text: "#92400E" };
 		case "EVENT":
-			return "success";
+			return { bg: "#DCFCE7", text: "#16A34A" };
 		case "DEADLINE":
-			return "destructive";
+			return { bg: "#FEE2E2", text: "#DC2626" };
 		case "CLUB":
-			return "info";
+			return { bg: "#EDE9FE", text: "#6D28D9" };
 		default:
-			return "default";
+			return { bg: "#F3F4F6", text: "#6B7280" };
 	}
-};
+}
 
-export const CalendarScreen: React.FC<CalendarScreenProps> = ({ navigation }) => {
+export function CalendarScreen() {
 	const [currentDate, setCurrentDate] = useState(new Date());
-	const { isDark } = useTheme();
 
 	const { startDate, endDate } = useMemo(() => {
 		const year = currentDate.getFullYear();
@@ -55,10 +38,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ navigation }) =>
 		isError,
 		refetch,
 		isRefetching,
-	} = trpc.calendar.listEvents.useQuery({
-		startDate,
-		endDate,
-	});
+	} = trpc.calendar.listEvents.useQuery({ startDate, endDate });
 
 	const onRefresh = React.useCallback(() => {
 		refetch();
@@ -72,16 +52,19 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ navigation }) =>
 		setCurrentDate((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
 	};
 
-	const formattedMonth = currentDate.toLocaleString("default", { month: "long", year: "numeric" });
+	const formattedMonth = currentDate.toLocaleString("default", {
+		month: "long",
+		year: "numeric",
+	});
 
 	if (isLoading) {
 		return (
 			<View className="flex-1 bg-background">
-				<View className="p-4">
-					<Skeleton className="h-12 mb-4" />
-					<Skeleton className="h-24 mb-3" />
-					<Skeleton className="h-24 mb-3" />
-					<Skeleton className="h-24" />
+				<View className="p-6">
+					<Skeleton className="h-12 mb-4 rounded-2xl" />
+					<Skeleton className="h-24 mb-3 rounded-2xl" />
+					<Skeleton className="h-24 mb-3 rounded-2xl" />
+					<Skeleton className="h-24 rounded-2xl" />
 				</View>
 			</View>
 		);
@@ -89,9 +72,14 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ navigation }) =>
 
 	if (isError) {
 		return (
-			<View className="flex-1 bg-background justify-center items-center px-5">
-				<Body className="text-destructive mb-3">Failed to load events</Body>
-				<Button onPress={() => refetch()}>Retry</Button>
+			<View className="flex-1 bg-background items-center justify-center px-6">
+				<MaterialIcons name="error_outline" size={48} color="#F87171" />
+				<Text className="text-foreground font-sans-bold text-lg mt-4 mb-2">
+					Failed to load events
+				</Text>
+				<Pressable onPress={() => refetch()} className="bg-primary px-6 py-3 rounded-full">
+					<Text className="text-white font-sans-bold">Retry</Text>
+				</Pressable>
 			</View>
 		);
 	}
@@ -100,70 +88,116 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ navigation }) =>
 		<ScrollView
 			className="flex-1 bg-background"
 			refreshControl={
-				<RefreshControl refreshing={isRefetching} onRefresh={onRefresh} tintColor="#FF7D45" />
+				<RefreshControl refreshing={isRefetching} onRefresh={onRefresh} tintColor="#f56e3d" />
 			}
 		>
-			<View className="flex-row items-center justify-between p-4 bg-card border-b border-border">
-				<Pressable onPress={handlePreviousMonth} className="p-2 active:opacity-70">
-					<ChevronLeft size={24} color={isDark ? "#E5E7EB" : "#2D3748"} />
+			{/* Month Navigation */}
+			<View className="flex-row items-center justify-between px-6 py-4">
+				<Pressable
+					onPress={handlePreviousMonth}
+					className="w-10 h-10 rounded-full bg-neutral-surface dark:bg-surface-dark items-center justify-center"
+				>
+					<MaterialIcons name="chevron_left" size={24} color="#5c4d47" />
 				</Pressable>
-				<H2>{formattedMonth}</H2>
-				<Pressable onPress={handleNextMonth} className="p-2 active:opacity-70">
-					<ChevronRight size={24} color={isDark ? "#E5E7EB" : "#2D3748"} />
+				<Text className="text-lg font-sans-bold text-foreground dark:text-white">
+					{formattedMonth}
+				</Text>
+				<Pressable
+					onPress={handleNextMonth}
+					className="w-10 h-10 rounded-full bg-neutral-surface dark:bg-surface-dark items-center justify-center"
+				>
+					<MaterialIcons name="chevron_right" size={24} color="#5c4d47" />
 				</Pressable>
 			</View>
 
-			<View className="p-4">
+			{/* Events */}
+			<View className="px-6 pb-8">
 				{!events || events.length === 0 ? (
-					<EmptyState
-						icon={<CalendarIcon size={48} color="#9CA3AF" />}
-						title="No events found"
-						description="No events scheduled for this month"
-					/>
+					<View className="items-center py-20">
+						<MaterialIcons name="event" size={48} color="#9CA3AF" />
+						<Text className="text-text-muted font-sans-medium text-base mt-4">
+							No events found
+						</Text>
+						<Text className="text-text-muted font-sans text-sm mt-1">
+							No events scheduled for this month
+						</Text>
+					</View>
 				) : (
-					events.map((event) => {
-						const eventDate = new Date(event.startDate);
+					<View className="gap-3">
+						{events.map((event) => {
+							const eventDate = new Date(event.startDate);
+							const categoryColor = getCategoryColor(event.category);
 
-						return (
-							<Card key={event.id} className="flex-row mb-3 p-3">
-								<View className="bg-primary/10 p-2.5 rounded-lg items-center justify-center w-12 h-15 mr-3">
-									<Body className="text-lg font-bold text-primary">{eventDate.getDate()}</Body>
-									<Body className="text-xs font-semibold text-primary uppercase">
-										{eventDate.toLocaleString("default", { month: "short" })}
-									</Body>
-								</View>
-								<View className="flex-1">
-									<Body className="font-semibold mb-1">{event.title}</Body>
-
-									<View className="flex-row items-center justify-between mb-1.5">
-										{!event.allDay && (
-											<View className="flex-row items-center gap-1">
-												<Clock size={14} color="#9CA3AF" />
-												<Muted className="text-xs">
-													{eventDate.toLocaleTimeString([], {
-														hour: "2-digit",
-														minute: "2-digit",
-													})}
-												</Muted>
-											</View>
-										)}
-										<Badge variant={getCategoryVariant(event.category)}>
-											{event.category.replace("_", " ")}
-										</Badge>
+							return (
+								<View
+									key={event.id}
+									className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 flex-row gap-3"
+									style={{
+										borderLeftWidth: 4,
+										borderLeftColor: categoryColor.text,
+										shadowColor: "#f56e3d",
+										shadowOffset: { width: 0, height: 8 },
+										shadowOpacity: 0.08,
+										shadowRadius: 24,
+										elevation: 4,
+									}}
+								>
+									{/* Date badge */}
+									<View className="bg-primary/10 rounded-xl items-center justify-center w-14 py-2">
+										<Text className="text-lg font-sans-bold text-primary">
+											{eventDate.getDate()}
+										</Text>
+										<Text className="text-xs font-sans-semibold text-primary uppercase">
+											{eventDate.toLocaleString("default", { month: "short" })}
+										</Text>
 									</View>
 
-									{event.body ? (
-										<Muted className="text-sm leading-5" numberOfLines={2}>
-											{event.body}
-										</Muted>
-									) : null}
+									{/* Content */}
+									<View className="flex-1">
+										<Text className="text-base font-sans-bold text-foreground dark:text-white mb-1">
+											{event.title}
+										</Text>
+
+										<View className="flex-row items-center gap-3 mb-1.5">
+											{!event.allDay && (
+												<View className="flex-row items-center gap-1">
+													<MaterialIcons name="schedule" size={14} color="#96867f" />
+													<Text className="text-xs font-sans text-text-muted">
+														{eventDate.toLocaleTimeString([], {
+															hour: "2-digit",
+															minute: "2-digit",
+														})}
+													</Text>
+												</View>
+											)}
+											<View
+												className="rounded-full px-2.5 py-0.5"
+												style={{ backgroundColor: categoryColor.bg }}
+											>
+												<Text
+													className="text-xs font-sans-semibold"
+													style={{ color: categoryColor.text }}
+												>
+													{event.category.replace("_", " ")}
+												</Text>
+											</View>
+										</View>
+
+										{event.body ? (
+											<Text
+												className="text-sm font-sans text-text-muted leading-5"
+												numberOfLines={2}
+											>
+												{event.body}
+											</Text>
+										) : null}
+									</View>
 								</View>
-							</Card>
-						);
-					})
+							);
+						})}
+					</View>
 				)}
 			</View>
-			<View className="h-5" />
 		</ScrollView>
 	);
-};
+}
