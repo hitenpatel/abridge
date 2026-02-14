@@ -1,0 +1,28 @@
+journey:
+  id: search-messages
+  name: Search Messages
+  tags: [messaging, authenticated]
+  role: parent
+  preconditions:
+    seed: staff-with-messages
+    state: authenticated
+  steps:
+    - action: navigate
+      target: messages
+      selectors:
+        web: "/dashboard/messages"
+        mobile: "Inbox"
+    - action: fill
+      target: search-input
+      selectors:
+        web: "[data-testid='search-input']"
+        mobile: "Search"
+      value: "Test Message 1"
+    - action: wait
+      target: search-results
+      selectors:
+        web: "[data-testid='messages-list']"
+        mobile: "Messages"
+  assertions:
+    - type: visible
+      text: "Test Message 1"

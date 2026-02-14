@@ -97,6 +97,7 @@ export default function AttendancePage() {
 	};
 
 	return (
+		<div data-testid="attendance-view">
 		<div>
 			{/* Header */}
 			<header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
@@ -372,6 +373,7 @@ export default function AttendancePage() {
 					</Card>
 				</div>
 			</div>
+		</div>
 		</div>
 	);
 }

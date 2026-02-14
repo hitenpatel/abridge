@@ -1,0 +1,28 @@
+journey:
+  id: mark-attendance
+  name: Mark Attendance
+  tags: [attendance, staff, authenticated]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: staff-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: attendance
+      selectors:
+        web: "/dashboard/attendance"
+        mobile: "Attendance"
+    - action: tap
+      target: mark-present-button
+      selectors:
+        web: "[data-testid='mark-present']"
+        mobile: "Mark Present"
+    - action: tap
+      target: save-button
+      selectors:
+        web: "[data-testid='save-attendance']"
+        mobile: "Save"
+  assertions:
+    - type: visible
+      text: "Attendance saved"

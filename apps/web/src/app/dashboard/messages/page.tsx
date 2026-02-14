@@ -82,7 +82,7 @@ export default function MessagesPage() {
 				</div>
 
 				{/* Conversation List */}
-				<div className="flex-1 overflow-y-auto">
+				<div className="flex-1 overflow-y-auto" data-testid="messages-list">
 					{messages?.items && messages.items.length > 0 ? (
 						messages.items.map((message) => (
 							<div

@@ -13,6 +13,7 @@ apps/
   mobile/     Expo React Native
 packages/
   db/         Prisma schema, client, seed script
+  e2e/        E2E test infrastructure (Playwright + Maestro)
   tsconfig/   Shared TS configs
 ```
 
@@ -74,6 +75,7 @@ Users authenticate with email/password. better-auth stores credentials in the `A
 | `stripe`     | `createOnboardingLink`, `getStripeStatus`                 |
 | `user`       | `updatePushToken`, `listChildren`, `updateNotificationPreferences` |
 | `health`     | `check`                                                   |
+| `test`       | `seed` (test-only, guarded by `NODE_ENV=test`)            |
 
 ## Database (Prisma + PostgreSQL)
 
@@ -168,10 +170,59 @@ NEXT_PUBLIC_API_URL=http://localhost:4000   # baked at build time
 
 ## Testing
 
-- **Framework**: Vitest (API + Web), Jest (Mobile), Playwright (E2E)
+### Unit/Integration Tests
+
+- **Framework**: Vitest (API + Web), Jest (Mobile)
 - **API tests**: `apps/api/src/__tests__/*.test.ts` - Uses `appRouter.createCaller()` with mock context
-- **E2E tests**: `e2e/` directory with Playwright
 - **CI**: GitHub Actions (`.github/workflows/ci.yml`) - lint, test (with PostgreSQL service), build
+
+### E2E Testing (`packages/e2e`)
+
+**Architecture**: Single source of truth (YAML journey specs) generates tests for both platforms:
+- **Web**: Playwright tests auto-generated from YAML
+- **Mobile**: Maestro flows auto-generated from YAML
+
+**Key files**:
+- `packages/e2e/journeys/**/*.yaml` - Journey specs defining user flows
+- `packages/e2e/fixtures/factories.ts` - Prisma factories for test data seeding
+- `packages/e2e/generators/to-playwright.ts` - YAML → Playwright generator
+- `packages/e2e/generators/to-maestro.ts` - YAML → Maestro generator
+- `packages/e2e/contracts/contract.test.ts` - tRPC API contract tests
+
+**Test credentials** (defined in `fixtures/constants.ts`):
+- Parent: `parent@test.com` / `testpass123`
+- Staff: `staff@test.com` / `testpass123`
+
+**Fixtures** (seed DB via `POST /api/test/seed` when `NODE_ENV=test`):
+- `parent-with-school` - School + Parent + Student + credentials
+- `staff-with-school` - School + Staff (admin) + credentials
+- `staff-with-messages` - Staff + 5 messages
+- `parent-with-payments` - Parent + 3 payment requests
+
+**Commands**:
+```bash
+# Generate tests from YAML specs
+pnpm --filter @schoolconnect/e2e generate:playwright
+pnpm --filter @schoolconnect/e2e generate:maestro
+
+# Run tests (requires API + Web/Mobile running)
+pnpm --filter @schoolconnect/e2e test:web
+maestro test packages/e2e/generated/maestro/
+
+# View test coverage matrix
+pnpm --filter @schoolconnect/e2e matrix
+
+# Contract testing (catch API breaking changes)
+pnpm --filter @schoolconnect/e2e contracts:check
+```
+
+**CI**: Two parallel jobs (`e2e-web`, `e2e-mobile`) run on PRs (smoke tests) and main (full suite). Nightly cron at 2 AM UTC runs full suite + contract checks.
+
+**Tags**: Journey specs use tags for filtering:
+- `smoke` - Critical paths (run on PRs)
+- `authenticated`/`unauthenticated` - Auth state
+- `parent`/`staff` - User role
+- Domain tags: `auth`, `messaging`, `attendance`, `payments`, `forms`
 
 ## Common Gotchas
 

@@ -1,0 +1,32 @@
+journey:
+  id: make-payment
+  name: Make Payment
+  tags: [payments, parent, authenticated]
+  role: parent
+  preconditions:
+    seed: parent-with-payments
+    state: authenticated
+  steps:
+    - action: navigate
+      target: payments
+      selectors:
+        web: "/dashboard/payments"
+        mobile: "Payments"
+    - action: tap
+      target: payment-item
+      selectors:
+        web: "[data-testid='payment-item-1']"
+        mobile: "Payment Item 1"
+    - action: tap
+      target: pay-button
+      selectors:
+        web: "[data-testid='pay-button']"
+        mobile: "Pay Now"
+    - action: wait
+      target: payment-form
+      selectors:
+        web: "[data-testid='payment-form']"
+        mobile: "Payment"
+  assertions:
+    - type: visible
+      text: "Payment"

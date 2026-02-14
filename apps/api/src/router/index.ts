@@ -14,6 +14,11 @@ import { staffRouter } from "./staff";
 import { stripeRouter } from "./stripe";
 import { userRouter } from "./user";
 
+let testRouter: typeof import("./test").testRouter | undefined;
+if (process.env.NODE_ENV === "test") {
+	testRouter = (await import("./test.js")).testRouter;
+}
+
 export const appRouter = router({
 	health: healthRouter,
 	auth: authRouter,
@@ -29,6 +34,7 @@ export const appRouter = router({
 	setup: setupRouter,
 	staff: staffRouter,
 	dbInit: dbInitRouter,
+	...(testRouter ? { test: testRouter } : {}),
 });
 
 export type AppRouter = typeof appRouter;

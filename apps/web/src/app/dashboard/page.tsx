@@ -63,7 +63,7 @@ export default function DashboardPage() {
 	const attendancePercentage = summaryData?.attendancePercentage ?? 0;
 
 	return (
-		<div>
+		<div data-testid="dashboard-view">
 			{/* Header */}
 			<header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
 				<div>

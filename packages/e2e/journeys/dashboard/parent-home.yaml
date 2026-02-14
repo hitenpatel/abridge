@@ -1,0 +1,22 @@
+journey:
+  id: parent-home
+  name: Parent Dashboard Home
+  tags: [smoke, parent, authenticated, dashboard]
+  role: parent
+  preconditions:
+    seed: parent-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: dashboard
+      selectors:
+        web: "/dashboard"
+        mobile: "Home"
+    - action: wait
+      target: dashboard-view
+      selectors:
+        web: "[data-testid='dashboard-view']"
+        mobile: "Dashboard"
+  assertions:
+    - type: visible
+      text: "Home"

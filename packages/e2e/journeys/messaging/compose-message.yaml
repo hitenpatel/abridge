@@ -1,0 +1,39 @@
+journey:
+  id: compose-message
+  name: Compose Message
+  tags: [messaging, staff, authenticated]
+  role: staff
+  preconditions:
+    seed: staff-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: messages
+      selectors:
+        web: "/dashboard/messages"
+        mobile: "Inbox"
+    - action: tap
+      target: compose-button
+      selectors:
+        web: "[data-testid='compose-button']"
+        mobile: "Compose"
+    - action: fill
+      target: subject-field
+      selectors:
+        web: "[data-testid='subject-input']"
+        mobile: "Subject"
+      value: "Test Message"
+    - action: fill
+      target: body-field
+      selectors:
+        web: "[data-testid='body-input']"
+        mobile: "Message"
+      value: "This is a test message"
+    - action: tap
+      target: send-button
+      selectors:
+        web: "[data-testid='send-button']"
+        mobile: "Send"
+  assertions:
+    - type: visible
+      text: "Message sent"

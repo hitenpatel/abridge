@@ -1,0 +1,34 @@
+journey:
+  id: login-staff
+  name: Staff Login
+  tags: [smoke, staff, unauthenticated, auth]
+  role: staff
+  preconditions:
+    seed: staff-with-school
+    state: unauthenticated
+  steps:
+    - action: navigate
+      target: login
+      selectors:
+        web: "/"
+        mobile: "/"
+    - action: fill
+      target: email-input
+      selectors:
+        web: "[data-testid='email-input']"
+        mobile: "Email"
+      value: staff@test.com
+    - action: fill
+      target: password-input
+      selectors:
+        web: "[data-testid='password-input']"
+        mobile: "Password"
+      value: testpass123
+    - action: tap
+      target: login-button
+      selectors:
+        web: "[data-testid='login-button']"
+        mobile: "Sign In"
+  assertions:
+    - type: visible
+      text: "Dashboard"

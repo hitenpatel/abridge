@@ -55,7 +55,7 @@ export default function PaymentsDashboardPage() {
 	const firstName = session?.name?.split(" ")[0] || "Student";
 
 	return (
-		<div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+		<div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8" data-testid="payments-list">
 			{/* Left Column - Expenses List */}
 			<div className="lg:col-span-7 flex flex-col gap-6">
 				{/* Header */}

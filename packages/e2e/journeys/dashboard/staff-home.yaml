@@ -1,0 +1,22 @@
+journey:
+  id: staff-home
+  name: Staff Dashboard Home
+  tags: [smoke, staff, authenticated, dashboard]
+  role: staff
+  preconditions:
+    seed: staff-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: dashboard
+      selectors:
+        web: "/dashboard"
+        mobile: "Home"
+    - action: wait
+      target: dashboard-view
+      selectors:
+        web: "[data-testid='dashboard-view']"
+        mobile: "Dashboard"
+  assertions:
+    - type: visible
+      text: "Dashboard"

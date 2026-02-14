@@ -1,0 +1,22 @@
+journey:
+  id: logout
+  name: Logout
+  tags: [auth, authenticated]
+  role: parent
+  preconditions:
+    seed: parent-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: dashboard
+      selectors:
+        web: "/dashboard"
+        mobile: "Home"
+    - action: tap
+      target: logout-button
+      selectors:
+        web: "[data-testid='logout-button']"
+        mobile: "Logout"
+  assertions:
+    - type: visible
+      text: "Sign In"

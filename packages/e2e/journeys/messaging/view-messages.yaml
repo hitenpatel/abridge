@@ -1,0 +1,22 @@
+journey:
+  id: view-messages
+  name: View Messages
+  tags: [smoke, parent, authenticated, messaging]
+  role: parent
+  preconditions:
+    seed: staff-with-messages
+    state: authenticated
+  steps:
+    - action: navigate
+      target: messages
+      selectors:
+        web: "/dashboard/messages"
+        mobile: "Inbox"
+    - action: wait
+      target: messages-list
+      selectors:
+        web: "[data-testid='messages-list']"
+        mobile: "Messages"
+  assertions:
+    - type: visible
+      text: "Test Message 1"

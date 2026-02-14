@@ -1,0 +1,22 @@
+journey:
+  id: view-attendance
+  name: View Attendance
+  tags: [smoke, parent, authenticated, attendance]
+  role: parent
+  preconditions:
+    seed: parent-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: attendance
+      selectors:
+        web: "/dashboard/attendance"
+        mobile: "Attendance"
+    - action: wait
+      target: attendance-view
+      selectors:
+        web: "[data-testid='attendance-view']"
+        mobile: "Attendance"
+  assertions:
+    - type: visible
+      text: "Attendance"

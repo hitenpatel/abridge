@@ -1,0 +1,33 @@
+journey:
+  id: submit-form
+  name: Submit Form
+  tags: [forms, parent, authenticated]
+  role: parent
+  preconditions:
+    seed: parent-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: forms
+      selectors:
+        web: "/dashboard/forms"
+        mobile: "Forms"
+    - action: tap
+      target: form-item
+      selectors:
+        web: "[data-testid='form-item']"
+        mobile: "Permission Form"
+    - action: fill
+      target: form-field
+      selectors:
+        web: "[data-testid='form-field-1']"
+        mobile: "Response"
+      value: "Yes"
+    - action: tap
+      target: submit-button
+      selectors:
+        web: "[data-testid='submit-form']"
+        mobile: "Submit"
+  assertions:
+    - type: visible
+      text: "Form submitted"

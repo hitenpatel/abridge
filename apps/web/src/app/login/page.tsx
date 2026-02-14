@@ -58,6 +58,7 @@ export default function LoginPage() {
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
 								className="w-full"
+								data-testid="email-input"
 								required
 							/>
 						</div>
@@ -70,10 +71,11 @@ export default function LoginPage() {
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
 								className="w-full"
+								data-testid="password-input"
 								required
 							/>
 						</div>
-						<Button type="submit" disabled={loading} className="w-full">
+						<Button type="submit" disabled={loading} className="w-full" data-testid="login-button">
 							{loading ? "Signing in..." : "Sign In"}
 						</Button>
 						<p className="text-center text-sm text-muted-foreground">
