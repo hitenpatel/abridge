@@ -7,9 +7,9 @@ import {
 	PlusJakartaSans_800ExtraBold,
 	useFonts,
 } from "@expo-google-fonts/plus-jakarta-sans";
+import { MaterialIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import {
 	type NativeStackNavigationProp,
 	createNativeStackNavigator,
@@ -17,16 +17,9 @@ import {
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import { StatusBar } from "expo-status-bar";
-import {
-	Calendar,
-	ClipboardCheck,
-	CreditCard as CreditCardIcon,
-	Home,
-	MessageSquare,
-	Search,
-} from "lucide-react-native";
 import React from "react";
-import { ActivityIndicator, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Pressable, SafeAreaView, Text, View } from "react-native";
+import { FloatingTabBar } from "./src/components/FloatingTabBar";
 import { authClient } from "./src/lib/auth-client";
 import { hapticLight } from "./src/lib/haptics";
 import { TRPCProvider } from "./src/lib/provider";
@@ -35,12 +28,22 @@ import { trpc } from "./src/lib/trpc";
 import { useTheme } from "./src/lib/use-theme";
 import { AttendanceScreen } from "./src/screens/AttendanceScreen";
 import { CalendarScreen } from "./src/screens/CalendarScreen";
-import { DashboardScreen } from "./src/screens/DashboardScreen";
+import { ComposeMessageScreen } from "./src/screens/ComposeMessageScreen";
+import { FormDetailScreen } from "./src/screens/FormDetailScreen";
+import { FormsScreen } from "./src/screens/FormsScreen";
 import { LoginScreen } from "./src/screens/LoginScreen";
 import { MessageDetailScreen } from "./src/screens/MessageDetailScreen";
 import { MessagesScreen } from "./src/screens/MessagesScreen";
+import { ParentHomeScreen } from "./src/screens/ParentHomeScreen";
+import { PaymentHistoryScreen } from "./src/screens/PaymentHistoryScreen";
+import { PaymentSuccessScreen } from "./src/screens/PaymentSuccessScreen";
 import { PaymentsScreen } from "./src/screens/PaymentsScreen";
 import { SearchScreen } from "./src/screens/SearchScreen";
+import { StaffAttendanceScreen } from "./src/screens/StaffAttendanceScreen";
+import { StaffHomeScreen } from "./src/screens/StaffHomeScreen";
+import { StaffManagementScreen } from "./src/screens/StaffManagementScreen";
+import { StaffPaymentsScreen } from "./src/screens/StaffPaymentsScreen";
+import { StudentProfileScreen } from "./src/screens/StudentProfileScreen";
 
 // Message item type matching the API response
 export interface MessageItem {
@@ -56,17 +59,32 @@ export interface MessageItem {
 }
 
 export type RootStackParamList = {
+	Login: undefined;
 	Main: undefined;
 	MessageDetail: { message: MessageItem };
+	ComposeMessage: undefined;
+	PaymentSuccess: { amount: number; transactionId: string; itemName: string };
+	PaymentHistory: undefined;
+	Calendar: undefined;
+	Forms: undefined;
+	FormDetail: { formId: string; childId: string };
+	StudentProfile: { childId: string };
 	Search: undefined;
+	StaffManagement: undefined;
 };
 
-export type TabParamList = {
-	Dashboard: undefined;
+export type ParentTabParamList = {
+	ParentHome: undefined;
 	Messages: undefined;
-	Calendar: undefined;
-	Payments: undefined;
 	Attendance: undefined;
+	Payments: undefined;
+};
+
+export type StaffTabParamList = {
+	StaffHome: undefined;
+	StaffMessages: undefined;
+	StaffAttendance: undefined;
+	StaffPayments: undefined;
 };
 
 // Configure notification handler
@@ -79,100 +97,102 @@ Notifications.setNotificationHandler({
 });
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
-const Tab = createBottomTabNavigator<TabParamList>();
+const ParentTab = createBottomTabNavigator<ParentTabParamList>();
+const StaffTab = createBottomTabNavigator<StaffTabParamList>();
 
 function HeaderRight() {
 	const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-	const { isDark } = useTheme();
 	const logout = useLogout();
-	const color = isDark ? "#E5E7EB" : "#2D3748";
 
 	return (
-		<View className="flex-row items-center mr-4">
-			<TouchableOpacity
+		<View className="flex-row items-center mr-4 gap-3">
+			<Pressable
 				onPress={() => {
+					hapticLight();
 					navigation.navigate("Search");
 				}}
-				className="mr-4"
+				className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center"
 			>
-				<Search size={20} color={color} />
-			</TouchableOpacity>
-			<TouchableOpacity onPress={logout}>
-				<Text className="text-foreground text-sm font-medium">Logout</Text>
-			</TouchableOpacity>
+				<MaterialIcons name="search" size={20} color="#96867f" />
+			</Pressable>
+			<Pressable
+				onPress={logout}
+				className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center"
+			>
+				<MaterialIcons name="logout" size={18} color="#96867f" />
+			</Pressable>
 		</View>
 	);
 }
 
-function TabNavigator() {
-	const { isDark } = useTheme();
+function ParentTabNavigator() {
 	return (
-		<Tab.Navigator
-			screenOptions={{
-				headerStyle: { backgroundColor: isDark ? "#1E1E1E" : "#FFFFFF" },
-				headerTintColor: isDark ? "#E5E7EB" : "#2D3748",
-				headerTitleStyle: { fontWeight: "600" },
-				tabBarStyle: { backgroundColor: isDark ? "#1E1E1E" : "#FFFFFF" },
-				tabBarActiveTintColor: "#f56e3d",
-				tabBarInactiveTintColor: "#6B7280",
-				tabBarButton: (props) => (
-					<TouchableOpacity
-						{...props}
-						onPress={(e) => {
-							hapticLight();
-							props.onPress?.(e);
-						}}
-					/>
-				),
-			}}
+		<ParentTab.Navigator
+			tabBar={(props) => <FloatingTabBar {...props} />}
+			screenOptions={{ headerShown: false }}
 		>
-			<Tab.Screen
-				name="Dashboard"
-				component={DashboardScreen}
-				options={{
-					title: "Home",
-					tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
-					headerRight: () => <HeaderRight />,
-				}}
+			<ParentTab.Screen
+				name="ParentHome"
+				component={ParentHomeScreen}
+				options={{ tabBarLabel: { icon: "home", label: "Home" } as never }}
 			/>
-			<Tab.Screen
+			<ParentTab.Screen
 				name="Messages"
 				component={MessagesScreen}
-				options={{
-					title: "Inbox",
-					tabBarIcon: ({ color, size }) => <MessageSquare size={size} color={color} />,
-					headerRight: () => <HeaderRight />,
-				}}
+				options={{ tabBarLabel: { icon: "chat_bubble_outline", label: "Messages" } as never }}
 			/>
-			<Tab.Screen
-				name="Calendar"
-				component={CalendarScreen}
-				options={{
-					title: "Calendar",
-					tabBarIcon: ({ color, size }) => <Calendar size={size} color={color} />,
-					headerRight: () => <HeaderRight />,
-				}}
-			/>
-			<Tab.Screen
+			<ParentTab.Screen
 				name="Attendance"
 				component={AttendanceScreen}
-				options={{
-					title: "Attendance",
-					tabBarIcon: ({ color, size }) => <ClipboardCheck size={size} color={color} />,
-					headerRight: () => <HeaderRight />,
-				}}
+				options={{ tabBarLabel: { icon: "check_circle_outline", label: "Attendance" } as never }}
 			/>
-			<Tab.Screen
+			<ParentTab.Screen
 				name="Payments"
 				component={PaymentsScreen}
-				options={{
-					title: "Payments",
-					tabBarIcon: ({ color, size }) => <CreditCardIcon size={size} color={color} />,
-					headerRight: () => <HeaderRight />,
-				}}
+				options={{ tabBarLabel: { icon: "account_balance_wallet", label: "Payments" } as never }}
 			/>
-		</Tab.Navigator>
+		</ParentTab.Navigator>
 	);
+}
+
+function StaffTabNavigator() {
+	return (
+		<StaffTab.Navigator
+			tabBar={(props) => <FloatingTabBar {...props} />}
+			screenOptions={{ headerShown: false }}
+		>
+			<StaffTab.Screen
+				name="StaffHome"
+				component={StaffHomeScreen}
+				options={{ tabBarLabel: { icon: "dashboard", label: "Home" } as never }}
+			/>
+			<StaffTab.Screen
+				name="StaffMessages"
+				component={MessagesScreen}
+				options={{ tabBarLabel: { icon: "chat_bubble_outline", label: "Messages" } as never }}
+			/>
+			<StaffTab.Screen
+				name="StaffAttendance"
+				component={StaffAttendanceScreen}
+				options={{ tabBarLabel: { icon: "check_circle_outline", label: "Attendance" } as never }}
+			/>
+			<StaffTab.Screen
+				name="StaffPayments"
+				component={StaffPaymentsScreen}
+				options={{ tabBarLabel: { icon: "account_balance_wallet", label: "Payments" } as never }}
+			/>
+		</StaffTab.Navigator>
+	);
+}
+
+function MainNavigator() {
+	const { data: sessionData } = trpc.auth.getSession.useQuery();
+	const isStaff = !!sessionData?.staffRole;
+
+	if (isStaff) {
+		return <StaffTabNavigator />;
+	}
+	return <ParentTabNavigator />;
 }
 
 function AuthenticatedApp() {
@@ -182,14 +202,12 @@ function AuthenticatedApp() {
 	React.useEffect(() => {
 		const registerForPushNotifications = async () => {
 			try {
-				// Request permissions
 				const { status } = await Notifications.requestPermissionsAsync();
 				if (status !== "granted") {
 					console.log("Push notification permissions denied");
 					return;
 				}
 
-				// Get push token (requires EAS projectId, skip in Expo Go)
 				const projectId = Constants.expoConfig?.extra?.eas?.projectId;
 				if (!projectId) {
 					console.log("Skipping push token registration (no EAS projectId)");
@@ -212,12 +230,13 @@ function AuthenticatedApp() {
 		<NavigationContainer>
 			<Stack.Navigator
 				screenOptions={{
-					headerStyle: { backgroundColor: isDark ? "#1E1E1E" : "#FFFFFF" },
-					headerTintColor: isDark ? "#E5E7EB" : "#2D3748",
+					headerStyle: { backgroundColor: isDark ? "#33221b" : "#f8f6f5" },
+					headerTintColor: isDark ? "#E5E7EB" : "#5c4d47",
 					headerTitleStyle: { fontWeight: "600" },
+					headerShadowVisible: false,
 				}}
 			>
-				<Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
+				<Stack.Screen name="Main" component={MainNavigator} options={{ headerShown: false }} />
 				<Stack.Screen
 					name="MessageDetail"
 					component={MessageDetailScreen}
@@ -226,18 +245,53 @@ function AuthenticatedApp() {
 							route.params.message.subject.length > 25
 								? `${route.params.message.subject.substring(0, 25)}...`
 								: route.params.message.subject,
-						headerTitleStyle: {
-							fontWeight: "600",
-							fontSize: 16,
-						},
+						headerTitleStyle: { fontWeight: "600", fontSize: 16 },
 					})}
+				/>
+				<Stack.Screen
+					name="ComposeMessage"
+					component={ComposeMessageScreen}
+					options={{ title: "New Update", presentation: "modal" }}
+				/>
+				<Stack.Screen
+					name="PaymentSuccess"
+					component={PaymentSuccessScreen}
+					options={{ headerShown: false, presentation: "transparentModal" }}
+				/>
+				<Stack.Screen
+					name="PaymentHistory"
+					component={PaymentHistoryScreen}
+					options={{ title: "Payment History" }}
+				/>
+				<Stack.Screen
+					name="Calendar"
+					component={CalendarScreen}
+					options={{ title: "Calendar" }}
+				/>
+				<Stack.Screen
+					name="Forms"
+					component={FormsScreen}
+					options={{ title: "Forms & Consent" }}
+				/>
+				<Stack.Screen
+					name="FormDetail"
+					component={FormDetailScreen}
+					options={{ title: "Complete Form" }}
+				/>
+				<Stack.Screen
+					name="StudentProfile"
+					component={StudentProfileScreen}
+					options={{ title: "Student Profile" }}
 				/>
 				<Stack.Screen
 					name="Search"
 					component={SearchScreen}
-					options={{
-						title: "Search",
-					}}
+					options={{ title: "Search" }}
+				/>
+				<Stack.Screen
+					name="StaffManagement"
+					component={StaffManagementScreen}
+					options={{ title: "Staff Management" }}
 				/>
 			</Stack.Navigator>
 		</NavigationContainer>
@@ -269,7 +323,7 @@ function AppContent() {
 		return (
 			<View className="flex-1 bg-background items-center justify-center">
 				<ActivityIndicator size="large" color="#f56e3d" />
-				<Text className="mt-3 text-base text-muted-foreground font-sans">Loading...</Text>
+				<Text className="mt-3 text-base text-text-muted font-sans">Loading...</Text>
 			</View>
 		);
 	}
