@@ -1,25 +1,25 @@
 import { type VariantProps, cva } from "class-variance-authority";
 import { Pressable, type PressableProps, Text } from "react-native";
 
-const buttonVariants = cva("flex-row items-center justify-center rounded-xl", {
+const buttonVariants = cva("flex-row items-center justify-center", {
 	variants: {
 		variant: {
-			default: "bg-primary active:opacity-90",
-			destructive: "bg-destructive active:opacity-90",
-			outline: "border border-border bg-transparent active:bg-accent",
-			secondary: "bg-secondary active:opacity-80",
-			ghost: "active:bg-accent",
+			default: "bg-primary rounded-full active:opacity-90",
+			destructive: "bg-destructive rounded-full active:opacity-90",
+			outline: "border border-border bg-transparent rounded-2xl active:bg-accent",
+			secondary: "bg-secondary rounded-2xl active:opacity-80",
+			ghost: "rounded-xl active:bg-accent",
 		},
 		size: {
-			default: "h-10 px-4",
-			sm: "h-9 px-3",
-			lg: "h-11 px-8",
+			default: "h-12 px-6",
+			sm: "h-9 px-4",
+			lg: "h-14 px-8",
 		},
 	},
 	defaultVariants: { variant: "default", size: "default" },
 });
 
-const textVariants = cva("font-sans font-semibold", {
+const textVariants = cva("font-sans-bold", {
 	variants: {
 		variant: {
 			default: "text-primary-foreground",

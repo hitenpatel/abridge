@@ -1,29 +1,29 @@
 import { type VariantProps, cva } from "class-variance-authority";
 import { Text, View, type ViewProps } from "react-native";
 
-const badgeVariants = cva("rounded-full px-2.5 py-0.5 flex-row items-center self-start", {
+const badgeVariants = cva("rounded-full px-3 py-1 flex-row items-center self-start", {
 	variants: {
 		variant: {
-			default: "bg-primary",
-			success: "bg-success",
-			warning: "bg-warning",
-			destructive: "bg-destructive",
-			info: "bg-info",
-			secondary: "bg-secondary",
+			default: "bg-primary/10",
+			success: "bg-green-100",
+			warning: "bg-yellow-100",
+			destructive: "bg-red-100",
+			info: "bg-blue-100",
+			secondary: "bg-neutral-surface dark:bg-surface-dark",
 		},
 	},
 	defaultVariants: { variant: "default" },
 });
 
-const textVariants = cva("text-xs font-semibold font-sans", {
+const textVariants = cva("text-xs font-sans-bold", {
 	variants: {
 		variant: {
-			default: "text-primary-foreground",
-			success: "text-success-foreground",
-			warning: "text-warning-foreground",
-			destructive: "text-destructive-foreground",
-			info: "text-info-foreground",
-			secondary: "text-secondary-foreground",
+			default: "text-primary",
+			success: "text-green-700",
+			warning: "text-yellow-800",
+			destructive: "text-red-700",
+			info: "text-blue-700",
+			secondary: "text-text-muted",
 		},
 	},
 	defaultVariants: { variant: "default" },

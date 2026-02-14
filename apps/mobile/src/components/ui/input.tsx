@@ -10,8 +10,8 @@ export const Input = React.forwardRef<TextInput, InputProps>(
 		return (
 			<TextInput
 				ref={ref}
-				className={`rounded-xl h-10 px-3 border border-input bg-background text-foreground font-sans text-sm ${className}`}
-				placeholderTextColor="#9CA3AF"
+				className={`rounded-2xl h-12 px-4 bg-neutral-surface dark:bg-surface-dark text-foreground dark:text-white font-sans text-base ${className}`}
+				placeholderTextColor="#96867f"
 				{...props}
 			/>
 		);

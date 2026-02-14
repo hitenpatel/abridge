@@ -31,7 +31,7 @@ export function Skeleton({ className = "", width, height, ...props }: SkeletonPr
 
 	return (
 		<Animated.View
-			className={`bg-muted rounded-lg ${className}`}
+			className={`bg-neutral-surface dark:bg-surface-dark rounded-2xl ${className}`}
 			style={{ opacity, width, height }}
 			{...props}
 		/>

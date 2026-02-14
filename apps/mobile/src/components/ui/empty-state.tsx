@@ -22,10 +22,10 @@ export function EmptyState({
 	...props
 }: EmptyStateProps) {
 	return (
-		<View className={`flex-1 items-center justify-center px-6 ${className}`} {...props}>
-			{icon && <View className="mb-4">{icon}</View>}
-			<H2 className="text-center mb-2">{title}</H2>
-			{description && <Muted className="text-center mb-6">{description}</Muted>}
+		<View className={`flex-1 items-center justify-center px-8 py-20 ${className}`} {...props}>
+			{icon && <View className="mb-6">{icon}</View>}
+			<H2 className="text-center mb-2 text-foreground dark:text-white">{title}</H2>
+			{description && <Muted className="text-center mb-8 text-text-muted">{description}</Muted>}
 			{actionLabel && onAction && <Button onPress={onAction}>{actionLabel}</Button>}
 		</View>
 	);
