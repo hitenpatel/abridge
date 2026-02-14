@@ -1,10 +1,18 @@
-import { X } from "lucide-react-native";
-import type React from "react";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, FlatList, Pressable, ScrollView, View } from "react-native";
-import { Badge, Body, Button, Card, H2, Input, Modal, Muted } from "../components/ui";
+import {
+	ActivityIndicator,
+	Alert,
+	FlatList,
+	Pressable,
+	ScrollView,
+	Text,
+	TextInput,
+	View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ChildSelector } from "../components/ChildSelector";
 import { trpc } from "../lib/trpc";
-import { useTheme } from "../lib/use-theme";
 
 interface Child {
 	id: string;
@@ -23,17 +31,35 @@ interface AttendanceItem {
 	note: string | null;
 }
 
-export const AttendanceScreen: React.FC = () => {
+const reasons = [
+	{ key: "Sick", icon: "sick" as const, color: "#EF4444" },
+	{ key: "Appointment", icon: "event" as const, color: "#3B82F6" },
+	{ key: "Family", icon: "groups" as const, color: "#8B5CF6" },
+	{ key: "Other", icon: "more_horiz" as const, color: "#6B7280" },
+];
+
+function getMarkColor(mark: string): { bg: string; text: string; label: string } {
+	switch (mark) {
+		case "PRESENT":
+			return { bg: "#DCFCE7", text: "#16A34A", label: "Present" };
+		case "LATE":
+			return { bg: "#FEF3C7", text: "#D97706", label: "Late" };
+		case "ABSENT_AUTHORISED":
+			return { bg: "#FEE2E2", text: "#DC2626", label: "Authorised" };
+		case "ABSENT_UNAUTHORISED":
+			return { bg: "#FEE2E2", text: "#DC2626", label: "Unauthorised" };
+		default:
+			return { bg: "#F3F4F6", text: "#6B7280", label: mark.replace(/_/g, " ") };
+	}
+}
+
+export function AttendanceScreen() {
+	const insets = useSafeAreaInsets();
 	const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
-	const [isModalVisible, setIsModalVisible] = useState(false);
-	const { isDark } = useTheme();
-
-	// Form State
+	const [selectedReason, setSelectedReason] = useState("Sick");
 	const [startDate, setStartDate] = useState("");
-	const [endDate, setEndDate] = useState("");
-	const [reason, setReason] = useState("");
+	const [note, setNote] = useState("");
 
-	// Default query range: last 30 days
 	const [filterStartDate] = useState(() => {
 		const d = new Date();
 		d.setDate(d.getDate() - 30);
@@ -41,11 +67,9 @@ export const AttendanceScreen: React.FC = () => {
 	});
 	const [filterEndDate] = useState(() => new Date());
 
-	// Queries
 	const { data: childrenWrappers, isLoading: isLoadingChildren } =
 		trpc.user.listChildren.useQuery();
 
-	// Flatten children data structure
 	const children = (childrenWrappers as unknown as ChildWrapper[])?.map((item) => item.child);
 
 	const {
@@ -63,10 +87,8 @@ export const AttendanceScreen: React.FC = () => {
 
 	const reportAbsenceMutation = trpc.attendance.reportAbsence.useMutation({
 		onSuccess: () => {
-			setIsModalVisible(false);
 			setStartDate("");
-			setEndDate("");
-			setReason("");
+			setNote("");
 			Alert.alert("Success", "Absence reported successfully");
 			refetchAttendance();
 		},
@@ -75,174 +97,232 @@ export const AttendanceScreen: React.FC = () => {
 		},
 	});
 
-	// Select first child by default
 	useEffect(() => {
 		if (children && children.length > 0 && !selectedChildId) {
 			const firstChild = children[0];
-			if (firstChild) {
-				setSelectedChildId(firstChild.id);
-			}
+			if (firstChild) setSelectedChildId(firstChild.id);
 		}
 	}, [children, selectedChildId]);
 
 	const handleSubmitAbsence = () => {
-		if (!selectedChildId || !startDate || !reason) {
-			Alert.alert("Error", "Please fill in all required fields");
+		if (!selectedChildId || !startDate) {
+			Alert.alert("Error", "Please fill in the date");
 			return;
 		}
-
-		// Basic date validation YYYY-MM-DD
 		const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 		if (!dateRegex.test(startDate)) {
-			Alert.alert("Error", "Start Date must be in YYYY-MM-DD format");
+			Alert.alert("Error", "Date must be in YYYY-MM-DD format");
 			return;
 		}
-		if (endDate && !dateRegex.test(endDate)) {
-			Alert.alert("Error", "End Date must be in YYYY-MM-DD format");
-			return;
-		}
-
 		reportAbsenceMutation.mutate({
 			childId: selectedChildId,
 			startDate: new Date(startDate),
-			endDate: endDate ? new Date(endDate) : new Date(startDate),
-			reason,
+			endDate: new Date(startDate),
+			reason: `${selectedReason}${note ? `: ${note}` : ""}`,
 		});
 	};
 
-	const getStatusVariant = (mark: string): "default" | "success" | "warning" | "destructive" => {
-		switch (mark) {
-			case "PRESENT":
-				return "success";
-			case "LATE":
-				return "warning";
-			case "ABSENT_AUTHORISED":
-				return "warning";
-			case "ABSENT_UNAUTHORISED":
-				return "destructive";
-			default:
-				return "warning";
-		}
-	};
-
-	const renderAttendanceItem = ({ item }: { item: AttendanceItem }) => (
-		<Card className="flex-row justify-between items-center">
-			<View>
-				<Body className="font-semibold">
-					{new Date(item.date).toLocaleDateString("en-GB", {
-						weekday: "short",
-						day: "numeric",
-						month: "short",
-					})}
-				</Body>
-				<Muted className="mt-0.5">{item.session} Session</Muted>
-			</View>
-			<Badge variant={getStatusVariant(item.mark)}>{item.mark.replace(/_/g, " ")}</Badge>
-		</Card>
-	);
+	const selectedChild = children?.find((c) => c.id === selectedChildId);
+	const attendancePercentage =
+		attendanceRecords && attendanceRecords.length > 0
+			? Math.round(
+					(attendanceRecords.filter((r) => r.mark === "PRESENT").length /
+						attendanceRecords.length) *
+						100,
+				)
+			: 0;
 
 	if (isLoadingChildren) {
 		return (
-			<View className="flex-1 bg-background justify-center items-center">
-				<ActivityIndicator size="large" color="#FF7D45" />
+			<View className="flex-1 bg-background items-center justify-center">
+				<ActivityIndicator size="large" color="#f56e3d" />
 			</View>
 		);
 	}
 
 	return (
 		<View className="flex-1 bg-background">
-			{/* Child Selector */}
-			<View className="py-3 border-b border-border bg-card">
-				<ScrollView
-					horizontal
-					showsHorizontalScrollIndicator={false}
-					contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
-				>
-					{children?.map((child) => (
-						<Pressable
-							key={child.id}
-							className={`px-4 py-2 rounded-full border ${
-								selectedChildId === child.id
-									? "bg-primary border-primary"
-									: "bg-secondary border-border"
-							}`}
-							onPress={() => setSelectedChildId(child.id)}
-						>
-							<Body
-								className={`text-sm font-medium ${
-									selectedChildId === child.id ? "text-primary-foreground" : "text-foreground"
-								}`}
-							>
-								{child.firstName}
-							</Body>
-						</Pressable>
-					))}
-				</ScrollView>
-			</View>
-
-			{/* Report Absence Button */}
-			<View className="p-4 bg-card border-b border-border">
-				<Button onPress={() => setIsModalVisible(true)}>Report Absence</Button>
-			</View>
-
-			{/* Attendance List */}
-			{isLoadingAttendance ? (
-				<View className="flex-1 justify-center items-center">
-					<ActivityIndicator size="large" color="#FF7D45" />
+			<ScrollView
+				className="flex-1"
+				contentContainerStyle={{ paddingBottom: 100 }}
+				showsVerticalScrollIndicator={false}
+			>
+				{/* Header */}
+				<View className="px-6 pb-4" style={{ paddingTop: insets.top + 8 }}>
+					<View className="flex-row items-center justify-between">
+						<View>
+							<Text className="text-3xl font-sans-extrabold text-foreground dark:text-white tracking-tight">
+								Attendance Hub
+							</Text>
+							<Text className="text-sm font-sans text-text-muted mt-1">
+								Track and manage attendance
+							</Text>
+						</View>
+						<View className="bg-primary/10 rounded-full px-3 py-1.5">
+							<Text className="text-primary font-sans-bold text-sm">
+								{attendancePercentage}%
+							</Text>
+						</View>
+					</View>
 				</View>
-			) : (
-				<FlatList
-					data={attendanceRecords}
-					renderItem={renderAttendanceItem}
-					keyExtractor={(item, index) => index.toString()}
-					contentContainerStyle={{ padding: 16, gap: 12 }}
-					ListEmptyComponent={
-						<Muted className="text-center mt-10">No attendance records found.</Muted>
-					}
-				/>
-			)}
 
-			{/* Modal */}
-			<Modal visible={isModalVisible} onClose={() => setIsModalVisible(false)}>
-				<View className="flex-row justify-between items-center mb-5">
-					<H2>Report Absence</H2>
-					<Pressable onPress={() => setIsModalVisible(false)} className="p-1">
-						<X color={isDark ? "#E5E7EB" : "#2D3748"} size={24} />
+				{/* Child Selector */}
+				{children && children.length > 0 && (
+					<View className="px-6 mb-6">
+						<ChildSelector
+							children={children}
+							selectedChildId={selectedChildId ?? ""}
+							onSelect={setSelectedChildId}
+						/>
+					</View>
+				)}
+
+				{/* Absence Form Card */}
+				<View className="mx-6 bg-white dark:bg-surface-dark rounded-3xl p-5 mb-6">
+					<Text className="text-sm font-sans-bold uppercase tracking-wider text-text-muted mb-4">
+						Report Absence
+					</Text>
+
+					{/* Reason Toggles */}
+					<View className="flex-row gap-2 mb-4">
+						{reasons.map((r) => (
+							<Pressable
+								key={r.key}
+								onPress={() => setSelectedReason(r.key)}
+								className={`flex-1 flex-row items-center justify-center gap-1.5 py-2.5 rounded-full ${
+									selectedReason === r.key
+										? "bg-white dark:bg-neutral-surface-dark border border-gray-200 dark:border-white/10"
+										: "bg-background dark:bg-white/5"
+								}`}
+								style={{
+									shadowColor: selectedReason === r.key ? "#000" : "transparent",
+									shadowOffset: { width: 0, height: 2 },
+									shadowOpacity: selectedReason === r.key ? 0.08 : 0,
+									shadowRadius: 4,
+									elevation: selectedReason === r.key ? 2 : 0,
+								}}
+							>
+								<MaterialIcons
+									name={r.icon}
+									size={16}
+									color={selectedReason === r.key ? r.color : "#9CA3AF"}
+								/>
+								<Text
+									className={`text-xs font-sans-semibold ${
+										selectedReason === r.key ? "text-foreground dark:text-white" : "text-text-muted"
+									}`}
+								>
+									{r.key}
+								</Text>
+							</Pressable>
+						))}
+					</View>
+
+					{/* Date Input */}
+					<TextInput
+						className="bg-background dark:bg-white/5 rounded-2xl py-4 px-5 text-foreground dark:text-white font-sans mb-3"
+						placeholder="Date (YYYY-MM-DD)"
+						placeholderTextColor="#96867f"
+						value={startDate}
+						onChangeText={setStartDate}
+					/>
+
+					{/* Note Input */}
+					<TextInput
+						className="bg-background dark:bg-white/5 rounded-2xl py-4 px-5 text-foreground dark:text-white font-sans mb-4 min-h-[80px]"
+						placeholder="Optional note..."
+						placeholderTextColor="#96867f"
+						value={note}
+						onChangeText={setNote}
+						multiline
+						textAlignVertical="top"
+					/>
+
+					{/* Submit Button */}
+					<Pressable
+						onPress={handleSubmitAbsence}
+						disabled={reportAbsenceMutation.isPending}
+						className="h-16 rounded-[40px] flex-row items-center justify-center gap-3"
+						style={{ backgroundColor: "#ccfbf1" }}
+					>
+						<MaterialIcons name="send" size={20} color="#0D9488" />
+						<View>
+							<Text className="text-base font-sans-extrabold" style={{ color: "#0D9488" }}>
+								{reportAbsenceMutation.isPending ? "Submitting..." : "Report Absence"}
+							</Text>
+							{selectedChild && (
+								<Text className="text-xs font-sans" style={{ color: "#5EEAD4" }}>
+									to {selectedChild.firstName}'s teacher
+								</Text>
+							)}
+						</View>
 					</Pressable>
 				</View>
 
-				<View className="gap-4">
-					<View>
-						<Body className="font-medium mb-1.5">Start Date (YYYY-MM-DD)</Body>
-						<Input placeholder="2023-10-25" value={startDate} onChangeText={setStartDate} />
-					</View>
+				{/* Recent Records */}
+				<View className="px-6">
+					<Text className="text-sm font-sans-bold uppercase tracking-wider text-text-muted mb-4">
+						Recent Records
+					</Text>
 
-					<View>
-						<Body className="font-medium mb-1.5">End Date (Optional, YYYY-MM-DD)</Body>
-						<Input placeholder="2023-10-26" value={endDate} onChangeText={setEndDate} />
-					</View>
-
-					<View>
-						<Body className="font-medium mb-1.5">Reason</Body>
-						<Input
-							placeholder="Sick, Family Event, etc."
-							value={reason}
-							onChangeText={setReason}
-							multiline
-							numberOfLines={3}
-							className="h-24"
-						/>
-					</View>
-
-					<Button
-						onPress={handleSubmitAbsence}
-						disabled={reportAbsenceMutation.isPending}
-						className="mt-4"
-					>
-						{reportAbsenceMutation.isPending ? "Submitting..." : "Submit Report"}
-					</Button>
+					{isLoadingAttendance ? (
+						<ActivityIndicator size="small" color="#f56e3d" />
+					) : attendanceRecords && attendanceRecords.length > 0 ? (
+						<View className="gap-3">
+							{attendanceRecords.slice(0, 10).map((item, index) => {
+								const markInfo = getMarkColor(item.mark);
+								return (
+									<View
+										key={`${item.session}-${index}`}
+										className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 flex-row items-center gap-3"
+									>
+										<View
+											className="w-10 h-10 rounded-full items-center justify-center"
+											style={{ backgroundColor: markInfo.bg }}
+										>
+											<MaterialIcons
+												name={item.mark === "PRESENT" ? "check_circle" : "cancel"}
+												size={20}
+												color={markInfo.text}
+											/>
+										</View>
+										<View className="flex-1">
+											<Text className="text-sm font-sans-bold text-foreground dark:text-white">
+												{new Date(item.date).toLocaleDateString("en-GB", {
+													weekday: "short",
+													day: "numeric",
+													month: "short",
+												})}
+											</Text>
+											<Text className="text-xs font-sans text-text-muted">
+												{item.session} Session
+											</Text>
+										</View>
+										<View
+											className="rounded-full px-2.5 py-1"
+											style={{ backgroundColor: markInfo.bg }}
+										>
+											<Text
+												className="text-xs font-sans-semibold"
+												style={{ color: markInfo.text }}
+											>
+												{markInfo.label}
+											</Text>
+										</View>
+									</View>
+								);
+							})}
+						</View>
+					) : (
+						<View className="items-center py-10">
+							<MaterialIcons name="event_available" size={48} color="#9CA3AF" />
+							<Text className="text-text-muted font-sans-medium text-base mt-4">
+								No records found
+							</Text>
+						</View>
+					)}
 				</View>
-			</Modal>
+			</ScrollView>
 		</View>
 	);
-};
+}
