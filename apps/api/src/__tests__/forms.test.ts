@@ -1,12 +1,18 @@
-import { TRPCError } from "@trpc/server";
 import { describe, expect, it, vi } from "vitest";
 import { appRouter } from "../router";
+
+vi.mock("../lib/redis", () => ({
+	getCachedStaffMembership: vi.fn().mockResolvedValue(null),
+	setCachedStaffMembership: vi.fn().mockResolvedValue(undefined),
+	invalidateStaffCache: vi.fn().mockResolvedValue(undefined),
+}));
 
 function createTestContext(overrides?: Record<string, any>): any {
 	return {
 		prisma: {
 			formTemplate: {
 				findMany: vi.fn().mockResolvedValue([]),
+				findUnique: vi.fn().mockResolvedValue(null),
 				create: vi.fn().mockResolvedValue({ id: "template-1" }),
 			},
 			formResponse: {
@@ -25,7 +31,7 @@ function createTestContext(overrides?: Record<string, any>): any {
 		},
 		req: {},
 		res: {},
-		user: { id: "user-1", name: "User" },
+		user: { id: "user-1", name: "User", email: "user@example.com" },
 		session: {},
 		...overrides,
 	};
@@ -43,6 +49,8 @@ describe("forms router", () => {
 					},
 					formTemplate: {
 						findMany: vi.fn().mockResolvedValue(mockTemplates),
+						findUnique: vi.fn(),
+						create: vi.fn(),
 					},
 				},
 			});
@@ -55,6 +63,15 @@ describe("forms router", () => {
 				where: { schoolId: "school-1" },
 				orderBy: { createdAt: "desc" },
 			});
+		});
+
+		it("rejects non-staff user", async () => {
+			const ctx = createTestContext();
+			const caller = appRouter.createCaller(ctx);
+
+			await expect(
+				caller.forms.getTemplates({ schoolId: "school-1" }),
+			).rejects.toThrow();
 		});
 	});
 
@@ -89,6 +106,58 @@ describe("forms router", () => {
 				},
 			});
 		});
+
+		it("rejects unauthenticated user", async () => {
+			const ctx = createTestContext({ user: null, session: null });
+			const caller = appRouter.createCaller(ctx);
+
+			await expect(
+				caller.forms.createTemplate({
+					schoolId: "school-1",
+					title: "Form",
+					fields: [{ id: "q1", type: "text", label: "Q", required: true }],
+				}),
+			).rejects.toThrow("UNAUTHORIZED");
+		});
+	});
+
+	describe("getTemplate", () => {
+		it("returns a template by ID", async () => {
+			const mockTemplate = { id: "t1", title: "Consent Form", fields: [] };
+			const ctx = createTestContext({
+				prisma: {
+					...createTestContext().prisma,
+					formTemplate: {
+						findMany: vi.fn(),
+						findUnique: vi.fn().mockResolvedValue(mockTemplate),
+						create: vi.fn(),
+					},
+				},
+			});
+			const caller = appRouter.createCaller(ctx);
+
+			const result = await caller.forms.getTemplate({ templateId: "t1" });
+
+			expect(result).toEqual(mockTemplate);
+		});
+
+		it("throws NOT_FOUND if template does not exist", async () => {
+			const ctx = createTestContext();
+			const caller = appRouter.createCaller(ctx);
+
+			await expect(
+				caller.forms.getTemplate({ templateId: "nonexistent" }),
+			).rejects.toThrow("Template not found");
+		});
+
+		it("rejects unauthenticated user", async () => {
+			const ctx = createTestContext({ user: null, session: null });
+			const caller = appRouter.createCaller(ctx);
+
+			await expect(
+				caller.forms.getTemplate({ templateId: "t1" }),
+			).rejects.toThrow("UNAUTHORIZED");
+		});
 	});
 
 	describe("getPendingForms", () => {
@@ -105,6 +174,8 @@ describe("forms router", () => {
 					},
 					formTemplate: {
 						findMany: vi.fn().mockResolvedValue(mockTemplates),
+						findUnique: vi.fn(),
+						create: vi.fn(),
 					},
 				},
 			});
@@ -129,6 +200,59 @@ describe("forms router", () => {
 			await expect(caller.forms.getPendingForms({ childId: "child-1" })).rejects.toThrow(
 				"You are not a parent of this child",
 			);
+		});
+
+		it("rejects unauthenticated user", async () => {
+			const ctx = createTestContext({ user: null, session: null });
+			const caller = appRouter.createCaller(ctx);
+
+			await expect(
+				caller.forms.getPendingForms({ childId: "child-1" }),
+			).rejects.toThrow("UNAUTHORIZED");
+		});
+	});
+
+	describe("getCompletedForms", () => {
+		it("returns completed forms for a child", async () => {
+			const mockResponses = [
+				{ id: "resp-1", templateId: "t1", submittedAt: new Date(), template: { title: "Consent" } },
+			];
+			const ctx = createTestContext({
+				prisma: {
+					...createTestContext().prisma,
+					parentChild: {
+						findUnique: vi.fn().mockResolvedValue({ id: "pc-1" }),
+					},
+					formResponse: {
+						findMany: vi.fn().mockResolvedValue(mockResponses),
+						create: vi.fn(),
+					},
+				},
+			});
+			const caller = appRouter.createCaller(ctx);
+
+			const result = await caller.forms.getCompletedForms({ childId: "child-1" });
+
+			expect(result).toHaveLength(1);
+			expect(result[0].template.title).toBe("Consent");
+		});
+
+		it("throws if user is not parent of child", async () => {
+			const ctx = createTestContext();
+			const caller = appRouter.createCaller(ctx);
+
+			await expect(
+				caller.forms.getCompletedForms({ childId: "child-1" }),
+			).rejects.toThrow("You are not a parent of this child");
+		});
+
+		it("rejects unauthenticated user", async () => {
+			const ctx = createTestContext({ user: null, session: null });
+			const caller = appRouter.createCaller(ctx);
+
+			await expect(
+				caller.forms.getCompletedForms({ childId: "child-1" }),
+			).rejects.toThrow("UNAUTHORIZED");
 		});
 	});
 
@@ -163,6 +287,32 @@ describe("forms router", () => {
 					signature: input.signature,
 				},
 			});
+		});
+
+		it("rejects if not parent of child", async () => {
+			const ctx = createTestContext();
+			const caller = appRouter.createCaller(ctx);
+
+			await expect(
+				caller.forms.submitForm({
+					templateId: "t1",
+					childId: "other-child",
+					data: { q1: "Answer" },
+				}),
+			).rejects.toThrow("You are not a parent of this child");
+		});
+
+		it("rejects unauthenticated user", async () => {
+			const ctx = createTestContext({ user: null, session: null });
+			const caller = appRouter.createCaller(ctx);
+
+			await expect(
+				caller.forms.submitForm({
+					templateId: "t1",
+					childId: "child-1",
+					data: { q1: "Answer" },
+				}),
+			).rejects.toThrow("UNAUTHORIZED");
 		});
 	});
 });

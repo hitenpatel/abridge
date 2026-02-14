@@ -19,4 +19,4 @@ journey:
         mobile: "Payments"
   assertions:
     - type: visible
-      text: "Payment Item 1"
+      text: "School Expenses"

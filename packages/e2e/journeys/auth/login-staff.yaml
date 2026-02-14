@@ -31,4 +31,4 @@ journey:
         mobile: "Sign In"
   assertions:
     - type: visible
-      text: "Dashboard"
+      text: "Home"

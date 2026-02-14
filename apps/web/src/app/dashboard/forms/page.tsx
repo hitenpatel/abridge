@@ -45,6 +45,7 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 								key={template.id}
 								href={`/dashboard/forms/${template.id}?childId=${childId}`}
 								className="group"
+								data-testid="form-item"
 							>
 								<Card className="hover:border-warning transition-colors border-warning/30">
 									<CardContent className="flex items-center justify-between p-4">

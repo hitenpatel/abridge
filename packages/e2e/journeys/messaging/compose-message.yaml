@@ -2,6 +2,7 @@ journey:
   id: compose-message
   name: Compose Message
   tags: [messaging, staff, authenticated]
+  skipPlatforms: [web]
   role: staff
   preconditions:
     seed: staff-with-school

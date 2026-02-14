@@ -60,9 +60,9 @@ function translateAction(step: Step): string {
 function translateAssertion(assertion: Assertion): string {
 	switch (assertion.type) {
 		case "visible":
-			return `await expect(page.getByText('${assertion.text}')).toBeVisible();`;
+			return `await expect(page.getByText('${assertion.text}').first()).toBeVisible();`;
 		case "not-visible":
-			return `await expect(page.getByText('${assertion.text}')).not.toBeVisible();`;
+			return `await expect(page.getByText('${assertion.text}').first()).not.toBeVisible();`;
 		case "count": {
 			const count = assertion.count || 0;
 			return `await expect(page.getByText('${assertion.text}')).toHaveCount(${count});`;
@@ -79,7 +79,7 @@ function generateTest(journey: Journey): string {
 		journey.preconditions.state === "authenticated"
 			? `
   // Login as ${journey.role}
-  await page.goto('/');
+  await page.goto('/login');
   await page.getByTestId('email-input').fill('${TEST_CREDENTIALS[journey.role].email}');
   await page.getByTestId('password-input').fill('${TEST_CREDENTIALS[journey.role].password}');
   await page.getByTestId('login-button').click();

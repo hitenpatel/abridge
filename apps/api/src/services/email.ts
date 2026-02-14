@@ -1,8 +1,14 @@
 import { Resend } from "resend";
 import { logger } from "../lib/logger";
 
-// Initialize Resend client
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy-initialize Resend client to avoid throwing at import time in tests
+let _resend: Resend | null = null;
+function getResend() {
+	if (!_resend) {
+		_resend = new Resend(process.env.RESEND_API_KEY);
+	}
+	return _resend;
+}
 
 // Email sender configuration
 const FROM_EMAIL = process.env.FROM_EMAIL || "SchoolConnect <onboarding@resend.dev>";
@@ -42,7 +48,7 @@ export async function sendStaffInvitationEmail(data: StaffInvitationEmailData) {
 	const expiryDate = data.expiresAt.toLocaleDateString("en-GB");
 
 	try {
-		const { data: emailData, error: emailError } = await resend.emails.send({
+		const { data: emailData, error: emailError } = await getResend().emails.send({
 			from: FROM_EMAIL,
 			to: [data.recipientEmail],
 			subject: `Invitation to join ${data.schoolName} on SchoolConnect`,
@@ -155,7 +161,7 @@ export async function sendStaffInvitationEmail(data: StaffInvitationEmailData) {
  */
 export async function sendNotificationEmail(data: NotificationEmailData) {
 	try {
-		const { data: emailData, error: emailError } = await resend.emails.send({
+		const { data: emailData, error: emailError } = await getResend().emails.send({
 			from: FROM_EMAIL,
 			to: [data.recipientEmail],
 			subject: `${data.schoolName}: ${data.subject}`,
@@ -229,7 +235,7 @@ export async function sendNotificationEmail(data: NotificationEmailData) {
  */
 export async function sendReceiptEmail(data: ReceiptEmailData) {
 	try {
-		const { data: emailData, error: emailError } = await resend.emails.send({
+		const { data: emailData, error: emailError } = await getResend().emails.send({
 			from: FROM_EMAIL,
 			to: [data.recipientEmail],
 			subject: `Payment Receipt ${data.receiptNumber} - ${data.schoolName}`,

@@ -157,6 +157,31 @@ export async function createStaffWithMessages() {
 		},
 	});
 
+	// Create a parent user linked to the child so parent role can view messages
+	const parentHashedPassword = await hashPassword(TEST_CREDENTIALS.parent.password);
+	const parentUser = await db.user.create({
+		data: {
+			email: TEST_CREDENTIALS.parent.email,
+			name: "Test Parent",
+			emailVerified: true,
+		},
+	});
+	await db.account.create({
+		data: {
+			userId: parentUser.id,
+			accountId: parentUser.id,
+			providerId: "credential",
+			password: parentHashedPassword,
+		},
+	});
+	await db.parentChild.create({
+		data: {
+			userId: parentUser.id,
+			childId: child.id,
+			relation: "PARENT",
+		},
+	});
+
 	const messages = await Promise.all(
 		Array.from({ length: 5 }, (_, i) =>
 			db.message.create({
@@ -176,7 +201,7 @@ export async function createStaffWithMessages() {
 		),
 	);
 
-	return { ...base, child, messages };
+	return { ...base, parentUser, child, messages };
 }
 
 export async function createParentWithPayments() {

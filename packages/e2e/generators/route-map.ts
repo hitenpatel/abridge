@@ -1,5 +1,5 @@
 export const ROUTE_MAP: Record<string, string> = {
-	login: "/",
+	login: "/login",
 	dashboard: "/dashboard",
 	messages: "/dashboard/messages",
 	attendance: "/dashboard/attendance",

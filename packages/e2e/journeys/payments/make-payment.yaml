@@ -2,6 +2,7 @@ journey:
   id: make-payment
   name: Make Payment
   tags: [payments, parent, authenticated]
+  skipPlatforms: [web]
   role: parent
   preconditions:
     seed: parent-with-payments

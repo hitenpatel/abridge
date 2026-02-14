@@ -13,6 +13,11 @@ journey:
         web: "/dashboard"
         mobile: "Home"
     - action: tap
+      target: user-menu-trigger
+      selectors:
+        web: "[data-testid='user-menu-trigger']"
+        mobile: "Profile"
+    - action: tap
       target: logout-button
       selectors:
         web: "[data-testid='logout-button']"

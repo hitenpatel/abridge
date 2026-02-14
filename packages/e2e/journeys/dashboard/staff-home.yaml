@@ -19,4 +19,4 @@ journey:
         mobile: "Dashboard"
   assertions:
     - type: visible
-      text: "Dashboard"
+      text: "Home"

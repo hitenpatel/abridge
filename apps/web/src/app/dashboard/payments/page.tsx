@@ -103,10 +103,11 @@ export default function PaymentsDashboardPage() {
 								<h3 className="text-lg font-bold text-gray-800">Due Soon</h3>
 							</div>
 
-							{upcomingPayments.map((payment) => (
+							{upcomingPayments.map((payment, index) => (
 								<div
 									key={payment.id}
 									className="group relative flex items-center p-4 mb-4 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-md transition-all bg-white"
+									data-testid={`payment-item-${index + 1}`}
 								>
 									<div
 										className={`w-16 h-16 rounded-xl bg-${payment.iconColor}-100 flex items-center justify-center text-${payment.iconColor}-600 mr-5 shrink-0`}
@@ -150,6 +151,7 @@ export default function PaymentsDashboardPage() {
 										</span>
 										<button
 											type="button"
+											data-testid="pay-button"
 											className={
 												payment.urgent
 													? "bg-primary hover:bg-orange-600 text-white px-5 py-2 rounded-xl font-bold shadow-lg shadow-orange-200 transition transform active:scale-95"

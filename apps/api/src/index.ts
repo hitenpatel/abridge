@@ -10,6 +10,7 @@ import { checkUndeliveredNotifications } from "./jobs/notification-fallback";
 import { auth } from "./lib/auth";
 import { appRouter } from "./router";
 import { pdfRoutes } from "./routes/pdf";
+import { testSeedRoutes } from "./routes/test-seed";
 import { webhookRoutes } from "./routes/webhooks";
 
 const server = Fastify({ logger: true });
@@ -68,6 +69,11 @@ async function main() {
 	await server.register(webhookRoutes);
 
 	await server.register(pdfRoutes);
+
+	// Test-only seed endpoint - never expose in production
+	if (process.env.NODE_ENV !== "production") {
+		await server.register(testSeedRoutes);
+	}
 
 	await server.register(fastifyTRPCPlugin, {
 		prefix: "/trpc",

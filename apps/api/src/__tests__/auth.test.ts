@@ -46,11 +46,21 @@ describe("auth router", () => {
 						ipAddress: null,
 						userAgent: null,
 					},
+					prisma: {
+						parentChild: { findMany: async () => [] },
+						staffMember: { findFirst: async () => null },
+						$queryRawUnsafe: async () => [],
+					} as unknown as Context["prisma"],
 				}),
 			);
 			const result = await caller.auth.getSession();
 
-			expect(result).toEqual(mockUser);
+			expect(result).toEqual({
+				...mockUser,
+				isParent: false,
+				staffRole: null,
+				schoolId: null,
+			});
 		});
 	});
 

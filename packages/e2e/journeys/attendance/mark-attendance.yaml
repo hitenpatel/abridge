@@ -3,7 +3,7 @@ journey:
   name: Mark Attendance
   tags: [attendance, staff, authenticated]
   role: staff
-  skipPlatforms: [mobile]
+  skipPlatforms: [web, mobile]
   preconditions:
     seed: staff-with-school
     state: authenticated

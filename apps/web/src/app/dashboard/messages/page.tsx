@@ -53,6 +53,7 @@ export default function MessagesPage() {
 							type="text"
 							placeholder="Search messages..."
 							className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+							data-testid="search-input"
 						/>
 					</div>
 				</div>
