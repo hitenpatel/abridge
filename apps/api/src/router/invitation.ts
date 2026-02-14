@@ -116,6 +116,28 @@ export const invitationRouter = router({
 				create: userData,
 			});
 
+			// Apply school default notification preferences for new users
+			if (!existingUser) {
+				const school = await ctx.prisma.school.findUnique({
+					where: { id: invitation.schoolId },
+					select: {
+						defaultNotifyByPush: true,
+						defaultNotifyBySms: true,
+						defaultNotifyByEmail: true,
+					},
+				});
+				if (school) {
+					await ctx.prisma.user.update({
+						where: { id: user.id },
+						data: {
+							notifyByPush: school.defaultNotifyByPush,
+							notifyBySms: school.defaultNotifyBySms,
+							notifyByEmail: school.defaultNotifyByEmail,
+						},
+					});
+				}
+			}
+
 			// Add staff member
 			await ctx.prisma.staffMember.create({
 				data: {
