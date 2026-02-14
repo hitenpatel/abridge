@@ -1,28 +1,26 @@
+import { MaterialIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useCallback, useEffect } from "react";
-import { ScrollView, View } from "react-native";
+import { useCallback, useEffect } from "react";
+import { ScrollView, Text, View } from "react-native";
 import type { RootStackParamList } from "../../App";
-import { Badge, Body, H1, Muted, Separator } from "../components/ui";
 import { trpc } from "../lib/trpc";
 
 type MessageDetailScreenProps = NativeStackScreenProps<RootStackParamList, "MessageDetail">;
 
-const getCategoryVariant = (
-	category: string,
-): "default" | "destructive" | "warning" | "success" | "info" => {
+function getCategoryColor(category: string): { bg: string; text: string } {
 	switch (category.toLowerCase()) {
 		case "urgent":
-			return "destructive";
+			return { bg: "#FEE2E2", text: "#DC2626" };
 		case "announcement":
-			return "info";
+			return { bg: "#DBEAFE", text: "#2563EB" };
 		case "reminder":
-			return "warning";
+			return { bg: "#FEF3C7", text: "#92400E" };
 		case "newsletter":
-			return "success";
+			return { bg: "#DCFCE7", text: "#16A34A" };
 		default:
-			return "default";
+			return { bg: "#F3F4F6", text: "#6B7280" };
 	}
-};
+}
 
 const formatFullDate = (date: Date): string => {
 	const d = new Date(date);
@@ -36,18 +34,16 @@ const formatFullDate = (date: Date): string => {
 	});
 };
 
-export const MessageDetailScreen = ({ route }: MessageDetailScreenProps) => {
+export function MessageDetailScreen({ route }: MessageDetailScreenProps) {
 	const { message } = route.params;
-
+	const categoryColor = getCategoryColor(message.category);
 	const utils = trpc.useUtils();
 
 	const markReadMutation = trpc.messaging.markRead.useMutation({
 		onSuccess: () => {
-			// Invalidate the inbox list to update read status
 			utils.messaging.listReceived.invalidate();
 		},
 		onError: (error) => {
-			// Log error but don't block UI - read receipt is not critical
 			console.warn("Failed to mark message as read:", error.message);
 		},
 	});
@@ -56,45 +52,55 @@ export const MessageDetailScreen = ({ route }: MessageDetailScreenProps) => {
 		markReadMutation.mutate({ messageId: message.id });
 	}, [markReadMutation, message.id]);
 
-	// Mark as read on mount
 	useEffect(() => {
-		// Only mark as read if not already read
 		if (!message.isRead) {
 			markAsRead();
 		}
 	}, [message.isRead, markAsRead]);
 
 	return (
-		<ScrollView className="flex-1 bg-card">
-			<View className="p-5">
+		<ScrollView className="flex-1 bg-background">
+			<View className="p-6">
 				{/* Coral accent bar */}
-				<View className="h-1 w-16 bg-primary rounded-full mb-4" />
+				<View className="h-1 w-16 bg-primary rounded-full mb-5" />
 
-				{/* Header section */}
-				<View className="mb-4">
-					<Badge variant={getCategoryVariant(message.category)} className="mb-4">
+				{/* Category badge */}
+				<View
+					className="self-start rounded-full px-3 py-1 mb-4"
+					style={{ backgroundColor: categoryColor.bg }}
+				>
+					<Text className="text-xs font-sans-semibold" style={{ color: categoryColor.text }}>
 						{message.category}
-					</Badge>
+					</Text>
+				</View>
 
-					<H1 className="mb-3 leading-8">{message.subject}</H1>
+				{/* Subject */}
+				<Text className="text-2xl font-sans-bold text-foreground dark:text-white leading-8 mb-4">
+					{message.subject}
+				</Text>
 
-					<View className="flex-row items-center flex-wrap">
-						<Body className="text-sm font-semibold text-primary">{message.schoolName}</Body>
-						<Muted className="mx-2">-</Muted>
-						<Muted className="text-sm">{formatFullDate(message.createdAt)}</Muted>
-					</View>
+				{/* Meta */}
+				<View className="flex-row items-center flex-wrap mb-6">
+					<Text className="text-sm font-sans-semibold text-primary">{message.schoolName}</Text>
+					<Text className="text-text-muted mx-2">·</Text>
+					<Text className="text-sm font-sans text-text-muted">
+						{formatFullDate(message.createdAt)}
+					</Text>
 				</View>
 
 				{/* Divider */}
-				<Separator className="my-5" />
+				<View className="h-px bg-border dark:bg-white/10 mb-6" />
 
-				{/* Message body */}
-				<Body className="text-base leading-7">{message.body}</Body>
+				{/* Body */}
+				<Text className="text-base font-sans text-text-main dark:text-gray-200 leading-7">
+					{message.body}
+				</Text>
 
-				{/* Read status indicator */}
+				{/* Read status */}
 				{message.readAt && (
-					<View className="mt-6 pt-4 border-t border-secondary">
-						<Muted className="text-xs text-center">
+					<View className="mt-8 pt-4 border-t border-border dark:border-white/10 flex-row items-center justify-center gap-1.5">
+						<MaterialIcons name="done_all" size={14} color="#f56e3d" />
+						<Text className="text-xs font-sans text-text-muted">
 							Read on{" "}
 							{new Date(message.readAt).toLocaleDateString([], {
 								month: "short",
@@ -102,10 +108,10 @@ export const MessageDetailScreen = ({ route }: MessageDetailScreenProps) => {
 								hour: "2-digit",
 								minute: "2-digit",
 							})}
-						</Muted>
+						</Text>
 					</View>
 				)}
 			</View>
 		</ScrollView>
 	);
-};
+}
