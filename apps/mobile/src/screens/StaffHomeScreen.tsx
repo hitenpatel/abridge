@@ -5,6 +5,7 @@ import React from "react";
 import { Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../../App";
+import { useLogout } from "../../App";
 import { StatCard } from "../components/StatCard";
 import { Skeleton } from "../components/ui";
 import { trpc } from "../lib/trpc";
@@ -14,6 +15,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export function StaffHomeScreen() {
 	const navigation = useNavigation<NavigationProp>();
 	const insets = useSafeAreaInsets();
+	const logout = useLogout();
 
 	const { data: session } = trpc.auth.getSession.useQuery();
 
@@ -73,12 +75,22 @@ export function StaffHomeScreen() {
 					backgroundColor: "rgba(245, 110, 61, 0.06)",
 				}}
 			>
-				<Text className="text-sm font-sans-semibold uppercase tracking-wider text-text-muted mb-1">
-					{dateString}
-				</Text>
-				<Text className="text-3xl font-sans-extrabold text-foreground dark:text-white">
-					{greeting}, <Text className="text-primary">{firstName}!</Text>
-				</Text>
+				<View className="flex-row items-start justify-between">
+					<View className="flex-1">
+						<Text className="text-sm font-sans-semibold uppercase tracking-wider text-text-muted mb-1">
+							{dateString}
+						</Text>
+						<Text className="text-3xl font-sans-extrabold text-foreground dark:text-white">
+							{greeting}, <Text className="text-primary">{firstName}!</Text>
+						</Text>
+					</View>
+					<Pressable
+						onPress={logout}
+						className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center mt-1"
+					>
+						<MaterialIcons name="logout" size={18} color="#96867f" />
+					</Pressable>
+				</View>
 			</View>
 
 			{/* Quick Stats */}

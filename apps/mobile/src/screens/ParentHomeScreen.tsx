@@ -6,6 +6,7 @@ import React from "react";
 import { Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { ParentTabParamList, RootStackParamList } from "../../App";
+import { useLogout } from "../../App";
 import { AchievementBadge } from "../components/AchievementBadge";
 import { HeroCard } from "../components/HeroCard";
 import { ProgressBar } from "../components/ProgressBar";
@@ -55,6 +56,7 @@ const quickActions = [
 
 export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 	const insets = useSafeAreaInsets();
+	const logout = useLogout();
 	const { data, isLoading, isError, refetch, isRefetching } = trpc.dashboard.getSummary.useQuery();
 
 	const onRefresh = React.useCallback(() => {
@@ -119,17 +121,25 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 							Hi, {firstName}!
 						</Text>
 					</View>
-					<Pressable
-						onPress={() => {
-							if (firstChild) navigation.navigate("StudentProfile", { childId: firstChild.id });
-						}}
-						className="w-12 h-12 rounded-full bg-primary/10 items-center justify-center"
-					>
-						<Text className="text-primary font-sans-bold text-lg">
-							{firstName[0]?.toUpperCase()}
-						</Text>
-						<View className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-green-400 border-2 border-background" />
-					</Pressable>
+					<View className="flex-row items-center gap-2">
+						<Pressable
+							onPress={logout}
+							className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center"
+						>
+							<MaterialIcons name="logout" size={18} color="#96867f" />
+						</Pressable>
+						<Pressable
+							onPress={() => {
+								if (firstChild) navigation.navigate("StudentProfile", { childId: firstChild.id });
+							}}
+							className="w-12 h-12 rounded-full bg-primary/10 items-center justify-center"
+						>
+							<Text className="text-primary font-sans-bold text-lg">
+								{firstName[0]?.toUpperCase()}
+							</Text>
+							<View className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-green-400 border-2 border-background" />
+						</Pressable>
+					</View>
 				</View>
 			</View>
 
