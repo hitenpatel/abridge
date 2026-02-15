@@ -45,6 +45,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 		{ name: "Payments", href: "/dashboard/payments", icon: "payments" },
 		{ name: "Calendar", href: "/dashboard/calendar", icon: "calendar_month" },
 		{ name: "Forms", href: "/dashboard/forms", icon: "description" },
+		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];
 
 	const staffNav: NavItem[] = [
@@ -53,11 +54,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 		{ name: "Attendance", href: "/dashboard/attendance", icon: "assignment_turned_in" },
 		{ name: "Payments", href: "/dashboard/payments", icon: "payments" },
 		{ name: "Analytics", href: "/dashboard/analytics", icon: "analytics" },
+		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];
 
 	const adminNav: NavItem[] = [
 		{ name: "Staff Management", href: "/dashboard/staff", icon: "shield_person" },
-		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];
 
 	let navItems: NavItem[] = [];
