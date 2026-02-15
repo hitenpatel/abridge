@@ -17,6 +17,9 @@ async function main() {
 			address: "123 Oak Lane, London, SE1 1AA",
 			phone: "020 7123 4567",
 			email: "office@oakwood.sch.uk",
+			defaultNotifyByPush: true,
+			defaultNotifyBySms: false,
+			defaultNotifyByEmail: true,
 		},
 	});
 
@@ -31,6 +34,9 @@ async function main() {
 			email: "sarah@example.com",
 			name: "Sarah Johnson",
 			phone: "+447700900001",
+			notifyByPush: true,
+			notifyBySms: false,
+			notifyByEmail: true,
 		},
 	});
 
@@ -57,6 +63,9 @@ async function main() {
 		create: {
 			email: "claire@oakwood.sch.uk",
 			name: "Claire Thompson",
+			notifyByPush: true,
+			notifyBySms: false,
+			notifyByEmail: true,
 		},
 	});
 
