@@ -42,6 +42,7 @@ import { SearchScreen } from "./src/screens/SearchScreen";
 import { StaffAttendanceScreen } from "./src/screens/StaffAttendanceScreen";
 import { StaffHomeScreen } from "./src/screens/StaffHomeScreen";
 import { StaffManagementScreen } from "./src/screens/StaffManagementScreen";
+import { SettingsScreen } from "./src/screens/SettingsScreen";
 import { StaffPaymentsScreen } from "./src/screens/StaffPaymentsScreen";
 import { StudentProfileScreen } from "./src/screens/StudentProfileScreen";
 
@@ -70,6 +71,7 @@ export type RootStackParamList = {
 	FormDetail: { formId: string; childId: string };
 	StudentProfile: { childId: string };
 	Search: undefined;
+	Settings: undefined;
 	StaffManagement: undefined;
 };
 
@@ -114,6 +116,15 @@ function HeaderRight() {
 				className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center"
 			>
 				<MaterialIcons name="search" size={20} color="#96867f" />
+			</Pressable>
+			<Pressable
+				onPress={() => {
+					hapticLight();
+					navigation.navigate("Settings");
+				}}
+				className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center"
+			>
+				<MaterialIcons name="settings" size={20} color="#96867f" />
 			</Pressable>
 			<Pressable
 				onPress={logout}
@@ -276,6 +287,7 @@ function AuthenticatedApp() {
 					options={{ title: "Student Profile" }}
 				/>
 				<Stack.Screen name="Search" component={SearchScreen} options={{ title: "Search" }} />
+				<Stack.Screen name="Settings" component={SettingsScreen} options={{ title: "Settings" }} />
 				<Stack.Screen
 					name="StaffManagement"
 					component={StaffManagementScreen}
