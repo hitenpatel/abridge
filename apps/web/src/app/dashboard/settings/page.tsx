@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 function Toggle({
@@ -15,14 +15,15 @@ function Toggle({
 	label,
 }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
 	return (
-		<label className="flex items-center justify-between py-2 cursor-pointer">
+		<div className="flex items-center justify-between py-2">
 			<span className="text-sm font-medium text-gray-700">{label}</span>
 			<button
 				type="button"
 				role="switch"
 				aria-checked={checked}
+				aria-label={label}
 				onClick={() => onChange(!checked)}
-				className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+				className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
 					checked ? "bg-primary" : "bg-gray-200"
 				}`}
 			>
@@ -32,7 +33,7 @@ function Toggle({
 					}`}
 				/>
 			</button>
-		</label>
+		</div>
 	);
 }
 
@@ -56,7 +57,9 @@ function ProfileCard() {
 	if (isLoading) {
 		return (
 			<Card className="rounded-2xl border border-gray-100">
-				<CardHeader><Skeleton className="h-6 w-32" /></CardHeader>
+				<CardHeader>
+					<Skeleton className="h-6 w-32" />
+				</CardHeader>
 				<CardContent className="space-y-4">
 					<Skeleton className="h-10 w-full" />
 					<Skeleton className="h-10 w-full" />
@@ -147,7 +150,9 @@ function NotificationsCard() {
 	if (isLoading) {
 		return (
 			<Card className="rounded-2xl border border-gray-100">
-				<CardHeader><Skeleton className="h-6 w-48" /></CardHeader>
+				<CardHeader>
+					<Skeleton className="h-6 w-48" />
+				</CardHeader>
 				<CardContent className="space-y-4">
 					<Skeleton className="h-8 w-full" />
 					<Skeleton className="h-8 w-full" />
@@ -247,7 +252,9 @@ function SchoolSettingsCard({ schoolId }: { schoolId: string }) {
 	if (isLoading) {
 		return (
 			<Card className="rounded-2xl border border-gray-100">
-				<CardHeader><Skeleton className="h-6 w-40" /></CardHeader>
+				<CardHeader>
+					<Skeleton className="h-6 w-40" />
+				</CardHeader>
 				<CardContent className="space-y-4">
 					<Skeleton className="h-10 w-full" />
 					<Skeleton className="h-8 w-full" />

@@ -37,7 +37,11 @@ function SectionCard({
 			}}
 		>
 			<View className="flex-row items-center gap-2 mb-4">
-				<MaterialIcons name={icon as keyof typeof MaterialIcons.glyphMap} size={22} color="#f56e3d" />
+				<MaterialIcons
+					name={icon as keyof typeof MaterialIcons.glyphMap}
+					size={22}
+					color="#f56e3d"
+				/>
 				<Text className="text-lg font-sans-bold text-foreground dark:text-white">{title}</Text>
 			</View>
 			{children}

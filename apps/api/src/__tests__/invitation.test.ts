@@ -269,6 +269,14 @@ describe("invitation router", () => {
 							email: "invitee@example.com",
 							name: "invitee",
 						}),
+						update: vi.fn().mockResolvedValue({}),
+					},
+					school: {
+						findUnique: vi.fn().mockResolvedValue({
+							defaultNotifyByPush: true,
+							defaultNotifyBySms: false,
+							defaultNotifyByEmail: true,
+						}),
 					},
 					staffMember: {
 						create: vi.fn().mockResolvedValue({}),
