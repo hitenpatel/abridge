@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
+import { FileText } from "lucide-react";
 import Link from "next/link";
 
 function ChildFormsList({ childId, childName }: { childId: string; childName: string }) {
