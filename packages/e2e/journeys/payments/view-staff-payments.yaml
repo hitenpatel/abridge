@@ -1,0 +1,22 @@
+journey:
+  id: view-staff-payments
+  name: Staff View Payments
+  tags: [staff, authenticated, payments]
+  role: staff
+  preconditions:
+    seed: staff-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: payments
+      selectors:
+        web: "/dashboard/payments"
+        mobile: "Payments"
+    - action: wait
+      target: payments-list
+      selectors:
+        web: "[data-testid='payments-list']"
+        mobile: "Payments"
+  assertions:
+    - type: visible
+      text: "Payments"

@@ -1,0 +1,22 @@
+journey:
+  id: view-staff-messages
+  name: Staff View Messages
+  tags: [staff, authenticated, messaging]
+  role: staff
+  preconditions:
+    seed: staff-with-messages
+    state: authenticated
+  steps:
+    - action: navigate
+      target: messages
+      selectors:
+        web: "/dashboard/messages"
+        mobile: "Messages"
+    - action: wait
+      target: messages-list
+      selectors:
+        web: "[data-testid='messages-list']"
+        mobile: "Messages"
+  assertions:
+    - type: visible
+      text: "Test Message 1"

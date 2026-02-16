@@ -1,0 +1,22 @@
+journey:
+  id: view-staff-posts
+  name: Staff View Posts on Home
+  tags: [staff, authenticated, posts]
+  role: staff
+  preconditions:
+    seed: staff-with-posts
+    state: authenticated
+  steps:
+    - action: navigate
+      target: dashboard
+      selectors:
+        web: "/dashboard"
+        mobile: "Home"
+    - action: wait
+      target: feed-loaded
+      selectors:
+        web: "[data-testid='activity-feed']"
+        mobile: "Feed"
+  assertions:
+    - type: visible
+      text: "Staff post 1"

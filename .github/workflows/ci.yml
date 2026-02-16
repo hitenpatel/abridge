@@ -196,6 +196,108 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: maestro-report
+          name: maestro-report-android
           path: packages/e2e/.maestro/
+          retention-days: 7
+
+  e2e-mobile-ios:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      # Maestro requires Java 17+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 17
+
+      - run: pnpm install --frozen-lockfile
+
+      # Install Maestro CLI
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "${HOME}/.maestro/bin" >> $GITHUB_PATH
+
+      # macOS runners don't support service containers — install PostgreSQL via Homebrew
+      - name: Set up PostgreSQL
+        run: |
+          brew install postgresql@16
+          brew services start postgresql@16
+          sleep 3
+          /opt/homebrew/opt/postgresql@16/bin/createdb -h localhost schoolconnect_test
+
+      # Push schema and start API server
+      - name: Start API server
+        run: |
+          pnpm --filter @schoolconnect/db db:push
+          pnpm --filter @schoolconnect/api dev &
+          sleep 5
+        env:
+          DATABASE_URL: postgresql://localhost:5432/schoolconnect_test
+          NODE_ENV: test
+
+      # Boot iOS simulator (Xcode 16 on macos-15 has iPhone 16 with iOS 18)
+      - name: Boot iOS simulator
+        run: |
+          DEVICE=$(xcrun simctl list devices available -j | \
+            python3 -c "import sys,json; devs=json.load(sys.stdin)['devices']; \
+            iphones=[d for r in devs for d in devs[r] if 'iPhone' in d['name'] and d['isAvailable']]; \
+            print(iphones[-1]['udid'])")
+          xcrun simctl boot "$DEVICE"
+          echo "Booted simulator: $DEVICE"
+
+      # Start Expo dev server — this auto-installs Expo Go on the booted simulator
+      - name: Start Expo dev server
+        run: |
+          cd apps/mobile
+          npx expo start --ios --no-dev &
+          cd ../..
+          sleep 30
+        env:
+          EXPO_PUBLIC_API_URL: http://localhost:4000
+
+      # Generate Maestro flows for Expo Go mode
+      - name: Generate Maestro flows
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            pnpm --filter @schoolconnect/e2e generate:maestro --tags=smoke
+          else
+            pnpm --filter @schoolconnect/e2e generate:maestro
+          fi
+        env:
+          MAESTRO_APP_ID: host.exp.Exponent
+          MAESTRO_EXPO_URL: exp://localhost:8081
+
+      # Run flows sequentially (concurrent execution causes session interference)
+      - name: Run Maestro flows
+        run: |
+          passed=0
+          failed=0
+          for flow in packages/e2e/generated/maestro/*.yaml; do
+            name=$(basename "$flow")
+            echo "--- Running: $name ---"
+            if maestro test "$flow" --debug-output maestro-debug; then
+              echo "PASSED: $name"
+              ((passed++))
+            else
+              echo "FAILED: $name"
+              ((failed++))
+            fi
+          done
+          echo "Results: $passed passed, $failed failed"
+          [ "$failed" -eq 0 ] || exit 1
+
+      # Upload debug artifacts on failure
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: maestro-report-ios
+          path: maestro-debug/
           retention-days: 7

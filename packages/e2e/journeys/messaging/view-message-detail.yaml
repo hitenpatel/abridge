@@ -1,0 +1,32 @@
+journey:
+  id: view-message-detail
+  name: Parent View Message Detail
+  tags: [parent, authenticated, messaging]
+  role: parent
+  preconditions:
+    seed: staff-with-messages
+    state: authenticated
+  steps:
+    - action: navigate
+      target: messages
+      selectors:
+        web: "/dashboard/messages"
+        mobile: "Messages"
+    - action: wait
+      target: messages-list
+      selectors:
+        web: "[data-testid='messages-list']"
+        mobile: "Messages"
+    - action: tap
+      target: first-message
+      selectors:
+        web: "[data-testid=message-row] >> nth=0"
+        mobile: "Test Message 1"
+    - action: wait
+      target: message-detail
+      selectors:
+        web: "[data-testid='message-detail']"
+        mobile: "Message Detail"
+  assertions:
+    - type: visible
+      text: "This is test message 1"

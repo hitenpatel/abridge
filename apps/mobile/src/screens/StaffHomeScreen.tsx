@@ -20,6 +20,11 @@ export function StaffHomeScreen() {
 	const { data: session } = trpc.auth.getSession.useQuery();
 
 	const { data: summary, isLoading, refetch, isRefetching } = trpc.dashboard.getSummary.useQuery();
+	const schoolId = session?.schoolId ?? "";
+	const { data: recentPosts } = trpc.classPost.listRecent.useQuery(
+		{ schoolId },
+		{ enabled: !!schoolId },
+	);
 
 	const onRefresh = React.useCallback(() => {
 		refetch();
@@ -84,12 +89,22 @@ export function StaffHomeScreen() {
 							{greeting}, <Text className="text-primary">{firstName}!</Text>
 						</Text>
 					</View>
-					<Pressable
-						onPress={logout}
-						className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center mt-1"
-					>
-						<MaterialIcons name="logout" size={18} color="#96867f" />
-					</Pressable>
+					<View className="flex-row items-center gap-2">
+						<Pressable
+							onPress={() => navigation.navigate("Settings")}
+							accessibilityLabel="Settings"
+							className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center mt-1"
+						>
+							<MaterialIcons name="settings" size={20} color="#96867f" />
+						</Pressable>
+						<Pressable
+							onPress={logout}
+							accessibilityLabel="Log Out"
+							className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center mt-1"
+						>
+							<MaterialIcons name="logout" size={18} color="#96867f" />
+						</Pressable>
+					</View>
 				</View>
 			</View>
 
@@ -126,7 +141,7 @@ export function StaffHomeScreen() {
 			{/* Post Update CTA */}
 			<View className="px-6 mt-6">
 				<Pressable
-					onPress={() => navigation.navigate("ComposeMessage")}
+					onPress={() => navigation.navigate("ComposePost")}
 					className="bg-primary rounded-3xl p-6 relative overflow-hidden"
 					style={{
 						shadowColor: "#f56e3d",
@@ -165,12 +180,12 @@ export function StaffHomeScreen() {
 					</Pressable>
 				</View>
 
-				{summary?.upcomingEvents && summary.upcomingEvents.length > 0 ? (
-					summary.upcomingEvents.slice(0, 3).map((event) => {
-						const eventDate = new Date(event.startDate);
+				{recentPosts && recentPosts.length > 0 ? (
+					recentPosts.map((post) => {
+						const postDate = new Date(post.createdAt);
 						return (
 							<View
-								key={event.id}
+								key={post.id}
 								className="bg-neutral-surface dark:bg-surface-dark rounded-3xl p-5 mb-3"
 								style={{
 									shadowColor: "#000",
@@ -181,22 +196,27 @@ export function StaffHomeScreen() {
 								}}
 							>
 								<View className="flex-row items-center gap-2 mb-2">
-									<View className="bg-yellow-100 rounded-full px-2.5 py-0.5">
-										<Text className="text-xs font-sans-semibold text-yellow-800">
-											{event.category.replace("_", " ")}
+									<View className="bg-primary/10 rounded-full px-2.5 py-0.5">
+										<Text className="text-xs font-sans-semibold text-primary">
+											{post.yearGroup} - {post.className}
 										</Text>
 									</View>
 									<Text className="text-xs font-sans text-text-muted">
-										{eventDate.toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+										{postDate.toLocaleDateString("en-GB", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}
 									</Text>
 								</View>
-								<Text className="text-base font-sans-bold text-foreground dark:text-white mb-1">
-									{event.title}
-								</Text>
-								{event.body && (
-									<Text className="text-sm font-sans text-text-muted" numberOfLines={2}>
-										{event.body}
+								{post.body && (
+									<Text className="text-base font-sans text-foreground dark:text-white" numberOfLines={3}>
+										{post.body}
 									</Text>
+								)}
+								{!post.body && Array.isArray(post.mediaUrls) && (post.mediaUrls as string[]).length > 0 && (
+									<View className="flex-row items-center gap-1">
+										<MaterialIcons name="photo" size={16} color="#96867f" />
+										<Text className="text-sm font-sans text-text-muted">
+											{(post.mediaUrls as string[]).length} photo{(post.mediaUrls as string[]).length > 1 ? "s" : ""}
+										</Text>
+									</View>
 								)}
 							</View>
 						);

@@ -1,0 +1,29 @@
+journey:
+  id: view-parent-settings
+  name: Parent View Settings
+  tags: [parent, authenticated, settings]
+  role: parent
+  preconditions:
+    seed: parent-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: dashboard
+      selectors:
+        web: "/dashboard"
+        mobile: "Home"
+    - action: tap
+      target: settings-button
+      selectors:
+        web: "[data-testid='settings-link']"
+        mobile: "Settings"
+    - action: wait
+      target: settings-view
+      selectors:
+        web: "[data-testid='settings-view']"
+        mobile: "Settings"
+  assertions:
+    - type: visible
+      text: "Profile"
+    - type: visible
+      text: "Notifications"
