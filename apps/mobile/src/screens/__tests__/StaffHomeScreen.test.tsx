@@ -3,6 +3,7 @@ import { StaffHomeScreen } from "../StaffHomeScreen";
 
 const mockSessionQuery = jest.fn();
 const mockSummaryQuery = jest.fn();
+const mockListRecentQuery = jest.fn();
 const mockLogout = jest.fn();
 const mockNavigate = jest.fn();
 
@@ -13,6 +14,9 @@ jest.mock("../../lib/trpc", () => ({
 		},
 		dashboard: {
 			getSummary: { useQuery: (...args: any[]) => mockSummaryQuery(...args) },
+		},
+		classPost: {
+			listRecent: { useQuery: (...args: any[]) => mockListRecentQuery(...args) },
 		},
 	},
 }));
@@ -32,6 +36,7 @@ jest.mock("react-native-safe-area-context", () => ({
 describe("StaffHomeScreen", () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
+		mockListRecentQuery.mockReturnValue({ data: undefined });
 	});
 
 	it("shows loading skeleton while data loads", () => {
@@ -146,32 +151,35 @@ describe("StaffHomeScreen", () => {
 		expect(screen.getByText("No recent posts")).toBeTruthy();
 	});
 
-	it("shows recent events when available", () => {
+	it("shows recent posts when available", () => {
 		mockSessionQuery.mockReturnValue({
-			data: { user: { name: "Jane" }, staffRole: "TEACHER" },
+			data: { user: { name: "Jane" }, staffRole: "TEACHER", schoolId: "school-1" },
 		});
 		mockSummaryQuery.mockReturnValue({
 			data: {
 				metrics: { unreadMessages: 0, attendanceAlerts: 0 },
-				upcomingEvents: [
-					{
-						id: "ev-1",
-						title: "Sports Day",
-						startDate: new Date(),
-						category: "EVENT",
-						body: "Annual competition",
-					},
-				],
+				upcomingEvents: [],
 			},
 			isLoading: false,
 			refetch: jest.fn(),
 			isRefetching: false,
 		});
+		mockListRecentQuery.mockReturnValue({
+			data: [
+				{
+					id: "post-1",
+					body: "Sports Day update",
+					yearGroup: "Year 3",
+					className: "3A",
+					createdAt: new Date().toISOString(),
+					mediaUrls: [],
+				},
+			],
+		});
 
 		render(<StaffHomeScreen />);
 
-		expect(screen.getByText("Sports Day")).toBeTruthy();
-		expect(screen.getByText("Annual competition")).toBeTruthy();
+		expect(screen.getByText("Sports Day update")).toBeTruthy();
 	});
 
 	it("shows Staff Management link for admin only", () => {
