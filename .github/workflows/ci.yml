@@ -288,19 +288,21 @@ jobs:
           brew install postgresql@16
           brew services start postgresql@16
           sleep 3
-          /opt/homebrew/opt/postgresql@16/bin/createdb -h localhost schoolconnect_test
+          /opt/homebrew/opt/postgresql@16/bin/createuser -h localhost -s postgres || true
+          /opt/homebrew/opt/postgresql@16/bin/psql -h localhost -U postgres -c "ALTER USER postgres PASSWORD 'postgres';" || true
+          /opt/homebrew/opt/postgresql@16/bin/createdb -h localhost -U postgres schoolconnect_test
 
       # Push database schema
       - name: Push database schema
         run: pnpm --filter @schoolconnect/db db:push
         env:
-          DATABASE_URL: postgresql://localhost:5432/schoolconnect_test
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
 
       # Create .env for API (dev script uses node --env-file=.env)
       - name: Create API .env
         run: |
           printf '%s\n' \
-            'DATABASE_URL=postgresql://localhost:5432/schoolconnect_test' \
+            'DATABASE_URL=postgresql://postgres:postgres@localhost:5432/schoolconnect_test' \
             'BETTER_AUTH_SECRET=test-secret-for-ci-e2e-testing-only' \
             'BETTER_AUTH_URL=http://localhost:4000' \
             'NODE_ENV=test' \
@@ -321,7 +323,7 @@ jobs:
           echo "ERROR: API server failed to start"
           exit 1
         env:
-          DATABASE_URL: postgresql://localhost:5432/schoolconnect_test
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
           BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
           BETTER_AUTH_URL: http://localhost:4000
           NODE_ENV: test
