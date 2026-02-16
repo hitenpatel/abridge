@@ -98,7 +98,7 @@ jobs:
 
       # Install Playwright browsers
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
         working-directory: packages/e2e
 
       # Push database schema (must complete before servers start)
@@ -240,7 +240,7 @@ jobs:
           arch: x86_64
           script: |
             cd apps/mobile
-            npx expo run:android
+            pnpm exec expo run:android
             cd ../../packages/e2e
             maestro test generated/maestro/
         env:
@@ -342,7 +342,7 @@ jobs:
       - name: Start Expo dev server
         run: |
           cd apps/mobile
-          npx expo start --ios --no-dev &
+          pnpm exec expo start --ios --no-dev &
           cd ../..
           sleep 30
         env:
