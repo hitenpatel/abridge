@@ -107,6 +107,16 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
 
+      # Create .env for API (dev script uses node --env-file=.env)
+      - name: Create API .env
+        run: |
+          printf '%s\n' \
+            'DATABASE_URL=postgresql://postgres:postgres@localhost:5432/schoolconnect_test' \
+            'BETTER_AUTH_SECRET=test-secret-for-ci-e2e-testing-only' \
+            'BETTER_AUTH_URL=http://localhost:4000' \
+            'NODE_ENV=test' \
+            > apps/api/.env
+
       # Start API and Web servers in background
       - name: Start servers
         run: |
@@ -192,6 +202,16 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
 
+      # Create .env for API (dev script uses node --env-file=.env)
+      - name: Create API .env
+        run: |
+          printf '%s\n' \
+            'DATABASE_URL=postgresql://postgres:postgres@localhost:5432/schoolconnect_test' \
+            'BETTER_AUTH_SECRET=test-secret-for-ci-e2e-testing-only' \
+            'BETTER_AUTH_URL=http://localhost:4000' \
+            'NODE_ENV=test' \
+            > apps/api/.env
+
       # Start API server
       - name: Start API server
         run: |
@@ -275,6 +295,16 @@ jobs:
         run: pnpm --filter @schoolconnect/db db:push
         env:
           DATABASE_URL: postgresql://localhost:5432/schoolconnect_test
+
+      # Create .env for API (dev script uses node --env-file=.env)
+      - name: Create API .env
+        run: |
+          printf '%s\n' \
+            'DATABASE_URL=postgresql://localhost:5432/schoolconnect_test' \
+            'BETTER_AUTH_SECRET=test-secret-for-ci-e2e-testing-only' \
+            'BETTER_AUTH_URL=http://localhost:4000' \
+            'NODE_ENV=test' \
+            > apps/api/.env
 
       # Start API server
       - name: Start API server
