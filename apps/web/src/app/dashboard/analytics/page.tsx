@@ -129,26 +129,27 @@ export default function AnalyticsPage() {
 
 	// Fetch term start date from analytics router
 	const { data: termStart } = trpc.analytics.termStart.useQuery(
-		{ schoolId: schoolId! },
+		{ schoolId: schoolId ?? "" },
 		{ enabled: !!schoolId },
 	);
 
 	const dates = schoolId ? getDateRange(range, termStart ? new Date(termStart) : null) : null;
 
+	const fallbackDate = new Date(0);
 	const attendance = trpc.analytics.attendance.useQuery(
-		{ schoolId: schoolId!, from: dates!.from, to: dates!.to },
+		{ schoolId: schoolId ?? "", from: dates?.from ?? fallbackDate, to: dates?.to ?? fallbackDate },
 		{ enabled: !!schoolId && !!dates },
 	);
 	const payments = trpc.analytics.payments.useQuery(
-		{ schoolId: schoolId!, from: dates!.from, to: dates!.to },
+		{ schoolId: schoolId ?? "", from: dates?.from ?? fallbackDate, to: dates?.to ?? fallbackDate },
 		{ enabled: !!schoolId && !!dates },
 	);
 	const forms = trpc.analytics.forms.useQuery(
-		{ schoolId: schoolId!, from: dates!.from, to: dates!.to },
+		{ schoolId: schoolId ?? "", from: dates?.from ?? fallbackDate, to: dates?.to ?? fallbackDate },
 		{ enabled: !!schoolId && !!dates },
 	);
 	const messages = trpc.analytics.messages.useQuery(
-		{ schoolId: schoolId!, from: dates!.from, to: dates!.to },
+		{ schoolId: schoolId ?? "", from: dates?.from ?? fallbackDate, to: dates?.to ?? fallbackDate },
 		{ enabled: !!schoolId && !!dates },
 	);
 
@@ -200,7 +201,9 @@ export default function AnalyticsPage() {
 						<div className="flex items-center justify-between mb-4">
 							<div className="flex items-center gap-3">
 								<div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
-									<span className="material-symbols-rounded text-green-600">assignment_turned_in</span>
+									<span className="material-symbols-rounded text-green-600">
+										assignment_turned_in
+									</span>
 								</div>
 								<h3 className="text-lg font-semibold text-gray-800">Attendance</h3>
 							</div>
@@ -255,8 +258,14 @@ export default function AnalyticsPage() {
 							{payments.data?.collectionRate ?? 0}%
 						</div>
 						<div className="flex items-center gap-4 text-sm text-gray-500">
-							<span>Collected: {"\u00A3"}{((payments.data?.collectedTotal ?? 0) / 100).toFixed(2)}</span>
-							<span>Outstanding: {"\u00A3"}{((payments.data?.outstandingTotal ?? 0) / 100).toFixed(2)}</span>
+							<span>
+								Collected: {"\u00A3"}
+								{((payments.data?.collectedTotal ?? 0) / 100).toFixed(2)}
+							</span>
+							<span>
+								Outstanding: {"\u00A3"}
+								{((payments.data?.outstandingTotal ?? 0) / 100).toFixed(2)}
+							</span>
 						</div>
 						<div className="text-sm text-gray-500 mt-1">
 							{payments.data?.overdueCount ?? 0} overdue items

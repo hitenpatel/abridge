@@ -27,12 +27,15 @@
 				"rules": {
 					"suspicious": {
 						"noExplicitAny": "off"
+					},
+					"style": {
+						"noNonNullAssertion": "off"
 					}
 				}
 			}
 		}
 	],
 	"files": {
-		"ignore": ["node_modules", ".next", "dist", ".expo", "*.generated.*"]
+		"ignore": ["node_modules", ".next", "dist", ".expo", ".turbo", "*.generated.*", "**/*.d.ts"]
 	}
 }

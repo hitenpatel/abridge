@@ -180,8 +180,8 @@ describe("messaging router", () => {
 			});
 
 			expect(result.data).toHaveLength(1);
-			expect(result.data[0].recipientCount).toBe(10);
-			expect(result.data[0].readCount).toBe(5);
+			expect(result.data[0]!.recipientCount).toBe(10);
+			expect(result.data[0]!.readCount).toBe(5);
 			expect(result.total).toBe(1);
 			expect(result.totalPages).toBe(1);
 		});
@@ -190,9 +190,9 @@ describe("messaging router", () => {
 			const ctx = createTestContext({ user: null, session: null });
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.messaging.listSent({ schoolId: "school-1" }),
-			).rejects.toThrow("UNAUTHORIZED");
+			await expect(caller.messaging.listSent({ schoolId: "school-1" })).rejects.toThrow(
+				"UNAUTHORIZED",
+			);
 		});
 
 		it("rejects non-staff user", async () => {
@@ -206,9 +206,7 @@ describe("messaging router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.messaging.listSent({ schoolId: "school-1" }),
-			).rejects.toThrow();
+			await expect(caller.messaging.listSent({ schoolId: "school-1" })).rejects.toThrow();
 		});
 	});
 
@@ -230,10 +228,7 @@ describe("messaging router", () => {
 				prisma: {
 					...createTestContext().prisma,
 					parentChild: {
-						findMany: vi.fn().mockResolvedValue([
-							{ childId: "child-1" },
-							{ childId: "child-2" },
-						]),
+						findMany: vi.fn().mockResolvedValue([{ childId: "child-1" }, { childId: "child-2" }]),
 					},
 					message: {
 						findMany: vi.fn().mockResolvedValue(mockMessages),
@@ -245,9 +240,9 @@ describe("messaging router", () => {
 			const result = await caller.messaging.listReceived({ limit: 20 });
 
 			expect(result.items).toHaveLength(1);
-			expect(result.items[0].subject).toBe("School Trip");
-			expect(result.items[0].schoolName).toBe("Oak Primary");
-			expect(result.items[0].isRead).toBe(true);
+			expect(result.items[0]!.subject).toBe("School Trip");
+			expect(result.items[0]!.schoolName).toBe("Oak Primary");
+			expect(result.items[0]!.isRead).toBe(true);
 		});
 
 		it("returns empty list for parent with no children", async () => {
@@ -296,17 +291,15 @@ describe("messaging router", () => {
 
 			const result = await caller.messaging.listReceived({ limit: 20 });
 
-			expect(result.items[0].isRead).toBe(false);
-			expect(result.items[0].readAt).toBeUndefined();
+			expect(result.items[0]!.isRead).toBe(false);
+			expect(result.items[0]!.readAt).toBeUndefined();
 		});
 
 		it("rejects unauthenticated user", async () => {
 			const ctx = createTestContext({ user: null, session: null });
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.messaging.listReceived({ limit: 20 }),
-			).rejects.toThrow("UNAUTHORIZED");
+			await expect(caller.messaging.listReceived({ limit: 20 })).rejects.toThrow("UNAUTHORIZED");
 		});
 	});
 
@@ -344,18 +337,18 @@ describe("messaging router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.messaging.markRead({ messageId: "msg-other" }),
-			).rejects.toThrow("Message not found or not accessible");
+			await expect(caller.messaging.markRead({ messageId: "msg-other" })).rejects.toThrow(
+				"Message not found or not accessible",
+			);
 		});
 
 		it("rejects unauthenticated user", async () => {
 			const ctx = createTestContext({ user: null, session: null });
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.messaging.markRead({ messageId: "msg-1" }),
-			).rejects.toThrow("UNAUTHORIZED");
+			await expect(caller.messaging.markRead({ messageId: "msg-1" })).rejects.toThrow(
+				"UNAUTHORIZED",
+			);
 		});
 	});
 });

@@ -69,9 +69,7 @@ describe("forms router", () => {
 			const ctx = createTestContext();
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.forms.getTemplates({ schoolId: "school-1" }),
-			).rejects.toThrow();
+			await expect(caller.forms.getTemplates({ schoolId: "school-1" })).rejects.toThrow();
 		});
 	});
 
@@ -145,18 +143,16 @@ describe("forms router", () => {
 			const ctx = createTestContext();
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.forms.getTemplate({ templateId: "nonexistent" }),
-			).rejects.toThrow("Template not found");
+			await expect(caller.forms.getTemplate({ templateId: "nonexistent" })).rejects.toThrow(
+				"Template not found",
+			);
 		});
 
 		it("rejects unauthenticated user", async () => {
 			const ctx = createTestContext({ user: null, session: null });
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.forms.getTemplate({ templateId: "t1" }),
-			).rejects.toThrow("UNAUTHORIZED");
+			await expect(caller.forms.getTemplate({ templateId: "t1" })).rejects.toThrow("UNAUTHORIZED");
 		});
 	});
 
@@ -206,9 +202,9 @@ describe("forms router", () => {
 			const ctx = createTestContext({ user: null, session: null });
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.forms.getPendingForms({ childId: "child-1" }),
-			).rejects.toThrow("UNAUTHORIZED");
+			await expect(caller.forms.getPendingForms({ childId: "child-1" })).rejects.toThrow(
+				"UNAUTHORIZED",
+			);
 		});
 	});
 
@@ -234,25 +230,25 @@ describe("forms router", () => {
 			const result = await caller.forms.getCompletedForms({ childId: "child-1" });
 
 			expect(result).toHaveLength(1);
-			expect(result[0].template.title).toBe("Consent");
+			expect(result[0]!.template.title).toBe("Consent");
 		});
 
 		it("throws if user is not parent of child", async () => {
 			const ctx = createTestContext();
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.forms.getCompletedForms({ childId: "child-1" }),
-			).rejects.toThrow("You are not a parent of this child");
+			await expect(caller.forms.getCompletedForms({ childId: "child-1" })).rejects.toThrow(
+				"You are not a parent of this child",
+			);
 		});
 
 		it("rejects unauthenticated user", async () => {
 			const ctx = createTestContext({ user: null, session: null });
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.forms.getCompletedForms({ childId: "child-1" }),
-			).rejects.toThrow("UNAUTHORIZED");
+			await expect(caller.forms.getCompletedForms({ childId: "child-1" })).rejects.toThrow(
+				"UNAUTHORIZED",
+			);
 		});
 	});
 

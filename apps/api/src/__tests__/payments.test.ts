@@ -259,9 +259,9 @@ describe("payments router", () => {
 			const result = await caller.payments.listOutstandingPayments();
 
 			expect(result).toHaveLength(1);
-			expect(result[0].title).toBe("Trip Fee");
-			expect(result[0].childName).toBe("Emma Smith");
-			expect(result[0].amount).toBe(1500);
+			expect(result[0]!.title).toBe("Trip Fee");
+			expect(result[0]!.childName).toBe("Emma Smith");
+			expect(result[0]!.amount).toBe(1500);
 		});
 
 		it("excludes already paid items", async () => {
@@ -309,9 +309,7 @@ describe("payments router", () => {
 			const ctx = createTestContext();
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.payments.listOutstandingPayments(),
-			).rejects.toThrow("UNAUTHORIZED");
+			await expect(caller.payments.listOutstandingPayments()).rejects.toThrow("UNAUTHORIZED");
 		});
 	});
 
@@ -331,7 +329,7 @@ describe("payments router", () => {
 					paymentItem: {
 						create: vi.fn().mockResolvedValue({ id: "item-new" }),
 					},
-				},
+				} as any,
 			});
 			const caller = appRouter.createCaller(ctx);
 
@@ -356,7 +354,7 @@ describe("payments router", () => {
 					staffMember: {
 						findUnique: vi.fn().mockResolvedValue({ schoolId: "school-1", role: "TEACHER" }),
 					},
-				},
+				} as any,
 			});
 			const caller = appRouter.createCaller(ctx);
 
@@ -381,7 +379,7 @@ describe("payments router", () => {
 					staffMember: {
 						findUnique: vi.fn().mockResolvedValue(null),
 					},
-				},
+				} as any,
 			});
 			const caller = appRouter.createCaller(ctx);
 
@@ -436,7 +434,7 @@ describe("payments router", () => {
 						findMany: vi.fn().mockResolvedValue(mockItems),
 						count: vi.fn().mockResolvedValue(1),
 					},
-				},
+				} as any,
 			});
 			const caller = appRouter.createCaller(ctx);
 
@@ -447,8 +445,8 @@ describe("payments router", () => {
 			});
 
 			expect(result.data).toHaveLength(1);
-			expect(result.data[0].recipientCount).toBe(30);
-			expect(result.data[0].paymentCount).toBe(15);
+			expect(result.data[0]!.recipientCount).toBe(30);
+			expect(result.data[0]!.paymentCount).toBe(15);
 			expect(result.total).toBe(1);
 		});
 
@@ -461,13 +459,11 @@ describe("payments router", () => {
 					staffMember: {
 						findUnique: vi.fn().mockResolvedValue(null),
 					},
-				},
+				} as any,
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.payments.listPaymentItems({ schoolId: "school-1" }),
-			).rejects.toThrow();
+			await expect(caller.payments.listPaymentItems({ schoolId: "school-1" })).rejects.toThrow();
 		});
 	});
 

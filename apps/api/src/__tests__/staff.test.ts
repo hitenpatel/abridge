@@ -64,7 +64,7 @@ describe("staff router", () => {
 			const result = await caller.staff.list({ schoolId: "school-1" });
 
 			expect(result).toHaveLength(2);
-			expect(result[0].role).toBe("ADMIN");
+			expect(result[0]!.role).toBe("ADMIN");
 			expect(ctx.prisma.staffMember.findMany).toHaveBeenCalledWith({
 				where: { schoolId: "school-1" },
 				include: {
@@ -80,9 +80,7 @@ describe("staff router", () => {
 			const ctx = createAdminContext({ user: null, session: null });
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.staff.list({ schoolId: "school-1" }),
-			).rejects.toThrow("UNAUTHORIZED");
+			await expect(caller.staff.list({ schoolId: "school-1" })).rejects.toThrow("UNAUTHORIZED");
 		});
 
 		it("rejects non-admin staff", async () => {
@@ -99,9 +97,9 @@ describe("staff router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.staff.list({ schoolId: "school-1" }),
-			).rejects.toThrow("Admin access required");
+			await expect(caller.staff.list({ schoolId: "school-1" })).rejects.toThrow(
+				"Admin access required",
+			);
 		});
 	});
 

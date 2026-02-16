@@ -46,18 +46,16 @@ describe("user router", () => {
 			const ctx = createTestContext({ user: null, session: null });
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.user.updatePushToken({ pushToken: "token" }),
-			).rejects.toThrow("UNAUTHORIZED");
+			await expect(caller.user.updatePushToken({ pushToken: "token" })).rejects.toThrow(
+				"UNAUTHORIZED",
+			);
 		});
 
 		it("rejects empty push token", async () => {
 			const ctx = createTestContext();
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.user.updatePushToken({ pushToken: "" }),
-			).rejects.toThrow();
+			await expect(caller.user.updatePushToken({ pushToken: "" })).rejects.toThrow();
 		});
 	});
 
@@ -103,7 +101,7 @@ describe("user router", () => {
 			const result = await caller.user.listChildren();
 
 			expect(result).toHaveLength(2);
-			expect(result[0].child.firstName).toBe("Alice");
+			expect(result[0]!.child.firstName).toBe("Alice");
 		});
 
 		it("rejects unauthenticated users", async () => {
@@ -113,5 +111,4 @@ describe("user router", () => {
 			await expect(caller.user.listChildren()).rejects.toThrow("UNAUTHORIZED");
 		});
 	});
-
 });

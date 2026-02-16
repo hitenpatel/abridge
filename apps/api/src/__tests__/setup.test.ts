@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { appRouter } from "../router";
 
 vi.mock("../lib/redis", () => ({
@@ -37,7 +37,7 @@ describe("setup router", () => {
 		});
 
 		afterAll(() => {
-			delete process.env.SETUP_KEY;
+			process.env.SETUP_KEY = undefined;
 		});
 
 		it("creates a school with valid setup key", async () => {

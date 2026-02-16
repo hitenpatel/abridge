@@ -131,9 +131,7 @@ describe("analytics router", () => {
 							amount: 2500,
 							dueDate: new Date("2024-01-01"),
 							children: [{ childId: "c1" }, { childId: "c2" }],
-							payments: [
-								{ amount: 2500, payment: { status: "COMPLETED" } },
-							],
+							payments: [{ amount: 2500, payment: { status: "COMPLETED" } }],
 						},
 					],
 				},
@@ -147,7 +145,7 @@ describe("analytics router", () => {
 			expect(result.collectionRate).toBe(50);
 			expect(result.overdueCount).toBe(1);
 			expect(result.byItem).toHaveLength(1);
-			expect(result.byItem[0].itemTitle).toBe("Trip Fee");
+			expect(result.byItem[0]!.itemTitle).toBe("Trip Fee");
 		});
 
 		it("returns zeroes for empty data", async () => {
@@ -191,7 +189,7 @@ describe("analytics router", () => {
 			expect(result.completionRate).toBe(40);
 			expect(result.pendingCount).toBe(3);
 			expect(result.byTemplate).toHaveLength(1);
-			expect(result.byTemplate[0].templateTitle).toBe("Consent Form");
+			expect(result.byTemplate[0]!.templateTitle).toBe("Consent Form");
 		});
 
 		it("returns zeroes for empty data", async () => {
@@ -241,9 +239,9 @@ describe("analytics router", () => {
 			expect(result.sentCount).toBe(1);
 			expect(result.avgReadRate).toBe(50);
 			expect(result.byMessage).toHaveLength(1);
-			expect(result.byMessage[0].subject).toBe("Welcome");
-			expect(result.byMessage[0].readCount).toBe(1);
-			expect(result.byMessage[0].recipientCount).toBe(2);
+			expect(result.byMessage[0]!.subject).toBe("Welcome");
+			expect(result.byMessage[0]!.readCount).toBe(1);
+			expect(result.byMessage[0]!.recipientCount).toBe(2);
 		});
 
 		it("returns zeroes for empty data", async () => {
@@ -266,9 +264,9 @@ describe("analytics router", () => {
 		it("rejects unauthenticated requests", async () => {
 			const caller = appRouter.createCaller(createTestContext());
 
-			await expect(
-				caller.analytics.attendance({ schoolId, from, to }),
-			).rejects.toThrow("UNAUTHORIZED");
+			await expect(caller.analytics.attendance({ schoolId, from, to })).rejects.toThrow(
+				"UNAUTHORIZED",
+			);
 		});
 
 		it("rejects non-staff users", async () => {
@@ -286,9 +284,9 @@ describe("analytics router", () => {
 
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.analytics.attendance({ schoolId, from, to }),
-			).rejects.toThrow("Not a staff member of this school");
+			await expect(caller.analytics.attendance({ schoolId, from, to })).rejects.toThrow(
+				"Not a staff member of this school",
+			);
 		});
 	});
 });
