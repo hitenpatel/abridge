@@ -1,10 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { assertFeatureEnabled } from "../lib/feature-guards";
 import { notificationService } from "../services/notification";
-import { protectedProcedure, router, schoolStaffProcedure } from "../trpc";
+import { protectedProcedure, router, schoolFeatureProcedure } from "../trpc";
 
 export const messagingRouter = router({
-	send: schoolStaffProcedure
+	send: schoolFeatureProcedure
 		.input(
 			z.object({
 				schoolId: z.string(),
@@ -16,6 +17,8 @@ export const messagingRouter = router({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "messaging");
+
 			if (!input.allChildren && (!input.childIds || input.childIds.length === 0)) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
@@ -96,7 +99,7 @@ export const messagingRouter = router({
 			return { success: true, messageId: message.id, recipientCount: targetChildIds.length };
 		}),
 
-	listSent: schoolStaffProcedure
+	listSent: schoolFeatureProcedure
 		.input(
 			z.object({
 				schoolId: z.string(),
@@ -105,6 +108,7 @@ export const messagingRouter = router({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "messaging");
 			const skip = (input.page - 1) * input.limit;
 
 			const [messages, total] = await Promise.all([

@@ -1,8 +1,8 @@
-import { readFileSync, existsSync } from "node:fs";
-import { describe, test, expect } from "vitest";
-import { appRouter } from "../../../apps/api/src/router/index.js";
+import { existsSync, readFileSync } from "node:fs";
 import type { AnyProcedure, AnyRouter } from "@trpc/server";
-import { z } from "zod";
+import { describe, expect, test } from "vitest";
+import type { z } from "zod";
+import { appRouter } from "../../../apps/api/src/router/index.js";
 
 type ProcedureSnapshot = {
 	input: string;
@@ -19,10 +19,7 @@ function zodToString(schema: z.ZodTypeAny): string {
 	}
 }
 
-function extractProcedures(
-	router: AnyRouter,
-	prefix = "",
-): ContractSnapshot {
+function extractProcedures(router: AnyRouter, prefix = ""): ContractSnapshot {
 	const snapshot: ContractSnapshot = {};
 
 	for (const [key, value] of Object.entries(router._def.procedures || {})) {
@@ -42,10 +39,7 @@ function extractProcedures(
 	for (const [key, value] of Object.entries(router._def.record || {})) {
 		if (value && typeof value === "object" && "_def" in value) {
 			const nestedRouter = value as AnyRouter;
-			const nestedSnapshot = extractProcedures(
-				nestedRouter,
-				prefix ? `${prefix}.${key}` : key,
-			);
+			const nestedSnapshot = extractProcedures(nestedRouter, prefix ? `${prefix}.${key}` : key);
 			Object.assign(snapshot, nestedSnapshot);
 		}
 	}
@@ -54,19 +48,14 @@ function extractProcedures(
 }
 
 describe("API Contract", () => {
-	const snapshotPath = new URL(
-		"./snapshots/api-contract.json",
-		import.meta.url,
-	).pathname;
+	const snapshotPath = new URL("./snapshots/api-contract.json", import.meta.url).pathname;
 
 	test("contract snapshot exists", () => {
 		expect(existsSync(snapshotPath)).toBe(true);
 	});
 
 	test("contract has not broken", () => {
-		const committedSnapshot: ContractSnapshot = JSON.parse(
-			readFileSync(snapshotPath, "utf-8"),
-		);
+		const committedSnapshot: ContractSnapshot = JSON.parse(readFileSync(snapshotPath, "utf-8"));
 		const currentSnapshot = extractProcedures(appRouter);
 
 		const errors: string[] = [];
@@ -90,9 +79,7 @@ describe("API Contract", () => {
 			}
 
 			if (current.input !== committed.input) {
-				warnings.push(
-					`Procedure '${path}' input schema changed - verify clients are updated`,
-				);
+				warnings.push(`Procedure '${path}' input schema changed - verify clients are updated`);
 			}
 		}
 
@@ -116,16 +103,12 @@ describe("API Contract", () => {
 			for (const proc of newProcedures) {
 				console.log(`  - ${proc}`);
 			}
-			console.log(
-				"\nRun 'pnpm --filter @schoolconnect/e2e contracts:update' to track them",
-			);
+			console.log("\nRun 'pnpm --filter @schoolconnect/e2e contracts:update' to track them");
 		}
 
 		// Fail only on breaking changes
 		if (errors.length > 0) {
-			throw new Error(
-				`Contract violations:\n${errors.map((e) => `  - ${e}`).join("\n")}`,
-			);
+			throw new Error(`Contract violations:\n${errors.map((e) => `  - ${e}`).join("\n")}`);
 		}
 	});
 });

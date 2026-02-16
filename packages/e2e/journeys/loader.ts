@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
-import { join, relative, dirname } from "node:path";
+import { dirname, join, relative } from "node:path";
 import { parse as parseYaml } from "yaml";
-import { journeySchema, type JourneyWithDomain } from "./types.js";
+import { type JourneyWithDomain, journeySchema } from "./types.js";
 
 const JOURNEYS_DIR = new URL(".", import.meta.url).pathname;
 
@@ -29,18 +29,14 @@ export function loadAllJourneys(options?: {
 
 		const result = journeySchema.safeParse(parsed);
 		if (!result.success) {
-			throw new Error(
-				`Invalid journey spec at ${filePath}: ${result.error.message}`,
-			);
+			throw new Error(`Invalid journey spec at ${filePath}: ${result.error.message}`);
 		}
 
 		const journey = result.data.journey;
 
 		// Tag filtering
 		if (options?.tags && options.tags.length > 0) {
-			const hasMatchingTag = journey.tags.some((tag) =>
-				options.tags?.includes(tag),
-			);
+			const hasMatchingTag = journey.tags.some((tag) => options.tags?.includes(tag));
 			if (!hasMatchingTag) {
 				continue;
 			}

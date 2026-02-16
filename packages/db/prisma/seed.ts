@@ -1,4 +1,9 @@
-import { type AttendanceMark, PrismaClient, type SchoolSession } from "@prisma/client";
+import {
+	type AttendanceMark,
+	type ClassPostEmoji,
+	PrismaClient,
+	type SchoolSession,
+} from "@prisma/client";
 import { hashPassword } from "better-auth/crypto";
 
 const prisma = new PrismaClient();
@@ -20,6 +25,16 @@ async function main() {
 			defaultNotifyByPush: true,
 			defaultNotifyBySms: false,
 			defaultNotifyByEmail: true,
+			messagingEnabled: true,
+			paymentsEnabled: true,
+			attendanceEnabled: true,
+			calendarEnabled: true,
+			formsEnabled: true,
+			paymentDinnerMoneyEnabled: true,
+			paymentTripsEnabled: true,
+			paymentClubsEnabled: true,
+			paymentUniformEnabled: true,
+			paymentOtherEnabled: true,
 		},
 	});
 
@@ -253,6 +268,64 @@ async function main() {
 				children: {
 					create: [{ childId: child1.id }, { childId: child2.id }],
 				},
+			},
+		});
+	}
+
+	// 9. Class Posts
+	const existingPost = await prisma.classPost.findFirst({
+		where: { schoolId: school.id },
+	});
+
+	if (!existingPost) {
+		const post1 = await prisma.classPost.create({
+			data: {
+				schoolId: school.id,
+				authorId: admin.id,
+				body: "Year 2 had an amazing art lesson today! The children created beautiful collages inspired by Henri Matisse. So proud of their creativity! 🎨",
+				yearGroup: "Year 2",
+				className: "2B",
+				mediaUrls: JSON.parse(
+					'["https://placeholder.example.com/art1.jpg", "https://placeholder.example.com/art2.jpg"]',
+				),
+			},
+		});
+
+		const post2 = await prisma.classPost.create({
+			data: {
+				schoolId: school.id,
+				authorId: admin.id,
+				body: "Great science experiment in Year 5 today! We made volcanoes erupt using baking soda and vinegar. The children loved it! 🌋",
+				yearGroup: "Year 5",
+				className: "5A",
+				mediaUrls: JSON.parse('["https://placeholder.example.com/science1.jpg"]'),
+			},
+		});
+
+		const post3 = await prisma.classPost.create({
+			data: {
+				schoolId: school.id,
+				authorId: admin.id,
+				body: "Reminder: Please bring PE kits tomorrow for our sports day practice.",
+				yearGroup: "Year 2",
+				className: "2B",
+			},
+		});
+
+		// Add reactions from parent
+		await prisma.classPostReaction.create({
+			data: {
+				postId: post1.id,
+				userId: parent.id,
+				emoji: "HEART" as ClassPostEmoji,
+			},
+		});
+
+		await prisma.classPostReaction.create({
+			data: {
+				postId: post2.id,
+				userId: parent.id,
+				emoji: "WOW" as ClassPostEmoji,
 			},
 		});
 	}

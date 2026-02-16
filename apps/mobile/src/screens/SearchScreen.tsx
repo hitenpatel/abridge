@@ -74,6 +74,14 @@ export function SearchScreen() {
 		<View className="flex-1 bg-background">
 			{/* Search Input */}
 			<View className="mx-6 mt-4 mb-4">
+				{__DEV__ && (
+					<Pressable
+						onPress={() => setQuery("Test Message 1")}
+						className="bg-neutral-surface dark:bg-surface-dark rounded-full h-10 items-center justify-center mb-3"
+					>
+						<Text className="text-text-muted font-sans-semibold text-sm">Test Search</Text>
+					</Pressable>
+				)}
 				<View className="flex-row items-center bg-neutral-surface dark:bg-surface-dark rounded-2xl px-4 h-12 gap-2">
 					<MaterialIcons name="search" size={20} color="#96867f" />
 					<TextInput

@@ -1,8 +1,10 @@
 "use client";
 
+import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
 import { FileText } from "lucide-react";
 import Link from "next/link";
@@ -111,6 +113,9 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 }
 
 export default function FormsPage() {
+	const features = useFeatureToggles();
+	if (!features.formsEnabled) return <FeatureDisabled featureName="Forms" />;
+
 	const { data: summaryData, isLoading, error } = trpc.dashboard.getSummary.useQuery(undefined);
 
 	if (isLoading) {

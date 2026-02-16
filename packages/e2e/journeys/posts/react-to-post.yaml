@@ -1,0 +1,27 @@
+journey:
+  id: react-to-post
+  name: React to Class Post
+  tags: [parent, authenticated, posts]
+  role: parent
+  preconditions:
+    seed: parent-with-posts
+    state: authenticated
+  steps:
+    - action: navigate
+      target: dashboard
+      selectors:
+        web: "/dashboard"
+        mobile: "Home"
+    - action: wait
+      target: feed-loaded
+      selectors:
+        web: "[data-testid='activity-feed']"
+        mobile: "Feed"
+    - action: tap
+      target: heart-reaction
+      selectors:
+        web: "[data-testid=class-post-card]:first-of-type [data-testid=reaction-HEART]"
+        mobile: "\u2764\uFE0F"
+  assertions:
+    - type: visible
+      text: "1"

@@ -112,6 +112,39 @@ export const schoolStaffProcedure = protectedProcedure
 		});
 	});
 
+// School-scoped staff procedure with feature toggles loaded into context
+export const schoolFeatureProcedure = schoolStaffProcedure.use(async ({ ctx, next }) => {
+	const school = await ctx.prisma.school.findUnique({
+		where: { id: ctx.schoolId },
+		select: {
+			messagingEnabled: true,
+			paymentsEnabled: true,
+			attendanceEnabled: true,
+			calendarEnabled: true,
+			formsEnabled: true,
+			paymentDinnerMoneyEnabled: true,
+			paymentTripsEnabled: true,
+			paymentClubsEnabled: true,
+			paymentUniformEnabled: true,
+			paymentOtherEnabled: true,
+		},
+	});
+
+	if (!school) {
+		throw new TRPCError({
+			code: "NOT_FOUND",
+			message: "School not found",
+		});
+	}
+
+	return next({
+		ctx: {
+			...ctx,
+			schoolFeatures: school,
+		},
+	});
+});
+
 // School-scoped admin procedure - verifies admin role for a specific school
 export const schoolAdminProcedure = protectedProcedure
 	.input(schoolInput)

@@ -197,9 +197,9 @@ describe("invitation router", () => {
 			const ctx = createPublicContext();
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.invitation.verify({ token: "bad-token" }),
-			).rejects.toThrow("Invalid invitation token");
+			await expect(caller.invitation.verify({ token: "bad-token" })).rejects.toThrow(
+				"Invalid invitation token",
+			);
 		});
 
 		it("rejects expired invitation", async () => {
@@ -218,9 +218,9 @@ describe("invitation router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.invitation.verify({ token: "expired-token" }),
-			).rejects.toThrow("Invitation has expired");
+			await expect(caller.invitation.verify({ token: "expired-token" })).rejects.toThrow(
+				"Invitation has expired",
+			);
 		});
 
 		it("rejects already accepted invitation", async () => {
@@ -239,9 +239,9 @@ describe("invitation router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.invitation.verify({ token: "used-token" }),
-			).rejects.toThrow("Invitation has already been accepted");
+			await expect(caller.invitation.verify({ token: "used-token" })).rejects.toThrow(
+				"Invitation has already been accepted",
+			);
 		});
 	});
 
@@ -302,9 +302,9 @@ describe("invitation router", () => {
 			const ctx = createPublicContext();
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.invitation.accept({ token: "bad-token" }),
-			).rejects.toThrow("Invalid invitation token");
+			await expect(caller.invitation.accept({ token: "bad-token" })).rejects.toThrow(
+				"Invalid invitation token",
+			);
 		});
 
 		it("rejects expired invitation", async () => {
@@ -323,9 +323,9 @@ describe("invitation router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.invitation.accept({ token: "expired-token" }),
-			).rejects.toThrow("Invitation has expired");
+			await expect(caller.invitation.accept({ token: "expired-token" })).rejects.toThrow(
+				"Invitation has expired",
+			);
 		});
 	});
 
@@ -370,9 +370,9 @@ describe("invitation router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.invitation.list({ schoolId: "school-1" }),
-			).rejects.toThrow("Admin access required");
+			await expect(caller.invitation.list({ schoolId: "school-1" })).rejects.toThrow(
+				"Admin access required",
+			);
 		});
 	});
 });

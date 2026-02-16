@@ -1,12 +1,13 @@
-import { EventList } from "@/components/calendar/event-list";
-import type { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-	title: "Calendar | Abridge",
-	description: "View school events and dates",
-};
+import { EventList } from "@/components/calendar/event-list";
+import { FeatureDisabled } from "@/components/feature-disabled";
+import { useFeatureToggles } from "@/lib/feature-toggles";
 
 export default function CalendarPage() {
+	const features = useFeatureToggles();
+	if (!features.calendarEnabled) return <FeatureDisabled featureName="Calendar" />;
+
 	return (
 		<div className="max-w-4xl mx-auto">
 			<div className="flex items-center gap-3 mb-6">

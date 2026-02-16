@@ -1,7 +1,8 @@
 import type { Prisma } from "@schoolconnect/db";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { protectedProcedure, router, schoolStaffProcedure } from "../trpc";
+import { assertFeatureEnabled } from "../lib/feature-guards";
+import { protectedProcedure, router, schoolFeatureProcedure } from "../trpc";
 
 const fieldSchema = z.object({
 	id: z.string(),
@@ -12,14 +13,15 @@ const fieldSchema = z.object({
 });
 
 export const formsRouter = router({
-	getTemplates: schoolStaffProcedure.query(async ({ ctx, input }) => {
+	getTemplates: schoolFeatureProcedure.query(async ({ ctx, input }) => {
+		assertFeatureEnabled(ctx, "forms");
 		return ctx.prisma.formTemplate.findMany({
 			where: { schoolId: input.schoolId },
 			orderBy: { createdAt: "desc" },
 		});
 	}),
 
-	createTemplate: schoolStaffProcedure
+	createTemplate: schoolFeatureProcedure
 		.input(
 			z.object({
 				title: z.string(),
@@ -28,6 +30,7 @@ export const formsRouter = router({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "forms");
 			return ctx.prisma.formTemplate.create({
 				data: {
 					schoolId: input.schoolId,

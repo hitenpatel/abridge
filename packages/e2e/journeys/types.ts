@@ -2,20 +2,8 @@ import { z } from "zod";
 import type { FixtureName } from "../fixtures/factories.js";
 
 const platformSchema = z.enum(["web", "mobile"]);
-const actionTypeSchema = z.enum([
-	"navigate",
-	"tap",
-	"fill",
-	"scroll",
-	"wait",
-	"long-press",
-]);
-const assertionTypeSchema = z.enum([
-	"visible",
-	"not-visible",
-	"count",
-	"navigate-back",
-]);
+const actionTypeSchema = z.enum(["navigate", "tap", "fill", "scroll", "wait", "long-press"]);
+const assertionTypeSchema = z.enum(["visible", "not-visible", "count", "navigate-back"]);
 
 const selectorsSchema = z.object({
 	web: z.string(),
@@ -32,6 +20,7 @@ const stepSchema = z.object({
 const assertionSchema = z.object({
 	type: assertionTypeSchema,
 	text: z.string().optional(),
+	mobileText: z.string().optional(),
 	target: z.string().optional(),
 	count: z.number().optional(),
 });
@@ -48,6 +37,9 @@ export const journeySchema = z.object({
 		tags: z.array(z.string()),
 		role: z.enum(["staff", "parent"]),
 		skipPlatforms: z.array(platformSchema).optional(),
+		// Button label to tap on mobile instead of fill actions (for Expo Go
+		// where inputText is unavailable). The button prefills form fields.
+		mobileTestButton: z.string().optional(),
 		preconditions: preconditionSchema,
 		steps: z.array(stepSchema),
 		assertions: z.array(assertionSchema),

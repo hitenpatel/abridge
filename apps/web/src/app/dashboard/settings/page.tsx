@@ -314,6 +314,118 @@ function SchoolSettingsCard({ schoolId }: { schoolId: string }) {
 	);
 }
 
+function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
+	const { data, isLoading } = trpc.settings.getFeatureToggles.useQuery({ schoolId });
+	const utils = trpc.useUtils();
+	const [messaging, setMessaging] = useState(true);
+	const [payments, setPayments] = useState(true);
+	const [attendance, setAttendance] = useState(true);
+	const [calendar, setCalendar] = useState(true);
+	const [forms, setForms] = useState(true);
+	const [dinnerMoney, setDinnerMoney] = useState(true);
+	const [trips, setTrips] = useState(true);
+	const [clubs, setClubs] = useState(true);
+	const [uniform, setUniform] = useState(true);
+	const [other, setOther] = useState(true);
+
+	useEffect(() => {
+		if (data) {
+			setMessaging(data.messagingEnabled);
+			setPayments(data.paymentsEnabled);
+			setAttendance(data.attendanceEnabled);
+			setCalendar(data.calendarEnabled);
+			setForms(data.formsEnabled);
+			setDinnerMoney(data.paymentDinnerMoneyEnabled);
+			setTrips(data.paymentTripsEnabled);
+			setClubs(data.paymentClubsEnabled);
+			setUniform(data.paymentUniformEnabled);
+			setOther(data.paymentOtherEnabled);
+		}
+	}, [data]);
+
+	const updateToggles = trpc.settings.updateFeatureToggles.useMutation({
+		onSuccess: () => {
+			toast.success("Feature settings saved");
+			utils.settings.getFeatureToggles.invalidate({ schoolId });
+		},
+		onError: (err) => toast.error(err.message),
+	});
+
+	if (isLoading) {
+		return (
+			<Card className="rounded-2xl border border-gray-100">
+				<CardHeader>
+					<Skeleton className="h-6 w-40" />
+				</CardHeader>
+				<CardContent className="space-y-4">
+					<Skeleton className="h-8 w-full" />
+					<Skeleton className="h-8 w-full" />
+					<Skeleton className="h-8 w-full" />
+				</CardContent>
+			</Card>
+		);
+	}
+
+	return (
+		<Card className="rounded-2xl border border-gray-100">
+			<CardHeader>
+				<CardTitle className="flex items-center gap-2">
+					<span className="material-symbols-rounded text-primary">toggle_on</span>
+					Features
+				</CardTitle>
+			</CardHeader>
+			<CardContent>
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						updateToggles.mutate({
+							schoolId,
+							messagingEnabled: messaging,
+							paymentsEnabled: payments,
+							attendanceEnabled: attendance,
+							calendarEnabled: calendar,
+							formsEnabled: forms,
+							paymentDinnerMoneyEnabled: dinnerMoney,
+							paymentTripsEnabled: trips,
+							paymentClubsEnabled: clubs,
+							paymentUniformEnabled: uniform,
+							paymentOtherEnabled: other,
+						});
+					}}
+					className="space-y-4"
+				>
+					<p className="text-sm text-gray-500">
+						Enable or disable features for your school. Disabled features will be hidden from
+						navigation and blocked at the API level.
+					</p>
+
+					<div className="space-y-1">
+						<Toggle checked={messaging} onChange={setMessaging} label="Messaging" />
+						<Toggle checked={payments} onChange={setPayments} label="Payments" />
+						{payments && (
+							<div className="pl-6 border-l-2 border-gray-100 ml-2 space-y-1">
+								<p className="text-xs text-gray-400 pt-1 pb-1">Payment categories</p>
+								<Toggle checked={dinnerMoney} onChange={setDinnerMoney} label="Dinner Money" />
+								<Toggle checked={trips} onChange={setTrips} label="Trips" />
+								<Toggle checked={clubs} onChange={setClubs} label="Clubs" />
+								<Toggle checked={uniform} onChange={setUniform} label="Uniform" />
+								<Toggle checked={other} onChange={setOther} label="Other" />
+							</div>
+						)}
+						<Toggle checked={attendance} onChange={setAttendance} label="Attendance" />
+						<Toggle checked={calendar} onChange={setCalendar} label="Calendar" />
+						<Toggle checked={forms} onChange={setForms} label="Forms" />
+					</div>
+
+					<Button type="submit" disabled={updateToggles.isPending}>
+						{updateToggles.isPending ? "Saving..." : "Save Features"}
+					</Button>
+				</form>
+			</CardContent>
+		</Card>
+	);
+}
+
 export default function SettingsPage() {
 	const { data: session, isLoading } = trpc.auth.getSession.useQuery();
 
@@ -341,6 +453,7 @@ export default function SettingsPage() {
 				<ProfileCard />
 				<NotificationsCard />
 				{isAdmin && schoolId && <SchoolSettingsCard schoolId={schoolId} />}
+				{isAdmin && schoolId && <FeatureTogglesCard schoolId={schoolId} />}
 			</div>
 		</div>
 	);

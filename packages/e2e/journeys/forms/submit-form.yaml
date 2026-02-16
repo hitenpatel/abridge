@@ -3,6 +3,7 @@ journey:
   name: Submit Form
   tags: [forms, parent, authenticated]
   skipPlatforms: [web]
+  mobileTestButton: "Test Fill"
   role: parent
   preconditions:
     seed: parent-with-school

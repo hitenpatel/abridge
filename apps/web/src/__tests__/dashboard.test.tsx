@@ -120,9 +120,7 @@ describe("DashboardPage", () => {
 				children: [],
 				metrics: { unreadMessages: 0, paymentsCount: 0, paymentsTotal: 0, attendanceAlerts: 0 },
 				todayAttendance: [],
-				upcomingEvents: [
-					{ id: "e1", title: "Sports Day", body: "Annual sports event" },
-				],
+				upcomingEvents: [{ id: "e1", title: "Sports Day", body: "Annual sports event" }],
 				attendancePercentage: 0,
 			},
 			isLoading: false,

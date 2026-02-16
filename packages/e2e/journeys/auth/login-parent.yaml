@@ -32,3 +32,4 @@ journey:
   assertions:
     - type: visible
       text: "Messages"
+      mobileText: "No activity yet"

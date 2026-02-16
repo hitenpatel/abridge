@@ -145,6 +145,26 @@ export function FormDetailScreen({ route, navigation }: Props) {
 					</View>
 				)}
 
+				{/* Test Fill (dev only) */}
+				{__DEV__ && fields.length > 0 && (
+					<Pressable
+						onPress={() => {
+							for (const field of fields) {
+								if (field.type === "text" || field.type === "textarea") {
+									handleChange(field.id, "Yes");
+								} else if (field.type === "checkbox") {
+									handleChange(field.id, true);
+								} else if (field.type === "select" && field.options?.length) {
+									handleChange(field.id, field.options[0]);
+								}
+							}
+						}}
+						className="bg-neutral-surface dark:bg-surface-dark rounded-full h-10 items-center justify-center mb-4"
+					>
+						<Text className="text-text-muted font-sans-semibold text-sm">Test Fill</Text>
+					</Pressable>
+				)}
+
 				{/* Form Fields */}
 				<FormRenderer fields={fields} values={values} onChange={handleChange} errors={errors} />
 			</ScrollView>

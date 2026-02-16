@@ -1,20 +1,19 @@
-import { writeFileSync, mkdirSync } from "node:fs";
-import { join, dirname } from "node:path";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { stringify as stringifyYaml } from "yaml";
-import { loadAllJourneys } from "../journeys/loader.js";
-import type { Journey, Step, Assertion } from "../journeys/types.js";
-import { TAB_MAP } from "./tab-map.js";
 import { TEST_CREDENTIALS, TEST_URLS } from "../fixtures/constants.js";
+import { loadAllJourneys } from "../journeys/loader.js";
+import type { Assertion, Journey, Step } from "../journeys/types.js";
+import { TAB_MAP } from "./tab-map.js";
 
-const GENERATED_DIR = new URL("../generated/maestro/", import.meta.url)
-	.pathname;
+const GENERATED_DIR = new URL("../generated/maestro/", import.meta.url).pathname;
 
 // When running in Expo Go mode (MAESTRO_EXPO_URL set), inputText is unavailable
 // due to XCUITest driver incompatibility with Xcode 13. We use dev-mode test
 // buttons for login and to prefill form fields.
 const useTestButtons = !!process.env.MAESTRO_EXPO_URL;
 
-function translateAction(step: Step): Record<string, any>[] {
+function translateAction(step: Step): Record<string, unknown>[] {
 	const selector = step.selectors.mobile;
 
 	switch (step.action) {
@@ -44,7 +43,7 @@ function translateAction(step: Step): Record<string, any>[] {
 	}
 }
 
-function translateAssertion(assertion: Assertion): Record<string, any> {
+function translateAssertion(assertion: Assertion): Record<string, unknown> {
 	const text = assertion.mobileText || assertion.text;
 	switch (assertion.type) {
 		case "visible":
@@ -59,9 +58,7 @@ function translateAssertion(assertion: Assertion): Record<string, any> {
 		case "not-visible":
 			return { assertNotVisible: text };
 		default:
-			throw new Error(
-				`Unsupported assertion type for Maestro: ${assertion.type}`,
-			);
+			throw new Error(`Unsupported assertion type for Maestro: ${assertion.type}`);
 	}
 }
 
@@ -73,10 +70,10 @@ function generateFlow(journey: Journey): string {
 	const expoUrl = process.env.MAESTRO_EXPO_URL;
 
 	// Config section (before the --- separator)
-	const config: Record<string, any> = { appId };
+	const config: Record<string, unknown> = { appId };
 
 	// Commands section (after the --- separator)
-	const commands: Record<string, any>[] = [];
+	const commands: Record<string, unknown>[] = [];
 	if (expoUrl) {
 		// For Expo Go: invalidate server-side sessions BEFORE restarting the app.
 		// This ensures the app's stored SecureStore token is rejected on launch,
@@ -129,8 +126,7 @@ function generateFlow(journey: Journey): string {
 	// Login if authenticated — use dev-mode test buttons to avoid inputText
 	// (Maestro's XCUITest driver crashes on inputText with Xcode 13/iOS 15)
 	if (journey.preconditions.state === "authenticated") {
-		const testButton =
-			journey.role === "staff" ? "Test Staff" : "Test Parent";
+		const testButton = journey.role === "staff" ? "Test Staff" : "Test Parent";
 		commands.push(
 			{ tapOn: testButton },
 			// Wait for the login API call to complete and the home screen to render.
@@ -150,12 +146,8 @@ function generateFlow(journey: Journey): string {
 	// For login journeys (unauthenticated with fill), replace fill+tap with
 	// a single test login button
 	if (useTestButtons && journey.preconditions.state === "unauthenticated" && hasFill) {
-		const testButton =
-			journey.role === "staff" ? "Test Staff" : "Test Parent";
-		commands.push(
-			{ tapOn: testButton },
-			{ waitForAnimationToEnd: {} },
-		);
+		const testButton = journey.role === "staff" ? "Test Staff" : "Test Parent";
+		commands.push({ tapOn: testButton }, { waitForAnimationToEnd: {} });
 	} else {
 		// Track whether we've already injected the test button for fill actions
 		let testButtonInjected = false;
@@ -165,10 +157,7 @@ function generateFlow(journey: Journey): string {
 				// In Expo Go mode, replace all fill steps with a single test button tap.
 				// The button prefills all form fields at once.
 				if (!testButtonInjected) {
-					commands.push(
-						{ tapOn: journey.mobileTestButton },
-						{ waitForAnimationToEnd: {} },
-					);
+					commands.push({ tapOn: journey.mobileTestButton }, { waitForAnimationToEnd: {} });
 					testButtonInjected = true;
 				}
 				// Skip subsequent fill steps — the button fills everything
@@ -225,7 +214,9 @@ function main() {
 		generated++;
 	}
 
-	console.log(`\nGenerated ${generated} Maestro flows${skipped > 0 ? ` (${skipped} skipped)` : ""}`);
+	console.log(
+		`\nGenerated ${generated} Maestro flows${skipped > 0 ? ` (${skipped} skipped)` : ""}`,
+	);
 }
 
 main();

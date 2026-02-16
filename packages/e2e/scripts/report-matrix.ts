@@ -89,19 +89,12 @@ function main() {
 	console.log(`  - Skipped: ${matrix.summary.mobileSkipped}`);
 
 	const webCoverage =
-		((matrix.summary.webCovered /
-			(matrix.summary.total - matrix.summary.webSkipped)) *
-			100) |
-		0;
+		((matrix.summary.webCovered / (matrix.summary.total - matrix.summary.webSkipped)) * 100) | 0;
 	const mobileCoverage =
-		((matrix.summary.mobileCovered /
-			(matrix.summary.total - matrix.summary.mobileSkipped)) *
-			100) |
+		((matrix.summary.mobileCovered / (matrix.summary.total - matrix.summary.mobileSkipped)) * 100) |
 		0;
 
-	console.log(
-		`\nWeb Coverage: ${webCoverage}% | Mobile Coverage: ${mobileCoverage}%\n`,
-	);
+	console.log(`\nWeb Coverage: ${webCoverage}% | Mobile Coverage: ${mobileCoverage}%\n`);
 }
 
 main();

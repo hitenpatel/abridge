@@ -9,19 +9,15 @@ import {
 } from "@expo-google-fonts/plus-jakarta-sans";
 import { MaterialIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
-import {
-	type NativeStackNavigationProp,
-	createNativeStackNavigator,
-} from "@react-navigation/native-stack";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { ActivityIndicator, Pressable, SafeAreaView, Text, View } from "react-native";
+import { ActivityIndicator, SafeAreaView, Text, View } from "react-native";
 import { FloatingTabBar } from "./src/components/FloatingTabBar";
 import { authClient } from "./src/lib/auth-client";
-import { hapticLight } from "./src/lib/haptics";
 import { TRPCProvider } from "./src/lib/provider";
 import { ThemeProvider } from "./src/lib/theme-provider";
 import { trpc } from "./src/lib/trpc";
@@ -29,6 +25,7 @@ import { useTheme } from "./src/lib/use-theme";
 import { AttendanceScreen } from "./src/screens/AttendanceScreen";
 import { CalendarScreen } from "./src/screens/CalendarScreen";
 import { ComposeMessageScreen } from "./src/screens/ComposeMessageScreen";
+import { ComposePostScreen } from "./src/screens/ComposePostScreen";
 import { FormDetailScreen } from "./src/screens/FormDetailScreen";
 import { FormsScreen } from "./src/screens/FormsScreen";
 import { LoginScreen } from "./src/screens/LoginScreen";
@@ -38,11 +35,12 @@ import { ParentHomeScreen } from "./src/screens/ParentHomeScreen";
 import { PaymentHistoryScreen } from "./src/screens/PaymentHistoryScreen";
 import { PaymentSuccessScreen } from "./src/screens/PaymentSuccessScreen";
 import { PaymentsScreen } from "./src/screens/PaymentsScreen";
+import { PostDetailScreen } from "./src/screens/PostDetailScreen";
 import { SearchScreen } from "./src/screens/SearchScreen";
+import { SettingsScreen } from "./src/screens/SettingsScreen";
 import { StaffAttendanceScreen } from "./src/screens/StaffAttendanceScreen";
 import { StaffHomeScreen } from "./src/screens/StaffHomeScreen";
 import { StaffManagementScreen } from "./src/screens/StaffManagementScreen";
-import { SettingsScreen } from "./src/screens/SettingsScreen";
 import { StaffPaymentsScreen } from "./src/screens/StaffPaymentsScreen";
 import { StudentProfileScreen } from "./src/screens/StudentProfileScreen";
 
@@ -73,6 +71,8 @@ export type RootStackParamList = {
 	Search: undefined;
 	Settings: undefined;
 	StaffManagement: undefined;
+	ComposePost: undefined;
+	PostDetail: { postId: string };
 };
 
 export type ParentTabParamList = {
@@ -102,41 +102,29 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const ParentTab = createBottomTabNavigator<ParentTabParamList>();
 const StaffTab = createBottomTabNavigator<StaffTabParamList>();
 
-function HeaderRight() {
-	const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-	const logout = useLogout();
+const defaultToggles = {
+	messagingEnabled: true,
+	paymentsEnabled: true,
+	attendanceEnabled: true,
+	calendarEnabled: true,
+	formsEnabled: true,
+};
 
-	return (
-		<View className="flex-row items-center mr-4 gap-3">
-			<Pressable
-				onPress={() => {
-					hapticLight();
-					navigation.navigate("Search");
-				}}
-				className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center"
-			>
-				<MaterialIcons name="search" size={20} color="#96867f" />
-			</Pressable>
-			<Pressable
-				onPress={() => {
-					hapticLight();
-					navigation.navigate("Settings");
-				}}
-				className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center"
-			>
-				<MaterialIcons name="settings" size={20} color="#96867f" />
-			</Pressable>
-			<Pressable
-				onPress={logout}
-				className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center"
-			>
-				<MaterialIcons name="logout" size={18} color="#96867f" />
-			</Pressable>
-		</View>
+function useStaffFeatureToggles(schoolId: string | null | undefined) {
+	const { data } = trpc.settings.getFeatureToggles.useQuery(
+		{ schoolId: schoolId as string },
+		{ enabled: !!schoolId },
 	);
+	return { ...defaultToggles, ...data };
+}
+
+function useParentFeatureToggles() {
+	const { data } = trpc.settings.getFeatureTogglesForParent.useQuery();
+	return { ...defaultToggles, ...data };
 }
 
 function ParentTabNavigator() {
+	const features = useParentFeatureToggles();
 	return (
 		<ParentTab.Navigator
 			tabBar={(props) => <FloatingTabBar {...props} />}
@@ -147,26 +135,33 @@ function ParentTabNavigator() {
 				component={ParentHomeScreen}
 				options={{ tabBarLabel: { icon: "home", label: "Home" } as never }}
 			/>
-			<ParentTab.Screen
-				name="Messages"
-				component={MessagesScreen}
-				options={{ tabBarLabel: { icon: "chat-bubble-outline", label: "Messages" } as never }}
-			/>
-			<ParentTab.Screen
-				name="Attendance"
-				component={AttendanceScreen}
-				options={{ tabBarLabel: { icon: "check-circle-outline", label: "Attendance" } as never }}
-			/>
-			<ParentTab.Screen
-				name="Payments"
-				component={PaymentsScreen}
-				options={{ tabBarLabel: { icon: "account-balance-wallet", label: "Payments" } as never }}
-			/>
+			{features.messagingEnabled && (
+				<ParentTab.Screen
+					name="Messages"
+					component={MessagesScreen}
+					options={{ tabBarLabel: { icon: "chat-bubble-outline", label: "Messages" } as never }}
+				/>
+			)}
+			{features.attendanceEnabled && (
+				<ParentTab.Screen
+					name="Attendance"
+					component={AttendanceScreen}
+					options={{ tabBarLabel: { icon: "check-circle-outline", label: "Attendance" } as never }}
+				/>
+			)}
+			{features.paymentsEnabled && (
+				<ParentTab.Screen
+					name="Payments"
+					component={PaymentsScreen}
+					options={{ tabBarLabel: { icon: "account-balance-wallet", label: "Payments" } as never }}
+				/>
+			)}
 		</ParentTab.Navigator>
 	);
 }
 
-function StaffTabNavigator() {
+function StaffTabNavigator({ schoolId }: { schoolId: string | null | undefined }) {
+	const features = useStaffFeatureToggles(schoolId);
 	return (
 		<StaffTab.Navigator
 			tabBar={(props) => <FloatingTabBar {...props} />}
@@ -177,21 +172,27 @@ function StaffTabNavigator() {
 				component={StaffHomeScreen}
 				options={{ tabBarLabel: { icon: "dashboard", label: "Home" } as never }}
 			/>
-			<StaffTab.Screen
-				name="StaffMessages"
-				component={MessagesScreen}
-				options={{ tabBarLabel: { icon: "chat-bubble-outline", label: "Messages" } as never }}
-			/>
-			<StaffTab.Screen
-				name="StaffAttendance"
-				component={StaffAttendanceScreen}
-				options={{ tabBarLabel: { icon: "check-circle-outline", label: "Attendance" } as never }}
-			/>
-			<StaffTab.Screen
-				name="StaffPayments"
-				component={StaffPaymentsScreen}
-				options={{ tabBarLabel: { icon: "account-balance-wallet", label: "Payments" } as never }}
-			/>
+			{features.messagingEnabled && (
+				<StaffTab.Screen
+					name="StaffMessages"
+					component={MessagesScreen}
+					options={{ tabBarLabel: { icon: "chat-bubble-outline", label: "Messages" } as never }}
+				/>
+			)}
+			{features.attendanceEnabled && (
+				<StaffTab.Screen
+					name="StaffAttendance"
+					component={StaffAttendanceScreen}
+					options={{ tabBarLabel: { icon: "check-circle-outline", label: "Attendance" } as never }}
+				/>
+			)}
+			{features.paymentsEnabled && (
+				<StaffTab.Screen
+					name="StaffPayments"
+					component={StaffPaymentsScreen}
+					options={{ tabBarLabel: { icon: "account-balance-wallet", label: "Payments" } as never }}
+				/>
+			)}
 		</StaffTab.Navigator>
 	);
 }
@@ -199,9 +200,10 @@ function StaffTabNavigator() {
 function MainNavigator() {
 	const { data: sessionData } = trpc.auth.getSession.useQuery();
 	const isStaff = !!sessionData?.staffRole;
+	const schoolId = sessionData?.schoolId;
 
 	if (isStaff) {
-		return <StaffTabNavigator />;
+		return <StaffTabNavigator schoolId={schoolId} />;
 	}
 	return <ParentTabNavigator />;
 }
@@ -293,6 +295,16 @@ function AuthenticatedApp() {
 					component={StaffManagementScreen}
 					options={{ title: "Staff Management" }}
 				/>
+				<Stack.Screen
+					name="ComposePost"
+					component={ComposePostScreen}
+					options={{ title: "Post to Class", presentation: "modal" }}
+				/>
+				<Stack.Screen
+					name="PostDetail"
+					component={PostDetailScreen}
+					options={{ headerShown: false }}
+				/>
 			</Stack.Navigator>
 		</NavigationContainer>
 	);
@@ -303,8 +315,20 @@ export const useLogout = () => React.useContext(LogoutContext);
 
 function AppContent() {
 	const { data: session, isPending } = authClient.useSession();
-	const [authState, setAuthState] = React.useState<"auto" | "logged-out">("auto");
+	const [authState, setAuthState] = React.useState<
+		"checking" | "authenticated" | "unauthenticated"
+	>("checking");
 	const { isDark, colorScheme } = useTheme();
+
+	// Sync useSession state into local authState
+	React.useEffect(() => {
+		if (isPending) return;
+		if (session) {
+			setAuthState("authenticated");
+		} else if (authState === "checking") {
+			setAuthState("unauthenticated");
+		}
+	}, [session, isPending, authState]);
 
 	const handleLogout = React.useCallback(async () => {
 		try {
@@ -312,14 +336,16 @@ function AppContent() {
 		} catch (e) {
 			// Clear local state even if API call fails
 		}
-		setAuthState("logged-out");
+		setAuthState("unauthenticated");
 	}, []);
 
 	const handleLoginSuccess = React.useCallback(() => {
-		setAuthState("auto");
+		// Directly transition to authenticated — don't wait for useSession
+		// (better-auth's useSession has known reactivity issues)
+		setAuthState("authenticated");
 	}, []);
 
-	if (isPending && authState === "auto") {
+	if (authState === "checking") {
 		return (
 			<View className="flex-1 bg-background items-center justify-center">
 				<ActivityIndicator size="large" color="#f56e3d" />
@@ -328,7 +354,7 @@ function AppContent() {
 		);
 	}
 
-	if (!session || authState === "logged-out") {
+	if (authState === "unauthenticated") {
 		return (
 			<SafeAreaView className={`flex-1 ${colorScheme}`}>
 				<LoginScreen onLoginSuccess={handleLoginSuccess} />

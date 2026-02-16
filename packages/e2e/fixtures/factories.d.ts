@@ -1,4 +1,4 @@
-export type FixtureName = "parent-with-school" | "staff-with-school" | "staff-with-messages" | "parent-with-payments";
+export type FixtureName = "parent-with-school" | "staff-with-school" | "staff-with-messages" | "parent-with-payments" | "parent-with-posts" | "staff-with-posts";
 export declare function cleanTestData(): Promise<void>;
 export declare function seedFixture(name: FixtureName): Promise<{
     school: any;
@@ -32,5 +32,19 @@ export declare function createParentWithPayments(): Promise<{
     school: any;
     user: any;
     child: any;
+}>;
+export declare function createParentWithPosts(): Promise<{
+    staffUser: any;
+    posts: any;
+    school: any;
+    user: any;
+    child: any;
+}>;
+export declare function createStaffWithPosts(): Promise<{
+    child: any;
+    posts: any;
+    school: any;
+    user: any;
+    staffMember: any;
 }>;
 //# sourceMappingURL=factories.d.ts.map

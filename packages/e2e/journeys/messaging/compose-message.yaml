@@ -3,6 +3,7 @@ journey:
   name: Compose Message
   tags: [messaging, staff, authenticated]
   skipPlatforms: [web]
+  mobileTestButton: "Test Fill"
   role: staff
   preconditions:
     seed: staff-with-school

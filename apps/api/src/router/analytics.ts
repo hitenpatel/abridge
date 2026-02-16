@@ -58,12 +58,12 @@ export const analyticsRouter = router({
 			const todayPresent = todayRecords.filter(
 				(r) => r.mark === "PRESENT" || r.mark === "LATE",
 			).length;
-			const todayRate = todayRecords.length > 0 ? Math.round((todayPresent / todayRecords.length) * 100) : 0;
+			const todayRate =
+				todayRecords.length > 0 ? Math.round((todayPresent / todayRecords.length) * 100) : 0;
 
-			const periodPresent = records.filter(
-				(r) => r.mark === "PRESENT" || r.mark === "LATE",
-			).length;
-			const periodRate = records.length > 0 ? Math.round((periodPresent / records.length) * 100) : 0;
+			const periodPresent = records.filter((r) => r.mark === "PRESENT" || r.mark === "LATE").length;
+			const periodRate =
+				records.length > 0 ? Math.round((periodPresent / records.length) * 100) : 0;
 
 			// Daily trend
 			const dailyMap = new Map<string, { present: number; total: number }>();
@@ -146,9 +146,7 @@ export const analyticsRouter = router({
 
 			const byItem = items.map((item) => {
 				const totalCount = item.children.length;
-				const completedPayments = item.payments.filter(
-					(li) => li.payment.status === "COMPLETED",
-				);
+				const completedPayments = item.payments.filter((li) => li.payment.status === "COMPLETED");
 				const collectedCount = completedPayments.length;
 				const collectedAmount = completedPayments.reduce((sum, li) => sum + li.amount, 0);
 				const totalExpected = item.amount * totalCount;
@@ -171,8 +169,12 @@ export const analyticsRouter = router({
 				};
 			});
 
-			const totalExpectedAll = items.reduce((sum, item) => sum + item.amount * item.children.length, 0);
-			const collectionRate = totalExpectedAll > 0 ? Math.round((collectedTotal / totalExpectedAll) * 100) : 0;
+			const totalExpectedAll = items.reduce(
+				(sum, item) => sum + item.amount * item.children.length,
+				0,
+			);
+			const collectionRate =
+				totalExpectedAll > 0 ? Math.round((collectedTotal / totalExpectedAll) * 100) : 0;
 
 			return { outstandingTotal, collectedTotal, collectionRate, overdueCount, byItem };
 		}),
@@ -217,7 +219,8 @@ export const analyticsRouter = router({
 			});
 
 			const pendingCount = totalExpected - totalSubmitted;
-			const completionRate = totalExpected > 0 ? Math.round((totalSubmitted / totalExpected) * 100) : 0;
+			const completionRate =
+				totalExpected > 0 ? Math.round((totalSubmitted / totalExpected) * 100) : 0;
 
 			return { pendingCount: Math.max(0, pendingCount), completionRate, byTemplate };
 		}),

@@ -1,5 +1,18 @@
 import { z } from "zod";
-import { protectedProcedure, router, schoolAdminProcedure } from "../trpc";
+import { protectedProcedure, router, schoolAdminProcedure, schoolStaffProcedure } from "../trpc";
+
+const featureToggleSelect = {
+	messagingEnabled: true,
+	paymentsEnabled: true,
+	attendanceEnabled: true,
+	calendarEnabled: true,
+	formsEnabled: true,
+	paymentDinnerMoneyEnabled: true,
+	paymentTripsEnabled: true,
+	paymentClubsEnabled: true,
+	paymentUniformEnabled: true,
+	paymentOtherEnabled: true,
+} as const;
 
 export const settingsRouter = router({
 	getProfile: protectedProcedure.query(async ({ ctx }) => {
@@ -102,5 +115,60 @@ export const settingsRouter = router({
 				},
 			});
 			return { success: true };
+		}),
+
+	getFeatureToggles: schoolStaffProcedure.query(async ({ ctx }) => {
+		const school = await ctx.prisma.school.findUniqueOrThrow({
+			where: { id: ctx.schoolId },
+			select: featureToggleSelect,
+		});
+		return school;
+	}),
+
+	getFeatureTogglesForParent: protectedProcedure.query(async ({ ctx }) => {
+		const parentChild = await ctx.prisma.parentChild.findFirst({
+			where: { userId: ctx.user.id },
+			select: { child: { select: { schoolId: true } } },
+		});
+		if (!parentChild) {
+			return null;
+		}
+		const school = await ctx.prisma.school.findUniqueOrThrow({
+			where: { id: parentChild.child.schoolId },
+			select: featureToggleSelect,
+		});
+		return school;
+	}),
+
+	updateFeatureToggles: schoolAdminProcedure
+		.input(
+			z.object({
+				messagingEnabled: z.boolean().optional(),
+				paymentsEnabled: z.boolean().optional(),
+				attendanceEnabled: z.boolean().optional(),
+				calendarEnabled: z.boolean().optional(),
+				formsEnabled: z.boolean().optional(),
+				paymentDinnerMoneyEnabled: z.boolean().optional(),
+				paymentTripsEnabled: z.boolean().optional(),
+				paymentClubsEnabled: z.boolean().optional(),
+				paymentUniformEnabled: z.boolean().optional(),
+				paymentOtherEnabled: z.boolean().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const { schoolId, ...toggles } = input;
+			const data: Record<string, boolean> = {};
+			for (const [key, value] of Object.entries(toggles)) {
+				if (value !== undefined) {
+					data[key] = value;
+				}
+			}
+
+			const school = await ctx.prisma.school.update({
+				where: { id: ctx.schoolId },
+				data,
+				select: featureToggleSelect,
+			});
+			return school;
 		}),
 });

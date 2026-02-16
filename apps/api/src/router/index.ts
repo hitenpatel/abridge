@@ -3,6 +3,7 @@ import { analyticsRouter } from "./analytics";
 import { attendanceRouter } from "./attendance";
 import { authRouter } from "./auth";
 import { calendarRouter } from "./calendar";
+import { classPostRouter } from "./class-post";
 import { dashboardRouter } from "./dashboard";
 import { dbInitRouter } from "./db-init";
 import { formsRouter } from "./forms";
@@ -21,6 +22,7 @@ export const appRouter = router({
 	auth: authRouter,
 	analytics: analyticsRouter,
 	calendar: calendarRouter,
+	classPost: classPostRouter,
 	dashboard: dashboardRouter,
 	messaging: messagingRouter,
 	payments: paymentsRouter,

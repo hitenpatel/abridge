@@ -116,18 +116,18 @@ describe("stripe router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.stripe.createOnboardingLink({ schoolId: "school-1" }),
-			).rejects.toThrow("School not found");
+			await expect(caller.stripe.createOnboardingLink({ schoolId: "school-1" })).rejects.toThrow(
+				"School not found",
+			);
 		});
 
 		it("rejects unauthenticated users", async () => {
 			const ctx = createAdminContext({ user: null, session: null });
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.stripe.createOnboardingLink({ schoolId: "school-1" }),
-			).rejects.toThrow("UNAUTHORIZED");
+			await expect(caller.stripe.createOnboardingLink({ schoolId: "school-1" })).rejects.toThrow(
+				"UNAUTHORIZED",
+			);
 		});
 
 		it("rejects non-admin staff", async () => {
@@ -144,9 +144,9 @@ describe("stripe router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.stripe.createOnboardingLink({ schoolId: "school-1" }),
-			).rejects.toThrow("Admin access required");
+			await expect(caller.stripe.createOnboardingLink({ schoolId: "school-1" })).rejects.toThrow(
+				"Admin access required",
+			);
 		});
 	});
 
@@ -227,9 +227,9 @@ describe("stripe router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.stripe.getStripeStatus({ schoolId: "school-1" }),
-			).rejects.toThrow("Admin access required");
+			await expect(caller.stripe.getStripeStatus({ schoolId: "school-1" })).rejects.toThrow(
+				"Admin access required",
+			);
 		});
 	});
 });

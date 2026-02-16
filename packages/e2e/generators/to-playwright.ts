@@ -1,12 +1,16 @@
-import { writeFileSync, mkdirSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { loadAllJourneys } from "../journeys/loader.js";
-import type { Journey, Step, Assertion } from "../journeys/types.js";
-import { ROUTE_MAP } from "./route-map.js";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { TEST_CREDENTIALS } from "../fixtures/constants.js";
+import { loadAllJourneys } from "../journeys/loader.js";
+import type { Assertion, Journey, Step } from "../journeys/types.js";
+import { ROUTE_MAP } from "./route-map.js";
 
-const GENERATED_DIR = new URL("../generated/playwright/", import.meta.url)
-	.pathname;
+const GENERATED_DIR = new URL("../generated/playwright/", import.meta.url).pathname;
+
+function extractSimpleTestId(selector: string): string | null {
+	const match = selector.match(/^\[data-testid='([^']+)'\]$/);
+	return match?.[1] ?? null;
+}
 
 function translateAction(step: Step): string {
 	const selector = step.selectors.web;
@@ -17,14 +21,14 @@ function translateAction(step: Step): string {
 			return `await page.goto('${route}');`;
 		}
 		case "tap": {
-			const testId = selector.match(/data-testid='([^']+)'/)?.[1];
+			const testId = extractSimpleTestId(selector);
 			if (testId) {
 				return `await page.getByTestId('${testId}').click();`;
 			}
 			return `await page.locator('${selector}').click();`;
 		}
 		case "fill": {
-			const testId = selector.match(/data-testid='([^']+)'/)?.[1];
+			const testId = extractSimpleTestId(selector);
 			const value = step.value || "";
 			if (testId) {
 				return `await page.getByTestId('${testId}').fill('${value}');`;
@@ -32,21 +36,21 @@ function translateAction(step: Step): string {
 			return `await page.locator('${selector}').fill('${value}');`;
 		}
 		case "scroll": {
-			const testId = selector.match(/data-testid='([^']+)'/)?.[1];
+			const testId = extractSimpleTestId(selector);
 			if (testId) {
 				return `await page.getByTestId('${testId}').scrollIntoViewIfNeeded();`;
 			}
 			return `await page.locator('${selector}').scrollIntoViewIfNeeded();`;
 		}
 		case "wait": {
-			const testId = selector.match(/data-testid='([^']+)'/)?.[1];
+			const testId = extractSimpleTestId(selector);
 			if (testId) {
 				return `await page.getByTestId('${testId}').waitFor();`;
 			}
 			return `await page.locator('${selector}').waitFor();`;
 		}
 		case "long-press": {
-			const testId = selector.match(/data-testid='([^']+)'/)?.[1];
+			const testId = extractSimpleTestId(selector);
 			if (testId) {
 				return `await page.getByTestId('${testId}').click({ delay: 1000 });`;
 			}

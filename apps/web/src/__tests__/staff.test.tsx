@@ -24,9 +24,7 @@ vi.mock("lucide-react", async (importOriginal) => {
 		Users: ({ className }: any) => <span data-testid="icon-users" className={className} />,
 		Plus: ({ className }: any) => <span data-testid="icon-plus" className={className} />,
 		Trash2: ({ className }: any) => <span data-testid="icon-trash" className={className} />,
-		ShieldCheck: ({ className }: any) => (
-			<span data-testid="icon-shield" className={className} />
-		),
+		ShieldCheck: ({ className }: any) => <span data-testid="icon-shield" className={className} />,
 	};
 });
 

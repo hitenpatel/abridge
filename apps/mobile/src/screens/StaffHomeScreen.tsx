@@ -202,22 +202,33 @@ export function StaffHomeScreen() {
 										</Text>
 									</View>
 									<Text className="text-xs font-sans text-text-muted">
-										{postDate.toLocaleDateString("en-GB", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}
+										{postDate.toLocaleDateString("en-GB", {
+											day: "numeric",
+											month: "short",
+											hour: "numeric",
+											minute: "2-digit",
+										})}
 									</Text>
 								</View>
 								{post.body && (
-									<Text className="text-base font-sans text-foreground dark:text-white" numberOfLines={3}>
+									<Text
+										className="text-base font-sans text-foreground dark:text-white"
+										numberOfLines={3}
+									>
 										{post.body}
 									</Text>
 								)}
-								{!post.body && Array.isArray(post.mediaUrls) && (post.mediaUrls as string[]).length > 0 && (
-									<View className="flex-row items-center gap-1">
-										<MaterialIcons name="photo" size={16} color="#96867f" />
-										<Text className="text-sm font-sans text-text-muted">
-											{(post.mediaUrls as string[]).length} photo{(post.mediaUrls as string[]).length > 1 ? "s" : ""}
-										</Text>
-									</View>
-								)}
+								{!post.body &&
+									Array.isArray(post.mediaUrls) &&
+									(post.mediaUrls as string[]).length > 0 && (
+										<View className="flex-row items-center gap-1">
+											<MaterialIcons name="photo" size={16} color="#96867f" />
+											<Text className="text-sm font-sans text-text-muted">
+												{(post.mediaUrls as string[]).length} photo
+												{(post.mediaUrls as string[]).length > 1 ? "s" : ""}
+											</Text>
+										</View>
+									)}
 							</View>
 						);
 					})

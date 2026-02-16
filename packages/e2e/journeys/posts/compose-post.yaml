@@ -1,0 +1,40 @@
+journey:
+  id: compose-post
+  name: Staff Compose Class Post
+  tags: [staff, authenticated, posts]
+  role: staff
+  preconditions:
+    seed: staff-with-posts
+    state: authenticated
+  skipPlatforms: [web]
+  mobileTestButton: "Test Fill"
+  steps:
+    - action: navigate
+      target: dashboard
+      selectors:
+        web: "/dashboard"
+        mobile: "Home"
+    - action: tap
+      target: compose-button
+      selectors:
+        web: "[data-testid='compose-post-button']"
+        mobile: "Post Update"
+    - action: wait
+      target: compose-form
+      selectors:
+        web: "[data-testid='compose-post-form']"
+        mobile: "Compose"
+    - action: fill
+      target: post-body
+      value: "Today we painted pictures in art class!"
+      selectors:
+        web: "[data-testid='post-body-input']"
+        mobile: "What's happening in class?"
+    - action: tap
+      target: submit-post
+      selectors:
+        web: "[data-testid='submit-post-button']"
+        mobile: "Post"
+  assertions:
+    - type: visible
+      text: "Today we painted pictures"

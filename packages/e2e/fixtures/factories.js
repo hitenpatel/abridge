@@ -3,6 +3,8 @@ import { hashPassword } from "better-auth/crypto";
 import { TEST_CREDENTIALS } from "./constants.js";
 export async function cleanTestData() {
     // Truncate in dependency order to avoid FK violations
+    await db.$executeRaw `TRUNCATE TABLE class_post_reactions CASCADE`;
+    await db.$executeRaw `TRUNCATE TABLE class_posts CASCADE`;
     await db.$executeRaw `TRUNCATE TABLE notification_deliveries CASCADE`;
     await db.$executeRaw `TRUNCATE TABLE form_responses CASCADE`;
     await db.$executeRaw `TRUNCATE TABLE form_templates CASCADE`;
@@ -36,6 +38,10 @@ export async function seedFixture(name) {
             return await createStaffWithMessages();
         case "parent-with-payments":
             return await createParentWithPayments();
+        case "parent-with-posts":
+            return await createParentWithPosts();
+        case "staff-with-posts":
+            return await createStaffWithPosts();
         default:
             throw new Error(`Unknown fixture: ${name}`);
     }
@@ -190,5 +196,70 @@ export async function createParentWithPayments() {
         },
     })));
     return { ...base, paymentItems };
+}
+export async function createParentWithPosts() {
+    const base = await createParentWithSchool();
+    // Create a staff user to author posts
+    const staffHashedPassword = await hashPassword(TEST_CREDENTIALS.staff.password);
+    const staffUser = await db.user.create({
+        data: {
+            email: TEST_CREDENTIALS.staff.email,
+            name: "Test Staff",
+            emailVerified: true,
+        },
+    });
+    await db.account.create({
+        data: {
+            userId: staffUser.id,
+            accountId: staffUser.id,
+            providerId: "credential",
+            password: staffHashedPassword,
+        },
+    });
+    await db.staffMember.create({
+        data: {
+            userId: staffUser.id,
+            schoolId: base.school.id,
+            role: "ADMIN",
+        },
+    });
+    // Create class posts for the child's class
+    const posts = await Promise.all(Array.from({ length: 3 }, (_, i) => db.classPost.create({
+        data: {
+            schoolId: base.school.id,
+            authorId: staffUser.id,
+            body: `Class update ${i + 1}: Today we did something fun!`,
+            yearGroup: "1",
+            className: "1A",
+            mediaUrls: [],
+        },
+    })));
+    return { ...base, staffUser, posts };
+}
+export async function createStaffWithPosts() {
+    const base = await createStaffWithSchool();
+    // Create a child so posts have a target class
+    const child = await db.child.create({
+        data: {
+            firstName: "Test",
+            lastName: "Child",
+            dateOfBirth: new Date("2015-01-01"),
+            yearGroup: "1",
+            className: "1A",
+            schoolId: base.school.id,
+        },
+    });
+    // Create some existing class posts
+    const posts = await Promise.all(Array.from({ length: 2 }, (_, i) => db.classPost.create({
+        data: {
+            schoolId: base.school.id,
+            authorId: base.user.id,
+            body: `Staff post ${i + 1}: Class activity report`,
+            yearGroup: "1",
+            className: "1A",
+            mediaUrls: [],
+        },
+    })));
+    return { ...base, child, posts };
 }
 //# sourceMappingURL=factories.js.map

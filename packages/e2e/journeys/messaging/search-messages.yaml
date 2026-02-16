@@ -3,6 +3,7 @@ journey:
   name: Search Messages
   tags: [messaging, authenticated]
   role: parent
+  mobileTestButton: "Test Search"
   preconditions:
     seed: staff-with-messages
     state: authenticated

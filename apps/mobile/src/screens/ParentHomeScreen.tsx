@@ -30,8 +30,12 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 	const logout = useLogout();
 	const utils = trpc.useUtils();
 
-	const { data: summaryData, isLoading, refetch, isRefetching } =
-		trpc.dashboard.getSummary.useQuery();
+	const {
+		data: summaryData,
+		isLoading,
+		refetch,
+		isRefetching,
+	} = trpc.dashboard.getSummary.useQuery();
 
 	const children = summaryData?.children ?? [];
 	const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
@@ -94,10 +98,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 		(e: NativeSyntheticEvent<NativeScrollEvent>) => {
 			const { layoutMeasurement, contentOffset, contentSize } = e.nativeEvent;
 			const paddingToBottom = 200;
-			if (
-				layoutMeasurement.height + contentOffset.y >=
-				contentSize.height - paddingToBottom
-			) {
+			if (layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom) {
 				if (hasNextPage && !isFetchingNextPage) fetchNextPage();
 			}
 		},
@@ -175,7 +176,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 				{children.length > 1 && (
 					<View className="mb-4">
 						<ChildSwitcher
-							children={children.map((c) => ({
+							items={children.map((c) => ({
 								id: c.id,
 								firstName: c.firstName,
 								lastName: c.lastName,
@@ -196,8 +197,12 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 								type: item.type,
 								title: (item as Record<string, unknown>).title as string | undefined,
 								subject: (item as Record<string, unknown>).subject as string | undefined,
-								amountDuePence: (item as Record<string, unknown>).amountDuePence as number | undefined,
-								paymentItemId: (item as Record<string, unknown>).paymentItemId as string | undefined,
+								amountDuePence: (item as Record<string, unknown>).amountDuePence as
+									| number
+									| undefined,
+								paymentItemId: (item as Record<string, unknown>).paymentItemId as
+									| string
+									| undefined,
 								templateId: (item as Record<string, unknown>).templateId as string | undefined,
 								messageId: (item as Record<string, unknown>).messageId as string | undefined,
 							}))}

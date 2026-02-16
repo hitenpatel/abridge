@@ -20,12 +20,20 @@ export const attendanceRouter = router({
 						childId: input.childId,
 					},
 				},
+				include: { child: { select: { school: { select: { attendanceEnabled: true } } } } },
 			});
 
 			if (!parentChild) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
 					message: "You are not authorized to view attendance for this child",
+				});
+			}
+
+			if (!parentChild.child.school.attendanceEnabled) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "Attendance is disabled for this school",
 				});
 			}
 
@@ -64,6 +72,7 @@ export const attendanceRouter = router({
 					parentLinks: {
 						where: { userId: ctx.user.id },
 					},
+					school: { select: { attendanceEnabled: true } },
 				},
 			});
 
@@ -71,6 +80,13 @@ export const attendanceRouter = router({
 				throw new TRPCError({
 					code: "FORBIDDEN",
 					message: "You are not authorized to report absence for this child",
+				});
+			}
+
+			if (!child.school.attendanceEnabled) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "Attendance is disabled for this school",
 				});
 			}
 

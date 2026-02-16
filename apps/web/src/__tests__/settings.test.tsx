@@ -303,9 +303,7 @@ describe("SettingsPage", () => {
 
 		render(<SettingsPage />);
 
-		expect(
-			screen.getByText("Default notification preferences for new members"),
-		).toBeDefined();
+		expect(screen.getByText("Default notification preferences for new members")).toBeDefined();
 	});
 
 	it("email field is disabled", () => {

@@ -22,6 +22,16 @@ model School {
   defaultNotifyByPush   Boolean  @default(true)
   defaultNotifyBySms    Boolean  @default(false)
   defaultNotifyByEmail  Boolean  @default(true)
+  messagingEnabled          Boolean  @default(true)
+  paymentsEnabled           Boolean  @default(true)
+  attendanceEnabled         Boolean  @default(true)
+  calendarEnabled           Boolean  @default(true)
+  formsEnabled              Boolean  @default(true)
+  paymentDinnerMoneyEnabled Boolean  @default(true)
+  paymentTripsEnabled       Boolean  @default(true)
+  paymentClubsEnabled       Boolean  @default(true)
+  paymentUniformEnabled     Boolean  @default(true)
+  paymentOtherEnabled       Boolean  @default(true)
   createdAt        DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -33,6 +43,7 @@ model School {
   attendance AttendanceRecord[]
   formTemplates FormTemplate[]
   invitations Invitation[]
+  classPosts ClassPost[]
 
   @@map("schools")
 }
@@ -449,4 +460,44 @@ enum DeliveryStatus {
   DELIVERED
   OPENED
   FAILED
+}
+
+// ─── Class Posts ─────────────────────────────────────────────
+
+enum ClassPostEmoji {
+  HEART
+  THUMBS_UP
+  CLAP
+  LAUGH
+  WOW
+}
+
+model ClassPost {
+  id        String   @id @default(cuid())
+  schoolId  String
+  authorId  String
+  body      String?
+  yearGroup String
+  className String
+  mediaUrls Json     @default("[]")
+  createdAt DateTime @default(now())
+
+  school    School              @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  reactions ClassPostReaction[]
+
+  @@index([schoolId, yearGroup, className, createdAt])
+  @@map("class_posts")
+}
+
+model ClassPostReaction {
+  id        String         @id @default(cuid())
+  postId    String
+  userId    String
+  emoji     ClassPostEmoji
+  createdAt DateTime       @default(now())
+
+  post ClassPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@map("class_post_reactions")
 }

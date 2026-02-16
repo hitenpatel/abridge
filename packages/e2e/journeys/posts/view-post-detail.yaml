@@ -1,0 +1,32 @@
+journey:
+  id: view-post-detail
+  name: View Post Detail
+  tags: [parent, authenticated, posts]
+  role: parent
+  preconditions:
+    seed: parent-with-posts
+    state: authenticated
+  steps:
+    - action: navigate
+      target: dashboard
+      selectors:
+        web: "/dashboard"
+        mobile: "Home"
+    - action: wait
+      target: feed-loaded
+      selectors:
+        web: "[data-testid='activity-feed']"
+        mobile: "Feed"
+    - action: tap
+      target: first-post
+      selectors:
+        web: "[data-testid=class-post-card] >> nth=0"
+        mobile: "Class update 1"
+    - action: wait
+      target: post-detail
+      selectors:
+        web: "[data-testid='post-detail']"
+        mobile: "Post Detail"
+  assertions:
+    - type: visible
+      text: "Class Post"

@@ -1,7 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { assertFeatureEnabled, assertPaymentCategoryEnabled } from "../lib/feature-guards";
 import { stripe } from "../lib/stripe";
-import { protectedProcedure, router, schoolStaffProcedure } from "../trpc";
+import { protectedProcedure, router, schoolFeatureProcedure } from "../trpc";
 
 export const paymentsRouter = router({
 	createCheckoutSession: protectedProcedure
@@ -357,7 +358,7 @@ export const paymentsRouter = router({
 		return outstanding;
 	}),
 
-	createPaymentItem: schoolStaffProcedure
+	createPaymentItem: schoolFeatureProcedure
 		.input(
 			z.object({
 				schoolId: z.string(),
@@ -371,6 +372,9 @@ export const paymentsRouter = router({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "payments");
+			assertPaymentCategoryEnabled(ctx, input.category);
+
 			if (!input.allChildren && (!input.childIds || input.childIds.length === 0)) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
@@ -429,7 +433,7 @@ export const paymentsRouter = router({
 			};
 		}),
 
-	listPaymentItems: schoolStaffProcedure
+	listPaymentItems: schoolFeatureProcedure
 		.input(
 			z.object({
 				schoolId: z.string(),
@@ -438,6 +442,7 @@ export const paymentsRouter = router({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "payments");
 			const skip = (input.page - 1) * input.limit;
 
 			const [items, total] = await Promise.all([

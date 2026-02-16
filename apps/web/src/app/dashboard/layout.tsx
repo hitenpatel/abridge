@@ -11,6 +11,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
+import { FeatureToggleProvider, useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -22,6 +23,12 @@ interface NavItem {
 	href: string;
 	icon: string; // Material Symbol name
 	badge?: number;
+	featureKey?:
+		| "messagingEnabled"
+		| "paymentsEnabled"
+		| "attendanceEnabled"
+		| "calendarEnabled"
+		| "formsEnabled";
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -38,21 +45,65 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 			}
 		: null;
 
+	const featureToggles = useFeatureToggles();
+
 	const parentNav: NavItem[] = [
 		{ name: "Home", href: "/dashboard", icon: "home" },
-		{ name: "Messages", href: "/dashboard/messages", icon: "chat_bubble", badge: 3 },
-		{ name: "Attendance", href: "/dashboard/attendance", icon: "assignment_turned_in" },
-		{ name: "Payments", href: "/dashboard/payments", icon: "payments" },
-		{ name: "Calendar", href: "/dashboard/calendar", icon: "calendar_month" },
-		{ name: "Forms", href: "/dashboard/forms", icon: "description" },
+		{
+			name: "Messages",
+			href: "/dashboard/messages",
+			icon: "chat_bubble",
+			badge: 3,
+			featureKey: "messagingEnabled",
+		},
+		{
+			name: "Attendance",
+			href: "/dashboard/attendance",
+			icon: "assignment_turned_in",
+			featureKey: "attendanceEnabled",
+		},
+		{
+			name: "Payments",
+			href: "/dashboard/payments",
+			icon: "payments",
+			featureKey: "paymentsEnabled",
+		},
+		{
+			name: "Calendar",
+			href: "/dashboard/calendar",
+			icon: "calendar_month",
+			featureKey: "calendarEnabled",
+		},
+		{ name: "Forms", href: "/dashboard/forms", icon: "description", featureKey: "formsEnabled" },
 		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];
 
 	const staffNav: NavItem[] = [
 		{ name: "Home", href: "/dashboard", icon: "home" },
-		{ name: "Messages", href: "/dashboard/messages", icon: "chat_bubble" },
-		{ name: "Attendance", href: "/dashboard/attendance", icon: "assignment_turned_in" },
-		{ name: "Payments", href: "/dashboard/payments", icon: "payments" },
+		{
+			name: "Post to Class",
+			href: "/dashboard/compose",
+			icon: "edit_square",
+			featureKey: "messagingEnabled",
+		},
+		{
+			name: "Messages",
+			href: "/dashboard/messages",
+			icon: "chat_bubble",
+			featureKey: "messagingEnabled",
+		},
+		{
+			name: "Attendance",
+			href: "/dashboard/attendance",
+			icon: "assignment_turned_in",
+			featureKey: "attendanceEnabled",
+		},
+		{
+			name: "Payments",
+			href: "/dashboard/payments",
+			icon: "payments",
+			featureKey: "paymentsEnabled",
+		},
 		{ name: "Analytics", href: "/dashboard/analytics", icon: "analytics" },
 		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];
@@ -69,6 +120,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 	} else {
 		navItems = parentNav;
 	}
+
+	navItems = navItems.filter((item) => !item.featureKey || featureToggles[item.featureKey]);
 
 	const userInitials = session?.name
 		? session.name
@@ -117,122 +170,129 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 	);
 
 	return (
-		<div className="min-h-screen bg-background flex">
-			{/* Desktop Sidebar */}
-			<aside className="w-64 h-screen bg-card border-r shadow-soft fixed left-0 top-0 z-30 hidden lg:flex flex-col p-6">
-				<div className="flex items-center gap-3 mb-10 px-2">
-					<div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-glow">
-						<span className="material-symbols-rounded text-2xl">school</span>
+		<FeatureToggleProvider schoolId={session?.schoolId}>
+			<div className="min-h-screen bg-background flex">
+				{/* Desktop Sidebar */}
+				<aside className="w-64 h-screen bg-card border-r shadow-soft fixed left-0 top-0 z-30 hidden lg:flex flex-col p-6">
+					<div className="flex items-center gap-3 mb-10 px-2">
+						<div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-glow">
+							<span className="material-symbols-rounded text-2xl">school</span>
+						</div>
+						<h1 className="text-2xl font-bold tracking-tight text-slate-800">Abridge</h1>
 					</div>
-					<h1 className="text-2xl font-bold tracking-tight text-slate-800">Abridge</h1>
-				</div>
-				<NavContent />
-				<div className="mt-auto pt-6 border-t border-gray-100">
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<button
-								type="button"
-								className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 w-full text-left transition-colors"
-								data-testid="user-menu-trigger"
-							>
-								<Avatar className="h-10 w-10">
-									<AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
-										{userInitials}
-									</AvatarFallback>
-								</Avatar>
-								<div className="flex-1 min-w-0">
-									<p className="text-sm font-semibold truncate">{session?.name || "User"}</p>
-									<p className="text-xs text-gray-500 truncate">
+					<NavContent />
+					<div className="mt-auto pt-6 border-t border-gray-100">
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<button
+									type="button"
+									className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 w-full text-left transition-colors"
+									data-testid="user-menu-trigger"
+								>
+									<Avatar className="h-10 w-10">
+										<AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
+											{userInitials}
+										</AvatarFallback>
+									</Avatar>
+									<div className="flex-1 min-w-0">
+										<p className="text-sm font-semibold truncate">{session?.name || "User"}</p>
+										<p className="text-xs text-gray-500 truncate">
+											{userRole?.staffRole ? `Staff (${userRole.staffRole})` : "Parent Account"}
+										</p>
+									</div>
+									<span className="material-symbols-rounded ml-auto text-gray-400">
+										expand_more
+									</span>
+								</button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end" className="w-56">
+								<DropdownMenuLabel>
+									<p className="font-medium">{session?.name || "User"}</p>
+									<p className="text-xs text-muted-foreground font-normal">
 										{userRole?.staffRole ? `Staff (${userRole.staffRole})` : "Parent Account"}
 									</p>
+								</DropdownMenuLabel>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem onClick={handleSignOut} data-testid="logout-button">
+									<span className="material-symbols-rounded mr-2 text-base">logout</span>
+									Sign Out
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					</div>
+				</aside>
+
+				{/* Mobile Sidebar Overlay */}
+				<div
+					role="button"
+					tabIndex={0}
+					aria-label="Close menu"
+					onKeyDown={(e) => {
+						if (e.key === "Enter" || e.key === " ") {
+							setIsMobileMenuOpen(false);
+						}
+					}}
+					className={cn(
+						"fixed inset-0 z-40 bg-black/50 transition-opacity lg:hidden",
+						isMobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none",
+					)}
+					onClick={() => setIsMobileMenuOpen(false)}
+				/>
+
+				{/* Mobile Sidebar */}
+				<aside
+					className={cn(
+						"fixed inset-y-0 left-0 z-50 w-64 bg-card border-r shadow-xl transition-transform duration-300 lg:hidden",
+						isMobileMenuOpen ? "translate-x-0" : "-translate-x-full",
+					)}
+				>
+					<div className="flex flex-col h-full p-6">
+						<div className="flex items-center justify-between mb-10">
+							<div className="flex items-center gap-2">
+								<div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
+									<span className="material-symbols-rounded text-lg">school</span>
 								</div>
-								<span className="material-symbols-rounded ml-auto text-gray-400">expand_more</span>
-							</button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end" className="w-56">
-							<DropdownMenuLabel>
-								<p className="font-medium">{session?.name || "User"}</p>
-								<p className="text-xs text-muted-foreground font-normal">
-									{userRole?.staffRole ? `Staff (${userRole.staffRole})` : "Parent Account"}
-								</p>
-							</DropdownMenuLabel>
-							<DropdownMenuSeparator />
-							<DropdownMenuItem onClick={handleSignOut} data-testid="logout-button">
-								<span className="material-symbols-rounded mr-2 text-base">logout</span>
-								Sign Out
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</div>
-			</aside>
+								<h1 className="text-xl font-bold">Abridge</h1>
+							</div>
+							<Button
+								variant="ghost"
+								size="icon"
+								onClick={() => setIsMobileMenuOpen(false)}
+								aria-label="Close menu"
+							>
+								<span className="material-symbols-rounded">close</span>
+							</Button>
+						</div>
+						<NavContent onClick={() => setIsMobileMenuOpen(false)} />
+					</div>
+				</aside>
 
-			{/* Mobile Sidebar Overlay */}
-			<div
-				role="button"
-				tabIndex={0}
-				aria-label="Close menu"
-				onKeyDown={(e) => {
-					if (e.key === "Enter" || e.key === " ") {
-						setIsMobileMenuOpen(false);
-					}
-				}}
-				className={cn(
-					"fixed inset-0 z-40 bg-black/50 transition-opacity lg:hidden",
-					isMobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none",
-				)}
-				onClick={() => setIsMobileMenuOpen(false)}
-			/>
-
-			{/* Mobile Sidebar */}
-			<aside
-				className={cn(
-					"fixed inset-y-0 left-0 z-50 w-64 bg-card border-r shadow-xl transition-transform duration-300 lg:hidden",
-					isMobileMenuOpen ? "translate-x-0" : "-translate-x-full",
-				)}
-			>
-				<div className="flex flex-col h-full p-6">
-					<div className="flex items-center justify-between mb-10">
+				{/* Main Content */}
+				<main
+					id="main-content"
+					className="flex-1 ml-0 lg:ml-64 p-6 lg:p-10 overflow-y-auto h-screen"
+				>
+					{/* Mobile Header */}
+					<div className="lg:hidden flex justify-between items-center mb-6">
 						<div className="flex items-center gap-2">
 							<div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
 								<span className="material-symbols-rounded text-lg">school</span>
 							</div>
-							<h1 className="text-xl font-bold">Abridge</h1>
+							<h1 className="text-xl font-bold text-slate-800">Abridge</h1>
 						</div>
-						<Button
-							variant="ghost"
-							size="icon"
-							onClick={() => setIsMobileMenuOpen(false)}
-							aria-label="Close menu"
+						<button
+							type="button"
+							onClick={() => setIsMobileMenuOpen(true)}
+							className="p-2 rounded-lg bg-white shadow-sm"
 						>
-							<span className="material-symbols-rounded">close</span>
-						</Button>
+							<span className="material-symbols-rounded text-slate-800">menu</span>
+						</button>
 					</div>
-					<NavContent onClick={() => setIsMobileMenuOpen(false)} />
-				</div>
-			</aside>
 
-			{/* Main Content */}
-			<main id="main-content" className="flex-1 ml-0 lg:ml-64 p-6 lg:p-10 overflow-y-auto h-screen">
-				{/* Mobile Header */}
-				<div className="lg:hidden flex justify-between items-center mb-6">
-					<div className="flex items-center gap-2">
-						<div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
-							<span className="material-symbols-rounded text-lg">school</span>
-						</div>
-						<h1 className="text-xl font-bold text-slate-800">Abridge</h1>
-					</div>
-					<button
-						type="button"
-						onClick={() => setIsMobileMenuOpen(true)}
-						className="p-2 rounded-lg bg-white shadow-sm"
-					>
-						<span className="material-symbols-rounded text-slate-800">menu</span>
-					</button>
-				</div>
-
-				{/* Page Content */}
-				{children}
-			</main>
-		</div>
+					{/* Page Content */}
+					{children}
+				</main>
+			</div>
+		</FeatureToggleProvider>
 	);
 }

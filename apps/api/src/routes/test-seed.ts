@@ -1,15 +1,24 @@
 import { prisma } from "@schoolconnect/db";
-import type { FastifyInstance } from "fastify";
 import { hashPassword } from "better-auth/crypto";
+import type { FastifyInstance } from "fastify";
+import { auth } from "../lib/auth";
 
 const TEST_CREDENTIALS = {
 	parent: { email: "parent@test.com", password: "testpass123" },
 	staff: { email: "staff@test.com", password: "testpass123" },
 } as const;
 
-type FixtureName = "parent-with-school" | "staff-with-school" | "staff-with-messages" | "parent-with-payments";
+type FixtureName =
+	| "parent-with-school"
+	| "staff-with-school"
+	| "staff-with-messages"
+	| "parent-with-payments"
+	| "parent-with-posts"
+	| "staff-with-posts";
 
 async function cleanTestData() {
+	await prisma.$executeRaw`TRUNCATE TABLE class_post_reactions CASCADE`;
+	await prisma.$executeRaw`TRUNCATE TABLE class_posts CASCADE`;
 	await prisma.$executeRaw`TRUNCATE TABLE notification_deliveries CASCADE`;
 	await prisma.$executeRaw`TRUNCATE TABLE form_responses CASCADE`;
 	await prisma.$executeRaw`TRUNCATE TABLE form_templates CASCADE`;
@@ -213,6 +222,83 @@ async function createParentWithPayments() {
 	return { ...base, paymentItems };
 }
 
+async function createParentWithPosts() {
+	const base = await createParentWithSchool();
+
+	const staffHashedPassword = await hashPassword(TEST_CREDENTIALS.staff.password);
+	const staffUser = await prisma.user.create({
+		data: {
+			email: TEST_CREDENTIALS.staff.email,
+			name: "Test Staff",
+			emailVerified: true,
+		},
+	});
+	await prisma.account.create({
+		data: {
+			userId: staffUser.id,
+			accountId: staffUser.id,
+			providerId: "credential",
+			password: staffHashedPassword,
+		},
+	});
+	await prisma.staffMember.create({
+		data: {
+			userId: staffUser.id,
+			schoolId: base.school.id,
+			role: "ADMIN",
+		},
+	});
+
+	const posts = await Promise.all(
+		Array.from({ length: 3 }, (_, i) =>
+			prisma.classPost.create({
+				data: {
+					schoolId: base.school.id,
+					authorId: staffUser.id,
+					body: `Class update ${i + 1}: Today we did something fun!`,
+					yearGroup: "1",
+					className: "1A",
+					mediaUrls: [],
+				},
+			}),
+		),
+	);
+
+	return { ...base, staffUser, posts };
+}
+
+async function createStaffWithPosts() {
+	const base = await createStaffWithSchool();
+
+	const child = await prisma.child.create({
+		data: {
+			firstName: "Test",
+			lastName: "Child",
+			dateOfBirth: new Date("2015-01-01"),
+			yearGroup: "1",
+			className: "1A",
+			schoolId: base.school.id,
+		},
+	});
+
+	const posts = await Promise.all(
+		Array.from({ length: 2 }, (_, i) =>
+			prisma.classPost.create({
+				data: {
+					schoolId: base.school.id,
+					authorId: base.user.id,
+					body: `Staff post ${i + 1}: Class activity report`,
+					yearGroup: "1",
+					className: "1A",
+					mediaUrls: [],
+				},
+			}),
+		),
+	);
+
+	return { ...base, child, posts };
+}
+
 async function seedFixture(name: FixtureName) {
 	await cleanTestData();
 
@@ -225,6 +311,10 @@ async function seedFixture(name: FixtureName) {
 			return await createStaffWithMessages();
 		case "parent-with-payments":
 			return await createParentWithPayments();
+		case "parent-with-posts":
+			return await createParentWithPosts();
+		case "staff-with-posts":
+			return await createStaffWithPosts();
 		default:
 			throw new Error(`Unknown fixture: ${name}`);
 	}
@@ -245,6 +335,29 @@ export async function testSeedRoutes(server: FastifyInstance) {
 			server.log.error(error);
 			return res.status(500).send({
 				error: error instanceof Error ? error.message : "Seed failed",
+			});
+		}
+	});
+
+	server.post("/api/test/login", async (req, res) => {
+		const { email, password } = req.body as { email: string; password: string };
+
+		if (!email || !password) {
+			return res.status(400).send({ error: "Missing email or password" });
+		}
+
+		try {
+			const response = await auth.api.signInEmail({
+				body: { email, password },
+			});
+
+			// Extract session token from the response
+			const sessionToken = response.token;
+			return res.status(200).send({ ok: true, sessionToken });
+		} catch (error) {
+			server.log.error(error);
+			return res.status(500).send({
+				error: error instanceof Error ? error.message : "Login failed",
 			});
 		}
 	});

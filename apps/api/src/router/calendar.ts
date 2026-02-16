@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { protectedProcedure, router, schoolStaffProcedure } from "../trpc";
+import { assertFeatureEnabled } from "../lib/feature-guards";
+import { protectedProcedure, router, schoolFeatureProcedure } from "../trpc";
 
 export const calendarRouter = router({
 	listEvents: protectedProcedure
@@ -33,7 +34,7 @@ export const calendarRouter = router({
 			});
 		}),
 
-	createEvent: schoolStaffProcedure
+	createEvent: schoolFeatureProcedure
 		.input(
 			z.object({
 				schoolId: z.string(),
@@ -46,6 +47,7 @@ export const calendarRouter = router({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "calendar");
 			const event = await ctx.prisma.event.create({
 				data: {
 					schoolId: input.schoolId,
@@ -61,7 +63,7 @@ export const calendarRouter = router({
 			return { success: true, eventId: event.id };
 		}),
 
-	deleteEvent: schoolStaffProcedure
+	deleteEvent: schoolFeatureProcedure
 		.input(
 			z.object({
 				schoolId: z.string(),
@@ -69,6 +71,7 @@ export const calendarRouter = router({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "calendar");
 			const event = await ctx.prisma.event.findUnique({
 				where: { id: input.eventId },
 			});

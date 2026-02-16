@@ -139,6 +139,21 @@ export function ComposeMessageScreen() {
 					</View>
 				</View>
 
+				{/* Test Fill (dev only) */}
+				{__DEV__ && (
+					<View className="mx-6 mb-4">
+						<Pressable
+							onPress={() => {
+								setSubject("Test Message");
+								setBody("This is a test message");
+							}}
+							className="bg-neutral-surface dark:bg-surface-dark rounded-full h-10 items-center justify-center"
+						>
+							<Text className="text-text-muted font-sans-semibold text-sm">Test Fill</Text>
+						</Pressable>
+					</View>
+				)}
+
 				{/* Input Card */}
 				<View className="mx-6 mb-4">
 					<View className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4">

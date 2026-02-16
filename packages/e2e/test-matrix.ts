@@ -3,8 +3,7 @@ import { join } from "node:path";
 import { loadAllJourneys } from "./journeys/loader.js";
 import type { JourneyWithDomain } from "./journeys/types.js";
 
-const PLAYWRIGHT_DIR = new URL("./generated/playwright/", import.meta.url)
-	.pathname;
+const PLAYWRIGHT_DIR = new URL("./generated/playwright/", import.meta.url).pathname;
 const MAESTRO_DIR = new URL("./generated/maestro/", import.meta.url).pathname;
 
 export type PlatformStatus = "covered" | "missing" | "skip";
@@ -66,15 +65,14 @@ export function getTestMatrix(): TestMatrix {
 		if (!domainMap.has(journey.domain)) {
 			domainMap.set(journey.domain, []);
 		}
-		domainMap.get(journey.domain)!.push(status);
+		const domainList = domainMap.get(journey.domain);
+		if (domainList) domainList.push(status);
 	}
 
-	const domains: DomainCoverage[] = Array.from(domainMap.entries()).map(
-		([domain, journeys]) => ({
-			domain,
-			journeys,
-		}),
-	);
+	const domains: DomainCoverage[] = Array.from(domainMap.entries()).map(([domain, journeys]) => ({
+		domain,
+		journeys,
+	}));
 
 	const summary = {
 		total: journeys.length,

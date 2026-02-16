@@ -5,8 +5,14 @@ import FormsPage from "../app/dashboard/forms/page";
 
 // Mock next/link
 vi.mock("next/link", () => ({
-	default: ({ children, href, ...rest }: { children: React.ReactNode; href: string; [key: string]: any }) => (
-		<a href={href} {...rest}>{children}</a>
+	default: ({
+		children,
+		href,
+		...rest
+	}: { children: React.ReactNode; href: string; [key: string]: any }) => (
+		<a href={href} {...rest}>
+			{children}
+		</a>
 	),
 }));
 
@@ -105,17 +111,13 @@ describe("FormsPage", () => {
 	it("renders child forms sections when children exist", () => {
 		mockSummaryQuery.mockReturnValue({
 			data: {
-				children: [
-					{ id: "child-1", firstName: "Alice", lastName: "Smith" },
-				],
+				children: [{ id: "child-1", firstName: "Alice", lastName: "Smith" }],
 			},
 			isLoading: false,
 			error: null,
 		});
 		mockPendingQuery.mockReturnValue({
-			data: [
-				{ id: "form-1", title: "Photo Consent", description: "Allow photos in newsletters" },
-			],
+			data: [{ id: "form-1", title: "Photo Consent", description: "Allow photos in newsletters" }],
 			isLoading: false,
 		});
 		mockCompletedQuery.mockReturnValue({
@@ -134,9 +136,7 @@ describe("FormsPage", () => {
 	it("renders completed forms section", () => {
 		mockSummaryQuery.mockReturnValue({
 			data: {
-				children: [
-					{ id: "child-1", firstName: "Alice", lastName: "Smith" },
-				],
+				children: [{ id: "child-1", firstName: "Alice", lastName: "Smith" }],
 			},
 			isLoading: false,
 			error: null,
@@ -166,9 +166,7 @@ describe("FormsPage", () => {
 	it("shows loading state for child forms", () => {
 		mockSummaryQuery.mockReturnValue({
 			data: {
-				children: [
-					{ id: "child-1", firstName: "Alice", lastName: "Smith" },
-				],
+				children: [{ id: "child-1", firstName: "Alice", lastName: "Smith" }],
 			},
 			isLoading: false,
 			error: null,
@@ -191,17 +189,13 @@ describe("FormsPage", () => {
 	it("renders pending form links with correct href", () => {
 		mockSummaryQuery.mockReturnValue({
 			data: {
-				children: [
-					{ id: "child-1", firstName: "Alice", lastName: "Smith" },
-				],
+				children: [{ id: "child-1", firstName: "Alice", lastName: "Smith" }],
 			},
 			isLoading: false,
 			error: null,
 		});
 		mockPendingQuery.mockReturnValue({
-			data: [
-				{ id: "form-1", title: "Trip Permission", description: null },
-			],
+			data: [{ id: "form-1", title: "Trip Permission", description: null }],
 			isLoading: false,
 		});
 		mockCompletedQuery.mockReturnValue({

@@ -17,25 +17,32 @@ export const LoginScreen = ({ onLoginSuccess }: { onLoginSuccess?: () => void })
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
 
-	const handleLogin = async () => {
-		if (!email || !password) {
+	const handleLogin = async (overrideEmail?: string, overridePassword?: string) => {
+		const loginEmail = overrideEmail || email;
+		const loginPassword = overridePassword || password;
+
+		if (!loginEmail || !loginPassword) {
 			Alert.alert("Error", "Please fill in all fields");
 			return;
 		}
 
 		setLoading(true);
 		try {
+			console.log("[Login] Attempting sign in for:", loginEmail);
 			const { data, error } = await authClient.signIn.email({
-				email,
-				password,
+				email: loginEmail,
+				password: loginPassword,
 			});
+			console.log("[Login] Result:", JSON.stringify({ data: !!data, error }));
 
 			if (error) {
 				Alert.alert("Login Failed", error.message || "Invalid credentials");
 			} else {
+				console.log("[Login] Success, calling onLoginSuccess");
 				onLoginSuccess?.();
 			}
 		} catch (err) {
+			console.log("[Login] Exception:", err);
 			Alert.alert("Error", "An unexpected error occurred");
 		} finally {
 			setLoading(false);
@@ -96,7 +103,7 @@ export const LoginScreen = ({ onLoginSuccess }: { onLoginSuccess?: () => void })
 					</View>
 
 					<Pressable
-						onPress={handleLogin}
+						onPress={() => handleLogin()}
 						disabled={loading}
 						className="bg-primary rounded-full h-14 items-center justify-center mt-2"
 						style={{
@@ -114,6 +121,25 @@ export const LoginScreen = ({ onLoginSuccess }: { onLoginSuccess?: () => void })
 							<Text className="text-white font-sans-bold text-base">Sign In</Text>
 						)}
 					</Pressable>
+
+					{__DEV__ && (
+						<View className="flex-row gap-3 mt-2">
+							<Pressable
+								onPress={() => handleLogin("parent@test.com", "testpass123")}
+								disabled={loading}
+								className="flex-1 bg-neutral-surface dark:bg-surface-dark rounded-full h-12 items-center justify-center"
+							>
+								<Text className="text-text-muted font-sans-semibold text-sm">Test Parent</Text>
+							</Pressable>
+							<Pressable
+								onPress={() => handleLogin("staff@test.com", "testpass123")}
+								disabled={loading}
+								className="flex-1 bg-neutral-surface dark:bg-surface-dark rounded-full h-12 items-center justify-center"
+							>
+								<Text className="text-text-muted font-sans-semibold text-sm">Test Staff</Text>
+							</Pressable>
+						</View>
+					)}
 				</View>
 			</View>
 		</KeyboardAvoidingView>
