@@ -82,12 +82,18 @@ function generateTest(journey: Journey): string {
 	const preconditionCode =
 		journey.preconditions.state === "authenticated"
 			? `
-  // Login as ${journey.role}
-  await page.goto('/login');
-  await page.getByTestId('email-input').fill('${TEST_CREDENTIALS[journey.role].email}');
-  await page.getByTestId('password-input').fill('${TEST_CREDENTIALS[journey.role].password}');
-  await page.getByTestId('login-button').click();
-  await page.waitForURL('/dashboard**');
+  // Login via API and set session cookie
+  const loginResponse = await page.request.post('http://localhost:4000/api/test/login', {
+    data: { email: '${TEST_CREDENTIALS[journey.role].email}', password: '${TEST_CREDENTIALS[journey.role].password}' },
+  });
+  const { sessionToken } = await loginResponse.json();
+  await page.context().addCookies([{
+    name: 'better-auth.session_token',
+    value: sessionToken,
+    domain: 'localhost',
+    path: '/',
+  }]);
+  await page.goto('/dashboard');
 `
 			: "";
 
