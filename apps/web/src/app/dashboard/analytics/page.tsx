@@ -59,7 +59,8 @@ function Sparkline({ data }: { data: number[] }) {
 		.join(" ");
 
 	return (
-		<svg width={width} height={height} className="inline-block">
+		<svg width={width} height={height} className="inline-block" role="img">
+			<title>Trend sparkline</title>
 			<polyline
 				fill="none"
 				stroke="currentColor"

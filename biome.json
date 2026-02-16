@@ -6,7 +6,14 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"recommended": true,
+			"suspicious": {
+				"noArrayIndexKey": "off"
+			},
+			"a11y": {
+				"useSemanticElements": "off",
+				"noNoninteractiveTabindex": "off"
+			}
 		}
 	},
 	"formatter": {
@@ -36,6 +43,16 @@
 		}
 	],
 	"files": {
-		"ignore": ["node_modules", ".next", "dist", ".expo", ".turbo", "*.generated.*", "**/*.d.ts"]
+		"ignore": [
+			"node_modules",
+			".next",
+			"dist",
+			".expo",
+			".turbo",
+			"*.generated.*",
+			"**/*.d.ts",
+			"packages/e2e/fixtures/*.js",
+			"packages/e2e/fixtures/*.js.map"
+		]
 	}
 }

@@ -1,4 +1,4 @@
-import type { User } from "@schoolconnect/db/client";
+import type { StaffRole, User } from "@schoolconnect/db/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { logger } from "../lib/logger";
@@ -26,11 +26,12 @@ export const authRouter = router({
 		// (handles case where the signup hook failed to process them)
 		if (!staffMember) {
 			try {
-				const invitations: any[] = await ctx.prisma.$queryRawUnsafe(
-					`SELECT * FROM invitations
+				const invitations: { id: string; schoolId: string; role: StaffRole }[] =
+					await ctx.prisma.$queryRawUnsafe(
+						`SELECT * FROM invitations
 					 WHERE email = $1 AND "acceptedAt" IS NULL AND "expiresAt" > NOW()`,
-					ctx.user.email,
-				);
+						ctx.user.email,
+					);
 
 				for (const invite of invitations) {
 					await ctx.prisma.staffMember.create({

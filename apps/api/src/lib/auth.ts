@@ -1,4 +1,4 @@
-import { prisma } from "@schoolconnect/db";
+import { type StaffRole, prisma } from "@schoolconnect/db";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { logger } from "./logger";
@@ -45,11 +45,12 @@ export const auth = betterAuth({
 						logger.info("Creating user, checking invites", { email: user.email });
 						// Check for pending invitations for this email
 						// Using raw SQL to bypass Prisma client generation issues
-						const invitations: any[] = await prisma.$queryRawUnsafe(
-							`SELECT * FROM invitations
+						const invitations: { id: string; schoolId: string; role: StaffRole }[] =
+							await prisma.$queryRawUnsafe(
+								`SELECT * FROM invitations
 							 WHERE email = $1 AND "acceptedAt" IS NULL AND "expiresAt" > NOW()`,
-							user.email,
-						);
+								user.email,
+							);
 						logger.info("Found invitations", { count: invitations.length });
 
 						for (const invite of invitations) {

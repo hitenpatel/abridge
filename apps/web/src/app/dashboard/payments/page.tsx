@@ -1,10 +1,14 @@
 "use client";
 
+import { FeatureDisabled } from "@/components/feature-disabled";
 import { Card } from "@/components/ui/card";
+import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
 import { useState } from "react";
 
 export default function PaymentsDashboardPage() {
+	const features = useFeatureToggles();
+	if (!features.paymentsEnabled) return <FeatureDisabled featureName="Payments" />;
 	const { data: session } = trpc.auth.getSession.useQuery();
 	const [view, setView] = useState<"upcoming" | "history">("upcoming");
 	const [customAmount, setCustomAmount] = useState("");
@@ -55,7 +59,10 @@ export default function PaymentsDashboardPage() {
 	const firstName = session?.name?.split(" ")[0] || "Student";
 
 	return (
-		<div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8" data-testid="payments-list">
+		<div
+			className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8"
+			data-testid="payments-list"
+		>
 			{/* Left Column - Expenses List */}
 			<div className="lg:col-span-7 flex flex-col gap-6">
 				{/* Header */}
@@ -236,12 +243,15 @@ export default function PaymentsDashboardPage() {
 
 					{/* Auto-refill Toggle */}
 					<div className="mt-8 z-20 flex items-center gap-3 bg-gray-50 p-2 pr-4 rounded-full border border-gray-100">
-						<label className="relative inline-flex items-center cursor-pointer">
-							<input type="checkbox" className="sr-only peer" />
+						<label
+							htmlFor="auto-refill"
+							className="relative inline-flex items-center cursor-pointer"
+						>
+							<input id="auto-refill" type="checkbox" className="sr-only peer" />
 							<div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-400" />
-						</label>
-						<label className="text-sm font-semibold text-gray-600 cursor-pointer">
-							Auto-refill when below $10
+							<span className="ml-3 text-sm font-semibold text-gray-600 cursor-pointer">
+								Auto-refill when below $10
+							</span>
 						</label>
 					</div>
 				</Card>

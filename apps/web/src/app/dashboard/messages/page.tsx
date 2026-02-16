@@ -1,12 +1,16 @@
 "use client";
 
+import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
 import { useState } from "react";
 
 export default function MessagesPage() {
+	const features = useFeatureToggles();
+	if (!features.messagingEnabled) return <FeatureDisabled featureName="Messaging" />;
 	const { data: session, isLoading: sessionLoading } = trpc.auth.getSession.useQuery();
 	const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
 	const [messageInput, setMessageInput] = useState("");
@@ -89,6 +93,11 @@ export default function MessagesPage() {
 							<div
 								key={message.id}
 								onClick={() => setSelectedMessageId(message.id)}
+								onKeyDown={(e) =>
+									(e.key === "Enter" || e.key === " ") && setSelectedMessageId(message.id)
+								}
+								role="button"
+								tabIndex={0}
 								className={`group flex items-center gap-3 p-3 cursor-pointer transition-colors ${
 									selectedMessageId === message.id
 										? "bg-orange-50 border-l-4 border-primary"

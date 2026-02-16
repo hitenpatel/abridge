@@ -202,7 +202,7 @@ export async function seedFormTemplate(params: {
 					label: "I consent to emergency medical treatment if required",
 					required: true,
 				},
-			] as any,
+			] as unknown as Record<string, unknown>[],
 		},
 	});
 

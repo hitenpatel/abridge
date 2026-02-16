@@ -1,10 +1,21 @@
 import { randomBytes } from "node:crypto";
+import type { StaffRole } from "@schoolconnect/db";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { logger } from "../lib/logger";
 import { invalidateStaffCache } from "../lib/redis";
 import { sendStaffInvitationEmail } from "../services/email";
 import { publicProcedure, router, schoolAdminProcedure } from "../trpc";
+
+interface RawInvitation {
+	id: string;
+	email: string;
+	schoolId: string;
+	role: StaffRole;
+	schoolName: string;
+	expiresAt: Date;
+	acceptedAt: Date | null;
+}
 
 export const invitationRouter = router({
 	send: schoolAdminProcedure
@@ -67,7 +78,7 @@ export const invitationRouter = router({
 		.input(z.object({ token: z.string() }))
 		.mutation(async ({ ctx, input }) => {
 			// Using queryRaw to bypass client model check
-			const results: any[] = await ctx.prisma.$queryRawUnsafe(
+			const results: RawInvitation[] = await ctx.prisma.$queryRawUnsafe(
 				`SELECT i.*, s.name as "schoolName" 
 				 FROM invitations i 
 				 JOIN schools s ON i."schoolId" = s.id 
@@ -166,7 +177,7 @@ export const invitationRouter = router({
 		}),
 
 	verify: publicProcedure.input(z.object({ token: z.string() })).query(async ({ ctx, input }) => {
-		const results: any[] = await ctx.prisma.$queryRawUnsafe(
+		const results: RawInvitation[] = await ctx.prisma.$queryRawUnsafe(
 			`SELECT i.*, s.name as "schoolName" 
 				 FROM invitations i 
 				 JOIN schools s ON i."schoolId" = s.id 
