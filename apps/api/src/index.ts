@@ -137,7 +137,7 @@ async function main() {
 		process.exit(1);
 	}
 
-	await server.listen({ port, host: "0.0.0.0" });
+	await server.listen({ port, host: "::" });
 	server.log.info(`API server running on port ${port}`);
 
 	// Run every 5 minutes

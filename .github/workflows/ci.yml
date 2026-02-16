@@ -112,15 +112,17 @@ jobs:
         run: |
           pnpm --filter @schoolconnect/api dev &
           pnpm --filter @schoolconnect/web dev &
-          # Wait for API to be ready
+          # Wait for API to be ready (fail if not up after 60s)
           for i in $(seq 1 30); do
             if curl -sf http://localhost:4000/trpc/health.check > /dev/null 2>&1; then
               echo "API is ready"
-              break
+              exit 0
             fi
             echo "Waiting for API... ($i/30)"
             sleep 2
           done
+          echo "ERROR: API server failed to start"
+          exit 1
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
           BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
@@ -197,11 +199,13 @@ jobs:
           for i in $(seq 1 30); do
             if curl -sf http://localhost:4000/trpc/health.check > /dev/null 2>&1; then
               echo "API is ready"
-              break
+              exit 0
             fi
             echo "Waiting for API... ($i/30)"
             sleep 2
           done
+          echo "ERROR: API server failed to start"
+          exit 1
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
           BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
@@ -279,11 +283,13 @@ jobs:
           for i in $(seq 1 30); do
             if curl -sf http://localhost:4000/trpc/health.check > /dev/null 2>&1; then
               echo "API is ready"
-              break
+              exit 0
             fi
             echo "Waiting for API... ($i/30)"
             sleep 2
           done
+          echo "ERROR: API server failed to start"
+          exit 1
         env:
           DATABASE_URL: postgresql://localhost:5432/schoolconnect_test
           BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
