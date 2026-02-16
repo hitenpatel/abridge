@@ -49,6 +49,9 @@ function createTestContext(overrides?: Record<string, any>): any {
 			formTemplate: {
 				findMany: vi.fn().mockResolvedValue([]),
 			},
+			user: {
+				findMany: vi.fn().mockResolvedValue([]),
+			},
 		},
 		req: {},
 		res: {},

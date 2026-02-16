@@ -41,6 +41,20 @@ function createTestContext(overrides?: Record<string, any>): any {
 			staffMember: {
 				findUnique: vi.fn().mockResolvedValue({ schoolId: "school-1", role: "TEACHER" }),
 			},
+			school: {
+				findUnique: vi.fn().mockResolvedValue({
+					messagingEnabled: true,
+					paymentsEnabled: true,
+					attendanceEnabled: true,
+					calendarEnabled: true,
+					formsEnabled: true,
+					paymentDinnerMoneyEnabled: true,
+					paymentTripsEnabled: true,
+					paymentClubsEnabled: true,
+					paymentUniformEnabled: true,
+					paymentOtherEnabled: true,
+				}),
+			},
 		},
 		req: {},
 		res: {},

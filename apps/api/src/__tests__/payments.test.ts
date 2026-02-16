@@ -46,6 +46,20 @@ function createTestContext(overrides?: Partial<Context>): Context {
 			staffMember: {
 				findUnique: vi.fn(),
 			},
+			school: {
+				findUnique: vi.fn().mockResolvedValue({
+					messagingEnabled: true,
+					paymentsEnabled: true,
+					attendanceEnabled: true,
+					calendarEnabled: true,
+					formsEnabled: true,
+					paymentDinnerMoneyEnabled: true,
+					paymentTripsEnabled: true,
+					paymentClubsEnabled: true,
+					paymentUniformEnabled: true,
+					paymentOtherEnabled: true,
+				}),
+			},
 		} as any,
 		req: {} as Context["req"],
 		res: {} as Context["res"],

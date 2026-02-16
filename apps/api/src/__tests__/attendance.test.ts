@@ -33,7 +33,11 @@ describe("attendance router", () => {
 				{ id: "1", date: new Date("2023-10-01T00:00:00.000Z"), session: "AM", mark: "PRESENT" },
 			];
 			const ctx = createTestContext();
-			ctx.prisma.parentChild.findUnique.mockResolvedValue({ userId: "user-1", childId: "child-1" });
+			ctx.prisma.parentChild.findUnique.mockResolvedValue({
+				userId: "user-1",
+				childId: "child-1",
+				child: { school: { attendanceEnabled: true } },
+			});
 			ctx.prisma.attendanceRecord.findMany.mockResolvedValue(mockRecords);
 
 			const caller = appRouter.createCaller(ctx);
@@ -76,6 +80,7 @@ describe("attendance router", () => {
 				id: "child-1",
 				schoolId: "school-1",
 				parentLinks: [{ userId: "user-1" }],
+				school: { attendanceEnabled: true },
 			});
 
 			const caller = appRouter.createCaller(ctx);
