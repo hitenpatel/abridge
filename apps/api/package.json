@@ -12,7 +12,8 @@
 		"db:studio": "prisma studio --schema=../../packages/db/prisma/schema.prisma"
 	},
 	"dependencies": {
-		"tsx": "^4.19.0",
+		"@aws-sdk/client-s3": "^3.990.0",
+		"@aws-sdk/s3-request-presigner": "^3.990.0",
 		"@fastify/cookie": "^11.0.2",
 		"@fastify/cors": "^10.0.0",
 		"@schoolconnect/db": "workspace:*",
@@ -28,9 +29,11 @@
 		"pdf-parse": "^2.4.5",
 		"pdfkit": "^0.17.2",
 		"resend": "^6.9.1",
+		"sharp": "^0.34.5",
 		"stripe": "^20.3.0",
 		"superjson": "^2.2.0",
 		"tesseract.js": "^7.0.0",
+		"tsx": "^4.19.0",
 		"twilio": "^5.12.0",
 		"zod": "^3.24.0"
 	},
@@ -38,6 +41,7 @@
 		"@schoolconnect/tsconfig": "workspace:*",
 		"@types/node": "^22.0.0",
 		"@types/pdf-parse": "^1.1.5",
+		"@types/sharp": "^0.32.0",
 		"prisma": "^6.3.0",
 		"typescript": "^5.7.0",
 		"vitest": "^2.1.0"
