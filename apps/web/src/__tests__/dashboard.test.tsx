@@ -27,171 +27,134 @@ vi.mock("@/lib/auth-client", () => ({
 // Mock trpc
 vi.mock("@/lib/trpc", () => ({
 	trpc: {
+		useUtils: vi.fn(),
 		dashboard: {
 			getSummary: {
 				useQuery: vi.fn(),
+			},
+			getFeed: {
+				useInfiniteQuery: vi.fn(),
+			},
+			getActionItems: {
+				useQuery: vi.fn(),
+			},
+		},
+		classPost: {
+			react: {
+				useMutation: vi.fn(),
+			},
+			removeReaction: {
+				useMutation: vi.fn(),
 			},
 		},
 	},
 }));
 
+// Mock feed components to simplify tests
+vi.mock("@/components/feed/activity-feed", () => ({
+	ActivityFeed: () => <div data-testid="activity-feed" />,
+}));
+vi.mock("@/components/feed/action-items-row", () => ({
+	ActionItemsRow: () => <div data-testid="action-items-row" />,
+}));
+vi.mock("@/components/feed/child-switcher", () => ({
+	ChildSwitcher: () => <div data-testid="child-switcher" />,
+}));
+
 describe("DashboardPage", () => {
 	const mockUseSession = vi.fn();
-	const mockUseQuery = vi.fn();
+	const mockSummaryQuery = vi.fn();
+	const mockFeedQuery = vi.fn();
+	const mockActionItemsQuery = vi.fn();
 
 	beforeEach(() => {
 		vi.clearAllMocks();
 		(authClientLib.authClient.useSession as any) = mockUseSession;
-		(trpcLib.trpc.dashboard.getSummary.useQuery as any) = mockUseQuery;
+		(trpcLib.trpc.dashboard.getSummary.useQuery as any) = mockSummaryQuery;
+		(trpcLib.trpc.dashboard.getFeed.useInfiniteQuery as any) = mockFeedQuery;
+		(trpcLib.trpc.dashboard.getActionItems.useQuery as any) = mockActionItemsQuery;
+		(trpcLib.trpc.useUtils as any) = () => ({
+			dashboard: { getFeed: { invalidate: vi.fn() } },
+		});
+		(trpcLib.trpc.classPost.react.useMutation as any) = () => ({ mutate: vi.fn() });
+		(trpcLib.trpc.classPost.removeReaction.useMutation as any) = () => ({ mutate: vi.fn() });
+
+		mockFeedQuery.mockReturnValue({
+			data: undefined,
+			isLoading: false,
+			fetchNextPage: vi.fn(),
+			hasNextPage: false,
+			isFetchingNextPage: false,
+		});
+		mockActionItemsQuery.mockReturnValue({ data: undefined, isLoading: false });
 	});
 
 	it("shows loading state while auth is pending", () => {
 		mockUseSession.mockReturnValue({ data: null, isPending: true });
-		mockUseQuery.mockReturnValue({ data: undefined, isLoading: false, error: null });
+		mockSummaryQuery.mockReturnValue({ data: undefined, isLoading: false });
 
 		render(<DashboardPage />);
 
-		// Should show skeleton loading UI
 		expect(screen.queryByTestId("dashboard-view")).toBeNull();
 	});
 
 	it("redirects to login when no session", () => {
 		mockUseSession.mockReturnValue({ data: null, isPending: false });
-		mockUseQuery.mockReturnValue({ data: undefined, isLoading: false, error: null });
+		mockSummaryQuery.mockReturnValue({ data: undefined, isLoading: false });
 
 		render(<DashboardPage />);
 
 		expect(mockPush).toHaveBeenCalledWith("/login");
 	});
 
-	it("renders dashboard with greeting when authenticated", () => {
+	it("renders dashboard view when authenticated", () => {
 		mockUseSession.mockReturnValue({
 			data: { name: "John Smith" },
 			isPending: false,
 		});
-		mockUseQuery.mockReturnValue({
+		mockSummaryQuery.mockReturnValue({
 			data: {
-				children: [],
-				metrics: { unreadMessages: 0, paymentsCount: 0, paymentsTotal: 0, attendanceAlerts: 0 },
-				todayAttendance: [],
-				upcomingEvents: [],
-				attendancePercentage: 0,
+				children: [{ id: "child-1", firstName: "Alice", lastName: "Smith" }],
 			},
 			isLoading: false,
-			error: null,
 		});
 
 		render(<DashboardPage />);
 
-		expect(screen.getByText("Hi, John!")).toBeDefined();
 		expect(screen.getByTestId("dashboard-view")).toBeDefined();
 	});
 
-	it("shows child status card when child data exists", () => {
-		mockUseSession.mockReturnValue({
-			data: { name: "Jane Doe" },
-			isPending: false,
-		});
-		mockUseQuery.mockReturnValue({
-			data: {
-				children: [{ id: "child-1", firstName: "Alice" }],
-				metrics: { unreadMessages: 0, paymentsCount: 0, paymentsTotal: 0, attendanceAlerts: 0 },
-				todayAttendance: [],
-				upcomingEvents: [],
-				attendancePercentage: 95,
-			},
-			isLoading: false,
-			error: null,
-		});
-
-		render(<DashboardPage />);
-
-		expect(screen.getByText("Alice is at School")).toBeDefined();
-		expect(screen.getByText("95%")).toBeDefined();
-	});
-
-	it("shows upcoming events when available", () => {
+	it("shows activity feed component", () => {
 		mockUseSession.mockReturnValue({
 			data: { name: "Parent" },
 			isPending: false,
 		});
-		mockUseQuery.mockReturnValue({
+		mockSummaryQuery.mockReturnValue({
 			data: {
-				children: [],
-				metrics: { unreadMessages: 0, paymentsCount: 0, paymentsTotal: 0, attendanceAlerts: 0 },
-				todayAttendance: [],
-				upcomingEvents: [{ id: "e1", title: "Sports Day", body: "Annual sports event" }],
-				attendancePercentage: 0,
+				children: [{ id: "child-1", firstName: "Alice", lastName: "Smith" }],
 			},
 			isLoading: false,
-			error: null,
 		});
 
 		render(<DashboardPage />);
 
-		expect(screen.getByText("Sports Day")).toBeDefined();
-		expect(screen.getByText("Annual sports event")).toBeDefined();
+		expect(screen.getByTestId("activity-feed")).toBeDefined();
 	});
 
-	it("shows no upcoming events message when none exist", () => {
+	it("shows Report Absence button", () => {
 		mockUseSession.mockReturnValue({
 			data: { name: "Parent" },
 			isPending: false,
 		});
-		mockUseQuery.mockReturnValue({
+		mockSummaryQuery.mockReturnValue({
 			data: {
-				children: [],
-				metrics: { unreadMessages: 0, paymentsCount: 0, paymentsTotal: 0, attendanceAlerts: 0 },
-				todayAttendance: [],
-				upcomingEvents: [],
-				attendancePercentage: 0,
+				children: [{ id: "child-1", firstName: "Alice", lastName: "Smith" }],
 			},
 			isLoading: false,
-			error: null,
 		});
 
 		render(<DashboardPage />);
 
-		expect(screen.getByText("No upcoming events")).toBeDefined();
-	});
-
-	it("shows error message when summary query fails", () => {
-		mockUseSession.mockReturnValue({
-			data: { name: "Parent" },
-			isPending: false,
-		});
-		mockUseQuery.mockReturnValue({
-			data: undefined,
-			isLoading: false,
-			error: { message: "Failed to load" },
-		});
-
-		render(<DashboardPage />);
-
-		expect(screen.getByText(/Error loading dashboard/)).toBeDefined();
-	});
-
-	it("renders quick action links", () => {
-		mockUseSession.mockReturnValue({
-			data: { name: "Parent" },
-			isPending: false,
-		});
-		mockUseQuery.mockReturnValue({
-			data: {
-				children: [],
-				metrics: { unreadMessages: 0, paymentsCount: 0, paymentsTotal: 0, attendanceAlerts: 0 },
-				todayAttendance: [],
-				upcomingEvents: [],
-				attendancePercentage: 0,
-			},
-			isLoading: false,
-			error: null,
-		});
-
-		render(<DashboardPage />);
-
-		expect(screen.getByText("Calendar")).toBeDefined();
-		expect(screen.getByText("Sick Note")).toBeDefined();
-		expect(screen.getByText("Lunch Menu")).toBeDefined();
+		expect(screen.getByText("Report Absence")).toBeDefined();
 	});
 });

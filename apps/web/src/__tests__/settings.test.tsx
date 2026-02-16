@@ -11,6 +11,7 @@ vi.mock("sonner", () => ({
 // Mock trpc
 vi.mock("@/lib/trpc", () => ({
 	trpc: {
+		useUtils: vi.fn(),
 		auth: {
 			getSession: {
 				useQuery: vi.fn(),
@@ -35,6 +36,12 @@ vi.mock("@/lib/trpc", () => ({
 			updateSchoolSettings: {
 				useMutation: vi.fn(),
 			},
+			getFeatureToggles: {
+				useQuery: vi.fn(),
+			},
+			updateFeatureToggles: {
+				useMutation: vi.fn(),
+			},
 		},
 	},
 }));
@@ -47,6 +54,8 @@ describe("SettingsPage", () => {
 	const mockNotifMutation = vi.fn();
 	const mockSchoolQuery = vi.fn();
 	const mockSchoolMutation = vi.fn();
+	const mockFeatureTogglesQuery = vi.fn();
+	const mockFeatureTogglesMutation = vi.fn();
 
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -57,10 +66,17 @@ describe("SettingsPage", () => {
 		(trpcLib.trpc.settings.updateNotificationPreferences.useMutation as any) = mockNotifMutation;
 		(trpcLib.trpc.settings.getSchoolSettings.useQuery as any) = mockSchoolQuery;
 		(trpcLib.trpc.settings.updateSchoolSettings.useMutation as any) = mockSchoolMutation;
+		(trpcLib.trpc.settings.getFeatureToggles.useQuery as any) = mockFeatureTogglesQuery;
+		(trpcLib.trpc.settings.updateFeatureToggles.useMutation as any) = mockFeatureTogglesMutation;
+		(trpcLib.trpc.useUtils as any) = () => ({
+			settings: { getFeatureToggles: { invalidate: vi.fn() } },
+		});
 
 		mockProfileMutation.mockReturnValue({ mutate: vi.fn(), isPending: false });
 		mockNotifMutation.mockReturnValue({ mutate: vi.fn(), isPending: false });
 		mockSchoolMutation.mockReturnValue({ mutate: vi.fn(), isPending: false });
+		mockFeatureTogglesMutation.mockReturnValue({ mutate: vi.fn(), isPending: false });
+		mockFeatureTogglesQuery.mockReturnValue({ data: undefined, isLoading: false });
 	});
 
 	it("shows loading skeleton while session loads", () => {
