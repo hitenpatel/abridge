@@ -35,14 +35,14 @@ function getCorsOptions() {
 			const allowedOrigins = [
 				process.env.WEB_URL,
 				process.env.MOBILE_APP_SCHEME,
-				process.env.NODE_ENV === "development" ? "http://localhost:3000" : null,
-				process.env.NODE_ENV === "development" ? "http://localhost:8081" : null,
+				process.env.NODE_ENV !== "production" ? "http://localhost:3000" : null,
+				process.env.NODE_ENV !== "production" ? "http://localhost:8081" : null,
 			]
 				.filter(Boolean)
 				.flatMap((u) => (u?.includes(",") ? u.split(",") : [u]))
 				.map((u) => u?.trim()) as string[];
 
-			if (allowedOrigins.includes(origin) || process.env.NODE_ENV === "development") {
+			if (allowedOrigins.includes(origin) || process.env.NODE_ENV !== "production") {
 				cb(null, true);
 				return;
 			}
