@@ -147,6 +147,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 						href={item.href}
 						onClick={onClick}
 						aria-current={isActive ? "page" : undefined}
+						data-testid={`${item.name.toLowerCase().replace(/\s+/g, "-")}-link`}
 						className={cn(
 							"flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all group",
 							isActive

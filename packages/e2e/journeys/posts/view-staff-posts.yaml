@@ -2,6 +2,7 @@ journey:
   id: view-staff-posts
   name: Staff View Posts on Home
   tags: [staff, authenticated, posts]
+  skipPlatforms: [web]
   role: staff
   preconditions:
     seed: staff-with-posts

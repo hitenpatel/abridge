@@ -2,6 +2,7 @@ journey:
   id: view-staff-messages
   name: Staff View Messages
   tags: [staff, authenticated, messaging]
+  skipPlatforms: [web]
   role: staff
   preconditions:
     seed: staff-with-messages

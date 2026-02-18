@@ -23,9 +23,9 @@ function translateAction(step: Step): string {
 		case "tap": {
 			const testId = extractSimpleTestId(selector);
 			if (testId) {
-				return `await page.getByTestId('${testId}').click();`;
+				return `await page.getByTestId('${testId}').first().click();`;
 			}
-			return `await page.locator('${selector}').click();`;
+			return `await page.locator('${selector}').first().click();`;
 		}
 		case "fill": {
 			const testId = extractSimpleTestId(selector);

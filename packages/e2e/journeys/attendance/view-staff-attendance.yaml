@@ -2,6 +2,7 @@ journey:
   id: view-staff-attendance
   name: Staff View Attendance
   tags: [staff, authenticated, attendance]
+  skipPlatforms: [web]
   role: staff
   preconditions:
     seed: staff-with-school

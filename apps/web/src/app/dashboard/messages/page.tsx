@@ -98,6 +98,7 @@ export default function MessagesPage() {
 								}
 								role="button"
 								tabIndex={0}
+								data-testid="message-row"
 								className={`group flex items-center gap-3 p-3 cursor-pointer transition-colors ${
 									selectedMessageId === message.id
 										? "bg-orange-50 border-l-4 border-primary"
@@ -143,7 +144,7 @@ export default function MessagesPage() {
 			</aside>
 
 			{/* Right Panel - Message Thread */}
-			<section className="flex-1 flex flex-col bg-background">
+			<section className="flex-1 flex flex-col bg-background" data-testid="message-detail">
 				{selectedMessage ? (
 					<>
 						{/* Contact Header */}

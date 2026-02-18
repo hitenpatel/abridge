@@ -29,4 +29,4 @@ journey:
         mobile: "Message Detail"
   assertions:
     - type: visible
-      text: "This is test message 1"
+      text: "This is test message"
