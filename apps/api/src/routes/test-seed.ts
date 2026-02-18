@@ -14,7 +14,8 @@ type FixtureName =
 	| "staff-with-messages"
 	| "parent-with-payments"
 	| "parent-with-posts"
-	| "staff-with-posts";
+	| "staff-with-posts"
+	| "both-roles";
 
 async function cleanTestData() {
 	await prisma.$executeRaw`TRUNCATE TABLE class_post_reactions CASCADE`;
@@ -299,6 +300,78 @@ async function createStaffWithPosts() {
 	return { ...base, child, posts };
 }
 
+async function createBothRoles() {
+	const school = await prisma.school.create({
+		data: {
+			name: "Test School",
+			urn: "123456",
+			address: "123 Test St",
+			phone: "01234567890",
+			email: "school@test.com",
+		},
+	});
+
+	const parentHashedPassword = await hashPassword(TEST_CREDENTIALS.parent.password);
+	const parentUser = await prisma.user.create({
+		data: {
+			email: TEST_CREDENTIALS.parent.email,
+			name: "Test Parent",
+			emailVerified: true,
+		},
+	});
+	await prisma.account.create({
+		data: {
+			userId: parentUser.id,
+			accountId: parentUser.id,
+			providerId: "credential",
+			password: parentHashedPassword,
+		},
+	});
+	const child = await prisma.child.create({
+		data: {
+			firstName: "Test",
+			lastName: "Child",
+			dateOfBirth: new Date("2015-01-01"),
+			yearGroup: "1",
+			className: "1A",
+			schoolId: school.id,
+		},
+	});
+	await prisma.parentChild.create({
+		data: {
+			userId: parentUser.id,
+			childId: child.id,
+			relation: "PARENT",
+		},
+	});
+
+	const staffHashedPassword = await hashPassword(TEST_CREDENTIALS.staff.password);
+	const staffUser = await prisma.user.create({
+		data: {
+			email: TEST_CREDENTIALS.staff.email,
+			name: "Test Staff",
+			emailVerified: true,
+		},
+	});
+	await prisma.account.create({
+		data: {
+			userId: staffUser.id,
+			accountId: staffUser.id,
+			providerId: "credential",
+			password: staffHashedPassword,
+		},
+	});
+	await prisma.staffMember.create({
+		data: {
+			userId: staffUser.id,
+			schoolId: school.id,
+			role: "ADMIN",
+		},
+	});
+
+	return { school, parentUser, staffUser, child };
+}
+
 async function seedFixture(name: FixtureName) {
 	await cleanTestData();
 
@@ -315,6 +388,8 @@ async function seedFixture(name: FixtureName) {
 			return await createParentWithPosts();
 		case "staff-with-posts":
 			return await createStaffWithPosts();
+		case "both-roles":
+			return await createBothRoles();
 		default:
 			throw new Error(`Unknown fixture: ${name}`);
 	}

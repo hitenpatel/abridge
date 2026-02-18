@@ -35,6 +35,9 @@ function translateAction(step: Step): Record<string, unknown>[] {
 		case "scroll":
 			return [{ scrollUntilVisible: { element: selector } }];
 		case "wait":
+			if (selector) {
+				return [{ extendedWaitUntil: { visible: selector, timeout: 15000 } }];
+			}
 			return [{ waitForAnimationToEnd: {} }];
 		case "long-press":
 			return [{ longPressOn: selector }];

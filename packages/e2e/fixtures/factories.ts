@@ -8,7 +8,8 @@ export type FixtureName =
 	| "staff-with-messages"
 	| "parent-with-payments"
 	| "parent-with-posts"
-	| "staff-with-posts";
+	| "staff-with-posts"
+	| "both-roles";
 
 export async function cleanTestData() {
 	// Truncate in dependency order to avoid FK violations

@@ -319,6 +319,7 @@ function AppContent() {
 		"checking" | "authenticated" | "unauthenticated"
 	>("checking");
 	const { isDark, colorScheme } = useTheme();
+	const utils = trpc.useUtils();
 
 	// Sync useSession state into local authState
 	React.useEffect(() => {
@@ -336,8 +337,9 @@ function AppContent() {
 		} catch (e) {
 			// Clear local state even if API call fails
 		}
+		await utils.invalidate();
 		setAuthState("unauthenticated");
-	}, []);
+	}, [utils]);
 
 	const handleLoginSuccess = React.useCallback(() => {
 		// Directly transition to authenticated — don't wait for useSession

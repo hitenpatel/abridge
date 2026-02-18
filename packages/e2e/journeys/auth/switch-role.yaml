@@ -1,0 +1,46 @@
+journey:
+  id: switch-role
+  name: Switch from Parent to Staff
+  tags: [auth, authenticated, regression]
+  role: parent
+  skipPlatforms: [web]
+  preconditions:
+    seed: both-roles
+    state: unauthenticated
+  steps:
+    # Login as parent
+    - action: tap
+      target: test-parent-button
+      selectors:
+        web: "[data-testid='test-parent-button']"
+        mobile: "Test Parent"
+    - action: wait
+      target: home-tab
+      selectors:
+        web: "[data-testid='home-link']"
+        mobile: "Home"
+    # Verify parent home is shown
+    - action: tap
+      target: logout-button
+      selectors:
+        web: "[data-testid='logout-button']"
+        mobile: "Log Out"
+    - action: wait
+      target: login-screen
+      selectors:
+        web: "[data-testid='login-form']"
+        mobile: "Sign In"
+    # Login as staff
+    - action: tap
+      target: test-staff-button
+      selectors:
+        web: "[data-testid='test-staff-button']"
+        mobile: "Test Staff"
+    - action: wait
+      target: home-tab
+      selectors:
+        web: "[data-testid='home-link']"
+        mobile: "Home"
+  assertions:
+    - type: visible
+      text: "Test School"

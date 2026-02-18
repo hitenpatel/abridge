@@ -52,7 +52,11 @@
 			"*.generated.*",
 			"**/*.d.ts",
 			"packages/e2e/fixtures/*.js",
-			"packages/e2e/fixtures/*.js.map"
+			"packages/e2e/fixtures/*.js.map",
+			"packages/e2e/generated/**",
+			"packages/e2e/test-results/**",
+			"playwright-report/**",
+			"test-results/**"
 		]
 	}
 }
