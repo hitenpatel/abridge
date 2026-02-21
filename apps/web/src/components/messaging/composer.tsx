@@ -80,6 +80,7 @@ export function MessageComposer({ schoolId }: MessageComposerProps) {
 						<Label htmlFor="subject">Subject</Label>
 						<Input
 							id="subject"
+							data-testid="message-subject-input"
 							placeholder="Enter subject"
 							{...register("subject")}
 							className={errors.subject ? "border-destructive" : ""}
@@ -93,6 +94,7 @@ export function MessageComposer({ schoolId }: MessageComposerProps) {
 						<Label htmlFor="category">Category</Label>
 						<select
 							id="category"
+							data-testid="message-category-select"
 							{...register("category")}
 							className="w-full border border-border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-ring bg-card"
 						>
@@ -109,6 +111,7 @@ export function MessageComposer({ schoolId }: MessageComposerProps) {
 						<Label htmlFor="body">Message Body</Label>
 						<Textarea
 							id="body"
+							data-testid="message-body-input"
 							rows={6}
 							{...register("body")}
 							className={errors.body ? "border-destructive" : ""}
@@ -133,6 +136,7 @@ export function MessageComposer({ schoolId }: MessageComposerProps) {
 					<div className="pt-2">
 						<Button
 							type="submit"
+							data-testid="message-send-button"
 							disabled={isSubmitting || sendMutation.isPending}
 							className="w-full sm:w-auto"
 						>

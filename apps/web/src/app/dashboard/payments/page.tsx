@@ -1,9 +1,11 @@
 "use client";
 
 import { FeatureDisabled } from "@/components/feature-disabled";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function PaymentsDashboardPage() {
@@ -70,6 +72,14 @@ export default function PaymentsDashboardPage() {
 					<div>
 						<h1 className="text-4xl font-bold mb-1">{firstName}'s School Expenses</h1>
 						<p className="text-gray-500">Manage upcoming trips, lunches, and fees.</p>
+						{session?.staffRole && (
+							<Link href="/dashboard/payments/new">
+								<Button data-testid="create-payment-button">
+									<span className="material-symbols-rounded text-base mr-1">add</span>
+									Create Payment Item
+								</Button>
+							</Link>
+						)}
 					</div>
 					<div className="hidden sm:flex bg-white rounded-xl p-1 shadow-sm border border-gray-100">
 						<button

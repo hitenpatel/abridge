@@ -1,10 +1,21 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
+import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { Play, User } from "lucide-react";
+import { Play, Trash2, User } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface ClassPostCardProps {
 	body?: string | null;
@@ -13,6 +24,12 @@ interface ClassPostCardProps {
 	timestamp: Date | string;
 	children?: React.ReactNode;
 	onPress?: () => void;
+	postId?: string;
+	authorId?: string;
+	currentUserId?: string;
+	isStaff?: boolean;
+	schoolId?: string;
+	onDeleted?: () => void;
 }
 
 function isVideoUrl(url: string): boolean {
@@ -148,8 +165,24 @@ export function ClassPostCard({
 	timestamp,
 	children,
 	onPress,
+	postId,
+	authorId,
+	currentUserId,
+	isStaff,
+	schoolId,
+	onDeleted,
 }: ClassPostCardProps) {
 	const [expandedImage, setExpandedImage] = useState<string | null>(null);
+	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+	const deleteMutation = trpc.classPost.delete.useMutation({
+		onSuccess: () => {
+			toast.success("Post deleted");
+			onDeleted?.();
+			setShowDeleteDialog(false);
+		},
+		// biome-ignore lint/suspicious/noExplicitAny: tRPC error type
+		onError: (err: any) => toast.error(err.message),
+	});
 	const videos = mediaUrls.filter(isVideoUrl);
 	const ts = typeof timestamp === "string" ? new Date(timestamp) : timestamp;
 
@@ -175,6 +208,19 @@ export function ClassPostCard({
 								)}
 								<p className="text-xs text-muted-foreground">{format(ts, "d MMM yyyy, h:mm a")}</p>
 							</div>
+							{isStaff && authorId && authorId === currentUserId && (
+								<button
+									type="button"
+									data-testid="post-delete-button"
+									onClick={(e) => {
+										e.stopPropagation();
+										setShowDeleteDialog(true);
+									}}
+									className="p-1 rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+								>
+									<Trash2 className="h-4 w-4" />
+								</button>
+							)}
 						</div>
 
 						{/* Caption */}
@@ -216,6 +262,29 @@ export function ClassPostCard({
 					/>
 				</div>
 			)}
+			<Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Delete Post</DialogTitle>
+						<DialogDescription>
+							Are you sure you want to delete this post? This cannot be undone.
+						</DialogDescription>
+					</DialogHeader>
+					<DialogFooter>
+						<Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
+							Cancel
+						</Button>
+						<Button
+							variant="destructive"
+							data-testid="confirm-delete-button"
+							onClick={() => postId && schoolId && deleteMutation.mutate({ schoolId, postId })}
+							disabled={deleteMutation.isPending}
+						>
+							{deleteMutation.isPending ? "Deleting..." : "Delete"}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</>
 	);
 }

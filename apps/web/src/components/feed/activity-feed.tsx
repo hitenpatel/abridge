@@ -68,6 +68,9 @@ interface ActivityFeedProps {
 	onReact?: (postId: string, emoji: Emoji) => void;
 	onRemoveReaction?: (postId: string) => void;
 	onPostPress?: (postId: string) => void;
+	currentUserId?: string;
+	isStaff?: boolean;
+	schoolId?: string;
 }
 
 function FeedSkeleton() {
@@ -96,6 +99,9 @@ function renderCard(
 	onReact?: (postId: string, emoji: Emoji) => void,
 	onRemoveReaction?: (postId: string) => void,
 	onPostPress?: (postId: string) => void,
+	currentUserId?: string,
+	isStaff?: boolean,
+	schoolId?: string,
 ) {
 	switch (card.type) {
 		case "classPost": {
@@ -103,6 +109,11 @@ function renderCard(
 			return (
 				<ClassPostCard
 					key={card.id}
+					postId={card.id}
+					authorId={d.authorId}
+					currentUserId={currentUserId}
+					isStaff={isStaff}
+					schoolId={schoolId}
 					body={d.body}
 					mediaUrls={d.mediaUrls}
 					authorName={d.authorName}
@@ -181,6 +192,9 @@ export function ActivityFeed({
 	onReact,
 	onRemoveReaction,
 	onPostPress,
+	currentUserId,
+	isStaff,
+	schoolId,
 }: ActivityFeedProps) {
 	const sentinelRef = useRef<HTMLDivElement>(null);
 
@@ -220,7 +234,9 @@ export function ActivityFeed({
 
 	return (
 		<div className="space-y-4" data-testid="activity-feed">
-			{items.map((card) => renderCard(card, onReact, onRemoveReaction, onPostPress))}
+			{items.map((card) =>
+				renderCard(card, onReact, onRemoveReaction, onPostPress, currentUserId, isStaff, schoolId),
+			)}
 
 			{/* Infinite scroll sentinel */}
 			<div ref={sentinelRef} className="h-px" />

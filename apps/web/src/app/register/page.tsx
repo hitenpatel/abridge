@@ -17,6 +17,7 @@ function RegisterForm() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const token = searchParams.get("token");
@@ -35,6 +36,7 @@ function RegisterForm() {
 
 	const handleRegister = async (e: React.FormEvent) => {
 		e.preventDefault();
+		setError(null);
 		setLoading(true);
 		try {
 			await authClient.signUp.email(
@@ -48,6 +50,7 @@ function RegisterForm() {
 							ctx.error?.message ||
 							ctx.error?.statusText ||
 							"Registration failed. Please try again.";
+						setError(errorMessage);
 						toast.error(errorMessage);
 						setLoading(false);
 					},
@@ -55,6 +58,7 @@ function RegisterForm() {
 			);
 		} catch (err) {
 			const message = err instanceof Error ? err.message : "Registration failed. Please try again.";
+			setError(message);
 			toast.error(message);
 			setLoading(false);
 		}
@@ -84,6 +88,14 @@ function RegisterForm() {
 				)}
 
 				<form onSubmit={handleRegister} className="space-y-4">
+					{error && (
+						<p
+							data-testid="register-error"
+							className="text-sm text-destructive bg-destructive/10 p-3 rounded-lg border border-destructive/20"
+						>
+							{error}
+						</p>
+					)}
 					<div className="space-y-2">
 						<Label htmlFor="name">Full Name</Label>
 						<Input

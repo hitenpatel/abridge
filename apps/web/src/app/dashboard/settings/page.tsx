@@ -508,6 +508,51 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 	);
 }
 
+function StripeCard({ schoolId }: { schoolId: string }) {
+	const { data: status, isLoading } = trpc.stripe.getStripeStatus.useQuery({ schoolId });
+	const createOnboarding = trpc.stripe.createOnboardingLink.useMutation({
+		onSuccess: (data) => {
+			window.open(data.url, "_blank");
+		},
+		onError: (err) => toast.error(err.message),
+	});
+
+	const isConnected = status?.chargesEnabled;
+
+	return (
+		<Card className="rounded-2xl border border-gray-100 shadow-sm">
+			<CardHeader>
+				<CardTitle className="flex items-center gap-2">
+					<span className="material-symbols-rounded text-primary">payments</span>
+					Stripe Payments
+				</CardTitle>
+			</CardHeader>
+			<CardContent className="space-y-4">
+				<div className="flex items-center gap-2" data-testid="stripe-status">
+					<div className={`w-3 h-3 rounded-full ${isConnected ? "bg-green-500" : "bg-gray-300"}`} />
+					<span className="text-sm font-medium">
+						{isLoading ? "Loading..." : isConnected ? "Connected" : "Not connected"}
+					</span>
+				</div>
+				{status?.isConnected && !status.chargesEnabled && (
+					<p className="text-sm text-muted-foreground">
+						Onboarding incomplete. Finish setup to accept payments.
+					</p>
+				)}
+				{!isConnected && !isLoading && (
+					<Button
+						data-testid="stripe-connect-button"
+						onClick={() => createOnboarding.mutate({ schoolId })}
+						disabled={createOnboarding.isPending}
+					>
+						{createOnboarding.isPending ? "Connecting..." : "Connect Stripe"}
+					</Button>
+				)}
+			</CardContent>
+		</Card>
+	);
+}
+
 export default function SettingsPage() {
 	const { data: session, isLoading } = trpc.auth.getSession.useQuery();
 
@@ -536,6 +581,7 @@ export default function SettingsPage() {
 				<NotificationsCard />
 				{isAdmin && schoolId && <SchoolSettingsCard schoolId={schoolId} />}
 				{isAdmin && schoolId && <FeatureTogglesCard schoolId={schoolId} />}
+				{isAdmin && schoolId && <StripeCard schoolId={schoolId} />}
 			</div>
 		</div>
 	);

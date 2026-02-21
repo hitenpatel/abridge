@@ -14,6 +14,7 @@ export default function MessagesPage() {
 	const { data: session, isLoading: sessionLoading } = trpc.auth.getSession.useQuery();
 	const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
 	const [messageInput, setMessageInput] = useState("");
+	const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
 
 	const { data: messages, isLoading: messagesLoading } = trpc.messaging.listReceived.useQuery(
 		{ limit: 20 },
@@ -37,6 +38,11 @@ export default function MessagesPage() {
 	}
 
 	const selectedMessage = messages?.items.find((m) => m.id === selectedMessageId);
+
+	const filteredMessages = categoryFilter
+		? // biome-ignore lint/suspicious/noExplicitAny: message type from tRPC
+			messages?.items?.filter((m: any) => m.category === categoryFilter)
+		: messages?.items;
 
 	// Auto-select first message if none selected
 	if (!selectedMessageId && messages?.items && messages.items.length > 0) {
@@ -86,10 +92,34 @@ export default function MessagesPage() {
 					</div>
 				</div>
 
+				{/* Category Filter */}
+				<div className="px-4 py-2 border-b flex gap-2 flex-wrap">
+					{[
+						{ key: null, label: "All Categories" },
+						{ key: "URGENT", label: "Urgent", testId: "filter-urgent" },
+						{ key: "STANDARD", label: "Standard", testId: "filter-standard" },
+						{ key: "FYI", label: "FYI", testId: "filter-fyi" },
+					].map((cat) => (
+						<button
+							key={cat.label}
+							type="button"
+							data-testid={cat.testId}
+							onClick={() => setCategoryFilter(cat.key)}
+							className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
+								categoryFilter === cat.key
+									? "bg-primary text-primary-foreground"
+									: "bg-muted text-muted-foreground hover:bg-accent"
+							}`}
+						>
+							{cat.label}
+						</button>
+					))}
+				</div>
+
 				{/* Conversation List */}
 				<div className="flex-1 overflow-y-auto" data-testid="messages-list">
-					{messages?.items && messages.items.length > 0 ? (
-						messages.items.map((message) => (
+					{filteredMessages && filteredMessages.length > 0 ? (
+						filteredMessages.map((message) => (
 							<div
 								key={message.id}
 								onClick={() => setSelectedMessageId(message.id)}

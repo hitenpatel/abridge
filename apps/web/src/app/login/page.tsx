@@ -14,10 +14,12 @@ export default function LoginPage() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
 	const router = useRouter();
 
 	const handleLogin = async (e: React.FormEvent) => {
 		e.preventDefault();
+		setError(null);
 		setLoading(true);
 		await authClient.signIn.email(
 			{ email, password },
@@ -27,6 +29,7 @@ export default function LoginPage() {
 				},
 				onError: (ctx) => {
 					const errorMessage = ctx.error?.message || "Login failed. Please try again.";
+					setError(errorMessage);
 					toast.error(errorMessage);
 					setLoading(false);
 				},
@@ -49,6 +52,14 @@ export default function LoginPage() {
 				</CardHeader>
 				<CardContent>
 					<form onSubmit={handleLogin} className="space-y-4">
+						{error && (
+							<p
+								data-testid="login-error"
+								className="text-sm text-destructive bg-destructive/10 p-3 rounded-lg border border-destructive/20"
+							>
+								{error}
+							</p>
+						)}
 						<div className="space-y-2">
 							<Label htmlFor="email">Email</Label>
 							<Input
