@@ -13,13 +13,21 @@ export const calendarRouter = router({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
-			// Get schools the parent's children attend
+			// Get schools via parent-child links
 			const parentLinks = await ctx.prisma.parentChild.findMany({
 				where: { userId: ctx.user.id },
 				select: { child: { select: { schoolId: true } } },
 			});
+			// Also get schools via staff membership
+			const staffLinks = await ctx.prisma.staffMember.findMany({
+				where: { userId: ctx.user.id },
+				select: { schoolId: true },
+			});
 			const schoolIds = [
-				...new Set(parentLinks.map((p: { child: { schoolId: string } }) => p.child.schoolId)),
+				...new Set([
+					...parentLinks.map((p: { child: { schoolId: string } }) => p.child.schoolId),
+					...staffLinks.map((s: { schoolId: string }) => s.schoolId),
+				]),
 			];
 
 			if (schoolIds.length === 0) return [];
