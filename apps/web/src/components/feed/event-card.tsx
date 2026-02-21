@@ -38,7 +38,7 @@ export function EventCard({ title, startDate, category, allDay }: EventCardProps
 	const start = typeof startDate === "string" ? new Date(startDate) : startDate;
 
 	return (
-		<Card>
+		<Card data-testid="calendar-event">
 			<CardContent className="p-4">
 				<div className="flex items-start gap-3">
 					<div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-purple-50">

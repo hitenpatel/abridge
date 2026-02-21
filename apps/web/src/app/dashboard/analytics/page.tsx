@@ -166,18 +166,19 @@ export default function AnalyticsPage() {
 	];
 
 	return (
-		<div className="max-w-7xl mx-auto">
+		<div className="max-w-7xl mx-auto" data-testid="analytics-view">
 			<div className="flex items-center justify-between mb-8">
 				<div>
 					<h1 className="text-3xl font-bold text-gray-900">Analytics</h1>
 					<p className="text-gray-500 mt-1">School performance overview</p>
 				</div>
-				<div className="flex bg-white rounded-xl p-1 shadow-sm border border-gray-100">
+				<div className="flex bg-white rounded-xl p-1 shadow-sm border border-gray-100" data-testid="analytics-date-range">
 					{ranges.map((r) => (
 						<button
 							key={r.key}
 							type="button"
 							onClick={() => setRange(r.key)}
+							data-testid={`date-range-${r.key}`}
 							className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
 								range === r.key
 									? "bg-primary text-white shadow-sm"
@@ -197,6 +198,7 @@ export default function AnalyticsPage() {
 				) : (
 					<Card
 						className="rounded-2xl p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow"
+						data-testid="analytics-attendance-card"
 						onClick={() => toggleExpand("attendance")}
 					>
 						<div className="flex items-center justify-between mb-4">
@@ -245,6 +247,7 @@ export default function AnalyticsPage() {
 				) : (
 					<Card
 						className="rounded-2xl p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow"
+						data-testid="analytics-payments-card"
 						onClick={() => toggleExpand("payments")}
 					>
 						<div className="flex items-center justify-between mb-4">
@@ -298,6 +301,7 @@ export default function AnalyticsPage() {
 				) : (
 					<Card
 						className="rounded-2xl p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow"
+						data-testid="analytics-forms-card"
 						onClick={() => toggleExpand("forms")}
 					>
 						<div className="flex items-center justify-between mb-4">
@@ -340,6 +344,7 @@ export default function AnalyticsPage() {
 				) : (
 					<Card
 						className="rounded-2xl p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow"
+						data-testid="analytics-messages-card"
 						onClick={() => toggleExpand("messages")}
 					>
 						<div className="flex items-center justify-between mb-4">

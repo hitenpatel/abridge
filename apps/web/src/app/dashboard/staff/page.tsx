@@ -165,6 +165,7 @@ export default function StaffManagementPage() {
 										value={newEmail}
 										onChange={(e) => setNewEmail(e.target.value)}
 										className="w-full px-3 py-2 border border-border rounded-lg bg-background"
+										data-testid="invite-email-input"
 										required
 									/>
 								</div>
@@ -174,17 +175,17 @@ export default function StaffManagementPage() {
 										value={newRole}
 										onValueChange={(value) => setNewRole(value as "ADMIN" | "TEACHER" | "OFFICE")}
 									>
-										<SelectTrigger id="role" className="w-full">
+										<SelectTrigger id="role" className="w-full" data-testid="invite-role-select">
 											<SelectValue />
 										</SelectTrigger>
 										<SelectContent>
-											<SelectItem value="TEACHER">Teacher</SelectItem>
-											<SelectItem value="OFFICE">Office Staff</SelectItem>
-											<SelectItem value="ADMIN">Administrator</SelectItem>
+											<SelectItem value="TEACHER" data-testid="role-option-TEACHER">Teacher</SelectItem>
+											<SelectItem value="OFFICE" data-testid="role-option-OFFICE">Office Staff</SelectItem>
+											<SelectItem value="ADMIN" data-testid="role-option-ADMIN">Administrator</SelectItem>
 										</SelectContent>
 									</Select>
 								</div>
-								<Button type="submit" className="w-full" disabled={sendInvitation.isPending}>
+								<Button type="submit" className="w-full" disabled={sendInvitation.isPending} data-testid="invite-send-button">
 									{sendInvitation.isPending ? "Sending..." : "Send Invitation"}
 								</Button>
 							</form>
@@ -213,11 +214,12 @@ export default function StaffManagementPage() {
 									<p>No staff members found.</p>
 								</div>
 							) : (
-								<div className="divide-y divide-border">
+								<div className="divide-y divide-border" data-testid="staff-list">
 									{staff.map((member) => (
 										<div
 											key={member.id}
 											className="flex items-center justify-between py-4 first:pt-0 last:pb-0"
+											data-testid="staff-member-row"
 										>
 											<div className="flex items-center gap-3">
 												<Avatar>
@@ -231,7 +233,7 @@ export default function StaffManagementPage() {
 												</div>
 											</div>
 											<div className="flex items-center gap-3">
-												<Badge variant={member.role === "ADMIN" ? "default" : "info"}>
+												<Badge variant={member.role === "ADMIN" ? "default" : "info"} data-testid="staff-role-badge">
 													{member.role}
 												</Badge>
 												{session?.staffRole === "ADMIN" && member.userId !== session.id && (
@@ -239,6 +241,7 @@ export default function StaffManagementPage() {
 														variant="ghost"
 														size="icon"
 														className="text-muted-foreground hover:text-destructive"
+														data-testid="staff-remove-button"
 														onClick={() => {
 															setStaffToRemove({
 																userId: member.userId,
@@ -268,7 +271,7 @@ export default function StaffManagementPage() {
 								</CardTitle>
 							</CardHeader>
 							<CardContent>
-								<div className="divide-y divide-primary/10">
+								<div className="divide-y divide-primary/10" data-testid="pending-invitations-list">
 									{invitations.map((invite) => (
 										<div
 											key={invite.id}
@@ -318,6 +321,7 @@ export default function StaffManagementPage() {
 						</Button>
 						<Button
 							variant="destructive"
+							data-testid="confirm-remove-button"
 							onClick={() => {
 								if (staffToRemove && session?.schoolId) {
 									removeStaff.mutate({

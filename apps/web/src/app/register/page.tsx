@@ -74,7 +74,7 @@ function RegisterForm() {
 			</CardHeader>
 			<CardContent className="space-y-6">
 				{inviteInfo && (
-					<Alert variant="info">
+					<Alert variant="info" data-testid="invitation-school-name">
 						<span className="material-symbols-rounded text-base">verified_user</span>
 						<AlertDescription>
 							You&apos;ve been invited to join <strong>{inviteInfo.schoolName}</strong> as a{" "}
@@ -88,6 +88,7 @@ function RegisterForm() {
 						<Label htmlFor="name">Full Name</Label>
 						<Input
 							id="name"
+							data-testid="register-name-input"
 							placeholder="John Doe"
 							value={name}
 							onChange={(e) => setName(e.target.value)}
@@ -98,6 +99,7 @@ function RegisterForm() {
 						<Label htmlFor="email">Email Address</Label>
 						<Input
 							id="email"
+							data-testid="register-email-input"
 							type="email"
 							placeholder="john@example.com"
 							value={email}
@@ -110,6 +112,7 @@ function RegisterForm() {
 						<Label htmlFor="password">Password</Label>
 						<Input
 							id="password"
+							data-testid="register-password-input"
 							type="password"
 							placeholder="Choose a password"
 							value={password}
@@ -119,6 +122,7 @@ function RegisterForm() {
 					</div>
 					<Button
 						type="submit"
+						data-testid="register-button"
 						disabled={loading || loadingInvite}
 						className="w-full h-12 text-base"
 					>

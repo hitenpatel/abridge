@@ -86,6 +86,7 @@ export default function PaymentsDashboardPage() {
 						<button
 							type="button"
 							onClick={() => setView("history")}
+							data-testid="history-button"
 							className={`px-4 py-2 rounded-lg font-medium transition-all ${
 								view === "history"
 									? "bg-primary text-white shadow-sm"

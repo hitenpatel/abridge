@@ -54,7 +54,7 @@ export function EventList() {
 	}
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-6" data-testid="calendar-view">
 			<div className="flex items-center justify-between">
 				<h2 className="text-2xl font-bold text-foreground">{format(currentDate, "MMMM yyyy")}</h2>
 				<div className="flex space-x-2">
@@ -80,7 +80,7 @@ export function EventList() {
 			<div className="space-y-4">
 				{events && events.length > 0 ? (
 					events.map((event) => (
-						<Card key={event.id} className="hover:shadow-md transition-shadow">
+						<Card key={event.id} className="hover:shadow-md transition-shadow" data-testid="calendar-event">
 							<CardContent className="p-4">
 								<div className="flex items-start justify-between">
 									<div className="flex-1">

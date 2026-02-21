@@ -78,6 +78,7 @@ export function PaymentItemForm({ schoolId }: PaymentItemFormProps) {
 						<Label htmlFor="title">Title</Label>
 						<input
 							{...register("title")}
+							data-testid="payment-title-input"
 							className="mt-1 block w-full rounded-md border-border shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
 							placeholder="e.g. Science Museum Trip"
 						/>
@@ -98,6 +99,7 @@ export function PaymentItemForm({ schoolId }: PaymentItemFormProps) {
 								{...register("amount")}
 								type="number"
 								step="0.01"
+								data-testid="payment-amount-input"
 								className="mt-1 block w-full rounded-md border-border shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
 								placeholder="0.00"
 							/>
@@ -113,7 +115,7 @@ export function PaymentItemForm({ schoolId }: PaymentItemFormProps) {
 								control={control}
 								render={({ field }) => (
 									<Select onValueChange={field.onChange} defaultValue={field.value}>
-										<SelectTrigger className="mt-1">
+										<SelectTrigger className="mt-1" data-testid="payment-category-select">
 											<SelectValue placeholder="Select category" />
 										</SelectTrigger>
 										<SelectContent>
@@ -141,7 +143,7 @@ export function PaymentItemForm({ schoolId }: PaymentItemFormProps) {
 					</div>
 
 					<div className="pt-4">
-						<Button type="submit" className="w-full" disabled={createPaymentItem.isPending}>
+						<Button type="submit" className="w-full" disabled={createPaymentItem.isPending} data-testid="payment-create-submit">
 							{createPaymentItem.isPending ? "Creating..." : "Create Payment Item"}
 						</Button>
 					</div>

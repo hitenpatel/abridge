@@ -61,7 +61,7 @@ export function PaymentCart({ items, onRemove, onCheckout, isPending }: PaymentC
 					<span className="text-muted-foreground font-medium">Total to pay</span>
 					<span className="text-xl font-bold text-foreground">£{(total / 100).toFixed(2)}</span>
 				</div>
-				<Button className="w-full py-6 text-lg" onClick={onCheckout} disabled={isPending}>
+				<Button className="w-full py-6 text-lg" onClick={onCheckout} disabled={isPending} data-testid="cart-checkout-button">
 					{isPending ? "Preparing Checkout..." : "Checkout Now"}
 				</Button>
 			</CardFooter>

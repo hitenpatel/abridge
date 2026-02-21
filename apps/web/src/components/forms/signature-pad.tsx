@@ -30,7 +30,7 @@ export function SignaturePad({ onChange, defaultValue }: SignaturePadProps) {
 
 	return (
 		<div className="space-y-2">
-			<div className="relative border rounded-md bg-white">
+			<div className="relative border rounded-md bg-white" data-testid="signature-canvas">
 				<SignatureCanvas
 					ref={sigCanvas}
 					onEnd={onEnd}
@@ -43,6 +43,7 @@ export function SignaturePad({ onChange, defaultValue }: SignaturePadProps) {
 					variant="outline"
 					className="absolute bottom-2 right-2 h-8 w-8 !p-0 flex items-center justify-center"
 					onClick={clear}
+					data-testid="signature-clear-button"
 				>
 					<Trash2 className="h-4 w-4" />
 				</Button>

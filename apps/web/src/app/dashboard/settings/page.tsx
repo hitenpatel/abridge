@@ -13,7 +13,8 @@ function Toggle({
 	checked,
 	onChange,
 	label,
-}: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
+	"data-testid": dataTestId,
+}: { checked: boolean; onChange: (v: boolean) => void; label: string; "data-testid"?: string }) {
 	return (
 		<div className="flex items-center justify-between py-2">
 			<span className="text-sm font-medium text-gray-700">{label}</span>
@@ -22,6 +23,7 @@ function Toggle({
 				role="switch"
 				aria-checked={checked}
 				aria-label={label}
+				data-testid={dataTestId}
 				onClick={() => onChange(!checked)}
 				className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
 					checked ? "bg-primary" : "bg-gray-200"
@@ -89,6 +91,7 @@ function ProfileCard() {
 						<Label htmlFor="settings-name">Name</Label>
 						<Input
 							id="settings-name"
+							data-testid="profile-name-input"
 							value={name}
 							onChange={(e) => setName(e.target.value)}
 							required
@@ -113,7 +116,7 @@ function ProfileCard() {
 							placeholder="Optional"
 						/>
 					</div>
-					<Button type="submit" disabled={updateProfile.isPending}>
+					<Button type="submit" data-testid="profile-save-button" disabled={updateProfile.isPending}>
 						{updateProfile.isPending ? "Saving..." : "Save Profile"}
 					</Button>
 				</form>
@@ -185,9 +188,9 @@ function NotificationsCard() {
 					className="space-y-4"
 				>
 					<div className="space-y-1">
-						<Toggle checked={push} onChange={setPush} label="Push notifications" />
-						<Toggle checked={sms} onChange={setSms} label="SMS notifications" />
-						<Toggle checked={email} onChange={setEmail} label="Email notifications" />
+						<Toggle checked={push} onChange={setPush} label="Push notifications" data-testid="toggle-push" />
+						<Toggle checked={sms} onChange={setSms} label="SMS notifications" data-testid="toggle-sms" />
+						<Toggle checked={email} onChange={setEmail} label="Email notifications" data-testid="toggle-email" />
 					</div>
 
 					<div className="border-t pt-4">
@@ -198,6 +201,7 @@ function NotificationsCard() {
 									<Label htmlFor="quiet-start">From</Label>
 									<Input
 										id="quiet-start"
+										data-testid="quiet-start-input"
 										type="time"
 										value={quietStart}
 										onChange={(e) => setQuietStart(e.target.value)}
@@ -207,6 +211,7 @@ function NotificationsCard() {
 									<Label htmlFor="quiet-end">To</Label>
 									<Input
 										id="quiet-end"
+										data-testid="quiet-end-input"
 										type="time"
 										value={quietEnd}
 										onChange={(e) => setQuietEnd(e.target.value)}
@@ -219,7 +224,7 @@ function NotificationsCard() {
 						</p>
 					</div>
 
-					<Button type="submit" disabled={updatePrefs.isPending}>
+					<Button type="submit" data-testid="notifications-save-button" disabled={updatePrefs.isPending}>
 						{updatePrefs.isPending ? "Saving..." : "Save Notifications"}
 					</Button>
 				</form>
@@ -290,6 +295,7 @@ function SchoolSettingsCard({ schoolId }: { schoolId: string }) {
 						<Label htmlFor="school-name">School Name</Label>
 						<Input
 							id="school-name"
+							data-testid="school-name-input"
 							value={schoolName}
 							onChange={(e) => setSchoolName(e.target.value)}
 							required
@@ -305,7 +311,7 @@ function SchoolSettingsCard({ schoolId }: { schoolId: string }) {
 						<Toggle checked={defEmail} onChange={setDefEmail} label="Email notifications" />
 					</div>
 
-					<Button type="submit" disabled={updateSchool.isPending}>
+					<Button type="submit" data-testid="school-settings-save" disabled={updateSchool.isPending}>
 						{updateSchool.isPending ? "Saving..." : "Save School Settings"}
 					</Button>
 				</form>
@@ -400,24 +406,24 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 					</p>
 
 					<div className="space-y-1">
-						<Toggle checked={messaging} onChange={setMessaging} label="Messaging" />
-						<Toggle checked={payments} onChange={setPayments} label="Payments" />
+						<Toggle checked={messaging} onChange={setMessaging} label="Messaging" data-testid="toggle-messaging" />
+						<Toggle checked={payments} onChange={setPayments} label="Payments" data-testid="toggle-payments" />
 						{payments && (
 							<div className="pl-6 border-l-2 border-gray-100 ml-2 space-y-1">
 								<p className="text-xs text-gray-400 pt-1 pb-1">Payment categories</p>
-								<Toggle checked={dinnerMoney} onChange={setDinnerMoney} label="Dinner Money" />
-								<Toggle checked={trips} onChange={setTrips} label="Trips" />
-								<Toggle checked={clubs} onChange={setClubs} label="Clubs" />
-								<Toggle checked={uniform} onChange={setUniform} label="Uniform" />
-								<Toggle checked={other} onChange={setOther} label="Other" />
+								<Toggle checked={dinnerMoney} onChange={setDinnerMoney} label="Dinner Money" data-testid="toggle-payment-dinner-money" />
+								<Toggle checked={trips} onChange={setTrips} label="Trips" data-testid="toggle-payment-trips" />
+								<Toggle checked={clubs} onChange={setClubs} label="Clubs" data-testid="toggle-payment-clubs" />
+								<Toggle checked={uniform} onChange={setUniform} label="Uniform" data-testid="toggle-payment-uniform" />
+								<Toggle checked={other} onChange={setOther} label="Other" data-testid="toggle-payment-other" />
 							</div>
 						)}
-						<Toggle checked={attendance} onChange={setAttendance} label="Attendance" />
-						<Toggle checked={calendar} onChange={setCalendar} label="Calendar" />
-						<Toggle checked={forms} onChange={setForms} label="Forms" />
+						<Toggle checked={attendance} onChange={setAttendance} label="Attendance" data-testid="toggle-attendance" />
+						<Toggle checked={calendar} onChange={setCalendar} label="Calendar" data-testid="toggle-calendar" />
+						<Toggle checked={forms} onChange={setForms} label="Forms" data-testid="toggle-forms" />
 					</div>
 
-					<Button type="submit" disabled={updateToggles.isPending}>
+					<Button type="submit" data-testid="feature-toggles-save" disabled={updateToggles.isPending}>
 						{updateToggles.isPending ? "Saving..." : "Save Features"}
 					</Button>
 				</form>

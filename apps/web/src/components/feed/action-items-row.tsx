@@ -62,7 +62,7 @@ export function ActionItemsRow({ items, onPayment, onForm, onMessage }: ActionIt
 	};
 
 	return (
-		<div className="overflow-x-auto scrollbar-hide">
+		<div data-testid="action-items-row" className="overflow-x-auto scrollbar-hide">
 			<div className="flex gap-3 snap-x snap-mandatory pb-2">
 				{items.map((item, i) => (
 					<ActionItemCard

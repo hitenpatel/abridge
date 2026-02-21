@@ -113,7 +113,7 @@ export default function AttendancePage() {
 							</span>
 						</div>
 						{childrenLinks.length > 1 && (
-							<div className="flex gap-2 mt-3">
+							<div className="flex gap-2 mt-3" data-testid="attendance-child-selector">
 								{childrenLinks.map((link) => (
 									<button
 										key={link.childId}
@@ -316,12 +316,13 @@ export default function AttendancePage() {
 										<input
 											id="absence-date"
 											type="date"
+											data-testid="absence-date-input"
 											className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-primary focus:border-transparent font-semibold transition-all"
 										/>
 									</div>
 								</div>
 
-								<fieldset>
+								<fieldset data-testid="absence-reason-input">
 									<legend className="block text-sm font-bold text-gray-500 mb-3">
 										Reason for Absence
 									</legend>
@@ -376,6 +377,7 @@ export default function AttendancePage() {
 
 								<button
 									type="submit"
+									data-testid="absence-submit"
 									className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02]"
 								>
 									Submit Absence Report

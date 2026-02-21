@@ -111,6 +111,14 @@ export default function DashboardPage() {
 
 	if (!session) return null;
 
+	if (children.length === 0) {
+		return (
+			<div data-testid="empty-dashboard" className="max-w-2xl mx-auto text-center py-16 text-muted-foreground">
+				<p className="text-sm">No children linked to your account yet.</p>
+			</div>
+		);
+	}
+
 	const feedItems = feedData?.pages.flatMap((page) => page.items) ?? [];
 
 	return (

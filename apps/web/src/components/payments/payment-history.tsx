@@ -40,7 +40,7 @@ export function PaymentHistory() {
 	}
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-4" data-testid="payment-history-list">
 			<Card className="overflow-hidden">
 				<Table>
 					<TableHeader>
@@ -54,7 +54,7 @@ export function PaymentHistory() {
 					</TableHeader>
 					<TableBody>
 						{data.data.map((payment) => (
-							<TableRow key={payment.id}>
+							<TableRow key={payment.id} data-testid="payment-history-item">
 								<TableCell className="whitespace-nowrap text-foreground">
 									{new Date(payment.completedAt || payment.createdAt).toLocaleDateString()}
 								</TableCell>

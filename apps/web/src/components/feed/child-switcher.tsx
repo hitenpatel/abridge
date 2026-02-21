@@ -26,14 +26,15 @@ export function ChildSwitcher({ items, selectedChildId, onSelect }: ChildSwitche
 	if (items.length === 0) return null;
 
 	return (
-		<div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-			{items.map((child) => {
+		<div data-testid="child-switcher" className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+			{items.map((child, index) => {
 				const isActive = child.id === selectedChildId;
 				const classLabel = [child.yearGroup, child.className].filter(Boolean).join(" ");
 				return (
 					<button
 						key={child.id}
 						type="button"
+						data-testid={`child-option-${index + 1}`}
 						onClick={() => onSelect(child.id)}
 						className={cn(
 							"flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors shrink-0",

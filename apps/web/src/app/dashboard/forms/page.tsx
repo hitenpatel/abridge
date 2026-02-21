@@ -37,7 +37,7 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 			</div>
 
 			{pendingForms && pendingForms.length > 0 && (
-				<div className="space-y-3">
+				<div className="space-y-3" data-testid="pending-forms-section">
 					<h3 className="text-sm font-medium text-warning flex items-center gap-1">
 						<span className="material-symbols-rounded text-base">schedule</span>
 						Action Required
@@ -78,7 +78,7 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 			)}
 
 			{completedForms && completedForms.length > 0 && (
-				<div className="space-y-3">
+				<div className="space-y-3" data-testid="completed-forms-section">
 					<h3 className="text-sm font-medium text-success flex items-center gap-1">
 						<span className="material-symbols-rounded text-base">check_circle</span>
 						Completed
@@ -141,7 +141,7 @@ export default function FormsPage() {
 	const children = summaryData?.children || [];
 
 	return (
-		<div className="p-8 max-w-5xl mx-auto">
+		<div className="p-8 max-w-5xl mx-auto" data-testid="forms-list">
 			<div className="mb-8">
 				<h1 className="text-3xl font-bold text-foreground">Forms & Consent</h1>
 				<p className="text-muted-foreground mt-1">

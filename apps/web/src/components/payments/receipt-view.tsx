@@ -31,7 +31,7 @@ export function ReceiptView({ paymentId, onClose }: ReceiptViewProps) {
 
 	return (
 		<Dialog open={!!paymentId} onOpenChange={(open) => !open && onClose()}>
-			<DialogContent className="max-w-2xl">
+			<DialogContent className="max-w-2xl" data-testid="receipt-view">
 				<div id="receipt-content">
 					{isLoading ? (
 						<div className="flex flex-col items-center justify-center py-12">
@@ -58,7 +58,7 @@ export function ReceiptView({ paymentId, onClose }: ReceiptViewProps) {
 									</div>
 									<div className="text-right">
 										<h3 className="text-lg font-bold text-foreground uppercase">Receipt</h3>
-										<p className="text-sm text-muted-foreground">#{receipt.receiptNumber}</p>
+										<p className="text-sm text-muted-foreground" data-testid="receipt-number">#{receipt.receiptNumber}</p>
 										<p className="text-sm text-muted-foreground mt-1">
 											{new Date(receipt.paymentDate).toLocaleDateString()}
 										</p>

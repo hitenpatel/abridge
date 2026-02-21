@@ -110,7 +110,7 @@ export default function MessagesPage() {
 										{message.schoolName?.[0] || "S"}
 									</div>
 									{!message.isRead && (
-										<div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+										<div data-testid="unread-badge" className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
 									)}
 								</div>
 								<div className="flex-1 min-w-0">
@@ -135,7 +135,7 @@ export default function MessagesPage() {
 							</div>
 						))
 					) : (
-						<div className="p-8 text-center text-gray-500">
+						<div className="p-8 text-center text-gray-500" data-testid="empty-messages">
 							<span className="material-symbols-rounded text-4xl mb-2 text-gray-300">inbox</span>
 							<p className="text-sm">No messages yet</p>
 						</div>
