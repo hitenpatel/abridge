@@ -1,0 +1,35 @@
+journey:
+  id: compose-message-web
+  name: Compose Message on Web
+  tags: [staff, authenticated, messaging, regression]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: staff-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: compose-message
+      selectors:
+        web: "/dashboard/messages/new"
+        mobile: null
+    - action: fill
+      target: subject
+      selectors:
+        web: "[data-testid='message-subject-input']"
+        mobile: null
+      value: "School Trip Reminder"
+    - action: fill
+      target: body
+      selectors:
+        web: "[data-testid='message-body-input']"
+        mobile: null
+      value: "Please remember to bring packed lunch for the trip tomorrow."
+    - action: tap
+      target: send-button
+      selectors:
+        web: "[data-testid='message-send-button']"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "Message sent"

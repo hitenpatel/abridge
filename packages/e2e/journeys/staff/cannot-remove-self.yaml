@@ -1,0 +1,19 @@
+journey:
+  id: cannot-remove-self
+  name: Admin Cannot Remove Self
+  tags: [admin, authenticated, staff-management, error]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: staff-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: staff-management
+      selectors:
+        web: "/dashboard/staff"
+        mobile: null
+  assertions:
+    - type: not-visible
+      target: self-remove
+      text: "Remove"

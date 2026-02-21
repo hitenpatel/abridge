@@ -1,0 +1,24 @@
+journey:
+  id: view-staff-list
+  name: View Staff List
+  tags: [admin, authenticated, staff-management, smoke]
+  role: staff
+  preconditions:
+    seed: admin-with-multiple-staff
+    state: authenticated
+  steps:
+    - action: navigate
+      target: staff-management
+      selectors:
+        web: "/dashboard/staff"
+        mobile: "Staff"
+    - action: wait
+      target: staff-list
+      selectors:
+        web: "[data-testid='staff-list']"
+        mobile: "Staff"
+  assertions:
+    - type: visible
+      text: "Admin"
+    - type: visible
+      text: "Teacher"

@@ -1,0 +1,23 @@
+journey:
+  id: view-stripe-status
+  name: View Stripe Connection Status
+  tags: [admin, authenticated, stripe, regression]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: staff-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: settings
+      selectors:
+        web: "/dashboard/settings"
+        mobile: null
+    - action: scroll
+      target: stripe-section
+      selectors:
+        web: "[data-testid='stripe-status']"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "Not connected"

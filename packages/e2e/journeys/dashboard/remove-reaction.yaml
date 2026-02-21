@@ -1,0 +1,27 @@
+journey:
+  id: remove-reaction
+  name: Remove Reaction from Post
+  tags: [parent, authenticated, posts, regression]
+  role: parent
+  preconditions:
+    seed: parent-with-reacted-post
+    state: authenticated
+  steps:
+    - action: navigate
+      target: dashboard
+      selectors:
+        web: "/dashboard"
+        mobile: "Home"
+    - action: wait
+      target: feed
+      selectors:
+        web: "[data-testid='activity-feed']"
+        mobile: "activity"
+    - action: tap
+      target: heart-reaction
+      selectors:
+        web: "[data-testid=class-post-card]:first-of-type [data-testid=reaction-HEART]"
+        mobile: "❤️"
+  assertions:
+    - type: visible
+      text: "0"

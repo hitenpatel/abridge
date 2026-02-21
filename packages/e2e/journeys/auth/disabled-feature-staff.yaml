@@ -1,0 +1,18 @@
+journey:
+  id: disabled-feature-staff
+  name: Staff Cannot Access Disabled Feature
+  tags: [error, authenticated, edge]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: staff-with-disabled-features
+    state: authenticated
+  steps:
+    - action: navigate
+      target: messages
+      selectors:
+        web: "/dashboard/messages"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "not available"

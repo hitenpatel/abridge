@@ -1,0 +1,26 @@
+journey:
+  id: action-items
+  name: Action Items Row Shows Pending Items
+  tags: [parent, authenticated, dashboard, regression]
+  role: parent
+  preconditions:
+    seed: parent-with-action-items
+    state: authenticated
+  steps:
+    - action: navigate
+      target: dashboard
+      selectors:
+        web: "/dashboard"
+        mobile: "Home"
+    - action: wait
+      target: action-items
+      selectors:
+        web: "[data-testid='action-items-row']"
+        mobile: "Action Items"
+  assertions:
+    - type: visible
+      text: "payment"
+      mobileText: "Payments Due"
+    - type: visible
+      text: "form"
+      mobileText: "Forms Pending"

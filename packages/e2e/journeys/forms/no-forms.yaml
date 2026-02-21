@@ -1,0 +1,18 @@
+journey:
+  id: no-forms
+  name: No Pending Forms
+  tags: [parent, authenticated, forms, edge]
+  role: parent
+  preconditions:
+    seed: parent-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: forms
+      selectors:
+        web: "/dashboard/forms"
+        mobile: "Forms"
+  assertions:
+    - type: visible
+      text: "No forms"
+      mobileText: "No forms"

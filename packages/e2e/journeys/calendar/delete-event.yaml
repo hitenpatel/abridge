@@ -1,0 +1,28 @@
+journey:
+  id: delete-event
+  name: Delete Calendar Event
+  tags: [admin, authenticated, calendar, regression]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: parent-with-calendar-events
+    state: authenticated
+  steps:
+    - action: navigate
+      target: calendar
+      selectors:
+        web: "/dashboard/calendar"
+        mobile: null
+    - action: tap
+      target: delete
+      selectors:
+        web: "[data-testid='calendar-event']:first-of-type [data-testid='event-delete-button']"
+        mobile: null
+    - action: tap
+      target: confirm
+      selectors:
+        web: "[data-testid='confirm-delete-event']"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "deleted"

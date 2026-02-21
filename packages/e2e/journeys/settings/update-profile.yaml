@@ -1,0 +1,33 @@
+journey:
+  id: update-profile
+  name: Update Profile Name
+  tags: [parent, authenticated, settings, regression]
+  role: parent
+  preconditions:
+    seed: parent-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: settings
+      selectors:
+        web: "/dashboard/settings"
+        mobile: "Settings"
+    - action: wait
+      target: settings-view
+      selectors:
+        web: "[data-testid='settings-view']"
+        mobile: "Profile"
+    - action: fill
+      target: name-input
+      selectors:
+        web: "[data-testid='profile-name-input']"
+        mobile: "Name"
+      value: "Updated Name"
+    - action: tap
+      target: save
+      selectors:
+        web: "[data-testid='profile-save-button']"
+        mobile: "Save Profile"
+  assertions:
+    - type: visible
+      text: "Updated Name"

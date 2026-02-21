@@ -1,0 +1,27 @@
+journey:
+  id: feed-pagination
+  name: Feed Infinite Scroll Pagination
+  tags: [parent, authenticated, dashboard, regression]
+  role: parent
+  preconditions:
+    seed: parent-with-many-posts
+    state: authenticated
+  steps:
+    - action: navigate
+      target: dashboard
+      selectors:
+        web: "/dashboard"
+        mobile: "Home"
+    - action: wait
+      target: feed
+      selectors:
+        web: "[data-testid='activity-feed']"
+        mobile: "activity"
+    - action: scroll
+      target: feed-bottom
+      selectors:
+        web: "[data-testid='activity-feed']"
+        mobile: "Post 15"
+  assertions:
+    - type: visible
+      text: "Post 15"

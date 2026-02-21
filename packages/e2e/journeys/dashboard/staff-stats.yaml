@@ -1,0 +1,24 @@
+journey:
+  id: staff-stats
+  name: Staff Dashboard Shows Quick Stats
+  tags: [staff, authenticated, dashboard, regression]
+  role: staff
+  preconditions:
+    seed: staff-with-messages
+    state: authenticated
+  steps:
+    - action: navigate
+      target: dashboard
+      selectors:
+        web: "/dashboard"
+        mobile: "Home"
+    - action: wait
+      target: dashboard-view
+      selectors:
+        web: "[data-testid='dashboard-view']"
+        mobile: "Home"
+  assertions:
+    - type: visible
+      text: "Messages"
+    - type: visible
+      text: "Attendance"

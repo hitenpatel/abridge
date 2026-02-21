@@ -1,0 +1,18 @@
+journey:
+  id: attendance-disabled
+  name: Attendance When Feature Disabled
+  tags: [parent, authenticated, attendance, edge]
+  role: parent
+  preconditions:
+    seed: parent-with-disabled-attendance
+    state: authenticated
+  steps:
+    - action: navigate
+      target: attendance
+      selectors:
+        web: "/dashboard/attendance"
+        mobile: "Attendance"
+  assertions:
+    - type: visible
+      text: "not available"
+      mobileText: "not available"

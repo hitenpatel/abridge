@@ -1,0 +1,33 @@
+journey:
+  id: update-role
+  name: Update Staff Role
+  tags: [admin, authenticated, staff-management, regression]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: admin-with-multiple-staff
+    state: authenticated
+  steps:
+    - action: navigate
+      target: staff-management
+      selectors:
+        web: "/dashboard/staff"
+        mobile: null
+    - action: wait
+      target: staff-list
+      selectors:
+        web: "[data-testid='staff-list']"
+        mobile: null
+    - action: tap
+      target: role-select
+      selectors:
+        web: "[data-testid='staff-member-row']:last-of-type [data-testid='staff-role-select']"
+        mobile: null
+    - action: tap
+      target: office-role
+      selectors:
+        web: "[data-testid='role-option-OFFICE']"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "Office"

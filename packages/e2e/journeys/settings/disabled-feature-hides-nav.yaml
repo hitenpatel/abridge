@@ -1,0 +1,18 @@
+journey:
+  id: disabled-feature-hides-nav
+  name: Disabled Feature Hides Navigation
+  tags: [admin, authenticated, settings, edge]
+  role: parent
+  preconditions:
+    seed: parent-with-disabled-features
+    state: authenticated
+  steps:
+    - action: navigate
+      target: dashboard
+      selectors:
+        web: "/dashboard"
+        mobile: "Home"
+  assertions:
+    - type: not-visible
+      text: "Messages"
+      mobileText: "Inbox"

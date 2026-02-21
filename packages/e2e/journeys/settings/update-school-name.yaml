@@ -1,0 +1,34 @@
+journey:
+  id: update-school-name
+  name: Update School Name
+  tags: [admin, authenticated, settings, regression]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: staff-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: settings
+      selectors:
+        web: "/dashboard/settings"
+        mobile: null
+    - action: scroll
+      target: school-settings
+      selectors:
+        web: "[data-testid='school-name-input']"
+        mobile: null
+    - action: fill
+      target: school-name
+      selectors:
+        web: "[data-testid='school-name-input']"
+        mobile: null
+      value: "Oakwood Academy"
+    - action: tap
+      target: save
+      selectors:
+        web: "[data-testid='school-settings-save']"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "Oakwood Academy"

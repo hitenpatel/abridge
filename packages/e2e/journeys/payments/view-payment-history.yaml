@@ -1,0 +1,27 @@
+journey:
+  id: view-payment-history
+  name: View Payment History
+  tags: [parent, authenticated, payments, regression]
+  role: parent
+  preconditions:
+    seed: parent-with-payment-history
+    state: authenticated
+  steps:
+    - action: navigate
+      target: payments
+      selectors:
+        web: "/dashboard/payments"
+        mobile: "Payments"
+    - action: tap
+      target: history-button
+      selectors:
+        web: "[data-testid='history-button']"
+        mobile: "History"
+    - action: wait
+      target: history-list
+      selectors:
+        web: "[data-testid='payment-history-list']"
+        mobile: "Payment History"
+  assertions:
+    - type: visible
+      text: "£10.00"

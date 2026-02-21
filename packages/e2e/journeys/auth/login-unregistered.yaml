@@ -1,0 +1,36 @@
+journey:
+  id: login-unregistered
+  name: Login with Unregistered Email
+  tags: [auth, unauthenticated, error]
+  role: parent
+  preconditions:
+    seed: clean-db
+    state: unauthenticated
+  steps:
+    - action: navigate
+      target: login
+      selectors:
+        web: "/"
+        mobile: "/"
+    - action: fill
+      target: email-input
+      selectors:
+        web: "[data-testid='email-input']"
+        mobile: "Email"
+      value: "nobody@test.com"
+    - action: fill
+      target: password-input
+      selectors:
+        web: "[data-testid='password-input']"
+        mobile: "Password"
+      value: "anypassword"
+    - action: tap
+      target: login-button
+      selectors:
+        web: "[data-testid='login-button']"
+        mobile: "Sign In"
+  assertions:
+    - type: visible
+      text: "Invalid email or password"
+    - type: not-visible
+      text: "Home"

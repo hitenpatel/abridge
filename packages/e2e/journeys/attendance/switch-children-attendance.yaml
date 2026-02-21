@@ -1,0 +1,32 @@
+journey:
+  id: switch-children-attendance
+  name: Switch Children on Attendance View
+  tags: [parent, authenticated, attendance, regression]
+  role: parent
+  preconditions:
+    seed: parent-with-multiple-children
+    state: authenticated
+  steps:
+    - action: navigate
+      target: attendance
+      selectors:
+        web: "/dashboard/attendance"
+        mobile: "Attendance"
+    - action: wait
+      target: attendance-view
+      selectors:
+        web: "[data-testid='attendance-view']"
+        mobile: "Attendance"
+    - action: tap
+      target: child-selector
+      selectors:
+        web: "[data-testid='attendance-child-selector']"
+        mobile: "Switch Child"
+    - action: tap
+      target: second-child
+      selectors:
+        web: "[data-testid='child-option-2']"
+        mobile: "Child Two"
+  assertions:
+    - type: visible
+      text: "Child Two"

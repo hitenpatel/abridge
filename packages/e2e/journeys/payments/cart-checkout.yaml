@@ -1,0 +1,27 @@
+journey:
+  id: cart-checkout
+  name: Cart Checkout Multiple Items
+  tags: [parent, authenticated, payments, regression]
+  role: parent
+  preconditions:
+    seed: parent-with-payments
+    state: authenticated
+  steps:
+    - action: navigate
+      target: payments
+      selectors:
+        web: "/dashboard/payments"
+        mobile: "Payments"
+    - action: wait
+      target: payments-list
+      selectors:
+        web: "[data-testid='payments-list']"
+        mobile: "School Expenses"
+    - action: tap
+      target: pay-all
+      selectors:
+        web: "[data-testid='cart-checkout-button']"
+        mobile: "Pay All"
+  assertions:
+    - type: visible
+      text: "£60.00"

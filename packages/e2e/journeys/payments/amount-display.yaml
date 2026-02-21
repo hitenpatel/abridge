@@ -1,0 +1,24 @@
+journey:
+  id: amount-display
+  name: Payment Amounts Displayed in Pounds
+  tags: [parent, authenticated, payments, regression]
+  role: parent
+  preconditions:
+    seed: parent-with-payments
+    state: authenticated
+  steps:
+    - action: navigate
+      target: payments
+      selectors:
+        web: "/dashboard/payments"
+        mobile: "Payments"
+    - action: wait
+      target: payments-list
+      selectors:
+        web: "[data-testid='payments-list']"
+        mobile: "School Expenses"
+  assertions:
+    - type: visible
+      text: "£10.00"
+    - type: not-visible
+      text: "1000"

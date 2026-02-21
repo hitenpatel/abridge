@@ -1,7 +1,7 @@
 journey:
-  id: view-staff-posts
-  name: Staff View Posts on Home
-  tags: [staff, authenticated, posts]
+  id: staff-recent-posts
+  name: Staff View Recent Posts on Dashboard
+  tags: [staff, authenticated, dashboard, regression]
   role: staff
   preconditions:
     seed: staff-with-posts
@@ -13,10 +13,10 @@ journey:
         web: "/dashboard"
         mobile: "Home"
     - action: wait
-      target: feed-loaded
+      target: dashboard-view
       selectors:
-        web: "[data-testid='activity-feed']"
-        mobile: "Feed"
+        web: "[data-testid='dashboard-view']"
+        mobile: "Home"
   assertions:
     - type: visible
       text: "Staff post 1"

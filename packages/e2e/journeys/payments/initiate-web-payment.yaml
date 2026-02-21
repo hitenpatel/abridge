@@ -1,0 +1,33 @@
+journey:
+  id: initiate-web-payment
+  name: Initiate Payment on Web
+  tags: [parent, authenticated, payments, regression]
+  role: parent
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: parent-with-payments
+    state: authenticated
+  steps:
+    - action: navigate
+      target: payments
+      selectors:
+        web: "/dashboard/payments"
+        mobile: null
+    - action: wait
+      target: payments-list
+      selectors:
+        web: "[data-testid='payments-list']"
+        mobile: null
+    - action: tap
+      target: payment-item
+      selectors:
+        web: "[data-testid='payment-item-1']"
+        mobile: null
+    - action: tap
+      target: pay-button
+      selectors:
+        web: "[data-testid='pay-button']"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "Payment"

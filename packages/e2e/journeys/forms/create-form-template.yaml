@@ -1,0 +1,45 @@
+journey:
+  id: create-form-template
+  name: Create Form Template
+  tags: [admin, authenticated, forms, regression]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: staff-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: forms
+      selectors:
+        web: "/dashboard/forms"
+        mobile: null
+    - action: tap
+      target: create
+      selectors:
+        web: "[data-testid='create-form-button']"
+        mobile: null
+    - action: fill
+      target: title
+      selectors:
+        web: "[data-testid='form-title-input']"
+        mobile: null
+      value: "Trip Consent"
+    - action: tap
+      target: add-field
+      selectors:
+        web: "[data-testid='add-field-button']"
+        mobile: null
+    - action: fill
+      target: field-label
+      selectors:
+        web: "[data-testid='field-label-input']"
+        mobile: null
+      value: "Do you consent?"
+    - action: tap
+      target: submit
+      selectors:
+        web: "[data-testid='form-create-submit']"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "Trip Consent"

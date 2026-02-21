@@ -1,0 +1,18 @@
+journey:
+  id: parent-no-staff-routes
+  name: Parent Cannot Access Staff Routes
+  tags: [error, authenticated, edge]
+  role: parent
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: parent-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: compose
+      selectors:
+        web: "/dashboard/compose"
+        mobile: null
+  assertions:
+    - type: not-visible
+      text: "compose-post-form"

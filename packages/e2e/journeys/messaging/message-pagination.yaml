@@ -1,0 +1,27 @@
+journey:
+  id: message-pagination
+  name: Message Pagination
+  tags: [parent, authenticated, messaging, regression]
+  role: parent
+  preconditions:
+    seed: parent-with-many-messages
+    state: authenticated
+  steps:
+    - action: navigate
+      target: messages
+      selectors:
+        web: "/dashboard/messages"
+        mobile: "Inbox"
+    - action: wait
+      target: messages-list
+      selectors:
+        web: "[data-testid='messages-list']"
+        mobile: "Test Message 1"
+    - action: scroll
+      target: messages-bottom
+      selectors:
+        web: "[data-testid='messages-list']"
+        mobile: "Test Message 20"
+  assertions:
+    - type: visible
+      text: "Test Message 20"

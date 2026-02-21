@@ -1,0 +1,38 @@
+journey:
+  id: mark-read
+  name: Message Marked as Read on Open
+  tags: [parent, authenticated, messaging, regression]
+  role: parent
+  preconditions:
+    seed: staff-with-messages
+    state: authenticated
+  steps:
+    - action: navigate
+      target: messages
+      selectors:
+        web: "/dashboard/messages"
+        mobile: "Inbox"
+    - action: wait
+      target: messages-list
+      selectors:
+        web: "[data-testid='messages-list']"
+        mobile: "Test Message 1"
+    - action: tap
+      target: first-message
+      selectors:
+        web: "[data-testid='message-row']:first-of-type"
+        mobile: "Test Message 1"
+    - action: wait
+      target: message-detail
+      selectors:
+        web: "[data-testid='message-detail']"
+        mobile: "This is test message"
+    - action: navigate
+      target: messages
+      selectors:
+        web: "/dashboard/messages"
+        mobile: "Inbox"
+  assertions:
+    - type: not-visible
+      target: unread-on-first
+      text: "unread"

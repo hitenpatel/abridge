@@ -1,0 +1,40 @@
+journey:
+  id: register-invitation
+  name: Register via Staff Invitation
+  tags: [auth, unauthenticated, staff, regression]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: pending-invitation
+    state: unauthenticated
+  steps:
+    - action: navigate
+      target: register-with-token
+      selectors:
+        web: "/register?token=test-invitation-token"
+        mobile: null
+    - action: wait
+      target: invitation-details
+      selectors:
+        web: "[data-testid='invitation-school-name']"
+        mobile: null
+    - action: fill
+      target: name-input
+      selectors:
+        web: "[data-testid='register-name-input']"
+        mobile: null
+      value: "New Staff"
+    - action: fill
+      target: password-input
+      selectors:
+        web: "[data-testid='register-password-input']"
+        mobile: null
+      value: "testpass123"
+    - action: tap
+      target: register-button
+      selectors:
+        web: "[data-testid='register-button']"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "Home"

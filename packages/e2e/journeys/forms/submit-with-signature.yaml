@@ -1,0 +1,38 @@
+journey:
+  id: submit-with-signature
+  name: Submit Form with Signature
+  tags: [parent, authenticated, forms, regression]
+  role: parent
+  preconditions:
+    seed: parent-with-signature-form
+    state: authenticated
+  steps:
+    - action: navigate
+      target: forms
+      selectors:
+        web: "/dashboard/forms"
+        mobile: "Forms"
+    - action: tap
+      target: form-item
+      selectors:
+        web: "[data-testid='form-item']"
+        mobile: "Consent Form"
+    - action: fill
+      target: first-field
+      selectors:
+        web: "[data-testid='form-field-1']"
+        mobile: "Field"
+      value: "Yes"
+    - action: tap
+      target: signature-area
+      selectors:
+        web: "[data-testid='signature-canvas']"
+        mobile: "Sign Here"
+    - action: tap
+      target: submit
+      selectors:
+        web: "[data-testid='form-submit-button']"
+        mobile: "Submit"
+  assertions:
+    - type: visible
+      text: "submitted"

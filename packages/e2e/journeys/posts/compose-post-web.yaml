@@ -1,0 +1,34 @@
+journey:
+  id: compose-post-web
+  name: Compose Post on Web
+  tags: [staff, authenticated, posts, regression]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: staff-with-posts
+    state: authenticated
+  steps:
+    - action: navigate
+      target: compose
+      selectors:
+        web: "/dashboard/compose"
+        mobile: null
+    - action: wait
+      target: compose-form
+      selectors:
+        web: "[data-testid='compose-post-form']"
+        mobile: null
+    - action: fill
+      target: post-body
+      selectors:
+        web: "[data-testid='post-body-input']"
+        mobile: null
+      value: "Today we painted pictures in art class!"
+    - action: tap
+      target: submit
+      selectors:
+        web: "[data-testid='submit-post-button']"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "posted"

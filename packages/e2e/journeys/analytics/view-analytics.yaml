@@ -1,0 +1,29 @@
+journey:
+  id: view-analytics
+  name: View Analytics Dashboard
+  tags: [admin, authenticated, analytics, smoke]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: admin-with-analytics-data
+    state: authenticated
+  steps:
+    - action: navigate
+      target: analytics
+      selectors:
+        web: "/dashboard/analytics"
+        mobile: null
+    - action: wait
+      target: analytics-view
+      selectors:
+        web: "[data-testid='analytics-view']"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "Attendance"
+    - type: visible
+      text: "Payments"
+    - type: visible
+      text: "Forms"
+    - type: visible
+      text: "Messages"

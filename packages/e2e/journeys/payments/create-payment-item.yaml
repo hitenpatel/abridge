@@ -1,0 +1,39 @@
+journey:
+  id: create-payment-item
+  name: Create Payment Item
+  tags: [staff, authenticated, payments, regression]
+  role: staff
+  preconditions:
+    seed: staff-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: payments
+      selectors:
+        web: "/dashboard/payments"
+        mobile: "Payments"
+    - action: tap
+      target: create-button
+      selectors:
+        web: "[data-testid='create-payment-button']"
+        mobile: "Create Payment"
+    - action: fill
+      target: title
+      selectors:
+        web: "[data-testid='payment-title-input']"
+        mobile: "Title"
+      value: "Science Museum Trip"
+    - action: fill
+      target: amount
+      selectors:
+        web: "[data-testid='payment-amount-input']"
+        mobile: "Amount"
+      value: "15.00"
+    - action: tap
+      target: submit
+      selectors:
+        web: "[data-testid='payment-create-submit']"
+        mobile: "Create"
+  assertions:
+    - type: visible
+      text: "Science Museum Trip"

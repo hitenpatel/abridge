@@ -1,0 +1,34 @@
+journey:
+  id: switch-children
+  name: Switch Between Children on Dashboard
+  tags: [parent, authenticated, dashboard, regression]
+  role: parent
+  preconditions:
+    seed: parent-with-multiple-children
+    state: authenticated
+  steps:
+    - action: navigate
+      target: dashboard
+      selectors:
+        web: "/dashboard"
+        mobile: "Home"
+    - action: wait
+      target: feed
+      selectors:
+        web: "[data-testid='activity-feed']"
+        mobile: "activity"
+    - action: tap
+      target: child-switcher
+      selectors:
+        web: "[data-testid='child-switcher']"
+        mobile: "Switch Child"
+    - action: tap
+      target: second-child
+      selectors:
+        web: "[data-testid='child-option-2']"
+        mobile: "Child Two"
+  assertions:
+    - type: visible
+      text: "Child Two"
+    - type: not-visible
+      text: "Child One post"

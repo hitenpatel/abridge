@@ -1,0 +1,24 @@
+journey:
+  id: filter-events
+  name: Filter Events by Category
+  tags: [parent, authenticated, calendar, regression]
+  role: parent
+  preconditions:
+    seed: parent-with-calendar-events
+    state: authenticated
+  steps:
+    - action: navigate
+      target: calendar
+      selectors:
+        web: "/dashboard/calendar"
+        mobile: "Calendar"
+    - action: tap
+      target: club-filter
+      selectors:
+        web: "[data-testid='calendar-filter-club']"
+        mobile: "Clubs"
+  assertions:
+    - type: visible
+      text: "Chess Club"
+    - type: not-visible
+      text: "Sports Day"

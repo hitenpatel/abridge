@@ -1,0 +1,29 @@
+journey:
+  id: view-receipt
+  name: View Payment Receipt
+  tags: [parent, authenticated, payments, regression]
+  role: parent
+  preconditions:
+    seed: parent-with-payment-history
+    state: authenticated
+  steps:
+    - action: navigate
+      target: payments
+      selectors:
+        web: "/dashboard/payments"
+        mobile: "Payments"
+    - action: tap
+      target: history-button
+      selectors:
+        web: "[data-testid='history-button']"
+        mobile: "History"
+    - action: tap
+      target: completed-payment
+      selectors:
+        web: "[data-testid='payment-history-item']:first-of-type"
+        mobile: "School Expenses"
+  assertions:
+    - type: visible
+      text: "Receipt"
+    - type: visible
+      text: "£10.00"

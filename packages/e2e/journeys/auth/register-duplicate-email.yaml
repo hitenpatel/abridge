@@ -1,0 +1,41 @@
+journey:
+  id: register-duplicate-email
+  name: Register with Already Used Email
+  tags: [auth, unauthenticated, error]
+  role: parent
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: parent-with-school
+    state: unauthenticated
+  steps:
+    - action: navigate
+      target: register
+      selectors:
+        web: "/register"
+        mobile: null
+    - action: fill
+      target: name-input
+      selectors:
+        web: "[data-testid='register-name-input']"
+        mobile: null
+      value: "Duplicate User"
+    - action: fill
+      target: email-input
+      selectors:
+        web: "[data-testid='register-email-input']"
+        mobile: null
+      value: "parent@test.com"
+    - action: fill
+      target: password-input
+      selectors:
+        web: "[data-testid='register-password-input']"
+        mobile: null
+      value: "testpass123"
+    - action: tap
+      target: register-button
+      selectors:
+        web: "[data-testid='register-button']"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "already"

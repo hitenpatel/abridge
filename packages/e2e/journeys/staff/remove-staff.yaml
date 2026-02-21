@@ -1,0 +1,33 @@
+journey:
+  id: remove-staff
+  name: Remove Staff Member
+  tags: [admin, authenticated, staff-management, regression]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: admin-with-multiple-staff
+    state: authenticated
+  steps:
+    - action: navigate
+      target: staff-management
+      selectors:
+        web: "/dashboard/staff"
+        mobile: null
+    - action: wait
+      target: staff-list
+      selectors:
+        web: "[data-testid='staff-list']"
+        mobile: null
+    - action: tap
+      target: remove-button
+      selectors:
+        web: "[data-testid='staff-member-row']:last-of-type [data-testid='staff-remove-button']"
+        mobile: null
+    - action: tap
+      target: confirm
+      selectors:
+        web: "[data-testid='confirm-remove-button']"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "removed"

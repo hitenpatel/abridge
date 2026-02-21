@@ -1,0 +1,18 @@
+journey:
+  id: no-events
+  name: Calendar with No Events
+  tags: [parent, authenticated, calendar, edge]
+  role: parent
+  preconditions:
+    seed: parent-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: calendar
+      selectors:
+        web: "/dashboard/calendar"
+        mobile: "Calendar"
+  assertions:
+    - type: visible
+      text: "No events"
+      mobileText: "No events"

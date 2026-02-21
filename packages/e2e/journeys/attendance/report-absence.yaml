@@ -1,0 +1,34 @@
+journey:
+  id: report-absence
+  name: Report Absence Single Day
+  tags: [parent, authenticated, attendance, regression]
+  role: parent
+  preconditions:
+    seed: parent-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: attendance
+      selectors:
+        web: "/dashboard/attendance"
+        mobile: "Attendance"
+    - action: wait
+      target: attendance-view
+      selectors:
+        web: "[data-testid='attendance-view']"
+        mobile: "Attendance"
+    - action: fill
+      target: reason
+      selectors:
+        web: "[data-testid='absence-reason-input']"
+        mobile: "Reason"
+      value: "Doctor appointment"
+    - action: tap
+      target: submit
+      selectors:
+        web: "[data-testid='absence-submit']"
+        mobile: "Submit"
+  assertions:
+    - type: visible
+      text: "Absence reported"
+      mobileText: "Absence reported"

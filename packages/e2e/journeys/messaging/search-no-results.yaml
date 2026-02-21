@@ -1,0 +1,24 @@
+journey:
+  id: search-no-results
+  name: Search Messages with No Results
+  tags: [parent, authenticated, messaging, edge]
+  role: parent
+  preconditions:
+    seed: staff-with-messages
+    state: authenticated
+  steps:
+    - action: navigate
+      target: messages
+      selectors:
+        web: "/dashboard/messages"
+        mobile: "Inbox"
+    - action: fill
+      target: search-input
+      selectors:
+        web: "[data-testid='search-input']"
+        mobile: "Search"
+      value: "xyznonexistent"
+  assertions:
+    - type: visible
+      text: "No messages found"
+      mobileText: "No results"

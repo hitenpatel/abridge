@@ -1,0 +1,28 @@
+journey:
+  id: initiate-onboarding
+  name: Initiate Stripe Onboarding
+  tags: [admin, authenticated, stripe, regression]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: staff-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: settings
+      selectors:
+        web: "/dashboard/settings"
+        mobile: null
+    - action: scroll
+      target: stripe-section
+      selectors:
+        web: "[data-testid='stripe-connect-button']"
+        mobile: null
+    - action: tap
+      target: connect
+      selectors:
+        web: "[data-testid='stripe-connect-button']"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "Stripe"

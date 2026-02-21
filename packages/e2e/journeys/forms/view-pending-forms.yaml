@@ -1,0 +1,25 @@
+journey:
+  id: view-pending-forms
+  name: View Pending Forms by Child
+  tags: [parent, authenticated, forms, regression]
+  role: parent
+  preconditions:
+    seed: parent-with-pending-forms
+    state: authenticated
+  steps:
+    - action: navigate
+      target: forms
+      selectors:
+        web: "/dashboard/forms"
+        mobile: "Forms"
+    - action: wait
+      target: forms-list
+      selectors:
+        web: "[data-testid='forms-list']"
+        mobile: "Forms"
+  assertions:
+    - type: visible
+      text: "Permission Form"
+    - type: visible
+      text: "Action Required"
+      mobileText: "Action Required"

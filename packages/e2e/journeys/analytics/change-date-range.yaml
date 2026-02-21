@@ -1,0 +1,28 @@
+journey:
+  id: change-date-range
+  name: Change Analytics Date Range
+  tags: [admin, authenticated, analytics, regression]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: admin-with-analytics-data
+    state: authenticated
+  steps:
+    - action: navigate
+      target: analytics
+      selectors:
+        web: "/dashboard/analytics"
+        mobile: null
+    - action: wait
+      target: analytics-view
+      selectors:
+        web: "[data-testid='analytics-view']"
+        mobile: null
+    - action: tap
+      target: term-range
+      selectors:
+        web: "[data-testid='date-range-term']"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "Term"

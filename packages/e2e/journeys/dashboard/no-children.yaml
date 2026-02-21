@@ -1,0 +1,18 @@
+journey:
+  id: no-children
+  name: Dashboard with No Children Linked
+  tags: [parent, authenticated, dashboard, edge]
+  role: parent
+  preconditions:
+    seed: parent-no-children
+    state: authenticated
+  steps:
+    - action: navigate
+      target: dashboard
+      selectors:
+        web: "/dashboard"
+        mobile: "Home"
+  assertions:
+    - type: visible
+      text: "No children"
+      mobileText: "No children"

@@ -1,7 +1,7 @@
 journey:
-  id: view-staff-messages
-  name: Staff View Messages
-  tags: [staff, authenticated, messaging]
+  id: view-sent-messages
+  name: Staff View Sent Messages
+  tags: [staff, authenticated, messaging, regression]
   role: staff
   preconditions:
     seed: staff-with-messages
@@ -11,12 +11,12 @@ journey:
       target: messages
       selectors:
         web: "/dashboard/messages"
-        mobile: "Messages"
+        mobile: "Inbox"
     - action: wait
       target: messages-list
       selectors:
         web: "[data-testid='messages-list']"
-        mobile: "Messages"
+        mobile: "Test Message 1"
   assertions:
     - type: visible
       text: "Test Message 1"

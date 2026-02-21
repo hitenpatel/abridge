@@ -1,0 +1,23 @@
+journey:
+  id: empty-feed
+  name: Dashboard with Empty Feed
+  tags: [parent, authenticated, dashboard, edge]
+  role: parent
+  preconditions:
+    seed: parent-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: dashboard
+      selectors:
+        web: "/dashboard"
+        mobile: "Home"
+    - action: wait
+      target: dashboard-view
+      selectors:
+        web: "[data-testid='dashboard-view']"
+        mobile: "Home"
+  assertions:
+    - type: visible
+      text: "No activity yet"
+      mobileText: "No activity yet"

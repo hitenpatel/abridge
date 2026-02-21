@@ -1,0 +1,28 @@
+journey:
+  id: send-invitation
+  name: Send Staff Invitation
+  tags: [admin, authenticated, staff-management, regression]
+  role: staff
+  preconditions:
+    seed: staff-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: staff-management
+      selectors:
+        web: "/dashboard/staff"
+        mobile: "Staff"
+    - action: fill
+      target: email
+      selectors:
+        web: "[data-testid='invite-email-input']"
+        mobile: "Invite Email"
+      value: "newteacher@school.com"
+    - action: tap
+      target: send
+      selectors:
+        web: "[data-testid='invite-send-button']"
+        mobile: "Send Invite"
+  assertions:
+    - type: visible
+      text: "newteacher@school.com"

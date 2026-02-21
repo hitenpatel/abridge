@@ -1,0 +1,20 @@
+journey:
+  id: invitation-expired
+  name: Accept Expired Invitation Token
+  tags: [auth, unauthenticated, error]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: expired-invitation
+    state: unauthenticated
+  steps:
+    - action: navigate
+      target: register-with-expired-token
+      selectors:
+        web: "/register?token=expired-token"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "expired"
+    - type: not-visible
+      text: "Create Account"

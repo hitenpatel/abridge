@@ -1,0 +1,24 @@
+journey:
+  id: view-events
+  name: View Calendar Events
+  tags: [smoke, parent, authenticated, calendar]
+  role: parent
+  preconditions:
+    seed: parent-with-calendar-events
+    state: authenticated
+  steps:
+    - action: navigate
+      target: calendar
+      selectors:
+        web: "/dashboard/calendar"
+        mobile: "Calendar"
+    - action: wait
+      target: calendar-view
+      selectors:
+        web: "[data-testid='calendar-view']"
+        mobile: "Calendar"
+  assertions:
+    - type: visible
+      text: "Sports Day"
+    - type: visible
+      text: "Half Term"

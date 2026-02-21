@@ -1,0 +1,34 @@
+journey:
+  id: submit-form-web
+  name: Submit Form on Web
+  tags: [parent, authenticated, forms, regression]
+  role: parent
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: parent-with-pending-forms
+    state: authenticated
+  steps:
+    - action: navigate
+      target: forms
+      selectors:
+        web: "/dashboard/forms"
+        mobile: null
+    - action: tap
+      target: form-item
+      selectors:
+        web: "[data-testid='form-item']"
+        mobile: null
+    - action: fill
+      target: first-field
+      selectors:
+        web: "[data-testid='form-field-1']"
+        mobile: null
+      value: "Yes"
+    - action: tap
+      target: submit
+      selectors:
+        web: "[data-testid='form-submit-button']"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "submitted"

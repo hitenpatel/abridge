@@ -1,0 +1,33 @@
+journey:
+  id: toggle-features
+  name: Toggle Features On Off
+  tags: [admin, authenticated, settings, regression]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: staff-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: settings
+      selectors:
+        web: "/dashboard/settings"
+        mobile: null
+    - action: scroll
+      target: feature-toggles
+      selectors:
+        web: "[data-testid='toggle-messaging']"
+        mobile: null
+    - action: tap
+      target: messaging-toggle
+      selectors:
+        web: "[data-testid='toggle-messaging']"
+        mobile: null
+    - action: tap
+      target: save
+      selectors:
+        web: "[data-testid='feature-toggles-save']"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "saved"

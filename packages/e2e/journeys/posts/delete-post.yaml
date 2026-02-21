@@ -1,0 +1,32 @@
+journey:
+  id: delete-post
+  name: Delete Own Post
+  tags: [staff, authenticated, posts, regression]
+  role: staff
+  preconditions:
+    seed: staff-with-posts
+    state: authenticated
+  steps:
+    - action: navigate
+      target: dashboard
+      selectors:
+        web: "/dashboard"
+        mobile: "Home"
+    - action: wait
+      target: post
+      selectors:
+        web: "[data-testid='class-post-card']:first-of-type"
+        mobile: "Staff post 1"
+    - action: tap
+      target: delete
+      selectors:
+        web: "[data-testid='class-post-card']:first-of-type [data-testid='post-delete-button']"
+        mobile: "Delete Post"
+    - action: tap
+      target: confirm
+      selectors:
+        web: "[data-testid='confirm-delete-button']"
+        mobile: "Confirm Delete"
+  assertions:
+    - type: not-visible
+      text: "Staff post 1"

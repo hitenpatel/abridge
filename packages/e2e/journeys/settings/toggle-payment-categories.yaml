@@ -1,0 +1,33 @@
+journey:
+  id: toggle-payment-categories
+  name: Toggle Payment Categories
+  tags: [admin, authenticated, settings, regression]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: staff-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: settings
+      selectors:
+        web: "/dashboard/settings"
+        mobile: null
+    - action: scroll
+      target: payment-categories
+      selectors:
+        web: "[data-testid='toggle-payment-dinner-money']"
+        mobile: null
+    - action: tap
+      target: dinner-money-toggle
+      selectors:
+        web: "[data-testid='toggle-payment-dinner-money']"
+        mobile: null
+    - action: tap
+      target: save
+      selectors:
+        web: "[data-testid='feature-toggles-save']"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "saved"

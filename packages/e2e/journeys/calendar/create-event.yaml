@@ -1,0 +1,34 @@
+journey:
+  id: create-event
+  name: Create Calendar Event
+  tags: [admin, authenticated, calendar, regression]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: staff-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: calendar
+      selectors:
+        web: "/dashboard/calendar"
+        mobile: null
+    - action: tap
+      target: create-event
+      selectors:
+        web: "[data-testid='create-event-button']"
+        mobile: null
+    - action: fill
+      target: title
+      selectors:
+        web: "[data-testid='event-title-input']"
+        mobile: null
+      value: "Sports Day"
+    - action: tap
+      target: submit
+      selectors:
+        web: "[data-testid='event-create-submit']"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "Sports Day"

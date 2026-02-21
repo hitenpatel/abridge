@@ -1,0 +1,40 @@
+journey:
+  id: register-parent
+  name: Register New Parent Account
+  tags: [smoke, auth, unauthenticated, parent]
+  role: parent
+  preconditions:
+    seed: clean-db
+    state: unauthenticated
+  steps:
+    - action: navigate
+      target: register
+      selectors:
+        web: "/register"
+        mobile: "Create Account"
+    - action: fill
+      target: name-input
+      selectors:
+        web: "[data-testid='register-name-input']"
+        mobile: "Name"
+      value: "Test Parent"
+    - action: fill
+      target: email-input
+      selectors:
+        web: "[data-testid='register-email-input']"
+        mobile: "Email"
+      value: "newparent@test.com"
+    - action: fill
+      target: password-input
+      selectors:
+        web: "[data-testid='register-password-input']"
+        mobile: "Password"
+      value: "testpass123"
+    - action: tap
+      target: register-button
+      selectors:
+        web: "[data-testid='register-button']"
+        mobile: "Create Account"
+  assertions:
+    - type: visible
+      text: "Home"

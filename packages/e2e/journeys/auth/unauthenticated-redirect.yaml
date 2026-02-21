@@ -1,0 +1,17 @@
+journey:
+  id: unauthenticated-redirect
+  name: Unauthenticated User Redirected
+  tags: [auth, unauthenticated, edge]
+  role: parent
+  preconditions:
+    seed: clean-db
+    state: unauthenticated
+  steps:
+    - action: navigate
+      target: dashboard
+      selectors:
+        web: "/dashboard"
+        mobile: "Home"
+  assertions:
+    - type: visible
+      text: "Sign In"

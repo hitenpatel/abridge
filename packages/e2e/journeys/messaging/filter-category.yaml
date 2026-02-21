@@ -1,0 +1,29 @@
+journey:
+  id: filter-category
+  name: Filter Messages by Category
+  tags: [parent, authenticated, messaging, regression]
+  role: parent
+  preconditions:
+    seed: parent-with-categorized-messages
+    state: authenticated
+  steps:
+    - action: navigate
+      target: messages
+      selectors:
+        web: "/dashboard/messages"
+        mobile: "Inbox"
+    - action: wait
+      target: messages-list
+      selectors:
+        web: "[data-testid='messages-list']"
+        mobile: "Messages"
+    - action: tap
+      target: urgent-filter
+      selectors:
+        web: "[data-testid='filter-urgent']"
+        mobile: "Urgent"
+  assertions:
+    - type: visible
+      text: "Urgent Message"
+    - type: not-visible
+      text: "FYI Message"

@@ -1,0 +1,18 @@
+journey:
+  id: non-admin-no-analytics
+  name: Non-Admin Cannot Access Analytics
+  tags: [error, authenticated, edge]
+  role: staff
+  skipPlatforms: [mobile]
+  preconditions:
+    seed: teacher-staff
+    state: authenticated
+  steps:
+    - action: navigate
+      target: analytics
+      selectors:
+        web: "/dashboard/analytics"
+        mobile: null
+  assertions:
+    - type: visible
+      text: "not authorized"

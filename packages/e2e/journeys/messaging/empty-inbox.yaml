@@ -1,0 +1,18 @@
+journey:
+  id: empty-inbox
+  name: Empty Inbox State
+  tags: [parent, authenticated, messaging, edge]
+  role: parent
+  preconditions:
+    seed: parent-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: messages
+      selectors:
+        web: "/dashboard/messages"
+        mobile: "Inbox"
+  assertions:
+    - type: visible
+      text: "No messages"
+      mobileText: "No messages"
