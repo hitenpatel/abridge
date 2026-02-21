@@ -94,6 +94,7 @@ export function ComposeMessageScreen() {
 					<View className="flex-row gap-3">
 						<Pressable
 							onPress={() => setCategory("STANDARD")}
+							accessibilityLabel="Standard"
 							className={`flex-1 rounded-2xl p-4 flex-row items-center gap-2 ${
 								category === "STANDARD" ? "border-2 border-green-500" : ""
 							}`}
@@ -116,6 +117,7 @@ export function ComposeMessageScreen() {
 						</Pressable>
 						<Pressable
 							onPress={() => setCategory("URGENT")}
+							accessibilityLabel="Urgent"
 							className={`flex-1 rounded-2xl p-4 flex-row items-center gap-2 ${
 								category === "URGENT" ? "border-2 border-red-500" : ""
 							}`}
@@ -213,6 +215,7 @@ export function ComposeMessageScreen() {
 				<Pressable
 					onPress={handleSend}
 					disabled={sendMessage.isPending}
+					accessibilityLabel="Sent"
 					className="bg-primary rounded-full py-4 items-center flex-row justify-center gap-2"
 					style={{ opacity: sendMessage.isPending ? 0.7 : 1 }}
 				>

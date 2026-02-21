@@ -57,11 +57,11 @@ export function StaffAttendanceScreen() {
 			{/* Stats Row */}
 			<View className="px-6 mt-4">
 				<View className="flex-row gap-3">
-					<View className="flex-1 bg-green-50 rounded-2xl p-4 items-center">
+					<View className="flex-1 bg-green-50 rounded-2xl p-4 items-center" accessibilityLabel="Present">
 						<Text className="text-2xl font-sans-bold text-green-700">{presentToday}</Text>
 						<Text className="text-xs font-sans-medium text-green-600 mt-1">Present</Text>
 					</View>
-					<View className="flex-1 bg-red-50 rounded-2xl p-4 items-center">
+					<View className="flex-1 bg-red-50 rounded-2xl p-4 items-center" accessibilityLabel="Absent">
 						<Text className="text-2xl font-sans-bold text-red-700">{absentToday}</Text>
 						<Text className="text-xs font-sans-medium text-red-600 mt-1">Absent</Text>
 					</View>

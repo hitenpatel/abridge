@@ -176,7 +176,7 @@ export function AttendanceScreen() {
 				)}
 
 				{/* Absence Form Card */}
-				<View className="mx-6 bg-white dark:bg-surface-dark rounded-3xl p-5 mb-6">
+				<View className="mx-6 bg-white dark:bg-surface-dark rounded-3xl p-5 mb-6" accessibilityLabel="Report Absence">
 					<Text className="text-sm font-sans-bold uppercase tracking-wider text-text-muted mb-4">
 						Report Absence
 					</Text>
@@ -187,6 +187,7 @@ export function AttendanceScreen() {
 							<Pressable
 								key={r.key}
 								onPress={() => setSelectedReason(r.key)}
+								accessibilityLabel={r.key}
 								className={`flex-1 flex-row items-center justify-center gap-1.5 py-2.5 rounded-full ${
 									selectedReason === r.key
 										? "bg-white dark:bg-neutral-surface-dark border border-gray-200 dark:border-white/10"
@@ -221,6 +222,7 @@ export function AttendanceScreen() {
 						className="bg-background dark:bg-white/5 rounded-2xl py-4 px-5 text-foreground dark:text-white font-sans mb-3"
 						placeholder="Date (YYYY-MM-DD)"
 						placeholderTextColor="#96867f"
+						accessibilityLabel="Date"
 						value={startDate}
 						onChangeText={setStartDate}
 					/>
@@ -230,6 +232,7 @@ export function AttendanceScreen() {
 						className="bg-background dark:bg-white/5 rounded-2xl py-4 px-5 text-foreground dark:text-white font-sans mb-4 min-h-[80px]"
 						placeholder="Optional note..."
 						placeholderTextColor="#96867f"
+						accessibilityLabel="Reason"
 						value={note}
 						onChangeText={setNote}
 						multiline
@@ -240,6 +243,7 @@ export function AttendanceScreen() {
 					<Pressable
 						onPress={handleSubmitAbsence}
 						disabled={reportAbsenceMutation.isPending}
+						accessibilityLabel="Submit"
 						className="h-16 rounded-[40px] flex-row items-center justify-center gap-3"
 						style={{ backgroundColor: "#ccfbf1" }}
 					>

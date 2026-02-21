@@ -90,9 +90,16 @@ export function ActionItemsRow({ items, onPayment, onForm, onMessage }: ActionIt
 				const config = CONFIG[item.type];
 				const description = getDescription(item);
 
+				const labelMap: Record<ActionItem["type"], string> = {
+					payment: "Payments Due",
+					form: "Forms Pending",
+					urgentMessage: "Unread Messages",
+				};
+
 				return (
 					<Pressable
 						onPress={() => handleAction(item)}
+						accessibilityLabel={labelMap[item.type]}
 						className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4"
 						style={{
 							width: 260,

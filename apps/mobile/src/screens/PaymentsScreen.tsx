@@ -111,6 +111,7 @@ export function PaymentsScreen() {
 					</View>
 					<Pressable
 						onPress={() => navigation.navigate("PaymentHistory")}
+						accessibilityLabel="History"
 						className="w-10 h-10 rounded-full bg-neutral-surface dark:bg-surface-dark items-center justify-center"
 					>
 						<MaterialIcons name="history" size={20} color="#96867f" />
@@ -161,6 +162,7 @@ export function PaymentsScreen() {
 												childId: item.childId,
 											})
 										}
+										accessibilityLabel="Pay Now"
 										className="bg-primary rounded-full px-4 py-1.5"
 									>
 										<Text className="text-white font-sans-bold text-xs">Pay Now</Text>
@@ -202,6 +204,7 @@ export function PaymentsScreen() {
 											childId: item.childId,
 										})
 									}
+									accessibilityLabel="Pay"
 									className="bg-primary/10 rounded-full px-4 py-1.5"
 								>
 									<Text className="text-primary font-sans-bold text-sm">Pay</Text>

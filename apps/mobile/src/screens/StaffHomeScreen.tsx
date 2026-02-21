@@ -245,6 +245,7 @@ export function StaffHomeScreen() {
 				<View className="px-6 mt-4">
 					<Pressable
 						onPress={() => navigation.navigate("StaffManagement")}
+						accessibilityLabel="Staff"
 						className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 flex-row items-center gap-3"
 					>
 						<View className="w-12 h-12 rounded-full bg-purple-100 items-center justify-center">

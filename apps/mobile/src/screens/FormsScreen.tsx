@@ -100,7 +100,7 @@ export function FormsScreen() {
 
 			{/* Action Required */}
 			{!isLoading && pendingForms && pendingForms.length > 0 && (
-				<View className="px-6 mb-6">
+				<View className="px-6 mb-6" accessibilityLabel="Pending Forms">
 					<View className="flex-row items-center gap-2 mb-4">
 						<Text className="text-sm font-sans-bold uppercase tracking-wider text-text-muted">
 							Action Required
@@ -144,7 +144,7 @@ export function FormsScreen() {
 
 			{/* Completed */}
 			{!isLoading && completedForms && completedForms.length > 0 && (
-				<View className="px-6 mb-6">
+				<View className="px-6 mb-6" accessibilityLabel="Completed Forms">
 					<Text className="text-sm font-sans-bold uppercase tracking-wider text-text-muted mb-4">
 						Completed
 					</Text>

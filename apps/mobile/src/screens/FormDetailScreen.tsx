@@ -174,6 +174,7 @@ export function FormDetailScreen({ route, navigation }: Props) {
 				<Pressable
 					onPress={handleSubmit}
 					disabled={submitForm.isPending}
+					accessibilityLabel="Submit"
 					className="bg-primary rounded-full py-4 items-center flex-row justify-center gap-2"
 					style={{ opacity: submitForm.isPending ? 0.7 : 1 }}
 				>

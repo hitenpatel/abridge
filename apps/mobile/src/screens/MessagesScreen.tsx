@@ -109,6 +109,7 @@ function MessageRow({ message, onPress }: { message: MessageItemData; onPress: (
 						<Text className="text-xs font-sans-medium text-primary">{message.schoolName}</Text>
 						<View
 							className="rounded-full px-2.5 py-0.5"
+							accessibilityLabel={message.category}
 							style={{ backgroundColor: categoryColor.bg }}
 						>
 							<Text className="text-xs font-sans-semibold" style={{ color: categoryColor.text }}>

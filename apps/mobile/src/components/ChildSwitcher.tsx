@@ -26,6 +26,7 @@ export function ChildSwitcher({ items, selectedChildId, onSelect }: ChildSwitche
 		<ScrollView
 			horizontal
 			showsHorizontalScrollIndicator={false}
+			accessibilityLabel="Switch Child"
 			contentContainerStyle={{ gap: 8, paddingHorizontal: 24, paddingBottom: 8 }}
 		>
 			{items.map((child) => {

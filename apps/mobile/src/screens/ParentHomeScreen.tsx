@@ -174,7 +174,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 			>
 				{/* Child Switcher */}
 				{children.length > 1 && (
-					<View className="mb-4">
+					<View className="mb-4" accessibilityLabel="Switch Child">
 						<ChildSwitcher
 							items={children.map((c) => ({
 								id: c.id,
@@ -191,7 +191,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 
 				{/* Action Items */}
 				{actionItems && actionItems.length > 0 && (
-					<View className="mb-4">
+					<View className="mb-4" accessibilityLabel="Action Items">
 						<ActionItemsRow
 							items={actionItems.map((item) => ({
 								type: item.type,
@@ -227,6 +227,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 			{/* Report Absence FAB */}
 			<Pressable
 				onPress={() => navigation.getParent()?.navigate("Attendance")}
+				accessibilityLabel="Report Absence"
 				className="absolute right-6 bg-primary rounded-full px-5 py-3 flex-row items-center gap-2"
 				style={{
 					shadowColor: "#f56e3d",

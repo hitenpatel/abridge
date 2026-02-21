@@ -113,7 +113,7 @@ export function StaffManagementScreen() {
 		<View className="flex-1 bg-background">
 			<ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 40 }}>
 				{/* Invite Section */}
-				<View className="px-6 pt-4 mb-6">
+				<View className="px-6 pt-4 mb-6" accessibilityLabel="Invite Staff">
 					<Text className="text-sm font-sans-bold uppercase tracking-wider text-text-muted mb-4">
 						Invite Staff
 					</Text>
@@ -125,6 +125,7 @@ export function StaffManagementScreen() {
 							placeholderTextColor="#96867f"
 							keyboardType="email-address"
 							autoCapitalize="none"
+							accessibilityLabel="Invite Email"
 							className="bg-background rounded-2xl px-4 h-12 text-foreground dark:text-white font-sans text-base mb-3"
 						/>
 
@@ -157,6 +158,7 @@ export function StaffManagementScreen() {
 						<Pressable
 							onPress={handleSendInvite}
 							disabled={sendInvite.isPending}
+							accessibilityLabel="Send Invite"
 							className="bg-primary rounded-full py-3 items-center flex-row justify-center gap-2"
 							style={{ opacity: sendInvite.isPending ? 0.7 : 1 }}
 						>
@@ -192,6 +194,7 @@ export function StaffManagementScreen() {
 							return (
 								<View
 									key={member.userId}
+									accessibilityLabel="Staff Member"
 									className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 flex-row items-center gap-3"
 								>
 									<View className="w-10 h-10 rounded-full bg-primary/10 items-center justify-center">

@@ -53,13 +53,15 @@ function ToggleRow({
 	label,
 	value,
 	onValueChange,
-}: { label: string; value: boolean; onValueChange: (v: boolean) => void }) {
+	accessibilityLabel,
+}: { label: string; value: boolean; onValueChange: (v: boolean) => void; accessibilityLabel?: string }) {
 	return (
 		<View className="flex-row items-center justify-between py-3">
 			<Text className="text-sm font-sans-medium text-foreground dark:text-gray-200">{label}</Text>
 			<Switch
 				value={value}
 				onValueChange={onValueChange}
+				accessibilityLabel={accessibilityLabel ?? label}
 				trackColor={{ false: "#D1D5DB", true: "#f56e3d" }}
 				thumbColor="#fff"
 			/>
@@ -104,6 +106,7 @@ function ProfileSection() {
 				<TextInput
 					value={name}
 					onChangeText={setName}
+					accessibilityLabel="Name"
 					className="bg-background dark:bg-white/5 rounded-xl px-4 py-3 text-sm font-sans text-foreground dark:text-white"
 					placeholderTextColor="#96867f"
 				/>
@@ -131,6 +134,7 @@ function ProfileSection() {
 			<Pressable
 				onPress={() => updateProfile.mutate({ name, phone: phone || null })}
 				disabled={updateProfile.isPending}
+				accessibilityLabel="Save Profile"
 				className="bg-primary rounded-xl py-3 items-center"
 				style={{ opacity: updateProfile.isPending ? 0.6 : 1 }}
 			>
@@ -182,9 +186,9 @@ function NotificationsSection() {
 
 	return (
 		<SectionCard title="Notifications" icon="notifications">
-			<ToggleRow label="Push notifications" value={push} onValueChange={setPush} />
-			<ToggleRow label="SMS notifications" value={sms} onValueChange={setSms} />
-			<ToggleRow label="Email notifications" value={email} onValueChange={setEmail} />
+			<ToggleRow label="Push notifications" value={push} onValueChange={setPush} accessibilityLabel="Push Notifications" />
+			<ToggleRow label="SMS notifications" value={sms} onValueChange={setSms} accessibilityLabel="SMS" />
+			<ToggleRow label="Email notifications" value={email} onValueChange={setEmail} accessibilityLabel="Email" />
 
 			<View className="border-t border-gray-200 dark:border-white/10 mt-2 pt-3">
 				<ToggleRow label="Quiet hours" value={quietEnabled} onValueChange={setQuietEnabled} />
@@ -196,6 +200,7 @@ function NotificationsSection() {
 								value={quietStart}
 								onChangeText={setQuietStart}
 								placeholder="21:00"
+								accessibilityLabel="Quiet Start"
 								className="bg-background dark:bg-white/5 rounded-xl px-4 py-3 text-sm font-sans text-foreground dark:text-white"
 								placeholderTextColor="#96867f"
 							/>
@@ -206,6 +211,7 @@ function NotificationsSection() {
 								value={quietEnd}
 								onChangeText={setQuietEnd}
 								placeholder="07:00"
+								accessibilityLabel="Quiet End"
 								className="bg-background dark:bg-white/5 rounded-xl px-4 py-3 text-sm font-sans text-foreground dark:text-white"
 								placeholderTextColor="#96867f"
 							/>
@@ -228,6 +234,7 @@ function NotificationsSection() {
 					})
 				}
 				disabled={updatePrefs.isPending}
+				accessibilityLabel="Save Notifications"
 				className="bg-primary rounded-xl py-3 items-center mt-4"
 				style={{ opacity: updatePrefs.isPending ? 0.6 : 1 }}
 			>
