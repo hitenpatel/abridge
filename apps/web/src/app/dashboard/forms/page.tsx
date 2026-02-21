@@ -299,13 +299,18 @@ function StaffFormsView({ schoolId }: { schoolId: string }) {
 export default function FormsPage() {
 	const features = useFeatureToggles();
 	const { data: session } = trpc.auth.getSession.useQuery();
+	const isStaff = !!session?.staffRole && !!session?.schoolId;
+	const {
+		data: summaryData,
+		isLoading,
+		error,
+	} = trpc.dashboard.getSummary.useQuery(undefined, { enabled: !isStaff });
+
 	if (!features.formsEnabled) return <FeatureDisabled featureName="Forms" />;
 
-	if (session?.staffRole && session?.schoolId) {
+	if (isStaff && session.schoolId) {
 		return <StaffFormsView schoolId={session.schoolId} />;
 	}
-
-	const { data: summaryData, isLoading, error } = trpc.dashboard.getSummary.useQuery(undefined);
 
 	if (isLoading) {
 		return (
