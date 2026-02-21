@@ -143,7 +143,12 @@ export function PaymentItemForm({ schoolId }: PaymentItemFormProps) {
 					</div>
 
 					<div className="pt-4">
-						<Button type="submit" className="w-full" disabled={createPaymentItem.isPending} data-testid="payment-create-submit">
+						<Button
+							type="submit"
+							className="w-full"
+							disabled={createPaymentItem.isPending}
+							data-testid="payment-create-submit"
+						>
 							{createPaymentItem.isPending ? "Creating..." : "Create Payment Item"}
 						</Button>
 					</div>

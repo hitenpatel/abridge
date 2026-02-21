@@ -110,7 +110,10 @@ export default function MessagesPage() {
 										{message.schoolName?.[0] || "S"}
 									</div>
 									{!message.isRead && (
-										<div data-testid="unread-badge" className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+										<div
+											data-testid="unread-badge"
+											className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"
+										/>
 									)}
 								</div>
 								<div className="flex-1 min-w-0">

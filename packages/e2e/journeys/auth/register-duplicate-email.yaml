@@ -12,30 +12,30 @@ journey:
       target: register
       selectors:
         web: "/register"
-        mobile: null
+        mobile: "N/A"
     - action: fill
       target: name-input
       selectors:
         web: "[data-testid='register-name-input']"
-        mobile: null
+        mobile: "N/A"
       value: "Duplicate User"
     - action: fill
       target: email-input
       selectors:
         web: "[data-testid='register-email-input']"
-        mobile: null
+        mobile: "N/A"
       value: "parent@test.com"
     - action: fill
       target: password-input
       selectors:
         web: "[data-testid='register-password-input']"
-        mobile: null
+        mobile: "N/A"
       value: "testpass123"
     - action: tap
       target: register-button
       selectors:
         web: "[data-testid='register-button']"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: visible
       text: "already"

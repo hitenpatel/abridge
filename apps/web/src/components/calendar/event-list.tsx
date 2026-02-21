@@ -80,7 +80,11 @@ export function EventList() {
 			<div className="space-y-4">
 				{events && events.length > 0 ? (
 					events.map((event) => (
-						<Card key={event.id} className="hover:shadow-md transition-shadow" data-testid="calendar-event">
+						<Card
+							key={event.id}
+							className="hover:shadow-md transition-shadow"
+							data-testid="calendar-event"
+						>
 							<CardContent className="p-4">
 								<div className="flex items-start justify-between">
 									<div className="flex-1">

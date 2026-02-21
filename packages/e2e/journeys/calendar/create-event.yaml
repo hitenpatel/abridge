@@ -12,23 +12,23 @@ journey:
       target: calendar
       selectors:
         web: "/dashboard/calendar"
-        mobile: null
+        mobile: "N/A"
     - action: tap
       target: create-event
       selectors:
         web: "[data-testid='create-event-button']"
-        mobile: null
+        mobile: "N/A"
     - action: fill
       target: title
       selectors:
         web: "[data-testid='event-title-input']"
-        mobile: null
+        mobile: "N/A"
       value: "Sports Day"
     - action: tap
       target: submit
       selectors:
         web: "[data-testid='event-create-submit']"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: visible
       text: "Sports Day"

@@ -12,24 +12,24 @@ journey:
       target: compose-message
       selectors:
         web: "/dashboard/messages/new"
-        mobile: null
+        mobile: "N/A"
     - action: fill
       target: subject
       selectors:
         web: "[data-testid='message-subject-input']"
-        mobile: null
+        mobile: "N/A"
       value: "School Trip Reminder"
     - action: fill
       target: body
       selectors:
         web: "[data-testid='message-body-input']"
-        mobile: null
+        mobile: "N/A"
       value: "Please remember to bring packed lunch for the trip tomorrow."
     - action: tap
       target: send-button
       selectors:
         web: "[data-testid='message-send-button']"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: visible
       text: "Message sent"

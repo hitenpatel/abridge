@@ -12,17 +12,17 @@ journey:
       target: analytics
       selectors:
         web: "/dashboard/analytics"
-        mobile: null
+        mobile: "N/A"
     - action: wait
       target: analytics-view
       selectors:
         web: "[data-testid='analytics-view']"
-        mobile: null
+        mobile: "N/A"
     - action: tap
       target: term-range
       selectors:
         web: "[data-testid='date-range-term']"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: visible
       text: "Term"

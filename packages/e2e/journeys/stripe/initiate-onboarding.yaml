@@ -12,17 +12,17 @@ journey:
       target: settings
       selectors:
         web: "/dashboard/settings"
-        mobile: null
+        mobile: "N/A"
     - action: scroll
       target: stripe-section
       selectors:
         web: "[data-testid='stripe-connect-button']"
-        mobile: null
+        mobile: "N/A"
     - action: tap
       target: connect
       selectors:
         web: "[data-testid='stripe-connect-button']"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: visible
       text: "Stripe"

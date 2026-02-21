@@ -54,7 +54,12 @@ function ToggleRow({
 	value,
 	onValueChange,
 	accessibilityLabel,
-}: { label: string; value: boolean; onValueChange: (v: boolean) => void; accessibilityLabel?: string }) {
+}: {
+	label: string;
+	value: boolean;
+	onValueChange: (v: boolean) => void;
+	accessibilityLabel?: string;
+}) {
 	return (
 		<View className="flex-row items-center justify-between py-3">
 			<Text className="text-sm font-sans-medium text-foreground dark:text-gray-200">{label}</Text>
@@ -186,9 +191,24 @@ function NotificationsSection() {
 
 	return (
 		<SectionCard title="Notifications" icon="notifications">
-			<ToggleRow label="Push notifications" value={push} onValueChange={setPush} accessibilityLabel="Push Notifications" />
-			<ToggleRow label="SMS notifications" value={sms} onValueChange={setSms} accessibilityLabel="SMS" />
-			<ToggleRow label="Email notifications" value={email} onValueChange={setEmail} accessibilityLabel="Email" />
+			<ToggleRow
+				label="Push notifications"
+				value={push}
+				onValueChange={setPush}
+				accessibilityLabel="Push Notifications"
+			/>
+			<ToggleRow
+				label="SMS notifications"
+				value={sms}
+				onValueChange={setSms}
+				accessibilityLabel="SMS"
+			/>
+			<ToggleRow
+				label="Email notifications"
+				value={email}
+				onValueChange={setEmail}
+				accessibilityLabel="Email"
+			/>
 
 			<View className="border-t border-gray-200 dark:border-white/10 mt-2 pt-3">
 				<ToggleRow label="Quiet hours" value={quietEnabled} onValueChange={setQuietEnabled} />

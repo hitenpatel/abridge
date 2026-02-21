@@ -12,23 +12,23 @@ journey:
       target: forms
       selectors:
         web: "/dashboard/forms"
-        mobile: null
+        mobile: "N/A"
     - action: tap
       target: form-item
       selectors:
         web: "[data-testid='form-item']"
-        mobile: null
+        mobile: "N/A"
     - action: fill
       target: first-field
       selectors:
         web: "[data-testid='form-field-1']"
-        mobile: null
+        mobile: "N/A"
       value: "Yes"
     - action: tap
       target: submit
       selectors:
         web: "[data-testid='form-submit-button']"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: visible
       text: "submitted"

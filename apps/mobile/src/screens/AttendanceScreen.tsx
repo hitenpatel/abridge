@@ -176,7 +176,10 @@ export function AttendanceScreen() {
 				)}
 
 				{/* Absence Form Card */}
-				<View className="mx-6 bg-white dark:bg-surface-dark rounded-3xl p-5 mb-6" accessibilityLabel="Report Absence">
+				<View
+					className="mx-6 bg-white dark:bg-surface-dark rounded-3xl p-5 mb-6"
+					accessibilityLabel="Report Absence"
+				>
 					<Text className="text-sm font-sans-bold uppercase tracking-wider text-text-muted mb-4">
 						Report Absence
 					</Text>

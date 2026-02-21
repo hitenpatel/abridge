@@ -12,22 +12,22 @@ journey:
       target: staff-management
       selectors:
         web: "/dashboard/staff"
-        mobile: null
+        mobile: "N/A"
     - action: wait
       target: staff-list
       selectors:
         web: "[data-testid='staff-list']"
-        mobile: null
+        mobile: "N/A"
     - action: tap
       target: remove-button
       selectors:
         web: "[data-testid='staff-member-row']:last-of-type [data-testid='staff-remove-button']"
-        mobile: null
+        mobile: "N/A"
     - action: tap
       target: confirm
       selectors:
         web: "[data-testid='confirm-remove-button']"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: visible
       text: "removed"

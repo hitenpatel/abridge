@@ -12,22 +12,22 @@ journey:
       target: settings
       selectors:
         web: "/dashboard/settings"
-        mobile: null
+        mobile: "N/A"
     - action: scroll
       target: payment-categories
       selectors:
         web: "[data-testid='toggle-payment-dinner-money']"
-        mobile: null
+        mobile: "N/A"
     - action: tap
       target: dinner-money-toggle
       selectors:
         web: "[data-testid='toggle-payment-dinner-money']"
-        mobile: null
+        mobile: "N/A"
     - action: tap
       target: save
       selectors:
         web: "[data-testid='feature-toggles-save']"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: visible
       text: "saved"

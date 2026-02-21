@@ -12,34 +12,34 @@ journey:
       target: forms
       selectors:
         web: "/dashboard/forms"
-        mobile: null
+        mobile: "N/A"
     - action: tap
       target: create
       selectors:
         web: "[data-testid='create-form-button']"
-        mobile: null
+        mobile: "N/A"
     - action: fill
       target: title
       selectors:
         web: "[data-testid='form-title-input']"
-        mobile: null
+        mobile: "N/A"
       value: "Trip Consent"
     - action: tap
       target: add-field
       selectors:
         web: "[data-testid='add-field-button']"
-        mobile: null
+        mobile: "N/A"
     - action: fill
       target: field-label
       selectors:
         web: "[data-testid='field-label-input']"
-        mobile: null
+        mobile: "N/A"
       value: "Do you consent?"
     - action: tap
       target: submit
       selectors:
         web: "[data-testid='form-create-submit']"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: visible
       text: "Trip Consent"

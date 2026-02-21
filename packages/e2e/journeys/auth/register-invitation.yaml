@@ -12,29 +12,29 @@ journey:
       target: register-with-token
       selectors:
         web: "/register?token=test-invitation-token"
-        mobile: null
+        mobile: "N/A"
     - action: wait
       target: invitation-details
       selectors:
         web: "[data-testid='invitation-school-name']"
-        mobile: null
+        mobile: "N/A"
     - action: fill
       target: name-input
       selectors:
         web: "[data-testid='register-name-input']"
-        mobile: null
+        mobile: "N/A"
       value: "New Staff"
     - action: fill
       target: password-input
       selectors:
         web: "[data-testid='register-password-input']"
-        mobile: null
+        mobile: "N/A"
       value: "testpass123"
     - action: tap
       target: register-button
       selectors:
         web: "[data-testid='register-button']"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: visible
       text: "Home"

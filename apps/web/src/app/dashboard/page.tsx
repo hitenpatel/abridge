@@ -113,7 +113,10 @@ export default function DashboardPage() {
 
 	if (children.length === 0) {
 		return (
-			<div data-testid="empty-dashboard" className="max-w-2xl mx-auto text-center py-16 text-muted-foreground">
+			<div
+				data-testid="empty-dashboard"
+				className="max-w-2xl mx-auto text-center py-16 text-muted-foreground"
+			>
 				<p className="text-sm">No children linked to your account yet.</p>
 			</div>
 		);

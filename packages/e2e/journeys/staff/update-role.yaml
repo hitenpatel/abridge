@@ -12,22 +12,22 @@ journey:
       target: staff-management
       selectors:
         web: "/dashboard/staff"
-        mobile: null
+        mobile: "N/A"
     - action: wait
       target: staff-list
       selectors:
         web: "[data-testid='staff-list']"
-        mobile: null
+        mobile: "N/A"
     - action: tap
       target: role-select
       selectors:
         web: "[data-testid='staff-member-row']:last-of-type [data-testid='staff-role-select']"
-        mobile: null
+        mobile: "N/A"
     - action: tap
       target: office-role
       selectors:
         web: "[data-testid='role-option-OFFICE']"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: visible
       text: "Office"

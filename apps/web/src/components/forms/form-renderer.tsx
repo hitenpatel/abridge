@@ -140,7 +140,12 @@ export function FormRenderer({ template, onSubmit, isSubmitting }: FormRendererP
 						{signatureError && <p className="mt-1 text-sm text-destructive">{signatureError}</p>}
 					</div>
 
-					<Button type="submit" className="w-full" disabled={isSubmitting} data-testid="form-submit-button">
+					<Button
+						type="submit"
+						className="w-full"
+						disabled={isSubmitting}
+						data-testid="form-submit-button"
+					>
 						{isSubmitting ? "Submitting..." : "Submit Form"}
 					</Button>
 				</form>

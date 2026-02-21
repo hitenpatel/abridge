@@ -12,7 +12,7 @@ journey:
       target: dashboard
       selectors:
         web: "/dashboard"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: not-visible
       text: "Staff"

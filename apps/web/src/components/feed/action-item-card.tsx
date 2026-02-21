@@ -51,7 +51,10 @@ export function ActionItemCard({
 	const { borderColor, bgColor, icon: Icon } = CONFIG[type];
 
 	return (
-		<Card data-testid={TEST_ID_MAP[type]} className={cn("border-l-4 min-w-[260px] shrink-0 snap-start", borderColor)}>
+		<Card
+			data-testid={TEST_ID_MAP[type]}
+			className={cn("border-l-4 min-w-[260px] shrink-0 snap-start", borderColor)}
+		>
 			<CardContent className="p-4">
 				<div className="flex items-start gap-3">
 					<div

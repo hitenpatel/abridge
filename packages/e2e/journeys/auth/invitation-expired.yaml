@@ -12,7 +12,7 @@ journey:
       target: register-with-expired-token
       selectors:
         web: "/register?token=expired-token"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: visible
       text: "expired"

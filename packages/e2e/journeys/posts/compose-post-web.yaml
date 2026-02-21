@@ -12,23 +12,23 @@ journey:
       target: compose
       selectors:
         web: "/dashboard/compose"
-        mobile: null
+        mobile: "N/A"
     - action: wait
       target: compose-form
       selectors:
         web: "[data-testid='compose-post-form']"
-        mobile: null
+        mobile: "N/A"
     - action: fill
       target: post-body
       selectors:
         web: "[data-testid='post-body-input']"
-        mobile: null
+        mobile: "N/A"
       value: "Today we painted pictures in art class!"
     - action: tap
       target: submit
       selectors:
         web: "[data-testid='submit-post-button']"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: visible
       text: "posted"

@@ -172,7 +172,10 @@ export default function AnalyticsPage() {
 					<h1 className="text-3xl font-bold text-gray-900">Analytics</h1>
 					<p className="text-gray-500 mt-1">School performance overview</p>
 				</div>
-				<div className="flex bg-white rounded-xl p-1 shadow-sm border border-gray-100" data-testid="analytics-date-range">
+				<div
+					className="flex bg-white rounded-xl p-1 shadow-sm border border-gray-100"
+					data-testid="analytics-date-range"
+				>
 					{ranges.map((r) => (
 						<button
 							key={r.key}

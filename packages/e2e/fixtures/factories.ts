@@ -607,9 +607,7 @@ async function createParentWithActionItems() {
 		data: {
 			schoolId: base.school.id,
 			title: "Permission Form",
-			fields: [
-				{ id: "1", type: "text", label: "Do you consent?", required: true },
-			],
+			fields: [{ id: "1", type: "text", label: "Do you consent?", required: true }],
 			isActive: true,
 		},
 	});
@@ -763,9 +761,7 @@ async function createParentWithPendingForms() {
 			schoolId: base.school.id,
 			title: "Permission Form",
 			description: "Please complete this form",
-			fields: [
-				{ id: "1", type: "text", label: "Do you consent?", required: true },
-			],
+			fields: [{ id: "1", type: "text", label: "Do you consent?", required: true }],
 			isActive: true,
 		},
 	});

@@ -11,22 +11,22 @@ journey:
     - action: navigate
       target: attendance
       selectors:
-        web: null
+        web: "N/A"
         mobile: "Attendance"
     - action: tap
       target: report-absence
       selectors:
-        web: null
+        web: "N/A"
         mobile: "Report Absence"
     - action: tap
       target: sick-reason
       selectors:
-        web: null
+        web: "N/A"
         mobile: "Sick"
     - action: tap
       target: submit
       selectors:
-        web: null
+        web: "N/A"
         mobile: "Submit"
   assertions:
     - type: visible

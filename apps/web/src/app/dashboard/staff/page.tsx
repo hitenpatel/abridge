@@ -179,13 +179,24 @@ export default function StaffManagementPage() {
 											<SelectValue />
 										</SelectTrigger>
 										<SelectContent>
-											<SelectItem value="TEACHER" data-testid="role-option-TEACHER">Teacher</SelectItem>
-											<SelectItem value="OFFICE" data-testid="role-option-OFFICE">Office Staff</SelectItem>
-											<SelectItem value="ADMIN" data-testid="role-option-ADMIN">Administrator</SelectItem>
+											<SelectItem value="TEACHER" data-testid="role-option-TEACHER">
+												Teacher
+											</SelectItem>
+											<SelectItem value="OFFICE" data-testid="role-option-OFFICE">
+												Office Staff
+											</SelectItem>
+											<SelectItem value="ADMIN" data-testid="role-option-ADMIN">
+												Administrator
+											</SelectItem>
 										</SelectContent>
 									</Select>
 								</div>
-								<Button type="submit" className="w-full" disabled={sendInvitation.isPending} data-testid="invite-send-button">
+								<Button
+									type="submit"
+									className="w-full"
+									disabled={sendInvitation.isPending}
+									data-testid="invite-send-button"
+								>
 									{sendInvitation.isPending ? "Sending..." : "Send Invitation"}
 								</Button>
 							</form>
@@ -233,7 +244,10 @@ export default function StaffManagementPage() {
 												</div>
 											</div>
 											<div className="flex items-center gap-3">
-												<Badge variant={member.role === "ADMIN" ? "default" : "info"} data-testid="staff-role-badge">
+												<Badge
+													variant={member.role === "ADMIN" ? "default" : "info"}
+													data-testid="staff-role-badge"
+												>
 													{member.role}
 												</Badge>
 												{session?.staffRole === "ADMIN" && member.userId !== session.id && (

@@ -12,7 +12,7 @@ journey:
       target: messages
       selectors:
         web: "/dashboard/messages"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: visible
       text: "not available"

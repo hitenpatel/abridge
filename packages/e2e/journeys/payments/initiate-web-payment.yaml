@@ -12,22 +12,22 @@ journey:
       target: payments
       selectors:
         web: "/dashboard/payments"
-        mobile: null
+        mobile: "N/A"
     - action: wait
       target: payments-list
       selectors:
         web: "[data-testid='payments-list']"
-        mobile: null
+        mobile: "N/A"
     - action: tap
       target: payment-item
       selectors:
         web: "[data-testid='payment-item-1']"
-        mobile: null
+        mobile: "N/A"
     - action: tap
       target: pay-button
       selectors:
         web: "[data-testid='pay-button']"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: visible
       text: "Payment"

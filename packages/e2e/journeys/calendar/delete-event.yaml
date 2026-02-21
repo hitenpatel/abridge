@@ -12,17 +12,17 @@ journey:
       target: calendar
       selectors:
         web: "/dashboard/calendar"
-        mobile: null
+        mobile: "N/A"
     - action: tap
       target: delete
       selectors:
         web: "[data-testid='calendar-event']:first-of-type [data-testid='event-delete-button']"
-        mobile: null
+        mobile: "N/A"
     - action: tap
       target: confirm
       selectors:
         web: "[data-testid='confirm-delete-event']"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: visible
       text: "deleted"

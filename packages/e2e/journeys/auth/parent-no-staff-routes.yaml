@@ -12,7 +12,7 @@ journey:
       target: compose
       selectors:
         web: "/dashboard/compose"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: not-visible
       text: "compose-post-form"

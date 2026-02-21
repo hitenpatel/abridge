@@ -12,7 +12,7 @@ journey:
       target: staff-management
       selectors:
         web: "/dashboard/staff"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: not-visible
       target: self-remove

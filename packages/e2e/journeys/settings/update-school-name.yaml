@@ -12,23 +12,23 @@ journey:
       target: settings
       selectors:
         web: "/dashboard/settings"
-        mobile: null
+        mobile: "N/A"
     - action: scroll
       target: school-settings
       selectors:
         web: "[data-testid='school-name-input']"
-        mobile: null
+        mobile: "N/A"
     - action: fill
       target: school-name
       selectors:
         web: "[data-testid='school-name-input']"
-        mobile: null
+        mobile: "N/A"
       value: "Oakwood Academy"
     - action: tap
       target: save
       selectors:
         web: "[data-testid='school-settings-save']"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: visible
       text: "Oakwood Academy"

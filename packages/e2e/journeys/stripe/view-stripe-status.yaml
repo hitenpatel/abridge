@@ -12,12 +12,12 @@ journey:
       target: settings
       selectors:
         web: "/dashboard/settings"
-        mobile: null
+        mobile: "N/A"
     - action: scroll
       target: stripe-section
       selectors:
         web: "[data-testid='stripe-status']"
-        mobile: null
+        mobile: "N/A"
   assertions:
     - type: visible
       text: "Not connected"
