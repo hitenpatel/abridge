@@ -1,0 +1,33 @@
+journey:
+  id: reply-to-broadcast-parent
+  name: Parent Replies to Broadcast
+  tags: [smoke, parent, authenticated, messaging]
+  role: parent
+  preconditions:
+    seed: staff-with-messages
+    state: authenticated
+  steps:
+    - action: navigate
+      target: messages
+      selectors:
+        web: "/dashboard/messages"
+        mobile: "Messages"
+    - action: tap
+      target: first-message
+      selectors:
+        web: "[data-testid='message-item']:first-child"
+        mobile: "Test Message 5"
+    - action: fill
+      target: reply-input
+      selectors:
+        web: "[data-testid='reply-input']"
+        mobile: "Reply"
+      value: "Thank you for letting us know!"
+    - action: tap
+      target: reply-send-button
+      selectors:
+        web: "[data-testid='reply-send-button']"
+        mobile: "Send"
+  assertions:
+    - type: visible
+      text: "Thank you for letting us know!"

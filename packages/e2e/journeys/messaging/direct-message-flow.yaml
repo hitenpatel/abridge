@@ -1,0 +1,29 @@
+journey:
+  id: direct-message-flow
+  name: Direct Message Back and Forth
+  tags: [parent, authenticated, messaging]
+  role: parent
+  preconditions:
+    seed: parent-with-conversations
+    state: authenticated
+  steps:
+    - action: navigate
+      target: messages
+      selectors:
+        web: "/dashboard/messages"
+        mobile: "Messages"
+    - action: tap
+      target: direct-tab
+      selectors:
+        web: "[data-testid='direct-tab']"
+        mobile: "Direct"
+    - action: tap
+      target: conversation-item
+      selectors:
+        web: "[data-testid='conversation-item']:first-child"
+        mobile: "Question about homework"
+  assertions:
+    - type: visible
+      text: "Hi, my child needs help with the maths homework."
+    - type: visible
+      text: "Of course! I'll send some extra resources home tomorrow."

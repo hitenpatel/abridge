@@ -1,0 +1,26 @@
+journey:
+  id: view-replies-staff
+  name: Staff Views Reply Thread
+  tags: [staff, authenticated, messaging]
+  role: staff
+  preconditions:
+    seed: staff-with-replies
+    state: authenticated
+  steps:
+    - action: navigate
+      target: messages
+      selectors:
+        web: "/dashboard/messages"
+        mobile: "Messages"
+    - action: tap
+      target: first-message
+      selectors:
+        web: "[data-testid='message-item']:first-child"
+        mobile: "Test Message 1"
+  assertions:
+    - type: visible
+      text: "Parent reply 1"
+    - type: visible
+      text: "Parent reply 2"
+    - type: visible
+      text: "Parent reply 3"

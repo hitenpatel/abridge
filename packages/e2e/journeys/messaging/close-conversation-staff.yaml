@@ -1,0 +1,32 @@
+journey:
+  id: close-conversation-staff
+  name: Staff Closes Conversation
+  tags: [staff, authenticated, messaging]
+  role: staff
+  preconditions:
+    seed: parent-with-conversations
+    state: authenticated
+  steps:
+    - action: navigate
+      target: messages
+      selectors:
+        web: "/dashboard/messages"
+        mobile: "Messages"
+    - action: tap
+      target: direct-tab
+      selectors:
+        web: "[data-testid='direct-tab']"
+        mobile: "Direct"
+    - action: tap
+      target: conversation-item
+      selectors:
+        web: "[data-testid='conversation-item']:first-child"
+        mobile: "Question about homework"
+    - action: tap
+      target: close-conversation-button
+      selectors:
+        web: "[data-testid='close-conversation-button']"
+        mobile: "Close"
+  assertions:
+    - type: visible
+      text: "Conversation closed"

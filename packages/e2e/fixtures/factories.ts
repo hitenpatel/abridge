@@ -30,7 +30,9 @@ export type FixtureName =
 	| "admin-with-analytics-data"
 	| "staff-with-disabled-features"
 	| "teacher-staff"
-	| "staff-with-children";
+	| "staff-with-children"
+	| "staff-with-replies"
+	| "parent-with-conversations";
 
 export async function cleanTestData() {
 	// Truncate in dependency order to avoid FK violations
@@ -47,6 +49,7 @@ export async function cleanTestData() {
 	await db.$executeRaw`TRUNCATE TABLE attendance_records CASCADE`;
 	await db.$executeRaw`TRUNCATE TABLE message_reads CASCADE`;
 	await db.$executeRaw`TRUNCATE TABLE message_children CASCADE`;
+	await db.$executeRaw`TRUNCATE TABLE conversations CASCADE`;
 	await db.$executeRaw`TRUNCATE TABLE messages CASCADE`;
 	await db.$executeRaw`TRUNCATE TABLE parent_children CASCADE`;
 	await db.$executeRaw`TRUNCATE TABLE children CASCADE`;
@@ -119,6 +122,10 @@ export async function seedFixture(name: FixtureName) {
 			return await createTeacherStaff();
 		case "staff-with-children":
 			return await createStaffWithChildren();
+		case "staff-with-replies":
+			return await createStaffWithReplies();
+		case "parent-with-conversations":
+			return await createParentWithConversations();
 		default:
 			throw new Error(`Unknown fixture: ${name}`);
 	}
@@ -1105,4 +1112,66 @@ async function createAdminWithAnalyticsData() {
 	});
 
 	return { ...base, child };
+}
+
+// --- Two-way messaging fixtures ---
+
+async function createStaffWithReplies() {
+	const base = await createStaffWithMessages();
+
+	for (let i = 0; i < 3; i++) {
+		await db.message.create({
+			data: {
+				schoolId: base.school.id,
+				subject: `Re: ${base.messages[0].subject}`,
+				body: `Parent reply ${i + 1}`,
+				category: "STANDARD",
+				type: "REPLY",
+				threadId: base.messages[0].id,
+				authorId: base.parentUser.id,
+			},
+		});
+	}
+
+	return base;
+}
+
+async function createParentWithConversations() {
+	const base = await createStaffWithMessages();
+
+	const conversation = await db.conversation.create({
+		data: {
+			schoolId: base.school.id,
+			parentId: base.parentUser.id,
+			staffId: base.user.id,
+			subject: "Question about homework",
+			lastMessageAt: new Date(),
+		},
+	});
+
+	await db.message.create({
+		data: {
+			schoolId: base.school.id,
+			subject: "Question about homework",
+			body: "Hi, my child needs help with the maths homework.",
+			category: "STANDARD",
+			type: "DIRECT",
+			conversationId: conversation.id,
+			authorId: base.parentUser.id,
+		},
+	});
+
+	await db.message.create({
+		data: {
+			schoolId: base.school.id,
+			subject: "Question about homework",
+			body: "Of course! I'll send some extra resources home tomorrow.",
+			category: "STANDARD",
+			type: "DIRECT",
+			conversationId: conversation.id,
+			authorId: base.user.id,
+		},
+	});
+
+	return { ...base, conversation };
 }

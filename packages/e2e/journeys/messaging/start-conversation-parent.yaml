@@ -1,0 +1,33 @@
+journey:
+  id: start-conversation-parent
+  name: Parent Starts Direct Conversation
+  tags: [parent, authenticated, messaging]
+  role: parent
+  preconditions:
+    seed: staff-with-messages
+    state: authenticated
+  steps:
+    - action: navigate
+      target: messages
+      selectors:
+        web: "/dashboard/messages"
+        mobile: "Messages"
+    - action: tap
+      target: new-conversation-button
+      selectors:
+        web: "[data-testid='new-conversation-button']"
+        mobile: "New Message"
+    - action: fill
+      target: new-convo-body
+      selectors:
+        web: "[data-testid='new-convo-body']"
+        mobile: "Message"
+      value: "Hello, I have a question about my child."
+    - action: tap
+      target: staff-picker-item
+      selectors:
+        web: "[data-testid='staff-picker-item']:first-child"
+        mobile: "Test Staff"
+  assertions:
+    - type: visible
+      text: "Hello, I have a question about my child."
