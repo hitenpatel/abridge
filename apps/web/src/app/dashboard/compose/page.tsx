@@ -28,8 +28,17 @@ export default function ComposePostPage() {
 	const getUploadUrl = trpc.classPost.getUploadUrl.useMutation();
 	const createPost = trpc.classPost.create.useMutation();
 
+	const isStaff = !!session?.staffRole && !!session?.schoolId;
 	const schoolId = session?.schoolId ?? "";
 	const canPost = selectedClass && (body.trim().length > 0 || files.length > 0);
+
+	if (session && !isStaff) {
+		return (
+			<div className="max-w-2xl mx-auto text-center py-16 text-muted-foreground">
+				<p>Only staff members can compose posts.</p>
+			</div>
+		);
+	}
 
 	const handlePost = async () => {
 		if (!canPost || !selectedClass || !schoolId) return;

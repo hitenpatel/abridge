@@ -61,6 +61,16 @@ export default function StaffManagementPage() {
 		},
 	});
 
+	const updateRole = trpc.staff.updateRole.useMutation({
+		onSuccess: () => {
+			utils.staff.list.invalidate();
+			toast.success("Role updated");
+		},
+		onError: (err) => {
+			toast.error(err.message);
+		},
+	});
+
 	const removeStaff = trpc.staff.remove.useMutation({
 		onSuccess: () => {
 			utils.staff.list.invalidate();
@@ -244,12 +254,42 @@ export default function StaffManagementPage() {
 												</div>
 											</div>
 											<div className="flex items-center gap-3">
-												<Badge
-													variant={member.role === "ADMIN" ? "default" : "info"}
-													data-testid="staff-role-badge"
-												>
-													{member.role}
-												</Badge>
+												{session?.staffRole === "ADMIN" && member.userId !== session.id ? (
+													<Select
+														value={member.role}
+														onValueChange={(value) => {
+															if (session?.schoolId) {
+																updateRole.mutate({
+																	schoolId: session.schoolId,
+																	userId: member.userId,
+																	role: value as "ADMIN" | "TEACHER" | "OFFICE",
+																});
+															}
+														}}
+													>
+														<SelectTrigger className="w-28" data-testid="staff-role-select">
+															<SelectValue />
+														</SelectTrigger>
+														<SelectContent>
+															<SelectItem value="TEACHER" data-testid="role-option-TEACHER">
+																Teacher
+															</SelectItem>
+															<SelectItem value="OFFICE" data-testid="role-option-OFFICE">
+																Office
+															</SelectItem>
+															<SelectItem value="ADMIN" data-testid="role-option-ADMIN">
+																Admin
+															</SelectItem>
+														</SelectContent>
+													</Select>
+												) : (
+													<Badge
+														variant={member.role === "ADMIN" ? "default" : "info"}
+														data-testid="staff-role-badge"
+													>
+														{member.role}
+													</Badge>
+												)}
 												{session?.staffRole === "ADMIN" && member.userId !== session.id && (
 													<Button
 														variant="ghost"

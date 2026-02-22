@@ -127,6 +127,7 @@ export default function AnalyticsPage() {
 
 	const { data: session } = trpc.auth.getSession.useQuery();
 	const schoolId = session?.schoolId;
+	const isStaff = !!session?.staffRole && !!schoolId;
 
 	// Fetch term start date from analytics router
 	const { data: termStart } = trpc.analytics.termStart.useQuery(
@@ -164,6 +165,14 @@ export default function AnalyticsPage() {
 		{ key: "month", label: "This Month" },
 		{ key: "term", label: "This Term" },
 	];
+
+	if (session && !isStaff) {
+		return (
+			<div className="max-w-2xl mx-auto text-center py-16 text-muted-foreground">
+				<p>Analytics is only available to staff members.</p>
+			</div>
+		);
+	}
 
 	return (
 		<div className="max-w-7xl mx-auto" data-testid="analytics-view">
