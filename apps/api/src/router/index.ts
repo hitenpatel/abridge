@@ -15,6 +15,7 @@ import { settingsRouter } from "./settings";
 import { setupRouter } from "./setup";
 import { staffRouter } from "./staff";
 import { stripeRouter } from "./stripe";
+import { translationRouter } from "./translation";
 import { userRouter } from "./user";
 
 export const appRouter = router({
@@ -34,6 +35,7 @@ export const appRouter = router({
 	invitation: invitationRouter,
 	setup: setupRouter,
 	staff: staffRouter,
+	translation: translationRouter,
 	dbInit: dbInitRouter,
 });
 

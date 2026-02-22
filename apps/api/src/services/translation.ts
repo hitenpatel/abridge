@@ -37,11 +37,12 @@ export async function translateTexts(
 	const misses: { index: number; text: string; hash: string }[] = [];
 
 	for (let i = 0; i < texts.length; i++) {
-		const hit = cacheMap.get(hashes[i]);
+		const hash = hashes[i] as string;
+		const hit = cacheMap.get(hash);
 		if (hit) {
 			results[i] = hit;
 		} else {
-			misses.push({ index: i, text: texts[i], hash: hashes[i] });
+			misses.push({ index: i, text: texts[i] as string, hash });
 		}
 	}
 
@@ -83,7 +84,7 @@ export async function translateTexts(
 		sourceLang,
 		targetLang,
 		sourceText: miss.text,
-		translated: translations[i].translatedText,
+		translated: (translations[i] as { translatedText: string }).translatedText,
 	}));
 
 	// Bulk insert cache entries (ignore conflicts)
@@ -93,7 +94,8 @@ export async function translateTexts(
 	});
 
 	for (let i = 0; i < misses.length; i++) {
-		results[misses[i].index] = translations[i].translatedText;
+		const miss = misses[i] as { index: number; text: string; hash: string };
+		results[miss.index] = (translations[i] as { translatedText: string }).translatedText;
 	}
 
 	return results;

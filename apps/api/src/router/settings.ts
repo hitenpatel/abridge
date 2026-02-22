@@ -12,13 +12,14 @@ const featureToggleSelect = {
 	paymentClubsEnabled: true,
 	paymentUniformEnabled: true,
 	paymentOtherEnabled: true,
+	translationEnabled: true,
 } as const;
 
 export const settingsRouter = router({
 	getProfile: protectedProcedure.query(async ({ ctx }) => {
 		const user = await ctx.prisma.user.findUniqueOrThrow({
 			where: { id: ctx.user.id },
-			select: { name: true, email: true, phone: true },
+			select: { name: true, email: true, phone: true, language: true },
 		});
 		return user;
 	}),
@@ -28,12 +29,13 @@ export const settingsRouter = router({
 			z.object({
 				name: z.string().min(1, "Name is required"),
 				phone: z.string().nullable(),
+				language: z.string().min(2).max(5).optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
 			await ctx.prisma.user.update({
 				where: { id: ctx.user.id },
-				data: { name: input.name, phone: input.phone },
+				data: { name: input.name, phone: input.phone, language: input.language },
 			});
 			return { success: true };
 		}),
@@ -153,6 +155,7 @@ export const settingsRouter = router({
 				paymentClubsEnabled: z.boolean().optional(),
 				paymentUniformEnabled: z.boolean().optional(),
 				paymentOtherEnabled: z.boolean().optional(),
+				translationEnabled: z.boolean().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

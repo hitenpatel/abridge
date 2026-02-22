@@ -1,7 +1,7 @@
 import type { PaymentCategory } from "@schoolconnect/db";
 import { TRPCError } from "@trpc/server";
 
-type FeatureName = "messaging" | "payments" | "attendance" | "calendar" | "forms";
+type FeatureName = "messaging" | "payments" | "attendance" | "calendar" | "forms" | "translation";
 
 interface SchoolFeatures {
 	messagingEnabled: boolean;
@@ -9,6 +9,7 @@ interface SchoolFeatures {
 	attendanceEnabled: boolean;
 	calendarEnabled: boolean;
 	formsEnabled: boolean;
+	translationEnabled: boolean;
 	paymentDinnerMoneyEnabled: boolean;
 	paymentTripsEnabled: boolean;
 	paymentClubsEnabled: boolean;
@@ -22,6 +23,7 @@ const featureFieldMap: Record<FeatureName, keyof SchoolFeatures> = {
 	attendance: "attendanceEnabled",
 	calendar: "calendarEnabled",
 	forms: "formsEnabled",
+	translation: "translationEnabled",
 };
 
 const featureLabel: Record<FeatureName, string> = {
@@ -30,6 +32,7 @@ const featureLabel: Record<FeatureName, string> = {
 	attendance: "Attendance",
 	calendar: "Calendar",
 	forms: "Forms",
+	translation: "Translation",
 };
 
 const categoryFieldMap: Record<PaymentCategory, keyof SchoolFeatures> = {

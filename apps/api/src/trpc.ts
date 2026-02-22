@@ -127,6 +127,7 @@ export const schoolFeatureProcedure = schoolStaffProcedure.use(async ({ ctx, nex
 			paymentClubsEnabled: true,
 			paymentUniformEnabled: true,
 			paymentOtherEnabled: true,
+			translationEnabled: true,
 		},
 	});
 

@@ -13,6 +13,7 @@ function allTogglesEnabled() {
 		paymentClubsEnabled: true,
 		paymentUniformEnabled: true,
 		paymentOtherEnabled: true,
+		translationEnabled: true,
 	};
 }
 
@@ -28,6 +29,7 @@ function allTogglesDisabled() {
 		paymentClubsEnabled: false,
 		paymentUniformEnabled: false,
 		paymentOtherEnabled: false,
+		translationEnabled: false,
 	};
 }
 
