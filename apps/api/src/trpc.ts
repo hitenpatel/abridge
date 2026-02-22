@@ -128,6 +128,7 @@ export const schoolFeatureProcedure = schoolStaffProcedure.use(async ({ ctx, nex
 			paymentUniformEnabled: true,
 			paymentOtherEnabled: true,
 			translationEnabled: true,
+			parentsEveningEnabled: true,
 		},
 	});
 

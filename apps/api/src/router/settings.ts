@@ -13,6 +13,7 @@ const featureToggleSelect = {
 	paymentUniformEnabled: true,
 	paymentOtherEnabled: true,
 	translationEnabled: true,
+	parentsEveningEnabled: true,
 } as const;
 
 export const settingsRouter = router({
@@ -156,6 +157,7 @@ export const settingsRouter = router({
 				paymentUniformEnabled: z.boolean().optional(),
 				paymentOtherEnabled: z.boolean().optional(),
 				translationEnabled: z.boolean().optional(),
+				parentsEveningEnabled: z.boolean().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

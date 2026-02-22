@@ -14,6 +14,7 @@ function allTogglesEnabled() {
 		paymentUniformEnabled: true,
 		paymentOtherEnabled: true,
 		translationEnabled: true,
+		parentsEveningEnabled: true,
 	};
 }
 
@@ -30,6 +31,7 @@ function allTogglesDisabled() {
 		paymentUniformEnabled: false,
 		paymentOtherEnabled: false,
 		translationEnabled: false,
+		parentsEveningEnabled: false,
 	};
 }
 
