@@ -1,0 +1,27 @@
+journey:
+  id: set-language-parent
+  name: Parent Changes Language
+  tags: [parent, authenticated, translation]
+  role: parent
+  preconditions:
+    seed: parent-with-school
+    state: authenticated
+  steps:
+    - action: navigate
+      target: settings
+      selectors:
+        web: "/dashboard/settings"
+        mobile: "Settings"
+    - action: tap
+      target: language-select
+      selectors:
+        web: "[data-testid='language-select']"
+        mobile: "Preferred Language"
+    - action: tap
+      target: polish-option
+      selectors:
+        web: "[data-testid='language-option-pl']"
+        mobile: "Polski"
+  assertions:
+    - type: visible
+      text: "Polski"

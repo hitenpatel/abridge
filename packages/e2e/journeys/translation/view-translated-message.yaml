@@ -1,0 +1,22 @@
+journey:
+  id: view-translated-message
+  name: Parent Views Translated Message
+  tags: [smoke, parent, authenticated, translation]
+  role: parent
+  preconditions:
+    seed: parent-with-translation
+    state: authenticated
+  steps:
+    - action: navigate
+      target: messages
+      selectors:
+        web: "/dashboard/messages"
+        mobile: "Messages"
+    - action: tap
+      target: first-message
+      selectors:
+        web: "[data-testid='message-item']:first-child"
+        mobile: "Test Message 5"
+  assertions:
+    - type: visible
+      text: "Translated"

@@ -32,7 +32,8 @@ export type FixtureName =
 	| "teacher-staff"
 	| "staff-with-children"
 	| "staff-with-replies"
-	| "parent-with-conversations";
+	| "parent-with-conversations"
+	| "parent-with-translation";
 
 export async function cleanTestData() {
 	// Truncate in dependency order to avoid FK violations
@@ -49,6 +50,7 @@ export async function cleanTestData() {
 	await db.$executeRaw`TRUNCATE TABLE attendance_records CASCADE`;
 	await db.$executeRaw`TRUNCATE TABLE message_reads CASCADE`;
 	await db.$executeRaw`TRUNCATE TABLE message_children CASCADE`;
+	await db.$executeRaw`TRUNCATE TABLE translation_cache CASCADE`;
 	await db.$executeRaw`TRUNCATE TABLE conversations CASCADE`;
 	await db.$executeRaw`TRUNCATE TABLE messages CASCADE`;
 	await db.$executeRaw`TRUNCATE TABLE parent_children CASCADE`;
@@ -126,6 +128,8 @@ export async function seedFixture(name: FixtureName) {
 			return await createStaffWithReplies();
 		case "parent-with-conversations":
 			return await createParentWithConversations();
+		case "parent-with-translation":
+			return await createParentWithTranslation();
 		default:
 			throw new Error(`Unknown fixture: ${name}`);
 	}
@@ -1174,4 +1178,20 @@ async function createParentWithConversations() {
 	});
 
 	return { ...base, conversation };
+}
+
+async function createParentWithTranslation() {
+	const base = await createStaffWithMessages();
+
+	await db.user.update({
+		where: { id: base.parentUser.id },
+		data: { language: "pl" },
+	});
+
+	await db.school.update({
+		where: { id: base.school.id },
+		data: { translationEnabled: true },
+	});
+
+	return base;
 }
