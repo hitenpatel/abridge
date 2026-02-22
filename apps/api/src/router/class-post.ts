@@ -181,6 +181,7 @@ export const classPostRouter = router({
 				yearGroup: post.yearGroup,
 				className: post.className,
 				mediaUrls: post.mediaUrls,
+				authorId: post.authorId,
 				createdAt: post.createdAt,
 			}));
 		}),

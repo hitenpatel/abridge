@@ -2,22 +2,90 @@
 
 import { ActionItemsRow } from "@/components/feed/action-items-row";
 import { ActivityFeed } from "@/components/feed/activity-feed";
+import { ClassPostCard } from "@/components/feed/class-post-card";
 import { ChildSwitcher } from "@/components/feed/child-switcher";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/lib/trpc";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, PenSquare } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 type Emoji = "HEART" | "THUMBS_UP" | "CLAP" | "LAUGH" | "WOW";
 
+function StaffDashboard({ schoolId, userId }: { schoolId: string; userId: string }) {
+	const utils = trpc.useUtils();
+	const { data: posts, isLoading } = trpc.classPost.listRecent.useQuery({
+		schoolId,
+		limit: 10,
+	});
+
+	const handleDeleted = () => {
+		utils.classPost.listRecent.invalidate();
+	};
+
+	if (isLoading) {
+		return (
+			<div className="max-w-2xl mx-auto space-y-4 p-4">
+				<Skeleton className="h-10 w-full rounded-full" />
+				<Skeleton className="h-64 w-full rounded-xl" />
+				<Skeleton className="h-48 w-full rounded-xl" />
+			</div>
+		);
+	}
+
+	return (
+		<div data-testid="dashboard-view" className="max-w-2xl mx-auto space-y-6">
+			<div className="flex items-center justify-between">
+				<h1 className="text-xl font-semibold">Recent Posts</h1>
+				<Link href="/dashboard/compose">
+					<Button size="sm" className="gap-2">
+						<PenSquare className="h-4 w-4" />
+						Compose Post
+					</Button>
+				</Link>
+			</div>
+
+			{posts && posts.length > 0 ? (
+				<div className="space-y-4" data-testid="activity-feed">
+					{posts.map((post) => (
+						<ClassPostCard
+							key={post.id}
+							postId={post.id}
+							body={post.body}
+							mediaUrls={post.mediaUrls}
+							authorId={post.authorId}
+							authorName="Staff"
+							timestamp={post.createdAt}
+							isStaff
+							currentUserId={userId}
+							schoolId={schoolId}
+							onDeleted={handleDeleted}
+						/>
+					))}
+				</div>
+			) : (
+				<div className="text-center py-12 text-muted-foreground">
+					<p className="text-sm">No posts yet. Create your first class post!</p>
+				</div>
+			)}
+		</div>
+	);
+}
+
 export default function DashboardPage() {
 	const { data: session, isPending: isAuthPending } = authClient.useSession();
 	const router = useRouter();
 	const utils = trpc.useUtils();
+
+	// Get session with role info
+	const { data: sessionInfo } = trpc.auth.getSession.useQuery(undefined, {
+		enabled: !!session,
+	});
+
+	const isStaff = !!sessionInfo?.staffRole && !!sessionInfo?.schoolId;
 
 	// Get children from summary (preserved endpoint)
 	const { data: summaryData, isLoading: isSummaryLoading } = trpc.dashboard.getSummary.useQuery(
@@ -110,6 +178,11 @@ export default function DashboardPage() {
 	}
 
 	if (!session) return null;
+
+	// Staff with no children: show staff dashboard
+	if (isStaff && children.length === 0 && sessionInfo?.schoolId) {
+		return <StaffDashboard schoolId={sessionInfo.schoolId} userId={sessionInfo.id} />;
+	}
 
 	if (children.length === 0) {
 		return (

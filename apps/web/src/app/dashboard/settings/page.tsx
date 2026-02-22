@@ -400,7 +400,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 	}
 
 	return (
-		<Card className="rounded-2xl border border-gray-100">
+		<Card className="rounded-2xl border border-gray-100" data-testid="feature-toggles-card">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
 					<span className="material-symbols-rounded text-primary">toggle_on</span>
