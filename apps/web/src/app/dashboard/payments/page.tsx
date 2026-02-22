@@ -52,7 +52,7 @@ function StaffPaymentsView({ schoolId }: { schoolId: string }) {
 									<div>
 										<h4 className="font-medium text-foreground">{item.title}</h4>
 										<p className="text-sm text-muted-foreground">
-											{(item.amount / 100).toFixed(2)} &middot; {item.category} &middot; {item.recipientCount} recipients
+											£{(item.amount / 100).toFixed(2)} &middot; {item.category} &middot; {item.recipientCount} recipients
 										</p>
 									</div>
 								</div>
@@ -226,7 +226,7 @@ export default function PaymentsDashboardPage() {
 									</div>
 									<div className="ml-4 flex flex-col items-end gap-2">
 										<span className="text-2xl font-bold text-gray-900">
-											${payment.amount.toFixed(2)}
+											£{payment.amount.toFixed(2)}
 										</span>
 										<button
 											type="button"
@@ -263,7 +263,7 @@ export default function PaymentsDashboardPage() {
 									</div>
 									<div className="text-right">
 										<span className="text-lg font-bold text-gray-400 line-through">
-											${payment.amount.toFixed(2)}
+											£{payment.amount.toFixed(2)}
 										</span>
 										<div className="text-green-500 text-xs font-bold uppercase">Paid</div>
 									</div>
@@ -304,7 +304,7 @@ export default function PaymentsDashboardPage() {
 						{/* Balance Amount */}
 						<div className="absolute inset-0 flex items-center justify-center z-40">
 							<span className="text-5xl font-extrabold text-white drop-shadow-md">
-								${balance.toFixed(2)}
+								£{balance.toFixed(2)}
 							</span>
 						</div>
 					</div>
@@ -322,7 +322,7 @@ export default function PaymentsDashboardPage() {
 							<input id="auto-refill" type="checkbox" className="sr-only peer" />
 							<div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-400" />
 							<span className="ml-3 text-sm font-semibold text-gray-600 cursor-pointer">
-								Auto-refill when below $10
+								Auto-refill when below £10
 							</span>
 						</label>
 					</div>
@@ -342,14 +342,14 @@ export default function PaymentsDashboardPage() {
 								type="button"
 								className="py-3 rounded-xl border border-gray-200 bg-white text-gray-700 font-bold hover:border-primary hover:text-primary hover:bg-orange-50 transition"
 							>
-								+${amount}
+								+£{amount}
 							</button>
 						))}
 					</div>
 
 					<div className="relative">
 						<div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-							<span className="text-gray-500 font-bold">$</span>
+							<span className="text-gray-500 font-bold">£</span>
 						</div>
 						<input
 							type="number"
