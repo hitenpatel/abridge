@@ -265,6 +265,29 @@ export const messagingRouter = router({
 			return { success: true };
 		}),
 
+	listSchoolStaff: protectedProcedure.query(async ({ ctx }) => {
+		const parentLink = await ctx.prisma.parentChild.findFirst({
+			where: { userId: ctx.user.id },
+			select: { child: { select: { schoolId: true } } },
+		});
+
+		if (!parentLink) return { staff: [] };
+
+		const staffMembers = await ctx.prisma.staffMember.findMany({
+			where: { schoolId: parentLink.child.schoolId },
+			include: { user: { select: { id: true, name: true } } },
+			orderBy: { role: "asc" },
+		});
+
+		return {
+			staff: staffMembers.map((s) => ({
+				userId: s.user.id,
+				name: s.user.name,
+				role: s.role,
+			})),
+		};
+	}),
+
 	reply: protectedProcedure
 		.input(
 			z.object({
