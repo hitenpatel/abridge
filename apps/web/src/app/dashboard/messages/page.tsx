@@ -4,16 +4,11 @@ import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from "@/hooks/use-translation";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
-import { useTranslation } from "@/hooks/use-translation";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
@@ -110,20 +105,6 @@ export default function MessagesPage() {
 		},
 	});
 
-	// Translate selected message when language is not English
-	useEffect(() => {
-		if (!selectedMessage || userLang === "en") {
-			setTranslatedSubject(null);
-			setTranslatedBody(null);
-			return;
-		}
-		setShowOriginal(false);
-		translate([selectedMessage.subject, selectedMessage.body]).then(([subject, body]) => {
-			setTranslatedSubject(subject ?? null);
-			setTranslatedBody(body ?? null);
-		});
-	}, [selectedMessageId, userLang]);
-
 	if (!features.messagingEnabled) return <FeatureDisabled featureName="Messaging" />;
 
 	const messagesLoading = isStaff ? sentLoading : receivedLoading;
@@ -146,9 +127,23 @@ export default function MessagesPage() {
 
 	// Normalize message list
 	// biome-ignore lint/suspicious/noExplicitAny: merging two different tRPC response shapes
-	const allMessages: any[] = isStaff ? sentMessages?.data ?? [] : receivedMessages?.items ?? [];
+	const allMessages: any[] = isStaff ? (sentMessages?.data ?? []) : (receivedMessages?.items ?? []);
 
 	const selectedMessage = allMessages.find((m) => m.id === selectedMessageId);
+
+	// Translate selected message when language is not English
+	useEffect(() => {
+		if (!selectedMessage || userLang === "en") {
+			setTranslatedSubject(null);
+			setTranslatedBody(null);
+			return;
+		}
+		setShowOriginal(false);
+		translate([selectedMessage.subject, selectedMessage.body]).then(([subject, body]) => {
+			setTranslatedSubject(subject ?? null);
+			setTranslatedBody(body ?? null);
+		});
+	}, [selectedMessage, selectedMessage?.subject, selectedMessage?.body, userLang, translate]);
 
 	const filteredMessages = categoryFilter
 		? allMessages.filter((m) => m.category === categoryFilter)
@@ -322,7 +317,10 @@ export default function MessagesPage() {
 									</div>
 									<div className="flex items-center gap-1">
 										{message.replyCount > 0 && (
-											<span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full font-medium" data-testid="reply-count-badge">
+											<span
+												className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full font-medium"
+												data-testid="reply-count-badge"
+											>
 												{message.replyCount}
 											</span>
 										)}
@@ -340,59 +338,59 @@ export default function MessagesPage() {
 								<p className="text-sm">No messages yet</p>
 							</div>
 						)
-					) : (
-						// Conversations list
-						conversations?.items && conversations.items.length > 0 ? (
-							conversations.items.map((convo) => (
-								<div
-									key={convo.id}
-									onClick={() => {
-										setSelectedConversationId(convo.id);
-										setSelectedMessageId(null);
-									}}
-									onKeyDown={(e) =>
-										(e.key === "Enter" || e.key === " ") && setSelectedConversationId(convo.id)
-									}
-									role="button"
-									tabIndex={0}
-									data-testid="conversation-item"
-									className={cn(
-										"group flex items-center gap-3 p-3 cursor-pointer transition-colors",
-										selectedConversationId === convo.id
-											? "bg-orange-50 border-l-4 border-primary"
-											: "hover:bg-gray-50",
-									)}
-								>
-									<div className="w-12 h-12 rounded-[20px] bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg shadow-sm">
-										{(isStaff ? convo.parent.name?.[0] : convo.staff.name?.[0]) || "?"}
-									</div>
-									<div className="flex-1 min-w-0">
-										<div className="flex justify-between items-baseline mb-1">
-											<h3 className="font-semibold text-gray-900 truncate text-sm">
-												{isStaff ? convo.parent.name : convo.staff.name}
-											</h3>
-											<span className="text-xs text-gray-400">
-												{new Date(convo.lastMessageAt).toLocaleDateString(undefined, {
-													month: "short",
-													day: "numeric",
-												})}
-											</span>
-										</div>
-										<p className="text-sm text-gray-500 truncate">
-											{convo.lastMessage?.body || convo.subject || "No messages"}
-										</p>
-									</div>
-									{convo.closedAt && (
-										<Badge variant="secondary" className="text-xs shrink-0">Closed</Badge>
-									)}
+					) : // Conversations list
+					conversations?.items && conversations.items.length > 0 ? (
+						conversations.items.map((convo) => (
+							<div
+								key={convo.id}
+								onClick={() => {
+									setSelectedConversationId(convo.id);
+									setSelectedMessageId(null);
+								}}
+								onKeyDown={(e) =>
+									(e.key === "Enter" || e.key === " ") && setSelectedConversationId(convo.id)
+								}
+								role="button"
+								tabIndex={0}
+								data-testid="conversation-item"
+								className={cn(
+									"group flex items-center gap-3 p-3 cursor-pointer transition-colors",
+									selectedConversationId === convo.id
+										? "bg-orange-50 border-l-4 border-primary"
+										: "hover:bg-gray-50",
+								)}
+							>
+								<div className="w-12 h-12 rounded-[20px] bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg shadow-sm">
+									{(isStaff ? convo.parent.name?.[0] : convo.staff.name?.[0]) || "?"}
 								</div>
-							))
-						) : (
-							<div className="p-8 text-center text-gray-500" data-testid="empty-conversations">
-								<span className="material-symbols-rounded text-4xl mb-2 text-gray-300">forum</span>
-								<p className="text-sm">No conversations yet</p>
+								<div className="flex-1 min-w-0">
+									<div className="flex justify-between items-baseline mb-1">
+										<h3 className="font-semibold text-gray-900 truncate text-sm">
+											{isStaff ? convo.parent.name : convo.staff.name}
+										</h3>
+										<span className="text-xs text-gray-400">
+											{new Date(convo.lastMessageAt).toLocaleDateString(undefined, {
+												month: "short",
+												day: "numeric",
+											})}
+										</span>
+									</div>
+									<p className="text-sm text-gray-500 truncate">
+										{convo.lastMessage?.body || convo.subject || "No messages"}
+									</p>
+								</div>
+								{convo.closedAt && (
+									<Badge variant="secondary" className="text-xs shrink-0">
+										Closed
+									</Badge>
+								)}
 							</div>
-						)
+						))
+					) : (
+						<div className="p-8 text-center text-gray-500" data-testid="empty-conversations">
+							<span className="material-symbols-rounded text-4xl mb-2 text-gray-300">forum</span>
+							<p className="text-sm">No conversations yet</p>
+						</div>
 					)}
 				</div>
 			</aside>
@@ -443,7 +441,9 @@ export default function MessagesPage() {
 									<Card className="bg-white p-4 rounded-2xl rounded-bl-sm shadow-sm border border-gray-100">
 										<div className="mb-2">
 											<h3 className="font-semibold text-gray-900 mb-1">
-												{showOriginal || !translatedSubject ? selectedMessage.subject : translatedSubject}
+												{showOriginal || !translatedSubject
+													? selectedMessage.subject
+													: translatedSubject}
 											</h3>
 											<Badge variant="secondary" className="text-xs">
 												{selectedMessage.category}
@@ -454,7 +454,10 @@ export default function MessagesPage() {
 										</div>
 										{translatedBody && (
 											<div className="mt-2 flex items-center gap-2">
-												<span className="text-xs text-blue-600 font-medium" data-testid="translated-indicator">
+												<span
+													className="text-xs text-blue-600 font-medium"
+													data-testid="translated-indicator"
+												>
 													{isTranslating ? "Translating..." : "Translated"}
 												</span>
 												<button
@@ -482,7 +485,10 @@ export default function MessagesPage() {
 								<div className="space-y-4 ml-11" data-testid="reply-thread">
 									<div className="flex items-center gap-2 text-xs text-gray-500">
 										<div className="h-px flex-1 bg-gray-200" />
-										<span>{repliesData.items.length} {repliesData.items.length === 1 ? "reply" : "replies"}</span>
+										<span>
+											{repliesData.items.length}{" "}
+											{repliesData.items.length === 1 ? "reply" : "replies"}
+										</span>
 										<div className="h-px flex-1 bg-gray-200" />
 									</div>
 									{repliesData.items.map((reply) => {
@@ -491,22 +497,33 @@ export default function MessagesPage() {
 											<div
 												key={reply.id}
 												data-testid="reply-item"
-												className={cn("flex gap-3 max-w-xl", isOwnReply && "ml-auto flex-row-reverse")}
+												className={cn(
+													"flex gap-3 max-w-xl",
+													isOwnReply && "ml-auto flex-row-reverse",
+												)}
 											>
 												<div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs shrink-0 mt-1">
 													{reply.authorName?.[0] || "?"}
 												</div>
 												<div className="flex flex-col gap-0.5">
-													<div className={cn(
-														"px-3 py-2 rounded-2xl text-sm",
-														isOwnReply
-															? "bg-primary text-white rounded-br-sm"
-															: "bg-white border border-gray-100 rounded-bl-sm",
-													)}>
+													<div
+														className={cn(
+															"px-3 py-2 rounded-2xl text-sm",
+															isOwnReply
+																? "bg-primary text-white rounded-br-sm"
+																: "bg-white border border-gray-100 rounded-bl-sm",
+														)}
+													>
 														{reply.body}
 													</div>
-													<span className={cn("text-[10px] text-gray-400", isOwnReply ? "text-right mr-1" : "ml-1")}>
-														{reply.authorName} • {new Date(reply.createdAt).toLocaleTimeString(undefined, {
+													<span
+														className={cn(
+															"text-[10px] text-gray-400",
+															isOwnReply ? "text-right mr-1" : "ml-1",
+														)}
+													>
+														{reply.authorName} •{" "}
+														{new Date(reply.createdAt).toLocaleTimeString(undefined, {
 															hour: "numeric",
 															minute: "2-digit",
 														})}
@@ -556,11 +573,15 @@ export default function MessagesPage() {
 						<div className="bg-white/80 backdrop-blur-sm border-b border-gray-100 p-4 flex justify-between items-center">
 							<div className="flex items-center gap-3">
 								<div className="w-10 h-10 rounded-[20px] bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-									{(isStaff ? convoData.conversation.parent.name?.[0] : convoData.conversation.staff.name?.[0]) || "?"}
+									{(isStaff
+										? convoData.conversation.parent.name?.[0]
+										: convoData.conversation.staff.name?.[0]) || "?"}
 								</div>
 								<div>
 									<h2 className="text-lg font-bold text-gray-900 leading-tight">
-										{isStaff ? convoData.conversation.parent.name : convoData.conversation.staff.name}
+										{isStaff
+											? convoData.conversation.parent.name
+											: convoData.conversation.staff.name}
 									</h2>
 									<p className="text-xs text-gray-500 font-medium">
 										{convoData.conversation.subject || "Direct Message"}
@@ -572,7 +593,9 @@ export default function MessagesPage() {
 								<Button
 									variant="outline"
 									size="sm"
-									onClick={() => closeConversationMutation.mutate({ conversationId: convoData.conversation.id })}
+									onClick={() =>
+										closeConversationMutation.mutate({ conversationId: convoData.conversation.id })
+									}
 									disabled={closeConversationMutation.isPending}
 									data-testid="close-conversation-button"
 								>
@@ -590,24 +613,35 @@ export default function MessagesPage() {
 										key={msg.id}
 										className={cn("flex gap-3 max-w-xl", isOwn && "ml-auto flex-row-reverse")}
 									>
-										<div className={cn(
-											"w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0 mt-1",
-											isOwn ? "bg-primary/10 text-primary" : "bg-blue-100 text-blue-600",
-										)}>
+										<div
+											className={cn(
+												"w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0 mt-1",
+												isOwn ? "bg-primary/10 text-primary" : "bg-blue-100 text-blue-600",
+											)}
+										>
 											{isOwn
-												? (session?.name?.[0] || "Y")
-												: ((isStaff ? convoData.conversation.parent.name?.[0] : convoData.conversation.staff.name?.[0]) || "?")}
+												? session?.name?.[0] || "Y"
+												: (isStaff
+														? convoData.conversation.parent.name?.[0]
+														: convoData.conversation.staff.name?.[0]) || "?"}
 										</div>
 										<div className="flex flex-col gap-0.5">
-											<div className={cn(
-												"px-4 py-2.5 rounded-2xl text-sm leading-relaxed",
-												isOwn
-													? "bg-primary text-white rounded-br-sm"
-													: "bg-white border border-gray-100 rounded-bl-sm shadow-sm",
-											)}>
+											<div
+												className={cn(
+													"px-4 py-2.5 rounded-2xl text-sm leading-relaxed",
+													isOwn
+														? "bg-primary text-white rounded-br-sm"
+														: "bg-white border border-gray-100 rounded-bl-sm shadow-sm",
+												)}
+											>
 												{msg.body}
 											</div>
-											<span className={cn("text-[10px] text-gray-400", isOwn ? "text-right mr-1" : "ml-1")}>
+											<span
+												className={cn(
+													"text-[10px] text-gray-400",
+													isOwn ? "text-right mr-1" : "ml-1",
+												)}
+											>
 												{new Date(msg.createdAt).toLocaleTimeString(undefined, {
 													hour: "numeric",
 													minute: "2-digit",
@@ -687,8 +721,14 @@ export default function MessagesPage() {
 					</DialogHeader>
 					<div className="space-y-4">
 						<div>
-							<label className="text-sm font-medium text-gray-700 mb-1 block">Your message</label>
+							<label
+								htmlFor="new-convo-body"
+								className="text-sm font-medium text-gray-700 mb-1 block"
+							>
+								Your message
+							</label>
 							<textarea
+								id="new-convo-body"
 								value={newConvoBody}
 								onChange={(e) => setNewConvoBody(e.target.value)}
 								placeholder="Write your message..."
@@ -698,7 +738,7 @@ export default function MessagesPage() {
 							/>
 						</div>
 						<div>
-							<label className="text-sm font-medium text-gray-700 mb-2 block">Select staff member</label>
+							<p className="text-sm font-medium text-gray-700 mb-2 block">Select staff member</p>
 							<div className="space-y-1 max-h-60 overflow-y-auto">
 								{staffData?.staff.map((s) => (
 									<button

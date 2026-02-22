@@ -1,8 +1,7 @@
-import { createHash } from "crypto";
+import { createHash } from "node:crypto";
 import type { PrismaClient } from "@schoolconnect/db";
 
-const GOOGLE_TRANSLATE_URL =
-	"https://translation.googleapis.com/language/translate/v2";
+const GOOGLE_TRANSLATE_URL = "https://translation.googleapis.com/language/translate/v2";
 
 function hashText(text: string): string {
 	return createHash("sha256").update(text).digest("hex");
@@ -61,11 +60,7 @@ export async function translateTexts(
 	});
 
 	if (!response.ok) {
-		console.error(
-			"Google Translate API error:",
-			response.status,
-			await response.text(),
-		);
+		console.error("Google Translate API error:", response.status, await response.text());
 		// Return original texts on failure
 		for (const miss of misses) {
 			results[miss.index] = miss.text;
