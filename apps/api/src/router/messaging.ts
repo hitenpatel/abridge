@@ -394,4 +394,252 @@ export const messagingRouter = router({
 				nextCursor,
 			};
 		}),
+
+	createConversation: protectedProcedure
+		.input(
+			z.object({
+				staffId: z.string(),
+				subject: z.string().optional(),
+				body: z.string().min(1),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const parentLink = await ctx.prisma.parentChild.findFirst({
+				where: { userId: ctx.user.id },
+				include: { child: { select: { schoolId: true } } },
+			});
+
+			if (!parentLink) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "Only parents can start conversations",
+				});
+			}
+
+			const schoolId = parentLink.child.schoolId;
+
+			const staffMember = await ctx.prisma.staffMember.findFirst({
+				where: { userId: input.staffId, schoolId },
+			});
+
+			if (!staffMember) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Staff member not found at your child's school",
+				});
+			}
+
+			const conversation = await ctx.prisma.conversation.upsert({
+				where: {
+					schoolId_parentId_staffId: {
+						schoolId,
+						parentId: ctx.user.id,
+						staffId: input.staffId,
+					},
+				},
+				update: {
+					closedAt: null,
+					lastMessageAt: new Date(),
+				},
+				create: {
+					schoolId,
+					parentId: ctx.user.id,
+					staffId: input.staffId,
+					subject: input.subject,
+					lastMessageAt: new Date(),
+				},
+			});
+
+			const message = await ctx.prisma.message.create({
+				data: {
+					schoolId,
+					subject: input.subject ?? "Direct Message",
+					body: input.body,
+					category: "STANDARD",
+					type: "DIRECT",
+					conversationId: conversation.id,
+					authorId: ctx.user.id,
+				},
+			});
+
+			return { conversationId: conversation.id, messageId: message.id };
+		}),
+
+	sendDirect: protectedProcedure
+		.input(
+			z.object({
+				conversationId: z.string(),
+				body: z.string().min(1),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const conversation = await ctx.prisma.conversation.findUnique({
+				where: { id: input.conversationId },
+			});
+
+			if (!conversation) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Conversation not found" });
+			}
+
+			if (conversation.parentId !== ctx.user.id && conversation.staffId !== ctx.user.id) {
+				throw new TRPCError({ code: "FORBIDDEN", message: "Not a participant" });
+			}
+
+			if (conversation.closedAt) {
+				throw new TRPCError({ code: "BAD_REQUEST", message: "Conversation is closed" });
+			}
+
+			const [message] = await ctx.prisma.$transaction([
+				ctx.prisma.message.create({
+					data: {
+						schoolId: conversation.schoolId,
+						subject: conversation.subject ?? "Direct Message",
+						body: input.body,
+						category: "STANDARD",
+						type: "DIRECT",
+						conversationId: conversation.id,
+						authorId: ctx.user.id,
+					},
+				}),
+				ctx.prisma.conversation.update({
+					where: { id: conversation.id },
+					data: { lastMessageAt: new Date() },
+				}),
+			]);
+
+			return { success: true, messageId: message.id };
+		}),
+
+	listConversations: protectedProcedure
+		.input(
+			z.object({
+				limit: z.number().min(1).max(50).default(20),
+				cursor: z.string().nullish(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const conversations = await ctx.prisma.conversation.findMany({
+				where: {
+					OR: [
+						{ parentId: ctx.user.id },
+						{ staffId: ctx.user.id },
+					],
+				},
+				orderBy: { lastMessageAt: "desc" },
+				take: input.limit + 1,
+				cursor: input.cursor ? { id: input.cursor } : undefined,
+				include: {
+					parent: { select: { id: true, name: true } },
+					staff: { select: { id: true, name: true } },
+					messages: {
+						orderBy: { createdAt: "desc" },
+						take: 1,
+						select: { body: true, createdAt: true, authorId: true },
+					},
+				},
+			});
+
+			let nextCursor: string | undefined;
+			if (conversations.length > input.limit) {
+				const next = conversations.pop();
+				nextCursor = next?.id;
+			}
+
+			return {
+				items: conversations.map((c) => ({
+					id: c.id,
+					subject: c.subject,
+					parent: c.parent,
+					staff: c.staff,
+					lastMessage: c.messages[0] ?? null,
+					closedAt: c.closedAt,
+					lastMessageAt: c.lastMessageAt,
+				})),
+				nextCursor,
+			};
+		}),
+
+	getConversation: protectedProcedure
+		.input(
+			z.object({
+				conversationId: z.string(),
+				limit: z.number().min(1).max(100).default(50),
+				cursor: z.string().nullish(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const conversation = await ctx.prisma.conversation.findUnique({
+				where: { id: input.conversationId },
+				include: {
+					parent: { select: { id: true, name: true } },
+					staff: { select: { id: true, name: true } },
+				},
+			});
+
+			if (!conversation) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Conversation not found" });
+			}
+
+			if (conversation.parentId !== ctx.user.id && conversation.staffId !== ctx.user.id) {
+				throw new TRPCError({ code: "FORBIDDEN", message: "Not a participant" });
+			}
+
+			const messages = await ctx.prisma.message.findMany({
+				where: { conversationId: input.conversationId, type: "DIRECT" },
+				orderBy: { createdAt: "asc" },
+				take: input.limit + 1,
+				cursor: input.cursor ? { id: input.cursor } : undefined,
+				select: {
+					id: true,
+					body: true,
+					authorId: true,
+					createdAt: true,
+				},
+			});
+
+			let nextCursor: string | undefined;
+			if (messages.length > input.limit) {
+				const next = messages.pop();
+				nextCursor = next?.id;
+			}
+
+			return {
+				conversation: {
+					id: conversation.id,
+					subject: conversation.subject,
+					parent: conversation.parent,
+					staff: conversation.staff,
+					closedAt: conversation.closedAt,
+				},
+				items: messages,
+				nextCursor,
+			};
+		}),
+
+	closeConversation: protectedProcedure
+		.input(z.object({ conversationId: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const conversation = await ctx.prisma.conversation.findUnique({
+				where: { id: input.conversationId },
+			});
+
+			if (!conversation) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Conversation not found" });
+			}
+
+			const isStaff = await ctx.prisma.staffMember.findFirst({
+				where: { userId: ctx.user.id, schoolId: conversation.schoolId },
+			});
+
+			if (!isStaff) {
+				throw new TRPCError({ code: "FORBIDDEN", message: "Only staff can close conversations" });
+			}
+
+			await ctx.prisma.conversation.update({
+				where: { id: input.conversationId },
+				data: { closedAt: new Date() },
+			});
+
+			return { success: true };
+		}),
 });
