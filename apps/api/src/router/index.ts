@@ -10,6 +10,7 @@ import { formsRouter } from "./forms";
 import { healthRouter } from "./health";
 import { invitationRouter } from "./invitation";
 import { messagingRouter } from "./messaging";
+import { parentsEveningRouter } from "./parents-evening";
 import { paymentsRouter } from "./payments";
 import { settingsRouter } from "./settings";
 import { setupRouter } from "./setup";
@@ -36,6 +37,7 @@ export const appRouter = router({
 	setup: setupRouter,
 	staff: staffRouter,
 	translation: translationRouter,
+	parentsEvening: parentsEveningRouter,
 	dbInit: dbInitRouter,
 });
 
