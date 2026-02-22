@@ -13,8 +13,9 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
+import { useTranslation } from "@/hooks/use-translation";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type ViewTab = "messages" | "direct";
 
@@ -30,6 +31,10 @@ export default function MessagesPage() {
 	const [dmInput, setDmInput] = useState("");
 	const [staffPickerOpen, setStaffPickerOpen] = useState(false);
 	const [newConvoBody, setNewConvoBody] = useState("");
+	const [showOriginal, setShowOriginal] = useState(false);
+	const [translatedSubject, setTranslatedSubject] = useState<string | null>(null);
+	const [translatedBody, setTranslatedBody] = useState<string | null>(null);
+	const { userLang, translate, isTranslating } = useTranslation();
 
 	const isStaff = !!session?.staffRole && !!session?.schoolId;
 
@@ -104,6 +109,20 @@ export default function MessagesPage() {
 			}
 		},
 	});
+
+	// Translate selected message when language is not English
+	useEffect(() => {
+		if (!selectedMessage || userLang === "en") {
+			setTranslatedSubject(null);
+			setTranslatedBody(null);
+			return;
+		}
+		setShowOriginal(false);
+		translate([selectedMessage.subject, selectedMessage.body]).then(([subject, body]) => {
+			setTranslatedSubject(subject ?? null);
+			setTranslatedBody(body ?? null);
+		});
+	}, [selectedMessageId, userLang]);
 
 	if (!features.messagingEnabled) return <FeatureDisabled featureName="Messaging" />;
 
@@ -424,15 +443,30 @@ export default function MessagesPage() {
 									<Card className="bg-white p-4 rounded-2xl rounded-bl-sm shadow-sm border border-gray-100">
 										<div className="mb-2">
 											<h3 className="font-semibold text-gray-900 mb-1">
-												{selectedMessage.subject}
+												{showOriginal || !translatedSubject ? selectedMessage.subject : translatedSubject}
 											</h3>
 											<Badge variant="secondary" className="text-xs">
 												{selectedMessage.category}
 											</Badge>
 										</div>
 										<div className="text-gray-800 text-sm leading-relaxed whitespace-pre-wrap">
-											{selectedMessage.body}
+											{showOriginal || !translatedBody ? selectedMessage.body : translatedBody}
 										</div>
+										{translatedBody && (
+											<div className="mt-2 flex items-center gap-2">
+												<span className="text-xs text-blue-600 font-medium" data-testid="translated-indicator">
+													{isTranslating ? "Translating..." : "Translated"}
+												</span>
+												<button
+													type="button"
+													onClick={() => setShowOriginal(!showOriginal)}
+													className="text-xs text-gray-500 underline hover:text-gray-700"
+													data-testid="show-original-toggle"
+												>
+													{showOriginal ? "Show translation" : "Show original"}
+												</button>
+											</div>
+										)}
 									</Card>
 									<span className="text-[10px] text-gray-400 ml-1">
 										{new Date(selectedMessage.createdAt).toLocaleTimeString(undefined, {

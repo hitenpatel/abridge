@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SUPPORTED_LANGUAGES } from "@/hooks/use-translation";
 import { trpc } from "@/lib/trpc";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -43,11 +44,13 @@ function ProfileCard() {
 	const { data, isLoading } = trpc.settings.getProfile.useQuery();
 	const [name, setName] = useState("");
 	const [phone, setPhone] = useState("");
+	const [language, setLanguage] = useState("en");
 
 	useEffect(() => {
 		if (data) {
 			setName(data.name ?? "");
 			setPhone(data.phone ?? "");
+			setLanguage(data.language ?? "en");
 		}
 	}, [data]);
 
@@ -83,7 +86,7 @@ function ProfileCard() {
 				<form
 					onSubmit={(e) => {
 						e.preventDefault();
-						updateProfile.mutate({ name, phone: phone || null });
+						updateProfile.mutate({ name, phone: phone || null, language });
 					}}
 					className="space-y-4"
 				>
@@ -115,6 +118,22 @@ function ProfileCard() {
 							onChange={(e) => setPhone(e.target.value)}
 							placeholder="Optional"
 						/>
+					</div>
+					<div className="space-y-1">
+						<Label htmlFor="settings-language">Preferred Language</Label>
+						<select
+							id="settings-language"
+							data-testid="language-select"
+							value={language}
+							onChange={(e) => setLanguage(e.target.value)}
+							className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+						>
+							{SUPPORTED_LANGUAGES.map((lang) => (
+								<option key={lang.code} value={lang.code} data-testid={`language-option-${lang.code}`}>
+									{lang.name}
+								</option>
+							))}
+						</select>
 					</div>
 					<Button
 						type="submit"
@@ -360,6 +379,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 	const [clubs, setClubs] = useState(true);
 	const [uniform, setUniform] = useState(true);
 	const [other, setOther] = useState(true);
+	const [translation, setTranslation] = useState(false);
 
 	useEffect(() => {
 		if (data) {
@@ -373,6 +393,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 			setClubs(data.paymentClubsEnabled);
 			setUniform(data.paymentUniformEnabled);
 			setOther(data.paymentOtherEnabled);
+			setTranslation(data.translationEnabled);
 		}
 	}, [data]);
 
@@ -423,6 +444,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							paymentClubsEnabled: clubs,
 							paymentUniformEnabled: uniform,
 							paymentOtherEnabled: other,
+							translationEnabled: translation,
 						});
 					}}
 					className="space-y-4"
@@ -493,6 +515,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							data-testid="toggle-calendar"
 						/>
 						<Toggle checked={forms} onChange={setForms} label="Forms" data-testid="toggle-forms" />
+						<Toggle checked={translation} onChange={setTranslation} label="Translation" data-testid="toggle-translation" />
 					</div>
 
 					<Button
