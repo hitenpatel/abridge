@@ -1,3 +1,6 @@
+import { initSentry, Sentry } from "./lib/sentry";
+initSentry();
+
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
 import { prisma } from "@schoolconnect/db";
@@ -150,6 +153,7 @@ async function main() {
 	setInterval(
 		() => {
 			checkUndeliveredNotifications(prisma).catch((err) => {
+				Sentry.captureException(err);
 				logger.error({ err }, "Notification fallback job failed");
 			});
 		},
@@ -158,6 +162,7 @@ async function main() {
 }
 
 main().catch((err) => {
+	Sentry.captureException(err);
 	server.log.error(err);
 	process.exit(1);
 });

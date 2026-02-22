@@ -17,6 +17,8 @@
 		"@fastify/cookie": "^11.0.2",
 		"@fastify/cors": "^10.0.0",
 		"@schoolconnect/db": "workspace:*",
+		"@sentry/node": "^10.39.0",
+		"@sentry/profiling-node": "^10.39.0",
 		"@trpc/server": "^11.0.0",
 		"@types/pdfkit": "^0.17.4",
 		"better-auth": "^1.4.18",
