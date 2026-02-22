@@ -1,7 +1,14 @@
 import type { PaymentCategory } from "@schoolconnect/db";
 import { TRPCError } from "@trpc/server";
 
-type FeatureName = "messaging" | "payments" | "attendance" | "calendar" | "forms" | "translation" | "parentsEvening";
+type FeatureName =
+	| "messaging"
+	| "payments"
+	| "attendance"
+	| "calendar"
+	| "forms"
+	| "translation"
+	| "parentsEvening";
 
 interface SchoolFeatures {
 	messagingEnabled: boolean;

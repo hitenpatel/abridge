@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { protectedProcedure, router } from "../trpc";
 import { translateTexts } from "../services/translation";
+import { protectedProcedure, router } from "../trpc";
 
 export const translationRouter = router({
 	translate: protectedProcedure

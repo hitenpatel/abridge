@@ -129,7 +129,11 @@ function ProfileCard() {
 							className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 						>
 							{SUPPORTED_LANGUAGES.map((lang) => (
-								<option key={lang.code} value={lang.code} data-testid={`language-option-${lang.code}`}>
+								<option
+									key={lang.code}
+									value={lang.code}
+									data-testid={`language-option-${lang.code}`}
+								>
 									{lang.name}
 								</option>
 							))}
@@ -232,7 +236,12 @@ function NotificationsCard() {
 					</div>
 
 					<div className="border-t pt-4">
-						<Toggle checked={quietEnabled} onChange={setQuietEnabled} label="Quiet hours" data-testid="toggle-quiet-hours" />
+						<Toggle
+							checked={quietEnabled}
+							onChange={setQuietEnabled}
+							label="Quiet hours"
+							data-testid="toggle-quiet-hours"
+						/>
 						{quietEnabled && (
 							<div className="mt-3 flex items-center gap-3">
 								<div className="space-y-1">
@@ -518,8 +527,18 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							data-testid="toggle-calendar"
 						/>
 						<Toggle checked={forms} onChange={setForms} label="Forms" data-testid="toggle-forms" />
-						<Toggle checked={translation} onChange={setTranslation} label="Translation" data-testid="toggle-translation" />
-						<Toggle checked={parentsEvening} onChange={setParentsEvening} label="Parents' Evening" data-testid="toggle-parents-evening" />
+						<Toggle
+							checked={translation}
+							onChange={setTranslation}
+							label="Translation"
+							data-testid="toggle-translation"
+						/>
+						<Toggle
+							checked={parentsEvening}
+							onChange={setParentsEvening}
+							label="Parents' Evening"
+							data-testid="toggle-parents-evening"
+						/>
 					</div>
 
 					<Button

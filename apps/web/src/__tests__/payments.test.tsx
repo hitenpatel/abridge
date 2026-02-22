@@ -3,11 +3,34 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import PaymentsDashboardPage from "../app/dashboard/payments/page";
 
+// Mock feature toggles
+vi.mock("@/lib/feature-toggles", () => ({
+	useFeatureToggles: () => ({
+		paymentsEnabled: true,
+		messagingEnabled: true,
+		attendanceEnabled: true,
+		calendarEnabled: true,
+		formsEnabled: true,
+		paymentDinnerMoneyEnabled: true,
+		paymentTripsEnabled: true,
+		paymentClubsEnabled: true,
+		paymentUniformEnabled: true,
+		paymentOtherEnabled: true,
+		translationEnabled: false,
+		parentsEveningEnabled: false,
+	}),
+}));
+
 // Mock trpc
 vi.mock("@/lib/trpc", () => ({
 	trpc: {
 		auth: {
 			getSession: {
+				useQuery: vi.fn(),
+			},
+		},
+		payments: {
+			listPaymentItems: {
 				useQuery: vi.fn(),
 			},
 		},
@@ -20,6 +43,10 @@ describe("PaymentsDashboardPage", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		(trpcLib.trpc.auth.getSession.useQuery as any) = mockSessionQuery;
+		(trpcLib.trpc.payments.listPaymentItems.useQuery as any) = () => ({
+			data: undefined,
+			isLoading: false,
+		});
 	});
 
 	it("renders payment list with upcoming payments", () => {
@@ -51,8 +78,8 @@ describe("PaymentsDashboardPage", () => {
 
 		render(<PaymentsDashboardPage />);
 
-		expect(screen.getByText("$25.00")).toBeDefined();
-		expect(screen.getByText("$85.00")).toBeDefined();
+		expect(screen.getByText("£25.00")).toBeDefined();
+		expect(screen.getByText("£85.00")).toBeDefined();
 	});
 
 	it("shows due dates for upcoming payments", () => {
@@ -86,7 +113,7 @@ describe("PaymentsDashboardPage", () => {
 		render(<PaymentsDashboardPage />);
 
 		expect(screen.getByText("Current Balance")).toBeDefined();
-		expect(screen.getByText("$142.50")).toBeDefined();
+		expect(screen.getByText("£142.50")).toBeDefined();
 	});
 
 	it("renders quick top-up section with preset amounts", () => {
@@ -97,9 +124,9 @@ describe("PaymentsDashboardPage", () => {
 		render(<PaymentsDashboardPage />);
 
 		expect(screen.getByText("Quick Top-Up")).toBeDefined();
-		expect(screen.getByText("+$20")).toBeDefined();
-		expect(screen.getByText("+$50")).toBeDefined();
-		expect(screen.getByText("+$100")).toBeDefined();
+		expect(screen.getByText("+£20")).toBeDefined();
+		expect(screen.getByText("+£50")).toBeDefined();
+		expect(screen.getByText("+£100")).toBeDefined();
 	});
 
 	it("renders payment methods section", () => {

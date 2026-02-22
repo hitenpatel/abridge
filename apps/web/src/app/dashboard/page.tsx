@@ -2,8 +2,8 @@
 
 import { ActionItemsRow } from "@/components/feed/action-items-row";
 import { ActivityFeed } from "@/components/feed/activity-feed";
-import { ClassPostCard } from "@/components/feed/class-post-card";
 import { ChildSwitcher } from "@/components/feed/child-switcher";
+import { ClassPostCard } from "@/components/feed/class-post-card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";

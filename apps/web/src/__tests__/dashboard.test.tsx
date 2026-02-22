@@ -28,6 +28,11 @@ vi.mock("@/lib/auth-client", () => ({
 vi.mock("@/lib/trpc", () => ({
 	trpc: {
 		useUtils: vi.fn(),
+		auth: {
+			getSession: {
+				useQuery: vi.fn(),
+			},
+		},
 		dashboard: {
 			getSummary: {
 				useQuery: vi.fn(),
@@ -45,6 +50,9 @@ vi.mock("@/lib/trpc", () => ({
 			},
 			removeReaction: {
 				useMutation: vi.fn(),
+			},
+			listRecent: {
+				useQuery: vi.fn(),
 			},
 		},
 	},
@@ -73,11 +81,20 @@ describe("DashboardPage", () => {
 		(trpcLib.trpc.dashboard.getSummary.useQuery as any) = mockSummaryQuery;
 		(trpcLib.trpc.dashboard.getFeed.useInfiniteQuery as any) = mockFeedQuery;
 		(trpcLib.trpc.dashboard.getActionItems.useQuery as any) = mockActionItemsQuery;
+		(trpcLib.trpc.auth.getSession.useQuery as any) = () => ({
+			data: undefined,
+			isLoading: false,
+		});
 		(trpcLib.trpc.useUtils as any) = () => ({
 			dashboard: { getFeed: { invalidate: vi.fn() } },
+			classPost: { listRecent: { invalidate: vi.fn() } },
 		});
 		(trpcLib.trpc.classPost.react.useMutation as any) = () => ({ mutate: vi.fn() });
 		(trpcLib.trpc.classPost.removeReaction.useMutation as any) = () => ({ mutate: vi.fn() });
+		(trpcLib.trpc.classPost.listRecent.useQuery as any) = () => ({
+			data: undefined,
+			isLoading: false,
+		});
 
 		mockFeedQuery.mockReturnValue({
 			data: undefined,

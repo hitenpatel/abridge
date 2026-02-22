@@ -4,12 +4,26 @@ import { addMonths, format, subMonths } from "date-fns";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { EventList } from "../event-list";
 
+// Mock sonner
+vi.mock("sonner", () => ({
+	toast: { error: vi.fn(), success: vi.fn() },
+}));
+
 // Mock the trpc client
 vi.mock("@/lib/trpc", () => ({
 	trpc: {
+		useUtils: vi.fn(),
+		auth: {
+			getSession: {
+				useQuery: vi.fn(),
+			},
+		},
 		calendar: {
 			listEvents: {
 				useQuery: vi.fn(),
+			},
+			deleteEvent: {
+				useMutation: vi.fn(),
 			},
 		},
 	},
@@ -22,6 +36,17 @@ describe("EventList", () => {
 		vi.clearAllMocks();
 		// Setup the mock implementation
 		(trpcLib.trpc.calendar.listEvents.useQuery as any) = mockUseQuery;
+		(trpcLib.trpc.auth.getSession.useQuery as any) = () => ({
+			data: undefined,
+			isLoading: false,
+		});
+		(trpcLib.trpc.useUtils as any) = () => ({
+			calendar: { listEvents: { invalidate: vi.fn() } },
+		});
+		(trpcLib.trpc.calendar.deleteEvent.useMutation as any) = () => ({
+			mutate: vi.fn(),
+			isPending: false,
+		});
 	});
 
 	it("renders a list of events for the current month", () => {

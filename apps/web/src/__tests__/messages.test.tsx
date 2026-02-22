@@ -3,9 +3,37 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import MessagesPage from "../app/dashboard/messages/page";
 
+// Mock feature toggles
+vi.mock("@/lib/feature-toggles", () => ({
+	useFeatureToggles: () => ({
+		messagingEnabled: true,
+		paymentsEnabled: true,
+		attendanceEnabled: true,
+		calendarEnabled: true,
+		formsEnabled: true,
+		paymentDinnerMoneyEnabled: true,
+		paymentTripsEnabled: true,
+		paymentClubsEnabled: true,
+		paymentUniformEnabled: true,
+		paymentOtherEnabled: true,
+		translationEnabled: false,
+		parentsEveningEnabled: false,
+	}),
+}));
+
+// Mock translation hook
+vi.mock("@/hooks/use-translation", () => ({
+	useTranslation: () => ({
+		userLang: "en",
+		translate: vi.fn().mockResolvedValue([]),
+		isTranslating: false,
+	}),
+}));
+
 // Mock trpc
 vi.mock("@/lib/trpc", () => ({
 	trpc: {
+		useUtils: vi.fn(),
 		auth: {
 			getSession: {
 				useQuery: vi.fn(),
@@ -14,6 +42,33 @@ vi.mock("@/lib/trpc", () => ({
 		messaging: {
 			listReceived: {
 				useQuery: vi.fn(),
+			},
+			listSent: {
+				useQuery: vi.fn(),
+			},
+			listConversations: {
+				useQuery: vi.fn(),
+			},
+			listReplies: {
+				useQuery: vi.fn(),
+			},
+			getConversation: {
+				useQuery: vi.fn(),
+			},
+			listSchoolStaff: {
+				useQuery: vi.fn(),
+			},
+			reply: {
+				useMutation: vi.fn(),
+			},
+			sendDirect: {
+				useMutation: vi.fn(),
+			},
+			createConversation: {
+				useMutation: vi.fn(),
+			},
+			closeConversation: {
+				useMutation: vi.fn(),
 			},
 		},
 	},
@@ -27,6 +82,49 @@ describe("MessagesPage", () => {
 		vi.clearAllMocks();
 		(trpcLib.trpc.auth.getSession.useQuery as any) = mockSessionQuery;
 		(trpcLib.trpc.messaging.listReceived.useQuery as any) = mockMessagesQuery;
+		(trpcLib.trpc.messaging.listSent.useQuery as any) = () => ({
+			data: undefined,
+			isLoading: false,
+		});
+		(trpcLib.trpc.messaging.listConversations.useQuery as any) = () => ({
+			data: undefined,
+			isLoading: false,
+		});
+		(trpcLib.trpc.messaging.listReplies.useQuery as any) = () => ({
+			data: undefined,
+			isLoading: false,
+		});
+		(trpcLib.trpc.messaging.getConversation.useQuery as any) = () => ({
+			data: undefined,
+			isLoading: false,
+		});
+		(trpcLib.trpc.messaging.listSchoolStaff.useQuery as any) = () => ({
+			data: undefined,
+			isLoading: false,
+		});
+		(trpcLib.trpc.useUtils as any) = () => ({
+			messaging: {
+				listReplies: { invalidate: vi.fn() },
+				getConversation: { invalidate: vi.fn() },
+				listConversations: { invalidate: vi.fn() },
+			},
+		});
+		(trpcLib.trpc.messaging.reply.useMutation as any) = () => ({
+			mutate: vi.fn(),
+			isPending: false,
+		});
+		(trpcLib.trpc.messaging.sendDirect.useMutation as any) = () => ({
+			mutate: vi.fn(),
+			isPending: false,
+		});
+		(trpcLib.trpc.messaging.createConversation.useMutation as any) = () => ({
+			mutate: vi.fn(),
+			isPending: false,
+		});
+		(trpcLib.trpc.messaging.closeConversation.useMutation as any) = () => ({
+			mutate: vi.fn(),
+			isPending: false,
+		});
 	});
 
 	it("shows loading skeleton while session is loading", () => {
@@ -39,7 +137,10 @@ describe("MessagesPage", () => {
 	});
 
 	it("shows loading skeleton while messages are loading", () => {
-		mockSessionQuery.mockReturnValue({ data: { name: "Parent" }, isLoading: false });
+		mockSessionQuery.mockReturnValue({
+			data: { name: "Parent", staffRole: null, schoolId: null },
+			isLoading: false,
+		});
 		mockMessagesQuery.mockReturnValue({ data: undefined, isLoading: true });
 
 		render(<MessagesPage />);
@@ -48,7 +149,10 @@ describe("MessagesPage", () => {
 	});
 
 	it("shows empty state when no messages", () => {
-		mockSessionQuery.mockReturnValue({ data: { name: "Parent" }, isLoading: false });
+		mockSessionQuery.mockReturnValue({
+			data: { name: "Parent", staffRole: null, schoolId: null },
+			isLoading: false,
+		});
 		mockMessagesQuery.mockReturnValue({
 			data: { items: [] },
 			isLoading: false,
@@ -81,7 +185,10 @@ describe("MessagesPage", () => {
 			},
 		];
 
-		mockSessionQuery.mockReturnValue({ data: { name: "Parent" }, isLoading: false });
+		mockSessionQuery.mockReturnValue({
+			data: { name: "Parent", staffRole: null, schoolId: null },
+			isLoading: false,
+		});
 		mockMessagesQuery.mockReturnValue({
 			data: { items: mockMessages },
 			isLoading: false,
@@ -107,7 +214,10 @@ describe("MessagesPage", () => {
 			},
 		];
 
-		mockSessionQuery.mockReturnValue({ data: { name: "Parent" }, isLoading: false });
+		mockSessionQuery.mockReturnValue({
+			data: { name: "Parent", staffRole: null, schoolId: null },
+			isLoading: false,
+		});
 		mockMessagesQuery.mockReturnValue({
 			data: { items: mockMessages },
 			isLoading: false,
@@ -132,7 +242,10 @@ describe("MessagesPage", () => {
 			},
 		];
 
-		mockSessionQuery.mockReturnValue({ data: { name: "Parent" }, isLoading: false });
+		mockSessionQuery.mockReturnValue({
+			data: { name: "Parent", staffRole: null, schoolId: null },
+			isLoading: false,
+		});
 		mockMessagesQuery.mockReturnValue({
 			data: { items: mockMessages },
 			isLoading: false,
@@ -150,7 +263,10 @@ describe("MessagesPage", () => {
 	});
 
 	it("shows placeholder when no message is selected and list is empty", () => {
-		mockSessionQuery.mockReturnValue({ data: { name: "Parent" }, isLoading: false });
+		mockSessionQuery.mockReturnValue({
+			data: { name: "Parent", staffRole: null, schoolId: null },
+			isLoading: false,
+		});
 		mockMessagesQuery.mockReturnValue({
 			data: { items: [] },
 			isLoading: false,
@@ -162,7 +278,10 @@ describe("MessagesPage", () => {
 	});
 
 	it("renders search input", () => {
-		mockSessionQuery.mockReturnValue({ data: { name: "Parent" }, isLoading: false });
+		mockSessionQuery.mockReturnValue({
+			data: { name: "Parent", staffRole: null, schoolId: null },
+			isLoading: false,
+		});
 		mockMessagesQuery.mockReturnValue({
 			data: { items: [] },
 			isLoading: false,
@@ -174,7 +293,10 @@ describe("MessagesPage", () => {
 	});
 
 	it("renders filter tabs", () => {
-		mockSessionQuery.mockReturnValue({ data: { name: "Parent" }, isLoading: false });
+		mockSessionQuery.mockReturnValue({
+			data: { name: "Parent", staffRole: null, schoolId: null },
+			isLoading: false,
+		});
 		mockMessagesQuery.mockReturnValue({
 			data: { items: [] },
 			isLoading: false,
@@ -182,9 +304,8 @@ describe("MessagesPage", () => {
 
 		render(<MessagesPage />);
 
-		expect(screen.getByText("All Chats")).toBeDefined();
-		expect(screen.getByText("Unread")).toBeDefined();
-		expect(screen.getByText("Teachers")).toBeDefined();
+		expect(screen.getByText("Messages")).toBeDefined();
+		expect(screen.getByText("Direct")).toBeDefined();
 	});
 
 	it("selects a different message on click", () => {
@@ -209,7 +330,10 @@ describe("MessagesPage", () => {
 			},
 		];
 
-		mockSessionQuery.mockReturnValue({ data: { name: "Parent" }, isLoading: false });
+		mockSessionQuery.mockReturnValue({
+			data: { name: "Parent", staffRole: null, schoolId: null },
+			isLoading: false,
+		});
 		mockMessagesQuery.mockReturnValue({
 			data: { items: mockMessages },
 			isLoading: false,

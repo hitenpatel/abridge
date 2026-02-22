@@ -56,7 +56,7 @@ describe("AnalyticsPage", () => {
 		messages?: any;
 	}) {
 		mockSessionQuery.mockReturnValue({
-			data: { schoolId: "school-1" },
+			data: { schoolId: "school-1", staffRole: "ADMIN" },
 		});
 		mockTermStart.mockReturnValue({
 			data: new Date("2025-09-01").toISOString(),
@@ -168,7 +168,7 @@ describe("AnalyticsPage", () => {
 
 	it("shows loading skeletons when data is loading", () => {
 		mockSessionQuery.mockReturnValue({
-			data: { schoolId: "school-1" },
+			data: { schoolId: "school-1", staffRole: "ADMIN" },
 		});
 		mockTermStart.mockReturnValue({ data: null });
 		mockAttendance.mockReturnValue({ data: undefined, isLoading: true });

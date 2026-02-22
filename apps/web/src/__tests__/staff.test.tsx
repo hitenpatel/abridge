@@ -53,6 +53,9 @@ vi.mock("@/lib/trpc", () => ({
 			list: {
 				useQuery: vi.fn(),
 			},
+			updateRole: {
+				useMutation: vi.fn(),
+			},
 			remove: {
 				useMutation: vi.fn(),
 			},
@@ -66,6 +69,7 @@ describe("StaffManagementPage", () => {
 	const mockStaffList = vi.fn();
 	const mockSendMutation = vi.fn();
 	const mockRemoveMutation = vi.fn();
+	const mockUpdateRoleMutation = vi.fn();
 
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -73,9 +77,11 @@ describe("StaffManagementPage", () => {
 		(trpcLib.trpc.invitation.list.useQuery as any) = mockInvitationList;
 		(trpcLib.trpc.staff.list.useQuery as any) = mockStaffList;
 		(trpcLib.trpc.invitation.send.useMutation as any) = mockSendMutation;
+		(trpcLib.trpc.staff.updateRole.useMutation as any) = mockUpdateRoleMutation;
 		(trpcLib.trpc.staff.remove.useMutation as any) = mockRemoveMutation;
 
 		mockSendMutation.mockReturnValue({ mutate: mockMutate, isPending: false });
+		mockUpdateRoleMutation.mockReturnValue({ mutate: vi.fn(), isPending: false });
 		mockRemoveMutation.mockReturnValue({ mutate: vi.fn(), isPending: false });
 	});
 
@@ -169,9 +175,9 @@ describe("StaffManagementPage", () => {
 
 		expect(screen.getByText("Jane Teacher")).toBeDefined();
 		expect(screen.getByText("jane@school.com")).toBeDefined();
-		expect(screen.getByText("TEACHER")).toBeDefined();
+		expect(screen.getByText("Teacher")).toBeDefined();
 		expect(screen.getByText("Bob Office")).toBeDefined();
-		expect(screen.getByText("OFFICE")).toBeDefined();
+		expect(screen.getByText("Office")).toBeDefined();
 	});
 
 	it("shows loading skeleton for staff list", () => {

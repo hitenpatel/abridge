@@ -17,6 +17,14 @@ vi.mock("@/lib/trpc", () => ({
 				useQuery: vi.fn(),
 			},
 		},
+		stripe: {
+			getStripeStatus: {
+				useQuery: vi.fn(),
+			},
+			createOnboardingLink: {
+				useMutation: vi.fn(),
+			},
+		},
 		settings: {
 			getProfile: {
 				useQuery: vi.fn(),
@@ -59,6 +67,14 @@ describe("SettingsPage", () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+		(trpcLib.trpc.stripe.getStripeStatus.useQuery as any) = () => ({
+			data: undefined,
+			isLoading: false,
+		});
+		(trpcLib.trpc.stripe.createOnboardingLink.useMutation as any) = () => ({
+			mutate: vi.fn(),
+			isPending: false,
+		});
 		(trpcLib.trpc.auth.getSession.useQuery as any) = mockSessionQuery;
 		(trpcLib.trpc.settings.getProfile.useQuery as any) = mockProfileQuery;
 		(trpcLib.trpc.settings.updateProfile.useMutation as any) = mockProfileMutation;

@@ -1,8 +1,8 @@
 "use client";
 
+import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { FeatureDisabled } from "@/components/feature-disabled";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
@@ -56,7 +56,8 @@ function StaffAttendanceView({ schoolId }: { schoolId: string }) {
 		}
 	};
 
-	const attendanceRate = summary.total > 0 ? Math.round((summary.present / summary.total) * 100) : 0;
+	const attendanceRate =
+		summary.total > 0 ? Math.round((summary.present / summary.total) * 100) : 0;
 
 	return (
 		<div data-testid="attendance-view">
@@ -64,7 +65,12 @@ function StaffAttendanceView({ schoolId }: { schoolId: string }) {
 				<div>
 					<h2 className="text-3xl font-bold text-slate-800">Attendance Overview</h2>
 					<p className="text-muted-foreground mt-1">
-						Today &middot; {new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}
+						Today &middot;{" "}
+						{new Date().toLocaleDateString("en-GB", {
+							weekday: "long",
+							day: "numeric",
+							month: "long",
+						})}
 					</p>
 				</div>
 			</header>
@@ -105,7 +111,9 @@ function StaffAttendanceView({ schoolId }: { schoolId: string }) {
 			{summary.total > 0 && (
 				<Card className="p-5 mb-8">
 					<div className="flex items-center justify-between mb-2">
-						<span className="text-sm font-medium text-muted-foreground">Today&apos;s Attendance Rate</span>
+						<span className="text-sm font-medium text-muted-foreground">
+							Today&apos;s Attendance Rate
+						</span>
 						<span className="text-sm font-bold">{attendanceRate}%</span>
 					</div>
 					<div className="w-full bg-gray-100 rounded-full h-3">
@@ -132,7 +140,10 @@ function StaffAttendanceView({ schoolId }: { schoolId: string }) {
 						</thead>
 						<tbody>
 							{rows.map((row) => (
-								<tr key={row.childId} className="border-b last:border-b-0 hover:bg-muted/30 transition-colors">
+								<tr
+									key={row.childId}
+									className="border-b last:border-b-0 hover:bg-muted/30 transition-colors"
+								>
 									<td className="p-4">
 										<span className="font-medium">
 											{row.firstName} {row.lastName}
@@ -143,7 +154,9 @@ function StaffAttendanceView({ schoolId }: { schoolId: string }) {
 									</td>
 									<td className="p-4 text-center">{markBadge(row.am)}</td>
 									<td className="p-4 text-center">{markBadge(row.pm)}</td>
-									<td className="p-4 text-sm text-muted-foreground">{row.amNote || row.pmNote || ""}</td>
+									<td className="p-4 text-sm text-muted-foreground">
+										{row.amNote || row.pmNote || ""}
+									</td>
 								</tr>
 							))}
 							{rows.length === 0 && (

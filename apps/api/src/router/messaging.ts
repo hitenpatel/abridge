@@ -411,7 +411,7 @@ export const messagingRouter = router({
 					id: r.id,
 					body: r.body,
 					authorId: r.authorId,
-					authorName: r.authorId ? authorMap.get(r.authorId) ?? "Unknown" : "Unknown",
+					authorName: r.authorId ? (authorMap.get(r.authorId) ?? "Unknown") : "Unknown",
 					createdAt: r.createdAt,
 				})),
 				nextCursor,
@@ -543,10 +543,7 @@ export const messagingRouter = router({
 		.query(async ({ ctx, input }) => {
 			const conversations = await ctx.prisma.conversation.findMany({
 				where: {
-					OR: [
-						{ parentId: ctx.user.id },
-						{ staffId: ctx.user.id },
-					],
+					OR: [{ parentId: ctx.user.id }, { staffId: ctx.user.id }],
 				},
 				orderBy: { lastMessageAt: "desc" },
 				take: input.limit + 1,

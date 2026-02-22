@@ -1,7 +1,7 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { FeatureDisabled } from "@/components/feature-disabled";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -22,9 +22,7 @@ function StaffPaymentsView({ schoolId }: { schoolId: string }) {
 			<div className="flex items-center justify-between mb-8">
 				<div>
 					<h1 className="text-3xl font-bold text-foreground">Payment Items</h1>
-					<p className="text-muted-foreground mt-1">
-						Create and manage payment items for parents.
-					</p>
+					<p className="text-muted-foreground mt-1">Create and manage payment items for parents.</p>
 				</div>
 				<Link href="/dashboard/payments/new">
 					<Button data-testid="create-payment-button">
@@ -52,7 +50,8 @@ function StaffPaymentsView({ schoolId }: { schoolId: string }) {
 									<div>
 										<h4 className="font-medium text-foreground">{item.title}</h4>
 										<p className="text-sm text-muted-foreground">
-											£{(item.amount / 100).toFixed(2)} &middot; {item.category} &middot; {item.recipientCount} recipients
+											£{(item.amount / 100).toFixed(2)} &middot; {item.category} &middot;{" "}
+											{item.recipientCount} recipients
 										</p>
 									</div>
 								</div>
@@ -63,7 +62,9 @@ function StaffPaymentsView({ schoolId }: { schoolId: string }) {
 				</div>
 			) : (
 				<div className="bg-muted rounded-lg p-12 text-center border border-dashed border-border">
-					<span className="material-symbols-rounded text-4xl text-muted-foreground mb-4">payments</span>
+					<span className="material-symbols-rounded text-4xl text-muted-foreground mb-4">
+						payments
+					</span>
 					<p className="text-muted-foreground">No payment items yet. Create one to get started.</p>
 				</div>
 			)}

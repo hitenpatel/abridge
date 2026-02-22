@@ -25,9 +25,33 @@ vi.mock("lucide-react", async (importOriginal) => {
 	};
 });
 
+// Mock feature toggles
+vi.mock("@/lib/feature-toggles", () => ({
+	useFeatureToggles: () => ({
+		formsEnabled: true,
+		messagingEnabled: true,
+		paymentsEnabled: true,
+		attendanceEnabled: true,
+		calendarEnabled: true,
+		paymentDinnerMoneyEnabled: true,
+		paymentTripsEnabled: true,
+		paymentClubsEnabled: true,
+		paymentUniformEnabled: true,
+		paymentOtherEnabled: true,
+		translationEnabled: false,
+		parentsEveningEnabled: false,
+	}),
+}));
+
 // Mock trpc
 vi.mock("@/lib/trpc", () => ({
 	trpc: {
+		useUtils: vi.fn(),
+		auth: {
+			getSession: {
+				useQuery: vi.fn(),
+			},
+		},
 		dashboard: {
 			getSummary: {
 				useQuery: vi.fn(),
@@ -40,6 +64,12 @@ vi.mock("@/lib/trpc", () => ({
 			getCompletedForms: {
 				useQuery: vi.fn(),
 			},
+			getTemplates: {
+				useQuery: vi.fn(),
+			},
+			createTemplate: {
+				useMutation: vi.fn(),
+			},
 		},
 	},
 }));
@@ -51,6 +81,21 @@ describe("FormsPage", () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+		(trpcLib.trpc.auth.getSession.useQuery as any) = () => ({
+			data: { staffRole: null, schoolId: null },
+			isLoading: false,
+		});
+		(trpcLib.trpc.useUtils as any) = () => ({
+			forms: { getTemplates: { invalidate: vi.fn() } },
+		});
+		(trpcLib.trpc.forms.getTemplates.useQuery as any) = () => ({
+			data: undefined,
+			isLoading: false,
+		});
+		(trpcLib.trpc.forms.createTemplate.useMutation as any) = () => ({
+			mutate: vi.fn(),
+			isPending: false,
+		});
 		(trpcLib.trpc.dashboard.getSummary.useQuery as any) = mockSummaryQuery;
 		(trpcLib.trpc.forms.getPendingForms.useQuery as any) = mockPendingQuery;
 		(trpcLib.trpc.forms.getCompletedForms.useQuery as any) = mockCompletedQuery;

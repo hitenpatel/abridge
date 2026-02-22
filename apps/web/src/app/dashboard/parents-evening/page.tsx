@@ -38,11 +38,7 @@ export default function ParentsEveningPage() {
 				{isAdmin && schoolId && <CreateEveningDialog schoolId={schoolId} />}
 			</div>
 
-			{isAdmin && schoolId ? (
-				<AdminView schoolId={schoolId} />
-			) : (
-				<ParentView />
-			)}
+			{isAdmin && schoolId ? <AdminView schoolId={schoolId} /> : <ParentView />}
 		</div>
 	);
 }
@@ -187,10 +183,7 @@ function AdminView({ schoolId }: { schoolId: string }) {
 	const [addingTeachers, setAddingTeachers] = useState(false);
 	const utils = trpc.useUtils();
 
-	const { data: staffList } = trpc.staff.list.useQuery(
-		{ schoolId },
-		{ enabled: addingTeachers },
-	);
+	const { data: staffList } = trpc.staff.list.useQuery({ schoolId }, { enabled: addingTeachers });
 
 	const addTeachersMutation = trpc.parentsEvening.addTeachers.useMutation({
 		onSuccess: (result) => {
@@ -223,7 +216,9 @@ function AdminView({ schoolId }: { schoolId: string }) {
 			{data?.items.length === 0 && (
 				<Card className="rounded-2xl border border-gray-100">
 					<CardContent className="py-12 text-center text-gray-500">
-						<span className="material-symbols-rounded text-5xl mb-3 text-gray-300 block">groups</span>
+						<span className="material-symbols-rounded text-5xl mb-3 text-gray-300 block">
+							groups
+						</span>
 						<p>No parents' evenings created yet</p>
 					</CardContent>
 				</Card>
@@ -253,8 +248,17 @@ function AdminView({ schoolId }: { schoolId: string }) {
 					</CardHeader>
 					<CardContent>
 						<div className="flex gap-4 text-sm text-gray-500">
-							<span>{new Date(evening.date).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</span>
-							<span>{evening.startTime} – {evening.endTime}</span>
+							<span>
+								{new Date(evening.date).toLocaleDateString("en-GB", {
+									weekday: "long",
+									day: "numeric",
+									month: "long",
+									year: "numeric",
+								})}
+							</span>
+							<span>
+								{evening.startTime} – {evening.endTime}
+							</span>
 							<span>{evening._count.slots} slots</span>
 						</div>
 
@@ -289,22 +293,24 @@ function AdminView({ schoolId }: { schoolId: string }) {
 								)}
 
 								{addingTeachers && staffList && (
-									<div className="space-y-2" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+									<div
+										className="space-y-2"
+										onClick={(e) => e.stopPropagation()}
+										onKeyDown={(e) => e.stopPropagation()}
+									>
 										<p className="text-sm font-medium">Select teachers:</p>
 										{staffList.map((s) => (
 											<label key={s.user.id} className="flex items-center gap-2 text-sm">
-												<input
-													type="checkbox"
-													value={s.user.id}
-													data-testid="teacher-checkbox"
-												/>
+												<input type="checkbox" value={s.user.id} data-testid="teacher-checkbox" />
 												{s.user.name} ({s.role})
 											</label>
 										))}
 										<Button
 											size="sm"
 											onClick={() => {
-												const checkboxes = document.querySelectorAll<HTMLInputElement>("[data-testid='teacher-checkbox']:checked");
+												const checkboxes = document.querySelectorAll<HTMLInputElement>(
+													"[data-testid='teacher-checkbox']:checked",
+												);
 												const staffIds = Array.from(checkboxes).map((cb) => cb.value);
 												if (staffIds.length === 0) {
 													toast.error("Select at least one teacher");
@@ -324,11 +330,7 @@ function AdminView({ schoolId }: { schoolId: string }) {
 								)}
 
 								{evening.isPublished && (
-									<StaffSlotView
-										parentsEveningId={evening.id}
-										schoolId={schoolId}
-										isStaff
-									/>
+									<StaffSlotView parentsEveningId={evening.id} schoolId={schoolId} isStaff />
 								)}
 							</div>
 						)}
@@ -366,7 +368,8 @@ function ParentView() {
 		<div className="space-y-4">
 			{data.items.map((evening) => {
 				const now = new Date();
-				const bookingOpen = now >= new Date(evening.bookingOpensAt) && now <= new Date(evening.bookingClosesAt);
+				const bookingOpen =
+					now >= new Date(evening.bookingOpensAt) && now <= new Date(evening.bookingClosesAt);
 
 				return (
 					<Card
@@ -380,8 +383,17 @@ function ParentView() {
 						</CardHeader>
 						<CardContent>
 							<div className="flex flex-wrap gap-4 text-sm text-gray-500">
-								<span>{new Date(evening.date).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</span>
-								<span>{evening.startTime} – {evening.endTime}</span>
+								<span>
+									{new Date(evening.date).toLocaleDateString("en-GB", {
+										weekday: "long",
+										day: "numeric",
+										month: "long",
+										year: "numeric",
+									})}
+								</span>
+								<span>
+									{evening.startTime} – {evening.endTime}
+								</span>
 								{evening.allowVideoCall && (
 									<span className="text-blue-600 flex items-center gap-1">
 										<span className="material-symbols-rounded text-sm">videocam</span>
@@ -410,7 +422,10 @@ function ParentView() {
 	);
 }
 
-function SlotBookingView({ parentsEveningId, bookingOpen }: { parentsEveningId: string; bookingOpen: boolean }) {
+function SlotBookingView({
+	parentsEveningId,
+	bookingOpen,
+}: { parentsEveningId: string; bookingOpen: boolean }) {
 	const { data: session } = trpc.auth.getSession.useQuery();
 	const { data, isLoading } = trpc.parentsEvening.getSlots.useQuery({ parentsEveningId });
 	const utils = trpc.useUtils();
@@ -468,10 +483,17 @@ function SlotBookingView({ parentsEveningId, bookingOpen }: { parentsEveningId: 
 											: "bg-white border-gray-200 hover:border-primary/50",
 								)}
 							>
-								<p className="font-medium">{slot.startTime} – {slot.endTime}</p>
+								<p className="font-medium">
+									{slot.startTime} – {slot.endTime}
+								</p>
 								{slot.isOwnBooking ? (
 									<div className="mt-1">
-										<span className="text-xs text-primary font-medium" data-testid="booked-indicator">Booked</span>
+										<span
+											className="text-xs text-primary font-medium"
+											data-testid="booked-indicator"
+										>
+											Booked
+										</span>
 										{slot.videoCallLink && (
 											<a
 												href={slot.videoCallLink}
@@ -572,7 +594,11 @@ function StaffSlotView({
 	}
 
 	return (
-		<div className="space-y-6" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+		<div
+			className="space-y-6"
+			onClick={(e) => e.stopPropagation()}
+			onKeyDown={(e) => e.stopPropagation()}
+		>
 			{Array.from(grouped.entries()).map(([staffId, { staffName, slots }]) => (
 				<div key={staffId}>
 					<h3 className="font-semibold text-gray-900 mb-2">{staffName}</h3>
@@ -586,9 +612,16 @@ function StaffSlotView({
 								)}
 							>
 								<div>
-									<span className="font-medium">{slot.startTime} – {slot.endTime}</span>
+									<span className="font-medium">
+										{slot.startTime} – {slot.endTime}
+									</span>
 									{slot.isBooked ? (
-										<span className="ml-2 text-blue-600 text-xs font-medium" data-testid="booked-indicator">Booked</span>
+										<span
+											className="ml-2 text-blue-600 text-xs font-medium"
+											data-testid="booked-indicator"
+										>
+											Booked
+										</span>
 									) : (
 										<span className="ml-2 text-gray-400 text-xs">Available</span>
 									)}
@@ -646,7 +679,9 @@ function StaffSlotView({
 						<Button
 							size="sm"
 							data-testid="save-notes-button"
-							onClick={() => addNotesMutation.mutate({ schoolId, slotId: notesSlotId, notes: notesText })}
+							onClick={() =>
+								addNotesMutation.mutate({ schoolId, slotId: notesSlotId, notes: notesText })
+							}
 							disabled={addNotesMutation.isPending}
 						>
 							Save
@@ -670,7 +705,9 @@ function StaffSlotView({
 					<div className="flex gap-2">
 						<Button
 							size="sm"
-							onClick={() => setVideoMutation.mutate({ schoolId, slotId: videoSlotId, videoCallLink: videoLink })}
+							onClick={() =>
+								setVideoMutation.mutate({ schoolId, slotId: videoSlotId, videoCallLink: videoLink })
+							}
 							disabled={setVideoMutation.isPending}
 						>
 							Save

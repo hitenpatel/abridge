@@ -3,11 +3,39 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import AttendancePage from "../app/dashboard/attendance/page";
 
+// Mock feature toggles
+vi.mock("@/lib/feature-toggles", () => ({
+	useFeatureToggles: () => ({
+		attendanceEnabled: true,
+		messagingEnabled: true,
+		paymentsEnabled: true,
+		calendarEnabled: true,
+		formsEnabled: true,
+		paymentDinnerMoneyEnabled: true,
+		paymentTripsEnabled: true,
+		paymentClubsEnabled: true,
+		paymentUniformEnabled: true,
+		paymentOtherEnabled: true,
+		translationEnabled: false,
+		parentsEveningEnabled: false,
+	}),
+}));
+
 // Mock trpc
 vi.mock("@/lib/trpc", () => ({
 	trpc: {
+		auth: {
+			getSession: {
+				useQuery: vi.fn(),
+			},
+		},
 		user: {
 			listChildren: {
+				useQuery: vi.fn(),
+			},
+		},
+		attendance: {
+			getSchoolAttendanceToday: {
 				useQuery: vi.fn(),
 			},
 		},
@@ -19,7 +47,15 @@ describe("AttendancePage", () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+		(trpcLib.trpc.auth.getSession.useQuery as any) = () => ({
+			data: { staffRole: null, schoolId: null },
+			isLoading: false,
+		});
 		(trpcLib.trpc.user.listChildren.useQuery as any) = mockListChildren;
+		(trpcLib.trpc.attendance.getSchoolAttendanceToday.useQuery as any) = () => ({
+			data: undefined,
+			isLoading: false,
+		});
 	});
 
 	it("shows loading skeleton while data loads", () => {

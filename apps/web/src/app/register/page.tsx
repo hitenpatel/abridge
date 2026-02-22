@@ -27,7 +27,10 @@ function RegisterForm() {
 		data: inviteInfo,
 		isLoading: loadingInvite,
 		error: inviteError,
-	} = trpc.invitation.verify.useQuery({ token: token as string }, { enabled: !!token, retry: false });
+	} = trpc.invitation.verify.useQuery(
+		{ token: token as string },
+		{ enabled: !!token, retry: false },
+	);
 
 	useEffect(() => {
 		if (inviteInfo?.email) {
