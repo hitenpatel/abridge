@@ -113,7 +113,7 @@ export const messagingRouter = router({
 
 			const [messages, total] = await Promise.all([
 				ctx.prisma.message.findMany({
-					where: { schoolId: input.schoolId },
+					where: { schoolId: input.schoolId, type: "BROADCAST" },
 					orderBy: { createdAt: "desc" },
 					take: input.limit,
 					skip,
@@ -122,11 +122,12 @@ export const messagingRouter = router({
 							select: {
 								children: true,
 								reads: true,
+								replies: true,
 							},
 						},
 					},
 				}),
-				ctx.prisma.message.count({ where: { schoolId: input.schoolId } }),
+				ctx.prisma.message.count({ where: { schoolId: input.schoolId, type: "BROADCAST" } }),
 			]);
 
 			return {
@@ -137,12 +138,13 @@ export const messagingRouter = router({
 						body: string;
 						category: string;
 						createdAt: Date;
-						_count: { children: number; reads: number };
+						_count: { children: number; reads: number; replies: number };
 					}) => ({
 						...m,
 						category: m.category as "STANDARD" | "URGENT" | "FYI",
 						recipientCount: m._count.children,
 						readCount: m._count.reads,
+						replyCount: m._count.replies,
 					}),
 				),
 				total,
@@ -169,9 +171,10 @@ export const messagingRouter = router({
 				return { items: [], nextCursor: undefined };
 			}
 
-			// Find messages sent to these children
+			// Find broadcast messages sent to these children
 			const messages = await ctx.prisma.message.findMany({
 				where: {
+					type: "BROADCAST",
 					children: {
 						some: {
 							childId: { in: childIds },
@@ -260,5 +263,135 @@ export const messagingRouter = router({
 			});
 
 			return { success: true };
+		}),
+
+	reply: protectedProcedure
+		.input(
+			z.object({
+				messageId: z.string(),
+				body: z.string().min(1),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const rootMessage = await ctx.prisma.message.findUnique({
+				where: { id: input.messageId },
+				include: {
+					children: {
+						select: { childId: true },
+					},
+				},
+			});
+
+			if (!rootMessage || rootMessage.type !== "BROADCAST") {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Message not found",
+				});
+			}
+
+			const isStaff = await ctx.prisma.staffMember.findFirst({
+				where: { userId: ctx.user.id, schoolId: rootMessage.schoolId },
+			});
+
+			if (!isStaff) {
+				const childIds = rootMessage.children.map((c) => c.childId);
+				const isParent = await ctx.prisma.parentChild.findFirst({
+					where: {
+						userId: ctx.user.id,
+						childId: { in: childIds },
+					},
+				});
+
+				if (!isParent) {
+					throw new TRPCError({
+						code: "FORBIDDEN",
+						message: "Not authorised to reply to this message",
+					});
+				}
+			}
+
+			const reply = await ctx.prisma.message.create({
+				data: {
+					schoolId: rootMessage.schoolId,
+					subject: `Re: ${rootMessage.subject}`,
+					body: input.body,
+					category: rootMessage.category,
+					type: "REPLY",
+					threadId: rootMessage.id,
+					authorId: ctx.user.id,
+				},
+			});
+
+			return { success: true, replyId: reply.id };
+		}),
+
+	listReplies: protectedProcedure
+		.input(
+			z.object({
+				messageId: z.string(),
+				limit: z.number().min(1).max(100).default(50),
+				cursor: z.string().nullish(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const rootMessage = await ctx.prisma.message.findUnique({
+				where: { id: input.messageId },
+				select: { id: true, schoolId: true, children: { select: { childId: true } } },
+			});
+
+			if (!rootMessage) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Message not found" });
+			}
+
+			const isStaff = await ctx.prisma.staffMember.findFirst({
+				where: { userId: ctx.user.id, schoolId: rootMessage.schoolId },
+			});
+
+			if (!isStaff) {
+				const childIds = rootMessage.children.map((c) => c.childId);
+				const isParent = await ctx.prisma.parentChild.findFirst({
+					where: { userId: ctx.user.id, childId: { in: childIds } },
+				});
+				if (!isParent) {
+					throw new TRPCError({ code: "FORBIDDEN", message: "Not authorised" });
+				}
+			}
+
+			const replies = await ctx.prisma.message.findMany({
+				where: { threadId: input.messageId, type: "REPLY" },
+				orderBy: { createdAt: "asc" },
+				take: input.limit + 1,
+				cursor: input.cursor ? { id: input.cursor } : undefined,
+				select: {
+					id: true,
+					body: true,
+					authorId: true,
+					createdAt: true,
+				},
+			});
+
+			let nextCursor: string | undefined;
+			if (replies.length > input.limit) {
+				const next = replies.pop();
+				nextCursor = next?.id;
+			}
+
+			const authorIds = [...new Set(replies.map((r) => r.authorId).filter(Boolean))] as string[];
+			const authors = await ctx.prisma.user.findMany({
+				where: { id: { in: authorIds } },
+				select: { id: true, name: true },
+			});
+			const authorMap = new Map(authors.map((a) => [a.id, a.name]));
+
+			return {
+				items: replies.map((r) => ({
+					id: r.id,
+					body: r.body,
+					authorId: r.authorId,
+					authorName: r.authorId ? authorMap.get(r.authorId) ?? "Unknown" : "Unknown",
+					createdAt: r.createdAt,
+				})),
+				nextCursor,
+			};
 		}),
 });
