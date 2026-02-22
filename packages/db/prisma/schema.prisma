@@ -44,6 +44,7 @@ model School {
   formTemplates FormTemplate[]
   invitations Invitation[]
   classPosts ClassPost[]
+  conversations Conversation[]
 
   @@map("schools")
 }
@@ -93,6 +94,8 @@ model User {
   accounts      Account[]
   formResponses FormResponse[]
   notificationDeliveries NotificationDelivery[]
+  conversationsAsParent Conversation[] @relation("ConversationParent")
+  conversationsAsStaff  Conversation[] @relation("ConversationStaff")
 
   @@map("users")
 }
@@ -208,18 +211,24 @@ enum ParentRelationType {
 // ─── Messaging ───────────────────────────────────────────────
 
 model Message {
-  id        String          @id @default(cuid())
-  schoolId  String
-  subject   String
-  body      String
-  category  MessageCategory @default(STANDARD)
-  authorId  String?
-  createdAt DateTime        @default(now())
+  id             String          @id @default(cuid())
+  schoolId       String
+  subject        String
+  body           String
+  category       MessageCategory @default(STANDARD)
+  type           MessageType     @default(BROADCAST)
+  authorId       String?
+  threadId       String?
+  conversationId String?
+  createdAt      DateTime        @default(now())
 
-  school   School         @relation(fields: [schoolId], references: [id], onDelete: Cascade)
-  children MessageChild[]
-  reads    MessageRead[]
-  deliveries NotificationDelivery[]
+  school       School              @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  children     MessageChild[]
+  reads        MessageRead[]
+  deliveries   NotificationDelivery[]
+  thread       Message?             @relation("MessageThread", fields: [threadId], references: [id])
+  replies      Message[]            @relation("MessageThread")
+  conversation Conversation?        @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
   @@index([schoolId, createdAt])
   @@map("messages")
@@ -253,6 +262,32 @@ enum MessageCategory {
   URGENT
   STANDARD
   FYI
+}
+
+enum MessageType {
+  BROADCAST
+  REPLY
+  DIRECT
+}
+
+model Conversation {
+  id            String    @id @default(cuid())
+  schoolId      String
+  parentId      String
+  staffId       String
+  subject       String?
+  lastMessageAt DateTime  @default(now())
+  closedAt      DateTime?
+  createdAt     DateTime  @default(now())
+
+  school   School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  parent   User      @relation("ConversationParent", fields: [parentId], references: [id], onDelete: Cascade)
+  staff    User      @relation("ConversationStaff", fields: [staffId], references: [id], onDelete: Cascade)
+  messages Message[]
+
+  @@unique([schoolId, parentId, staffId])
+  @@index([schoolId, lastMessageAt])
+  @@map("conversations")
 }
 
 // ─── Attendance ──────────────────────────────────────────────
