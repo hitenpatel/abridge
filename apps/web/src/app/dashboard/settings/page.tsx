@@ -380,6 +380,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 	const [uniform, setUniform] = useState(true);
 	const [other, setOther] = useState(true);
 	const [translation, setTranslation] = useState(false);
+	const [parentsEvening, setParentsEvening] = useState(false);
 
 	useEffect(() => {
 		if (data) {
@@ -394,6 +395,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 			setUniform(data.paymentUniformEnabled);
 			setOther(data.paymentOtherEnabled);
 			setTranslation(data.translationEnabled);
+			setParentsEvening(data.parentsEveningEnabled);
 		}
 	}, [data]);
 
@@ -445,6 +447,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							paymentUniformEnabled: uniform,
 							paymentOtherEnabled: other,
 							translationEnabled: translation,
+							parentsEveningEnabled: parentsEvening,
 						});
 					}}
 					className="space-y-4"
@@ -516,6 +519,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 						/>
 						<Toggle checked={forms} onChange={setForms} label="Forms" data-testid="toggle-forms" />
 						<Toggle checked={translation} onChange={setTranslation} label="Translation" data-testid="toggle-translation" />
+						<Toggle checked={parentsEvening} onChange={setParentsEvening} label="Parents' Evening" data-testid="toggle-parents-evening" />
 					</div>
 
 					<Button

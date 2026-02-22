@@ -75,6 +75,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 			featureKey: "calendarEnabled",
 		},
 		{ name: "Forms", href: "/dashboard/forms", icon: "description", featureKey: "formsEnabled" },
+		{
+			name: "Parents' Evening",
+			href: "/dashboard/parents-evening",
+			icon: "groups",
+			featureKey: "parentsEveningEnabled",
+		},
 		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];
 
@@ -105,6 +111,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 			featureKey: "paymentsEnabled",
 		},
 		{ name: "Analytics", href: "/dashboard/analytics", icon: "analytics" },
+		{
+			name: "Parents' Evening",
+			href: "/dashboard/parents-evening",
+			icon: "groups",
+			featureKey: "parentsEveningEnabled",
+		},
 		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];
 
