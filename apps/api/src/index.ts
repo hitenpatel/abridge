@@ -13,7 +13,17 @@ import { pdfRoutes } from "./routes/pdf";
 import { testSeedRoutes } from "./routes/test-seed";
 import { webhookRoutes } from "./routes/webhooks";
 
-const server = Fastify({ logger: true });
+const server = Fastify({
+	logger: {
+		level: process.env.LOG_LEVEL || (process.env.NODE_ENV === "production" ? "info" : "debug"),
+		...(process.env.NODE_ENV !== "production" && {
+			transport: {
+				target: "pino-pretty",
+				options: { colorize: true },
+			},
+		}),
+	},
+});
 
 // Add prisma to Fastify instance for use in routes
 declare module "fastify" {
