@@ -1,15 +1,167 @@
 "use client";
 
-import { FeatureDisabled } from "@/components/feature-disabled";
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { FeatureDisabled } from "@/components/feature-disabled";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
 import { useState } from "react";
 
-export default function AttendancePage() {
-	const features = useFeatureToggles();
-	if (!features.attendanceEnabled) return <FeatureDisabled featureName="Attendance" />;
+function StaffAttendanceView({ schoolId }: { schoolId: string }) {
+	const { data, isLoading } = trpc.attendance.getSchoolAttendanceToday.useQuery({ schoolId });
+
+	if (isLoading) {
+		return (
+			<div className="space-y-6" data-testid="attendance-view">
+				<Skeleton className="h-8 w-48" />
+				<div className="grid grid-cols-4 gap-4">
+					<Skeleton className="h-24" />
+					<Skeleton className="h-24" />
+					<Skeleton className="h-24" />
+					<Skeleton className="h-24" />
+				</div>
+				<Skeleton className="h-96 w-full" />
+			</div>
+		);
+	}
+
+	const summary = data?.summary ?? { present: 0, absent: 0, late: 0, unmarked: 0, total: 0 };
+	const rows = data?.rows ?? [];
+
+	const markBadge = (mark: string | null) => {
+		if (!mark)
+			return (
+				<Badge variant="outline" className="text-gray-400">
+					—
+				</Badge>
+			);
+		switch (mark) {
+			case "PRESENT":
+				return <Badge variant="success">Present</Badge>;
+			case "LATE":
+				return <Badge variant="warning">Late</Badge>;
+			case "ABSENT_AUTHORISED":
+				return <Badge variant="destructive">Absent (Auth)</Badge>;
+			case "ABSENT_UNAUTHORISED":
+				return <Badge variant="destructive">Absent</Badge>;
+			case "NOT_REQUIRED":
+				return (
+					<Badge variant="outline" className="text-gray-400">
+						N/R
+					</Badge>
+				);
+			default:
+				return <Badge variant="outline">{mark}</Badge>;
+		}
+	};
+
+	const attendanceRate = summary.total > 0 ? Math.round((summary.present / summary.total) * 100) : 0;
+
+	return (
+		<div data-testid="attendance-view">
+			<header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+				<div>
+					<h2 className="text-3xl font-bold text-slate-800">Attendance Overview</h2>
+					<p className="text-muted-foreground mt-1">
+						Today &middot; {new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}
+					</p>
+				</div>
+			</header>
+
+			{/* Summary Cards */}
+			<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+				<Card className="p-5 text-center">
+					<div className="flex items-center justify-center gap-2 mb-2">
+						<span className="material-symbols-rounded text-green-500">check_circle</span>
+						<span className="text-sm font-medium text-muted-foreground">Present</span>
+					</div>
+					<p className="text-3xl font-bold text-green-600">{summary.present}</p>
+				</Card>
+				<Card className="p-5 text-center">
+					<div className="flex items-center justify-center gap-2 mb-2">
+						<span className="material-symbols-rounded text-red-500">cancel</span>
+						<span className="text-sm font-medium text-muted-foreground">Absent</span>
+					</div>
+					<p className="text-3xl font-bold text-red-600">{summary.absent}</p>
+				</Card>
+				<Card className="p-5 text-center">
+					<div className="flex items-center justify-center gap-2 mb-2">
+						<span className="material-symbols-rounded text-yellow-500">schedule</span>
+						<span className="text-sm font-medium text-muted-foreground">Late</span>
+					</div>
+					<p className="text-3xl font-bold text-yellow-600">{summary.late}</p>
+				</Card>
+				<Card className="p-5 text-center">
+					<div className="flex items-center justify-center gap-2 mb-2">
+						<span className="material-symbols-rounded text-gray-400">help_outline</span>
+						<span className="text-sm font-medium text-muted-foreground">Unmarked</span>
+					</div>
+					<p className="text-3xl font-bold text-gray-500">{summary.unmarked}</p>
+				</Card>
+			</div>
+
+			{/* Attendance Rate Bar */}
+			{summary.total > 0 && (
+				<Card className="p-5 mb-8">
+					<div className="flex items-center justify-between mb-2">
+						<span className="text-sm font-medium text-muted-foreground">Today&apos;s Attendance Rate</span>
+						<span className="text-sm font-bold">{attendanceRate}%</span>
+					</div>
+					<div className="w-full bg-gray-100 rounded-full h-3">
+						<div
+							className="bg-green-500 h-3 rounded-full transition-all"
+							style={{ width: `${attendanceRate}%` }}
+						/>
+					</div>
+				</Card>
+			)}
+
+			{/* Student Table */}
+			<Card className="overflow-hidden">
+				<div className="overflow-x-auto">
+					<table className="w-full">
+						<thead>
+							<tr className="border-b bg-muted/50">
+								<th className="text-left p-4 text-sm font-medium text-muted-foreground">Student</th>
+								<th className="text-left p-4 text-sm font-medium text-muted-foreground">Class</th>
+								<th className="text-center p-4 text-sm font-medium text-muted-foreground">AM</th>
+								<th className="text-center p-4 text-sm font-medium text-muted-foreground">PM</th>
+								<th className="text-left p-4 text-sm font-medium text-muted-foreground">Notes</th>
+							</tr>
+						</thead>
+						<tbody>
+							{rows.map((row) => (
+								<tr key={row.childId} className="border-b last:border-b-0 hover:bg-muted/30 transition-colors">
+									<td className="p-4">
+										<span className="font-medium">
+											{row.firstName} {row.lastName}
+										</span>
+									</td>
+									<td className="p-4 text-sm text-muted-foreground">
+										{row.yearGroup && row.className ? `${row.yearGroup} ${row.className}` : "—"}
+									</td>
+									<td className="p-4 text-center">{markBadge(row.am)}</td>
+									<td className="p-4 text-center">{markBadge(row.pm)}</td>
+									<td className="p-4 text-sm text-muted-foreground">{row.amNote || row.pmNote || ""}</td>
+								</tr>
+							))}
+							{rows.length === 0 && (
+								<tr>
+									<td colSpan={5} className="p-8 text-center text-muted-foreground">
+										No students found in this school.
+									</td>
+								</tr>
+							)}
+						</tbody>
+					</table>
+				</div>
+			</Card>
+		</div>
+	);
+}
+
+function ParentAttendanceView() {
 	const { data: childrenLinks, isLoading } = trpc.user.listChildren.useQuery();
 	const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
 	const [selectedReason, setSelectedReason] = useState("sick");
@@ -94,7 +246,6 @@ export default function AttendancePage() {
 		}
 	};
 
-	const today = new Date().getDate();
 	const isToday = (day: number) => {
 		const now = new Date();
 		return day === now.getDate() && month === now.getMonth() && year === now.getFullYear();
@@ -394,4 +545,18 @@ export default function AttendancePage() {
 			</div>
 		</div>
 	);
+}
+
+export default function AttendancePage() {
+	const features = useFeatureToggles();
+	const { data: session } = trpc.auth.getSession.useQuery();
+	const isStaff = !!session?.staffRole && !!session?.schoolId;
+
+	if (!features.attendanceEnabled) return <FeatureDisabled featureName="Attendance" />;
+
+	if (isStaff && session.schoolId) {
+		return <StaffAttendanceView schoolId={session.schoolId} />;
+	}
+
+	return <ParentAttendanceView />;
 }

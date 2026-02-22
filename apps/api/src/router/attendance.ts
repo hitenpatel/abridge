@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
+import { endOfDay, startOfDay } from "date-fns";
 import { z } from "zod";
-import { protectedProcedure, router } from "../trpc";
+import { protectedProcedure, router, schoolStaffProcedure } from "../trpc";
 
 export const attendanceRouter = router({
 	getAttendanceForChild: protectedProcedure
@@ -159,4 +160,62 @@ export const attendanceRouter = router({
 
 			return { success: true, recordCount: dates.length * 2 };
 		}),
+
+	getSchoolAttendanceToday: schoolStaffProcedure.query(async ({ ctx }) => {
+		const today = new Date();
+		const children = await ctx.prisma.child.findMany({
+			where: { schoolId: ctx.schoolId },
+			select: {
+				id: true,
+				firstName: true,
+				lastName: true,
+				className: true,
+				yearGroup: true,
+				attendance: {
+					where: {
+						date: { gte: startOfDay(today), lte: endOfDay(today) },
+					},
+					select: { session: true, mark: true, note: true },
+				},
+			},
+			orderBy: [{ yearGroup: "asc" }, { lastName: "asc" }],
+		});
+
+		let present = 0;
+		let absent = 0;
+		let late = 0;
+		let unmarked = 0;
+
+		const rows = children.map((child) => {
+			const am = child.attendance.find((a) => a.session === "AM");
+			const pm = child.attendance.find((a) => a.session === "PM");
+			const amMark = am?.mark ?? null;
+			const pmMark = pm?.mark ?? null;
+
+			if (amMark === "PRESENT" || pmMark === "PRESENT") present++;
+			if (amMark === "LATE" || pmMark === "LATE") late++;
+			if (
+				amMark === "ABSENT_AUTHORISED" ||
+				amMark === "ABSENT_UNAUTHORISED" ||
+				pmMark === "ABSENT_AUTHORISED" ||
+				pmMark === "ABSENT_UNAUTHORISED"
+			)
+				absent++;
+			if (!amMark && !pmMark) unmarked++;
+
+			return {
+				childId: child.id,
+				firstName: child.firstName,
+				lastName: child.lastName,
+				className: child.className,
+				yearGroup: child.yearGroup,
+				am: amMark,
+				pm: pmMark,
+				amNote: am?.note ?? null,
+				pmNote: pm?.note ?? null,
+			};
+		});
+
+		return { summary: { present, absent, late, unmarked, total: children.length }, rows };
+	}),
 });
