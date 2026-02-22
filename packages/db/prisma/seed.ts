@@ -185,27 +185,43 @@ async function main() {
 		create: { userId: parent.id, childId: child2.id, relation: "PARENT" },
 	});
 
-	// 6. Message
-	const welcomeSubject = "Welcome to SchoolConnect!";
-	const existingMessage = await prisma.message.findFirst({
-		where: {
-			schoolId: school.id,
-			subject: welcomeSubject,
+	// 6. Messages (STANDARD, URGENT, FYI categories)
+	const seedMessages = [
+		{
+			subject: "Welcome to SchoolConnect!",
+			body: "We are excited to launch our new communication platform. You can now receive messages, view attendance, and make payments all in one place.",
+			category: "STANDARD" as const,
 		},
-	});
+		{
+			subject: "Urgent: School Closure Tomorrow",
+			body: "Due to severe weather conditions, the school will be closed tomorrow. Please make alternative arrangements for your children. We will update you by 6pm if the situation changes.",
+			category: "URGENT" as const,
+		},
+		{
+			subject: "FYI: New Library Books Available",
+			body: "We have added 50 new books to the school library this term. Children are welcome to borrow up to 3 books at a time. Please encourage reading at home!",
+			category: "FYI" as const,
+		},
+	];
 
-	if (!existingMessage) {
-		await prisma.message.create({
-			data: {
-				schoolId: school.id,
-				subject: welcomeSubject,
-				body: "We are excited to launch our new communication platform. You can now receive messages, view attendance, and make payments all in one place.",
-				category: "STANDARD",
-				children: {
-					create: [{ childId: child1.id }, { childId: child2.id }],
-				},
-			},
+	for (const msg of seedMessages) {
+		const existing = await prisma.message.findFirst({
+			where: { schoolId: school.id, subject: msg.subject },
 		});
+		if (!existing) {
+			await prisma.message.create({
+				data: {
+					schoolId: school.id,
+					authorId: admin.id,
+					subject: msg.subject,
+					body: msg.body,
+					category: msg.category,
+					children: {
+						create: [{ childId: child1.id }, { childId: child2.id }],
+					},
+				},
+			});
+		}
 	}
 
 	// 7. Attendance

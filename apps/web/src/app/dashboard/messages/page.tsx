@@ -10,16 +10,26 @@ import { useState } from "react";
 
 export default function MessagesPage() {
 	const features = useFeatureToggles();
-	if (!features.messagingEnabled) return <FeatureDisabled featureName="Messaging" />;
 	const { data: session, isLoading: sessionLoading } = trpc.auth.getSession.useQuery();
 	const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
 	const [messageInput, setMessageInput] = useState("");
 	const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
 
-	const { data: messages, isLoading: messagesLoading } = trpc.messaging.listReceived.useQuery(
-		{ limit: 20 },
-		{ enabled: !!session && !session.staffRole },
+	const isStaff = !!session?.staffRole && !!session?.schoolId;
+
+	// Parent inbox
+	const { data: receivedMessages, isLoading: receivedLoading } =
+		trpc.messaging.listReceived.useQuery({ limit: 20 }, { enabled: !!session && !isStaff });
+
+	// Staff sent messages
+	const { data: sentMessages, isLoading: sentLoading } = trpc.messaging.listSent.useQuery(
+		{ schoolId: session?.schoolId ?? "", limit: 20 },
+		{ enabled: !!session && isStaff },
 	);
+
+	if (!features.messagingEnabled) return <FeatureDisabled featureName="Messaging" />;
+
+	const messagesLoading = isStaff ? sentLoading : receivedLoading;
 
 	if (sessionLoading || messagesLoading) {
 		return (
@@ -37,16 +47,19 @@ export default function MessagesPage() {
 		);
 	}
 
-	const selectedMessage = messages?.items.find((m) => m.id === selectedMessageId);
+	// Normalize message list from either source
+	// biome-ignore lint/suspicious/noExplicitAny: merging two different tRPC response shapes
+	const allMessages: any[] = isStaff ? sentMessages?.data ?? [] : receivedMessages?.items ?? [];
+
+	const selectedMessage = allMessages.find((m) => m.id === selectedMessageId);
 
 	const filteredMessages = categoryFilter
-		? // biome-ignore lint/suspicious/noExplicitAny: message type from tRPC
-			messages?.items?.filter((m: any) => m.category === categoryFilter)
-		: messages?.items;
+		? allMessages.filter((m) => m.category === categoryFilter)
+		: allMessages;
 
 	// Auto-select first message if none selected
-	if (!selectedMessageId && messages?.items && messages.items.length > 0) {
-		setSelectedMessageId(messages.items[0].id);
+	if (!selectedMessageId && allMessages.length > 0) {
+		setSelectedMessageId(allMessages[0].id);
 	}
 
 	return (
@@ -137,9 +150,9 @@ export default function MessagesPage() {
 							>
 								<div className="relative">
 									<div className="w-12 h-12 rounded-[20px] bg-primary/10 flex items-center justify-center text-primary font-bold text-lg shadow-sm">
-										{message.schoolName?.[0] || "S"}
+										{message.schoolName?.[0] || message.subject?.[0] || "S"}
 									</div>
-									{!message.isRead && (
+									{message.isRead === false && (
 										<div
 											data-testid="unread-badge"
 											className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"
@@ -149,7 +162,7 @@ export default function MessagesPage() {
 								<div className="flex-1 min-w-0">
 									<div className="flex justify-between items-baseline mb-1">
 										<h3 className="font-semibold text-gray-900 truncate text-sm">
-											{message.schoolName}
+											{message.schoolName || message.subject}
 										</h3>
 										<span className="text-xs text-gray-400">
 											{new Date(message.createdAt).toLocaleDateString(undefined, {
@@ -160,7 +173,7 @@ export default function MessagesPage() {
 									</div>
 									<p className="text-sm text-gray-500 truncate">{message.subject}</p>
 								</div>
-								{!message.isRead && (
+								{message.isRead === false && (
 									<div className="w-5 h-5 bg-primary text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-sm">
 										!
 									</div>
@@ -185,13 +198,13 @@ export default function MessagesPage() {
 							<div className="flex items-center gap-3">
 								<div className="relative">
 									<div className="w-10 h-10 rounded-[20px] bg-primary/10 flex items-center justify-center text-primary font-bold">
-										{selectedMessage.schoolName?.[0] || "S"}
+										{selectedMessage.schoolName?.[0] || selectedMessage.subject?.[0] || "S"}
 									</div>
 									<div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
 								</div>
 								<div>
 									<h2 className="text-lg font-bold text-gray-900 leading-tight">
-										{selectedMessage.schoolName}
+										{selectedMessage.schoolName || "Sent Message"}
 									</h2>
 									<p className="text-xs text-gray-500 font-medium">
 										{selectedMessage.category} • School Message
@@ -232,7 +245,7 @@ export default function MessagesPage() {
 							{/* Received Message */}
 							<div className="flex gap-3 max-w-2xl">
 								<div className="w-8 h-8 rounded-[20px] bg-primary/10 flex items-center justify-center text-primary font-bold text-sm shrink-0 mt-1">
-									{selectedMessage.schoolName?.[0] || "S"}
+									{selectedMessage.schoolName?.[0] || selectedMessage.subject?.[0] || "S"}
 								</div>
 								<div className="flex flex-col gap-1">
 									<Card className="bg-white p-4 rounded-2xl rounded-bl-sm shadow-sm border border-gray-100">
