@@ -26,7 +26,7 @@ export async function getSessionFromRequest(request: FastifyRequest) {
 
 		return session;
 	} catch (error) {
-		logger.error("Session validation error", error as Error);
+		logger.error({ err: error }, "Session validation error");
 		return null;
 	}
 }

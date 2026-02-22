@@ -23,7 +23,7 @@ export function getRedisClient(): Redis | null {
 			});
 
 			redis.on("error", (err) => {
-				logger.error("Redis error", err);
+				logger.error({ err }, "Redis error");
 			});
 
 			redis.on("connect", () => {
@@ -32,13 +32,13 @@ export function getRedisClient(): Redis | null {
 
 			// Test connection
 			redis.connect().catch((err) => {
-				logger.warn("Redis not available, running without cache", { error: err.message });
+				logger.warn({ error: err.message }, "Redis not available, running without cache");
 				redis = null;
 			});
 		}
 		return redis;
 	} catch (err) {
-		logger.warn("Failed to initialize Redis", { error: (err as Error).message });
+		logger.warn({ error: (err as Error).message }, "Failed to initialize Redis");
 		return null;
 	}
 }
@@ -75,7 +75,7 @@ export async function getCachedStaffMembership(
 			return JSON.parse(cached) as StaffMembership | StaffMembership[];
 		}
 	} catch (err) {
-		logger.error("Redis get error", err as Error);
+		logger.error({ err }, "Redis get error");
 	}
 	return null;
 }
@@ -92,7 +92,7 @@ export async function setCachedStaffMembership(
 		const key = staffCacheKey(userId, schoolId);
 		await client.setex(key, STAFF_CACHE_TTL, JSON.stringify(data));
 	} catch (err) {
-		logger.error("Redis set error", err as Error);
+		logger.error({ err }, "Redis set error");
 	}
 }
 
@@ -108,6 +108,6 @@ export async function invalidateStaffCache(userId: string, schoolId?: string): P
 		// Always invalidate the "all" cache
 		await client.del(staffCacheKey(userId));
 	} catch (err) {
-		logger.error("Redis delete error", err as Error);
+		logger.error({ err }, "Redis delete error");
 	}
 }

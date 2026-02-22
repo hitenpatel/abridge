@@ -1,4 +1,5 @@
 import { translate } from "google-translate-api-x";
+import { logger } from "../lib/logger";
 
 export async function translateText(text: string, targetLang: string): Promise<string> {
 	if (!targetLang || targetLang === "en") return text;
@@ -6,7 +7,7 @@ export async function translateText(text: string, targetLang: string): Promise<s
 		const res = await translate(text, { to: targetLang });
 		return res.text;
 	} catch (e) {
-		console.error("Translation failed", e);
+		logger.error({ err: e }, "Translation failed");
 		return text;
 	}
 }

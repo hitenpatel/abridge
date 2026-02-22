@@ -42,7 +42,7 @@ export const auth = betterAuth({
 			create: {
 				after: async (user) => {
 					try {
-						logger.info("Creating user, checking invites", { email: user.email });
+						logger.info({ email: user.email }, "Creating user, checking invites");
 						// Check for pending invitations for this email
 						// Using raw SQL to bypass Prisma client generation issues
 						const invitations: { id: string; schoolId: string; role: StaffRole }[] =
@@ -51,7 +51,7 @@ export const auth = betterAuth({
 							 WHERE email = $1 AND "acceptedAt" IS NULL AND "expiresAt" > NOW()`,
 								user.email,
 							);
-						logger.info("Found invitations", { count: invitations.length });
+						logger.info({ count: invitations.length }, "Found invitations");
 
 						for (const invite of invitations) {
 							await prisma.staffMember.create({
@@ -61,7 +61,7 @@ export const auth = betterAuth({
 									role: invite.role,
 								},
 							});
-							logger.info("Created staff member", { userId: user.id, schoolId: invite.schoolId });
+							logger.info({ userId: user.id, schoolId: invite.schoolId }, "Created staff member");
 
 							// Invalidate staff cache for the new member
 							await invalidateStaffCache(user.id, invite.schoolId);
@@ -72,11 +72,7 @@ export const auth = betterAuth({
 							);
 						}
 					} catch (error) {
-						logger.error("Failed to process invitations during signup", {
-							email: user.email,
-							userId: user.id,
-							error: error instanceof Error ? error.message : String(error),
-						});
+						logger.error({ email: user.email, userId: user.id, error: error instanceof Error ? error.message : String(error) }, "Failed to process invitations during signup");
 						// Don't re-throw - allow user creation to succeed even if
 						// invitation processing fails. The invitation can be accepted
 						// later via the accept endpoint.

@@ -1,5 +1,6 @@
 import type { PrismaClient } from "@schoolconnect/db";
 import { Expo } from "expo-server-sdk";
+import { logger } from "../lib/logger";
 import { sendSms } from "./sms";
 import { translateText } from "./translator";
 
@@ -108,7 +109,7 @@ export class NotificationService {
 										.catch(() => {});
 								}
 							} else {
-								console.warn("Push notification failed:", ticket);
+								logger.warn({ ticket }, "Push notification failed");
 								if (data?.messageId && userId) {
 									await this.prisma.notificationDelivery
 										.create({
@@ -125,14 +126,14 @@ export class NotificationService {
 							}
 						}
 					} catch (error) {
-						console.error("Error sending push notification chunk:", error);
+						logger.error({ err: error }, "Error sending push notification chunk");
 					}
 				}
 			}
 
 			return { success: true, count: successCount };
 		} catch (error) {
-			console.error("Failed to send push notifications:", error);
+			logger.error({ err: error }, "Failed to send push notifications");
 			return {
 				success: false,
 				error: "Failed to send notifications",
@@ -168,7 +169,7 @@ export class NotificationService {
 
 		// Email fallback intent (future enhancement)
 		if (user.email) {
-			console.log(`[Email Fallback Intent] To: ${user.email}, Subject: ${title}`);
+			logger.info({ email: user.email, subject: title }, "Email fallback intent");
 		}
 
 		return false;

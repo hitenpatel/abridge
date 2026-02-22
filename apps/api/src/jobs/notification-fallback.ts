@@ -1,4 +1,5 @@
 import type { PrismaClient } from "@schoolconnect/db";
+import { logger } from "../lib/logger";
 import { NotificationService } from "../services/notification";
 
 export async function checkUndeliveredNotifications(prisma: PrismaClient) {
@@ -45,6 +46,6 @@ export async function checkUndeliveredNotifications(prisma: PrismaClient) {
 	}
 
 	if (undelivered.length > 0) {
-		console.log(`Processed ${undelivered.length} notification fallback checks`);
+		logger.info({ count: undelivered.length }, "Processed notification fallback checks");
 	}
 }

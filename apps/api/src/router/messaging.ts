@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { assertFeatureEnabled } from "../lib/feature-guards";
 import { notificationService } from "../services/notification";
+import { logger } from "../lib/logger";
 import { protectedProcedure, router, schoolFeatureProcedure } from "../trpc";
 
 export const messagingRouter = router({
@@ -92,7 +93,7 @@ export const messagingRouter = router({
 						);
 					}
 				} catch (err) {
-					console.error("Failed to send push notifications", err);
+					logger.error({ err }, "Failed to send push notifications");
 				}
 			})();
 

@@ -1,9 +1,10 @@
+import { logger } from "../lib/logger";
 import { publicProcedure, router } from "../trpc";
 
 export const dbInitRouter = router({
 	initTables: publicProcedure.mutation(async ({ ctx }) => {
 		try {
-			console.log("Creating invitations table...");
+			logger.info("Creating invitations table");
 			await ctx.prisma.$executeRawUnsafe(`
 				CREATE TABLE IF NOT EXISTS invitations (
 					id TEXT PRIMARY KEY,
@@ -19,7 +20,7 @@ export const dbInitRouter = router({
 			`);
 			return { success: true };
 		} catch (e) {
-			console.error("Failed to create table:", e);
+			logger.error({ err: e }, "Failed to create table");
 			throw e;
 		}
 	}),

@@ -41,11 +41,7 @@ export const authRouter = router({
 							role: invite.role,
 						},
 					});
-					logger.info("Recovered: created staff member from pending invitation", {
-						userId: ctx.user.id,
-						schoolId: invite.schoolId,
-						role: invite.role,
-					});
+					logger.info({ userId: ctx.user.id, schoolId: invite.schoolId, role: invite.role }, "Recovered: created staff member from pending invitation");
 
 					await invalidateStaffCache(ctx.user.id, invite.schoolId);
 
@@ -63,10 +59,7 @@ export const authRouter = router({
 					});
 				}
 			} catch (error) {
-				logger.error("Failed to recover pending invitations", {
-					userId: ctx.user.id,
-					error: error instanceof Error ? error.message : String(error),
-				});
+				logger.error({ userId: ctx.user.id, error: error instanceof Error ? error.message : String(error) }, "Failed to recover pending invitations");
 			}
 		}
 

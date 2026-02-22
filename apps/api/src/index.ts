@@ -8,6 +8,7 @@ import rawBody from "fastify-raw-body";
 import { createContext } from "./context";
 import { checkUndeliveredNotifications } from "./jobs/notification-fallback";
 import { auth } from "./lib/auth";
+import { logger } from "./lib/logger";
 import { appRouter } from "./router";
 import { pdfRoutes } from "./routes/pdf";
 import { testSeedRoutes } from "./routes/test-seed";
@@ -125,12 +126,7 @@ async function main() {
 				const responseText = await response.text();
 				return reply.send(responseText || "");
 			} catch (error) {
-				server.log.error("Authentication Error:");
-				server.log.error(error);
-				if (error instanceof Error) {
-					server.log.error(`Error message: ${error.message}`);
-					server.log.error(`Error stack: ${error.stack}`);
-				}
+				server.log.error({ err: error }, "Authentication error");
 				return reply.status(500).send({
 					error: "Internal authentication error",
 					code: "AUTH_FAILURE",
@@ -153,7 +149,9 @@ async function main() {
 	// Run every 5 minutes
 	setInterval(
 		() => {
-			checkUndeliveredNotifications(prisma).catch(console.error);
+			checkUndeliveredNotifications(prisma).catch((err) => {
+				logger.error({ err }, "Notification fallback job failed");
+			});
 		},
 		5 * 60 * 1000,
 	);

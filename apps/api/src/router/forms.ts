@@ -2,6 +2,7 @@ import type { Prisma } from "@schoolconnect/db";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { assertFeatureEnabled } from "../lib/feature-guards";
+import { logger } from "../lib/logger";
 import { protectedProcedure, router, schoolFeatureProcedure } from "../trpc";
 
 const fieldSchema = z.object({
@@ -175,8 +176,8 @@ export const formsRouter = router({
 				},
 			});
 
-			console.log("Generating PDF for form", form.id);
-			console.log("Emailing receipt to", ctx.user.email);
+			logger.info({ formId: form.id }, "Generating PDF for form");
+			logger.info({ email: ctx.user.email }, "Emailing receipt");
 
 			return form;
 		}),

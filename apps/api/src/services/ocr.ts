@@ -1,8 +1,10 @@
+import { logger } from "../lib/logger";
+
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB limit
 
 export async function extractText(fileBuffer: Buffer, mimeType: string): Promise<string> {
 	if (fileBuffer.length > MAX_FILE_SIZE) {
-		console.warn(`OCR skipped: file size (${fileBuffer.length}) exceeds limit`);
+		logger.warn({ size: fileBuffer.length }, "OCR skipped: file size exceeds limit");
 		return "";
 	}
 
@@ -28,7 +30,7 @@ export async function extractText(fileBuffer: Buffer, mimeType: string): Promise
 			return text || "";
 		}
 	} catch (error) {
-		console.error(`OCR failed for ${mimeType}:`, error);
+		logger.error({ err: error, mimeType }, "OCR failed");
 	}
 
 	return "";
