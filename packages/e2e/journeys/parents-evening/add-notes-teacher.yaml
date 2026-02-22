@@ -1,0 +1,38 @@
+journey:
+  id: add-notes-teacher
+  name: Teacher Adds Meeting Notes
+  tags: [staff, authenticated, parents-evening]
+  role: staff
+  preconditions:
+    seed: school-with-parents-evening
+    state: authenticated
+  steps:
+    - action: navigate
+      target: parents-evening
+      selectors:
+        web: "/dashboard/parents-evening"
+        mobile: "Parents' Evening"
+    - action: tap
+      target: evening-item
+      selectors:
+        web: "[data-testid='evening-item']:first-child"
+        mobile: "Year 1 Spring Parents' Evening"
+    - action: tap
+      target: add-notes-button
+      selectors:
+        web: "[data-testid='add-notes-button']"
+        mobile: "Add Notes"
+    - action: fill
+      target: notes-input
+      selectors:
+        web: "[data-testid='notes-input']"
+        mobile: "Notes"
+      value: "Great progress in reading. Continue practice at home."
+    - action: tap
+      target: save-notes-button
+      selectors:
+        web: "[data-testid='save-notes-button']"
+        mobile: "Save"
+  assertions:
+    - type: visible
+      text: "Notes saved"

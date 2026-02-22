@@ -1,0 +1,33 @@
+journey:
+  id: create-evening-admin
+  name: Admin Creates Parents Evening
+  tags: [staff, authenticated, parents-evening]
+  role: staff
+  preconditions:
+    seed: admin-with-multiple-staff
+    state: authenticated
+  steps:
+    - action: navigate
+      target: parents-evening
+      selectors:
+        web: "/dashboard/parents-evening"
+        mobile: "Parents' Evening"
+    - action: tap
+      target: create-evening-button
+      selectors:
+        web: "[data-testid='create-evening-button']"
+        mobile: "Create Evening"
+    - action: fill
+      target: evening-title
+      selectors:
+        web: "[data-testid='evening-title-input']"
+        mobile: "Title"
+      value: "Year 1 Spring Parents' Evening"
+    - action: tap
+      target: publish-evening-button
+      selectors:
+        web: "[data-testid='publish-evening-button']"
+        mobile: "Publish"
+  assertions:
+    - type: visible
+      text: "Year 1 Spring Parents' Evening"

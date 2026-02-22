@@ -1,0 +1,22 @@
+journey:
+  id: video-link-booking
+  name: Parent Sees Video Call Link
+  tags: [parent, authenticated, parents-evening]
+  role: parent
+  preconditions:
+    seed: school-with-parents-evening
+    state: authenticated
+  steps:
+    - action: navigate
+      target: parents-evening
+      selectors:
+        web: "/dashboard/parents-evening"
+        mobile: "Parents' Evening"
+    - action: tap
+      target: evening-item
+      selectors:
+        web: "[data-testid='evening-item']:first-child"
+        mobile: "Year 1 Spring Parents' Evening"
+  assertions:
+    - type: visible
+      text: "Join call"

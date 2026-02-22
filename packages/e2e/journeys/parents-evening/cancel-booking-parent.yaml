@@ -1,0 +1,27 @@
+journey:
+  id: cancel-booking-parent
+  name: Parent Cancels Booking
+  tags: [parent, authenticated, parents-evening]
+  role: parent
+  preconditions:
+    seed: school-with-parents-evening
+    state: authenticated
+  steps:
+    - action: navigate
+      target: parents-evening
+      selectors:
+        web: "/dashboard/parents-evening"
+        mobile: "Parents' Evening"
+    - action: tap
+      target: evening-item
+      selectors:
+        web: "[data-testid='evening-item']:first-child"
+        mobile: "Year 1 Spring Parents' Evening"
+    - action: tap
+      target: cancel-booking-button
+      selectors:
+        web: "[data-testid='cancel-booking-button']"
+        mobile: "Cancel"
+  assertions:
+    - type: visible
+      text: "Booking cancelled"

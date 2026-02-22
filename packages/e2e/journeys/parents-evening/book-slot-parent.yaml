@@ -1,0 +1,27 @@
+journey:
+  id: book-slot-parent
+  name: Parent Books a Slot
+  tags: [smoke, parent, authenticated, parents-evening]
+  role: parent
+  preconditions:
+    seed: school-with-parents-evening
+    state: authenticated
+  steps:
+    - action: navigate
+      target: parents-evening
+      selectors:
+        web: "/dashboard/parents-evening"
+        mobile: "Parents' Evening"
+    - action: tap
+      target: evening-item
+      selectors:
+        web: "[data-testid='evening-item']:first-child"
+        mobile: "Year 1 Spring Parents' Evening"
+    - action: tap
+      target: book-slot-button
+      selectors:
+        web: "[data-testid='book-slot-button']"
+        mobile: "Book"
+  assertions:
+    - type: visible
+      text: "Booked"

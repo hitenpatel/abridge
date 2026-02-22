@@ -33,7 +33,8 @@ export type FixtureName =
 	| "staff-with-children"
 	| "staff-with-replies"
 	| "parent-with-conversations"
-	| "parent-with-translation";
+	| "parent-with-translation"
+	| "school-with-parents-evening";
 
 export async function cleanTestData() {
 	// Truncate in dependency order to avoid FK violations
@@ -50,6 +51,8 @@ export async function cleanTestData() {
 	await db.$executeRaw`TRUNCATE TABLE attendance_records CASCADE`;
 	await db.$executeRaw`TRUNCATE TABLE message_reads CASCADE`;
 	await db.$executeRaw`TRUNCATE TABLE message_children CASCADE`;
+	await db.$executeRaw`TRUNCATE TABLE parents_evening_slots CASCADE`;
+	await db.$executeRaw`TRUNCATE TABLE parents_evenings CASCADE`;
 	await db.$executeRaw`TRUNCATE TABLE translation_cache CASCADE`;
 	await db.$executeRaw`TRUNCATE TABLE conversations CASCADE`;
 	await db.$executeRaw`TRUNCATE TABLE messages CASCADE`;
@@ -130,6 +133,8 @@ export async function seedFixture(name: FixtureName) {
 			return await createParentWithConversations();
 		case "parent-with-translation":
 			return await createParentWithTranslation();
+		case "school-with-parents-evening":
+			return await createSchoolWithParentsEvening();
 		default:
 			throw new Error(`Unknown fixture: ${name}`);
 	}
@@ -1178,6 +1183,74 @@ async function createParentWithConversations() {
 	});
 
 	return { ...base, conversation };
+}
+
+async function createSchoolWithParentsEvening() {
+	const base = await createStaffWithMessages();
+
+	const teacher = await db.user.create({
+		data: { email: "teacher@test.com", name: "Mrs Smith", emailVerified: true },
+	});
+	await db.account.create({
+		data: {
+			userId: teacher.id,
+			accountId: teacher.id,
+			providerId: "credential",
+			password: await hashPassword("password123"),
+		},
+	});
+	await db.staffMember.create({
+		data: { userId: teacher.id, schoolId: base.school.id, role: "TEACHER" },
+	});
+
+	await db.school.update({
+		where: { id: base.school.id },
+		data: { parentsEveningEnabled: true },
+	});
+
+	const evening = await db.parentsEvening.create({
+		data: {
+			schoolId: base.school.id,
+			title: "Year 1 Spring Parents' Evening",
+			date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+			slotDurationMin: 10,
+			breakDurationMin: 0,
+			startTime: "16:00",
+			endTime: "18:00",
+			bookingOpensAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+			bookingClosesAt: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000),
+			isPublished: true,
+			allowVideoCall: true,
+		},
+	});
+
+	const slots = [];
+	for (const staffId of [base.user.id, teacher.id]) {
+		for (let i = 0; i < 12; i++) {
+			const h = 16 + Math.floor((i * 10) / 60);
+			const m = (i * 10) % 60;
+			slots.push({
+				parentsEveningId: evening.id,
+				staffId,
+				startTime: `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`,
+				endTime: `${String(h + Math.floor((m + 10) / 60)).padStart(2, "0")}:${String((m + 10) % 60).padStart(2, "0")}`,
+				videoCallLink: staffId === teacher.id ? "https://meet.google.com/test-link" : null,
+			});
+		}
+	}
+	await db.parentsEveningSlot.createMany({ data: slots });
+
+	const firstSlot = await db.parentsEveningSlot.findFirst({
+		where: { parentsEveningId: evening.id, staffId: base.user.id, startTime: "16:00" },
+	});
+	if (firstSlot) {
+		await db.parentsEveningSlot.update({
+			where: { id: firstSlot.id },
+			data: { parentId: base.parentUser.id, childId: base.child.id, bookedAt: new Date() },
+		});
+	}
+
+	return { ...base, teacher, evening };
 }
 
 async function createParentWithTranslation() {
