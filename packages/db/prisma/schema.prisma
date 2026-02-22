@@ -27,6 +27,7 @@ model School {
   attendanceEnabled         Boolean  @default(true)
   calendarEnabled           Boolean  @default(true)
   formsEnabled              Boolean  @default(true)
+  translationEnabled        Boolean  @default(false)
   paymentDinnerMoneyEnabled Boolean  @default(true)
   paymentTripsEnabled       Boolean  @default(true)
   paymentClubsEnabled       Boolean  @default(true)
@@ -495,6 +496,22 @@ enum DeliveryStatus {
   DELIVERED
   OPENED
   FAILED
+}
+
+// ─── Translation ──────────────────────────────────────────
+
+model TranslationCache {
+  id         String   @id @default(cuid())
+  sourceHash String
+  sourceLang String   @default("en")
+  targetLang String
+  sourceText String
+  translated String
+  createdAt  DateTime @default(now())
+
+  @@unique([sourceHash, sourceLang, targetLang])
+  @@index([sourceHash, targetLang])
+  @@map("translation_cache")
 }
 
 // ─── Class Posts ─────────────────────────────────────────────
