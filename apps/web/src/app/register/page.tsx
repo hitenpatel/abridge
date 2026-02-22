@@ -23,10 +23,11 @@ function RegisterForm() {
 	const token = searchParams.get("token");
 
 	// Fetch invitation info if token exists
-	const { data: inviteInfo, isLoading: loadingInvite } = trpc.invitation.verify.useQuery(
-		{ token: token as string },
-		{ enabled: !!token },
-	);
+	const {
+		data: inviteInfo,
+		isLoading: loadingInvite,
+		error: inviteError,
+	} = trpc.invitation.verify.useQuery({ token: token as string }, { enabled: !!token, retry: false });
 
 	useEffect(() => {
 		if (inviteInfo?.email) {
@@ -77,6 +78,13 @@ function RegisterForm() {
 				<CardDescription>Join Abridge today</CardDescription>
 			</CardHeader>
 			<CardContent className="space-y-6">
+				{token && inviteError && (
+					<Alert variant="destructive" data-testid="invitation-error">
+						<span className="material-symbols-rounded text-base">error</span>
+						<AlertDescription>{inviteError.message}</AlertDescription>
+					</Alert>
+				)}
+
 				{inviteInfo && (
 					<Alert variant="info" data-testid="invitation-school-name">
 						<span className="material-symbols-rounded text-base">verified_user</span>

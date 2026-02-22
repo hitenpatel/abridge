@@ -101,6 +101,34 @@ async function main() {
 		},
 	});
 
+	const teacher = await prisma.user.upsert({
+		where: { email: "marcus@oakwood.sch.uk" },
+		update: { name: "Marcus Williams" },
+		create: {
+			email: "marcus@oakwood.sch.uk",
+			name: "Marcus Williams",
+			notifyByPush: true,
+			notifyBySms: false,
+			notifyByEmail: true,
+		},
+	});
+
+	await prisma.account.upsert({
+		where: {
+			providerId_accountId: {
+				providerId: "credential",
+				accountId: teacher.id,
+			},
+		},
+		update: { password: hashedPassword },
+		create: {
+			providerId: "credential",
+			accountId: teacher.id,
+			userId: teacher.id,
+			password: hashedPassword,
+		},
+	});
+
 	// 3. Staff
 	await prisma.staffMember.upsert({
 		where: {
@@ -114,6 +142,21 @@ async function main() {
 			userId: admin.id,
 			schoolId: school.id,
 			role: "ADMIN",
+		},
+	});
+
+	await prisma.staffMember.upsert({
+		where: {
+			userId_schoolId: {
+				userId: teacher.id,
+				schoolId: school.id,
+			},
+		},
+		update: { role: "TEACHER" },
+		create: {
+			userId: teacher.id,
+			schoolId: school.id,
+			role: "TEACHER",
 		},
 	});
 
@@ -348,7 +391,7 @@ async function main() {
 
 	console.log("Seed data created successfully");
 	console.log(
-		`\nLogin credentials:\n  Parent: sarah@example.com / ${SEED_PASSWORD}\n  Admin:  claire@oakwood.sch.uk / ${SEED_PASSWORD}`,
+		`\nLogin credentials:\n  Parent:  sarah@example.com / ${SEED_PASSWORD}\n  Admin:   claire@oakwood.sch.uk / ${SEED_PASSWORD}\n  Teacher: marcus@oakwood.sch.uk / ${SEED_PASSWORD}`,
 	);
 }
 

@@ -13,7 +13,7 @@ function StaffAttendanceView({ schoolId }: { schoolId: string }) {
 
 	if (isLoading) {
 		return (
-			<div className="space-y-6" data-testid="attendance-view">
+			<div className="space-y-6">
 				<Skeleton className="h-8 w-48" />
 				<div className="grid grid-cols-4 gap-4">
 					<Skeleton className="h-24" />
