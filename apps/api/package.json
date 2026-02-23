@@ -17,6 +17,7 @@
 		"@fastify/cookie": "^11.0.2",
 		"@fastify/cors": "^10.0.0",
 		"@fastify/helmet": "^13.0.2",
+		"@fastify/rate-limit": "^10.3.0",
 		"@schoolconnect/db": "workspace:*",
 		"@sentry/node": "^10.39.0",
 		"@sentry/profiling-node": "^10.39.0",
