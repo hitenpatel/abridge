@@ -16,6 +16,7 @@
 		"@aws-sdk/s3-request-presigner": "^3.990.0",
 		"@fastify/cookie": "^11.0.2",
 		"@fastify/cors": "^10.0.0",
+		"@fastify/helmet": "^13.0.2",
 		"@schoolconnect/db": "workspace:*",
 		"@sentry/node": "^10.39.0",
 		"@sentry/profiling-node": "^10.39.0",

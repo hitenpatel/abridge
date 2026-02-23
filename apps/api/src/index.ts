@@ -3,6 +3,7 @@ initSentry();
 
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
+import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
 import { prisma } from "@schoolconnect/db";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
@@ -83,6 +84,11 @@ async function main() {
 	await server.register(rateLimit, {
 		max: 100,
 		timeWindow: "1 minute",
+	});
+
+	await server.register(helmet, {
+		contentSecurityPolicy: false,
+		crossOriginEmbedderPolicy: false,
 	});
 
 	await server.register(cors, getCorsOptions());
