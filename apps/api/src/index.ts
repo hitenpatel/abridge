@@ -3,6 +3,7 @@ initSentry();
 
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
+import rateLimit from "@fastify/rate-limit";
 import { prisma } from "@schoolconnect/db";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 // toNodeHandler doesn't work properly with Fastify, removed
@@ -78,6 +79,12 @@ async function main() {
 		routes: ["/api/webhooks/stripe"],
 	});
 
+	// Global rate limit: 100 req/min per IP
+	await server.register(rateLimit, {
+		max: 100,
+		timeWindow: "1 minute",
+	});
+
 	await server.register(cors, getCorsOptions());
 
 	await server.register(webhookRoutes);
@@ -98,6 +105,12 @@ async function main() {
 	server.route({
 		method: ["GET", "POST"],
 		url: "/api/auth/*",
+		config: {
+			rateLimit: {
+				max: 5,
+				timeWindow: "15 minutes",
+			},
+		},
 		async handler(request, reply) {
 			try {
 				// Construct request URL
