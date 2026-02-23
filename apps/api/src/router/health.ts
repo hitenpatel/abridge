@@ -3,13 +3,19 @@ import { publicProcedure, router } from "../trpc";
 
 const startTime = Date.now();
 
-async function checkDatabase(prisma: { $queryRaw: (query: TemplateStringsArray) => Promise<unknown> }) {
+async function checkDatabase(prisma: {
+	$queryRaw: (query: TemplateStringsArray) => Promise<unknown>;
+}) {
 	const start = Date.now();
 	try {
 		await prisma.$queryRaw`SELECT 1`;
 		return { status: "up" as const, latencyMs: Date.now() - start };
 	} catch (err) {
-		return { status: "down" as const, latencyMs: Date.now() - start, error: (err as Error).message };
+		return {
+			status: "down" as const,
+			latencyMs: Date.now() - start,
+			error: (err as Error).message,
+		};
 	}
 }
 
@@ -23,16 +29,17 @@ async function checkRedis() {
 		await client.ping();
 		return { status: "up" as const, latencyMs: Date.now() - start };
 	} catch (err) {
-		return { status: "down" as const, latencyMs: Date.now() - start, error: (err as Error).message };
+		return {
+			status: "down" as const,
+			latencyMs: Date.now() - start,
+			error: (err as Error).message,
+		};
 	}
 }
 
 export const healthRouter = router({
 	check: publicProcedure.query(async ({ ctx }) => {
-		const [database, redis] = await Promise.all([
-			checkDatabase(ctx.prisma),
-			checkRedis(),
-		]);
+		const [database, redis] = await Promise.all([checkDatabase(ctx.prisma), checkRedis()]);
 
 		const dependencies = { database, redis };
 

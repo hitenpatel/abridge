@@ -24,20 +24,12 @@ export default function (data) {
 		return;
 	}
 
-	const received = trpcQuery(
-		"messaging.listReceived",
-		{ limit: 20 },
-		data.cookie,
-	);
+	const received = trpcQuery("messaging.listReceived", { limit: 20 }, data.cookie);
 	check(received, {
 		"received messages 200": (r) => r.status === 200,
 	});
 
-	const conversations = trpcQuery(
-		"messaging.listConversations",
-		{ limit: 20 },
-		data.cookie,
-	);
+	const conversations = trpcQuery("messaging.listConversations", { limit: 20 }, data.cookie);
 	check(conversations, {
 		"conversations 200": (r) => r.status === 200,
 	});

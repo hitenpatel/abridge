@@ -72,7 +72,14 @@ export const auth = betterAuth({
 							);
 						}
 					} catch (error) {
-						logger.error({ email: user.email, userId: user.id, error: error instanceof Error ? error.message : String(error) }, "Failed to process invitations during signup");
+						logger.error(
+							{
+								email: user.email,
+								userId: user.id,
+								error: error instanceof Error ? error.message : String(error),
+							},
+							"Failed to process invitations during signup",
+						);
 						// Don't re-throw - allow user creation to succeed even if
 						// invitation processing fails. The invitation can be accepted
 						// later via the accept endpoint.

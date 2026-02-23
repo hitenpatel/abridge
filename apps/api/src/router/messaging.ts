@@ -1,8 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { assertFeatureEnabled } from "../lib/feature-guards";
-import { notificationService } from "../services/notification";
 import { logger } from "../lib/logger";
+import { notificationService } from "../services/notification";
 import { protectedProcedure, router, schoolFeatureProcedure } from "../trpc";
 
 export const messagingRouter = router({

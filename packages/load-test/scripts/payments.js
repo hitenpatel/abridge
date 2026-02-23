@@ -24,20 +24,12 @@ export default function (data) {
 		return;
 	}
 
-	const outstanding = trpcQuery(
-		"payments.listOutstandingPayments",
-		undefined,
-		data.cookie,
-	);
+	const outstanding = trpcQuery("payments.listOutstandingPayments", undefined, data.cookie);
 	check(outstanding, {
 		"outstanding payments 200": (r) => r.status === 200,
 	});
 
-	const history = trpcQuery(
-		"payments.getPaymentHistory",
-		{ limit: 20 },
-		data.cookie,
-	);
+	const history = trpcQuery("payments.getPaymentHistory", { limit: 20 }, data.cookie);
 	check(history, {
 		"payment history 200": (r) => r.status === 200,
 	});

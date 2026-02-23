@@ -65,7 +65,10 @@ export const invitationRouter = router({
 			});
 
 			if (!emailResult.success) {
-				logger.warn({ email: input.email, invitationId: id }, "Invitation created but email failed to send");
+				logger.warn(
+					{ email: input.email, invitationId: id },
+					"Invitation created but email failed to send",
+				);
 			}
 
 			return { success: true, token, emailSent: emailResult.success };
@@ -164,7 +167,10 @@ export const invitationRouter = router({
 				invitation.id,
 			);
 
-			logger.info({ email: user.email, schoolName: invitation.schoolName, role: invitation.role }, "User accepted invitation");
+			logger.info(
+				{ email: user.email, schoolName: invitation.schoolName, role: invitation.role },
+				"User accepted invitation",
+			);
 
 			return { success: true };
 		}),

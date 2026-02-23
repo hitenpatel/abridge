@@ -15,14 +15,12 @@ export const options = {
 };
 
 export default function () {
-	const email = `parent${(__VU % 100)}@loadtest.com`;
+	const email = `parent${__VU % 100}@loadtest.com`;
 	const password = "LoadTest123!";
 
-	const res = http.post(
-		`${BASE_URL}/api/auth/sign-in/email`,
-		JSON.stringify({ email, password }),
-		{ headers: { "Content-Type": "application/json" } },
-	);
+	const res = http.post(`${BASE_URL}/api/auth/sign-in/email`, JSON.stringify({ email, password }), {
+		headers: { "Content-Type": "application/json" },
+	});
 
 	check(res, {
 		"login returns 200 or 401": (r) => r.status === 200 || r.status === 401,

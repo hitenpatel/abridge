@@ -132,15 +132,24 @@ export async function sendStaffInvitationEmail(data: StaffInvitationEmailData) {
 		});
 
 		if (emailError) {
-			logger.error({ error: emailError.message, recipient: data.recipientEmail, school: data.schoolName }, "Resend API returned error for staff invitation");
+			logger.error(
+				{ error: emailError.message, recipient: data.recipientEmail, school: data.schoolName },
+				"Resend API returned error for staff invitation",
+			);
 			return { success: false, error: emailError };
 		}
 
-		logger.info({ messageId: emailData?.id, recipient: data.recipientEmail, school: data.schoolName }, "Staff invitation email sent");
+		logger.info(
+			{ messageId: emailData?.id, recipient: data.recipientEmail, school: data.schoolName },
+			"Staff invitation email sent",
+		);
 
 		return { success: true, messageId: emailData?.id };
 	} catch (error) {
-		logger.error({ err: error, recipient: data.recipientEmail, school: data.schoolName }, "Failed to send staff invitation email");
+		logger.error(
+			{ err: error, recipient: data.recipientEmail, school: data.schoolName },
+			"Failed to send staff invitation email",
+		);
 		return { success: false, error };
 	}
 }
@@ -198,15 +207,24 @@ export async function sendNotificationEmail(data: NotificationEmailData) {
 		});
 
 		if (emailError) {
-			logger.error({ error: emailError.message, recipient: data.recipientEmail }, "Resend API returned error for notification email");
+			logger.error(
+				{ error: emailError.message, recipient: data.recipientEmail },
+				"Resend API returned error for notification email",
+			);
 			return { success: false, error: emailError };
 		}
 
-		logger.info({ messageId: emailData?.id, recipient: data.recipientEmail }, "Notification email sent");
+		logger.info(
+			{ messageId: emailData?.id, recipient: data.recipientEmail },
+			"Notification email sent",
+		);
 
 		return { success: true, messageId: emailData?.id };
 	} catch (error) {
-		logger.error({ err: error, recipient: data.recipientEmail }, "Failed to send notification email");
+		logger.error(
+			{ err: error, recipient: data.recipientEmail },
+			"Failed to send notification email",
+		);
 		return { success: false, error };
 	}
 }
@@ -282,15 +300,32 @@ export async function sendReceiptEmail(data: ReceiptEmailData) {
 		});
 
 		if (emailError) {
-			logger.error({ error: emailError.message, recipient: data.recipientEmail, receiptNumber: data.receiptNumber }, "Resend API returned error for receipt email");
+			logger.error(
+				{
+					error: emailError.message,
+					recipient: data.recipientEmail,
+					receiptNumber: data.receiptNumber,
+				},
+				"Resend API returned error for receipt email",
+			);
 			return { success: false, error: emailError };
 		}
 
-		logger.info({ messageId: emailData?.id, recipient: data.recipientEmail, receiptNumber: data.receiptNumber }, "Receipt email sent");
+		logger.info(
+			{
+				messageId: emailData?.id,
+				recipient: data.recipientEmail,
+				receiptNumber: data.receiptNumber,
+			},
+			"Receipt email sent",
+		);
 
 		return { success: true, messageId: emailData?.id };
 	} catch (error) {
-		logger.error({ err: error, recipient: data.recipientEmail, receiptNumber: data.receiptNumber }, "Failed to send receipt email");
+		logger.error(
+			{ err: error, recipient: data.recipientEmail, receiptNumber: data.receiptNumber },
+			"Failed to send receipt email",
+		);
 		return { success: false, error };
 	}
 }

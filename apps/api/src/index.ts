@@ -1,4 +1,4 @@
-import { initSentry, Sentry } from "./lib/sentry";
+import { Sentry, initSentry } from "./lib/sentry";
 initSentry();
 
 import cookie from "@fastify/cookie";
