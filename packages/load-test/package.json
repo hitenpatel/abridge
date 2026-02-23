@@ -1,0 +1,14 @@
+{
+	"name": "@schoolconnect/load-test",
+	"private": true,
+	"version": "0.0.0",
+	"scripts": {
+		"smoke": "k6 run scripts/smoke.js",
+		"auth": "k6 run scripts/auth.js",
+		"dashboard": "k6 run scripts/dashboard.js",
+		"messaging": "k6 run scripts/messaging.js",
+		"payments": "k6 run scripts/payments.js",
+		"mixed": "k6 run scripts/mixed.js",
+		"stress": "k6 run scripts/stress.js"
+	}
+}
