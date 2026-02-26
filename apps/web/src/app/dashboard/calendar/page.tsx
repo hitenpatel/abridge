@@ -63,12 +63,16 @@ export default function CalendarPage() {
 		<div className="max-w-4xl mx-auto">
 			<div className="flex items-center justify-between mb-6">
 				<div className="flex items-center gap-3">
-					<span className="material-symbols-rounded text-primary text-3xl">calendar_month</span>
+					<span className="material-symbols-rounded text-primary text-3xl" aria-hidden="true">
+						calendar_month
+					</span>
 					<h1 className="text-3xl font-bold text-slate-800">School Calendar</h1>
 				</div>
 				{session?.staffRole && (
 					<Button data-testid="create-event-button" onClick={() => setShowCreate(true)}>
-						<span className="material-symbols-rounded text-base mr-1">add</span>
+						<span className="material-symbols-rounded text-base mr-1" aria-hidden="true">
+							add
+						</span>
 						Create Event
 					</Button>
 				)}

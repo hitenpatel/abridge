@@ -181,16 +181,20 @@ export default function MessagesPage() {
 	return (
 		<main className="flex h-[calc(100vh-120px)] -mx-10 -my-10">
 			{/* Left Sidebar */}
-			<aside className="w-80 lg:w-96 border-r bg-card flex flex-col">
+			<aside className="w-80 lg:w-96 border-r bg-card flex flex-col" aria-label="Messages list">
 				{/* Search */}
 				<div className="p-4 border-b">
 					<div className="relative">
-						<span className="material-symbols-rounded absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+						<span
+							className="material-symbols-rounded absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+							aria-hidden="true"
+						>
 							search
 						</span>
 						<input
 							type="text"
 							placeholder="Search messages..."
+							aria-label="Search messages"
 							className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
 							data-testid="search-input"
 						/>
@@ -334,7 +338,12 @@ export default function MessagesPage() {
 							))
 						) : (
 							<div className="p-8 text-center text-gray-500" data-testid="empty-messages">
-								<span className="material-symbols-rounded text-4xl mb-2 text-gray-300">inbox</span>
+								<span
+									className="material-symbols-rounded text-4xl mb-2 text-gray-300"
+									aria-hidden="true"
+								>
+									inbox
+								</span>
 								<p className="text-sm">No messages yet</p>
 							</div>
 						)
@@ -388,7 +397,12 @@ export default function MessagesPage() {
 						))
 					) : (
 						<div className="p-8 text-center text-gray-500" data-testid="empty-conversations">
-							<span className="material-symbols-rounded text-4xl mb-2 text-gray-300">forum</span>
+							<span
+								className="material-symbols-rounded text-4xl mb-2 text-gray-300"
+								aria-hidden="true"
+							>
+								forum
+							</span>
 							<p className="text-sm">No conversations yet</p>
 						</div>
 					)}
@@ -396,7 +410,12 @@ export default function MessagesPage() {
 			</aside>
 
 			{/* Right Panel */}
-			<section className="flex-1 flex flex-col bg-background" data-testid="message-detail">
+			<section
+				className="flex-1 flex flex-col bg-background"
+				data-testid="message-detail"
+				aria-label="Message detail"
+				aria-live="polite"
+			>
 				{activeTab === "messages" && selectedMessage ? (
 					<>
 						{/* Message Header */}
@@ -560,9 +579,12 @@ export default function MessagesPage() {
 									onClick={handleSendReply}
 									disabled={!replyInput.trim() || replyMutation.isPending}
 									data-testid="reply-send-button"
+									aria-label="Send reply"
 									className="p-3 bg-primary hover:bg-orange-600 text-white rounded-full transition-all flex-shrink-0 shadow-lg disabled:opacity-50"
 								>
-									<span className="material-symbols-rounded">send</span>
+									<span className="material-symbols-rounded" aria-hidden="true">
+										send
+									</span>
 								</button>
 							</div>
 						</div>
@@ -685,9 +707,12 @@ export default function MessagesPage() {
 										onClick={handleSendDirect}
 										disabled={!dmInput.trim() || sendDirectMutation.isPending}
 										data-testid="dm-send-button"
+										aria-label="Send message"
 										className="p-3 bg-primary hover:bg-orange-600 text-white rounded-full transition-all flex-shrink-0 shadow-lg disabled:opacity-50"
 									>
-										<span className="material-symbols-rounded">send</span>
+										<span className="material-symbols-rounded" aria-hidden="true">
+											send
+										</span>
 									</button>
 								</div>
 							</div>
@@ -700,7 +725,10 @@ export default function MessagesPage() {
 				) : (
 					<div className="flex-1 flex items-center justify-center text-gray-400">
 						<div className="text-center">
-							<span className="material-symbols-rounded text-6xl mb-4 text-gray-300">
+							<span
+								className="material-symbols-rounded text-6xl mb-4 text-gray-300"
+								aria-hidden="true"
+							>
 								{activeTab === "direct" ? "forum" : "chat_bubble_outline"}
 							</span>
 							<p className="text-lg">

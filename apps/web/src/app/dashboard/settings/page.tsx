@@ -78,7 +78,9 @@ function ProfileCard() {
 		<Card className="rounded-2xl border border-gray-100">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
-					<span className="material-symbols-rounded text-primary">person</span>
+					<span className="material-symbols-rounded text-primary" aria-hidden="true">
+						person
+					</span>
 					Profile
 				</CardTitle>
 			</CardHeader>
@@ -196,7 +198,9 @@ function NotificationsCard() {
 		<Card className="rounded-2xl border border-gray-100">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
-					<span className="material-symbols-rounded text-primary">notifications</span>
+					<span className="material-symbols-rounded text-primary" aria-hidden="true">
+						notifications
+					</span>
 					Notifications
 				</CardTitle>
 			</CardHeader>
@@ -324,7 +328,9 @@ function SchoolSettingsCard({ schoolId }: { schoolId: string }) {
 		<Card className="rounded-2xl border border-gray-100">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
-					<span className="material-symbols-rounded text-primary">school</span>
+					<span className="material-symbols-rounded text-primary" aria-hidden="true">
+						school
+					</span>
 					School Settings
 				</CardTitle>
 			</CardHeader>
@@ -435,7 +441,9 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 		<Card className="rounded-2xl border border-gray-100" data-testid="feature-toggles-card">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
-					<span className="material-symbols-rounded text-primary">toggle_on</span>
+					<span className="material-symbols-rounded text-primary" aria-hidden="true">
+						toggle_on
+					</span>
 					Features
 				</CardTitle>
 			</CardHeader>
@@ -569,7 +577,9 @@ function StripeCard({ schoolId }: { schoolId: string }) {
 		<Card className="rounded-2xl border border-gray-100 shadow-sm">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
-					<span className="material-symbols-rounded text-primary">payments</span>
+					<span className="material-symbols-rounded text-primary" aria-hidden="true">
+						payments
+					</span>
 					Stripe Payments
 				</CardTitle>
 			</CardHeader>

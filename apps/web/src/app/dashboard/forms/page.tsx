@@ -51,7 +51,9 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 			{pendingForms && pendingForms.length > 0 && (
 				<div className="space-y-3" data-testid="pending-forms-section">
 					<h3 className="text-sm font-medium text-warning flex items-center gap-1">
-						<span className="material-symbols-rounded text-base">schedule</span>
+						<span className="material-symbols-rounded text-base" aria-hidden="true">
+							schedule
+						</span>
 						Action Required
 					</h3>
 					<div className="grid gap-3">
@@ -66,7 +68,9 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 									<CardContent className="flex items-center justify-between p-4">
 										<div className="flex items-center gap-3">
 											<div className="p-2 bg-warning/10 rounded-xl">
-												<span className="material-symbols-rounded text-warning">description</span>
+												<span className="material-symbols-rounded text-warning" aria-hidden="true">
+													description
+												</span>
 											</div>
 											<div>
 												<h4 className="font-medium text-foreground">{template.title}</h4>
@@ -79,7 +83,9 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 										</div>
 										<div className="flex items-center gap-2 text-warning font-medium text-sm">
 											Complete
-											<span className="material-symbols-rounded text-base">chevron_right</span>
+											<span className="material-symbols-rounded text-base" aria-hidden="true">
+												chevron_right
+											</span>
 										</div>
 									</CardContent>
 								</Card>
@@ -92,7 +98,9 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 			{completedForms && completedForms.length > 0 && (
 				<div className="space-y-3" data-testid="completed-forms-section">
 					<h3 className="text-sm font-medium text-success flex items-center gap-1">
-						<span className="material-symbols-rounded text-base">check_circle</span>
+						<span className="material-symbols-rounded text-base" aria-hidden="true">
+							check_circle
+						</span>
 						Completed
 					</h3>
 					<div className="grid gap-3">

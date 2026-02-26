@@ -12,7 +12,9 @@ export default function Home() {
 				<div className="container mx-auto px-4 h-16 flex items-center justify-between">
 					<div className="flex items-center gap-2">
 						<div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-							<span className="material-symbols-rounded text-white text-[20px]">school</span>
+							<span className="material-symbols-rounded text-white text-[20px]" aria-hidden="true">
+								school
+							</span>
 						</div>
 						<span className="text-xl font-bold text-foreground font-heading">Abridge</span>
 					</div>
@@ -45,7 +47,9 @@ export default function Home() {
 							<Link href="/register" className="w-full sm:w-auto">
 								<Button size="lg" className="w-full h-12 text-base gap-2">
 									Start Free Trial{" "}
-									<span className="material-symbols-rounded text-base">arrow_forward</span>
+									<span className="material-symbols-rounded text-base" aria-hidden="true">
+										arrow_forward
+									</span>
 								</Button>
 							</Link>
 							<Link href="/#features" className="w-full sm:w-auto">
@@ -71,7 +75,9 @@ export default function Home() {
 							<Card className="group hover:shadow-md transition-shadow">
 								<CardContent className="p-8">
 									<div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6 text-primary">
-										<span className="material-symbols-rounded text-2xl">bolt</span>
+										<span className="material-symbols-rounded text-2xl" aria-hidden="true">
+											bolt
+										</span>
 									</div>
 									<h3 className="text-xl font-semibold mb-3">Instant Updates</h3>
 									<p className="text-muted-foreground">
@@ -84,7 +90,9 @@ export default function Home() {
 							<Card className="group hover:shadow-md transition-shadow">
 								<CardContent className="p-8">
 									<div className="w-12 h-12 rounded-lg bg-info/10 flex items-center justify-center mb-6 text-info">
-										<span className="material-symbols-rounded text-2xl">shield</span>
+										<span className="material-symbols-rounded text-2xl" aria-hidden="true">
+											shield
+										</span>
 									</div>
 									<h3 className="text-xl font-semibold mb-3">Secure Payments</h3>
 									<p className="text-muted-foreground">
@@ -97,7 +105,9 @@ export default function Home() {
 							<Card className="group hover:shadow-md transition-shadow">
 								<CardContent className="p-8">
 									<div className="w-12 h-12 rounded-lg bg-warning/10 flex items-center justify-center mb-6 text-warning">
-										<span className="material-symbols-rounded text-2xl">check_circle</span>
+										<span className="material-symbols-rounded text-2xl" aria-hidden="true">
+											check_circle
+										</span>
 									</div>
 									<h3 className="text-xl font-semibold mb-3">Smart Attendance</h3>
 									<p className="text-muted-foreground">

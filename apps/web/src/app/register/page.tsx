@@ -73,7 +73,9 @@ function RegisterForm() {
 			<CardHeader className="text-center space-y-4">
 				<div className="flex items-center justify-center gap-2 mb-2">
 					<div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-						<span className="material-symbols-rounded text-white text-[20px]">school</span>
+						<span className="material-symbols-rounded text-white text-[20px]" aria-hidden="true">
+							school
+						</span>
 					</div>
 					<span className="text-xl font-bold font-heading">Abridge</span>
 				</div>
@@ -82,15 +84,19 @@ function RegisterForm() {
 			</CardHeader>
 			<CardContent className="space-y-6">
 				{token && inviteError && (
-					<Alert variant="destructive" data-testid="invitation-error">
-						<span className="material-symbols-rounded text-base">error</span>
+					<Alert variant="destructive" data-testid="invitation-error" role="alert">
+						<span className="material-symbols-rounded text-base" aria-hidden="true">
+							error
+						</span>
 						<AlertDescription>{inviteError.message}</AlertDescription>
 					</Alert>
 				)}
 
 				{inviteInfo && (
-					<Alert variant="info" data-testid="invitation-school-name">
-						<span className="material-symbols-rounded text-base">verified_user</span>
+					<Alert variant="info" data-testid="invitation-school-name" role="status">
+						<span className="material-symbols-rounded text-base" aria-hidden="true">
+							verified_user
+						</span>
 						<AlertDescription>
 							You&apos;ve been invited to join <strong>{inviteInfo.schoolName}</strong> as a{" "}
 							<strong>{inviteInfo.role}</strong>.
@@ -101,6 +107,7 @@ function RegisterForm() {
 				<form onSubmit={handleRegister} className="space-y-4">
 					{error && (
 						<p
+							role="alert"
 							data-testid="register-error"
 							className="text-sm text-destructive bg-destructive/10 p-3 rounded-lg border border-destructive/20"
 						>

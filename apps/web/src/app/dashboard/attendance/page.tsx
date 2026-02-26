@@ -79,28 +79,36 @@ function StaffAttendanceView({ schoolId }: { schoolId: string }) {
 			<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
 				<Card className="p-5 text-center">
 					<div className="flex items-center justify-center gap-2 mb-2">
-						<span className="material-symbols-rounded text-green-500">check_circle</span>
+						<span className="material-symbols-rounded" aria-hidden="true">
+							check_circle
+						</span>
 						<span className="text-sm font-medium text-muted-foreground">Present</span>
 					</div>
 					<p className="text-3xl font-bold text-green-600">{summary.present}</p>
 				</Card>
 				<Card className="p-5 text-center">
 					<div className="flex items-center justify-center gap-2 mb-2">
-						<span className="material-symbols-rounded text-red-500">cancel</span>
+						<span className="material-symbols-rounded" aria-hidden="true">
+							cancel
+						</span>
 						<span className="text-sm font-medium text-muted-foreground">Absent</span>
 					</div>
 					<p className="text-3xl font-bold text-red-600">{summary.absent}</p>
 				</Card>
 				<Card className="p-5 text-center">
 					<div className="flex items-center justify-center gap-2 mb-2">
-						<span className="material-symbols-rounded text-yellow-500">schedule</span>
+						<span className="material-symbols-rounded" aria-hidden="true">
+							schedule
+						</span>
 						<span className="text-sm font-medium text-muted-foreground">Late</span>
 					</div>
 					<p className="text-3xl font-bold text-yellow-600">{summary.late}</p>
 				</Card>
 				<Card className="p-5 text-center">
 					<div className="flex items-center justify-center gap-2 mb-2">
-						<span className="material-symbols-rounded text-gray-400">help_outline</span>
+						<span className="material-symbols-rounded" aria-hidden="true">
+							help_outline
+						</span>
 						<span className="text-sm font-medium text-muted-foreground">Unmarked</span>
 					</div>
 					<p className="text-3xl font-bold text-gray-500">{summary.unmarked}</p>
@@ -116,7 +124,15 @@ function StaffAttendanceView({ schoolId }: { schoolId: string }) {
 						</span>
 						<span className="text-sm font-bold">{attendanceRate}%</span>
 					</div>
-					<div className="w-full bg-gray-100 rounded-full h-3">
+					<div
+						className="w-full bg-gray-100 rounded-full h-3"
+						role="progressbar"
+						aria-valuenow={attendanceRate}
+						aria-valuemin={0}
+						aria-valuemax={100}
+						aria-label={`Attendance rate: ${attendanceRate}%`}
+						tabIndex={0}
+					>
 						<div
 							className="bg-green-500 h-3 rounded-full transition-all"
 							style={{ width: `${attendanceRate}%` }}
@@ -131,11 +147,27 @@ function StaffAttendanceView({ schoolId }: { schoolId: string }) {
 					<table className="w-full">
 						<thead>
 							<tr className="border-b bg-muted/50">
-								<th className="text-left p-4 text-sm font-medium text-muted-foreground">Student</th>
-								<th className="text-left p-4 text-sm font-medium text-muted-foreground">Class</th>
-								<th className="text-center p-4 text-sm font-medium text-muted-foreground">AM</th>
-								<th className="text-center p-4 text-sm font-medium text-muted-foreground">PM</th>
-								<th className="text-left p-4 text-sm font-medium text-muted-foreground">Notes</th>
+								<th scope="col" className="text-left p-4 text-sm font-medium text-muted-foreground">
+									Student
+								</th>
+								<th scope="col" className="text-left p-4 text-sm font-medium text-muted-foreground">
+									Class
+								</th>
+								<th
+									scope="col"
+									className="text-center p-4 text-sm font-medium text-muted-foreground"
+								>
+									AM
+								</th>
+								<th
+									scope="col"
+									className="text-center p-4 text-sm font-medium text-muted-foreground"
+								>
+									PM
+								</th>
+								<th scope="col" className="text-left p-4 text-sm font-medium text-muted-foreground">
+									Notes
+								</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -299,7 +331,9 @@ function ParentAttendanceView() {
 						type="button"
 						className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-soft text-sm font-medium hover:scale-105 transition-transform"
 					>
-						<span className="material-symbols-rounded text-primary">download</span>
+						<span className="material-symbols-rounded" aria-hidden="true">
+							download
+						</span>
 						<span>Export Log</span>
 					</button>
 				</header>
@@ -312,7 +346,10 @@ function ParentAttendanceView() {
 							{/* Month Navigation */}
 							<div className="flex justify-between items-center mb-6">
 								<h3 className="text-xl font-bold flex items-center gap-2">
-									<span className="material-symbols-rounded text-secondary text-2xl">
+									<span
+										className="material-symbols-rounded text-secondary text-2xl"
+										aria-hidden="true"
+									>
 										calendar_today
 									</span>
 									{monthName}
@@ -325,9 +362,11 @@ function ParentAttendanceView() {
 											prev.setMonth(prev.getMonth() - 1);
 											setCurrentMonth(prev);
 										}}
-										className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+										className="p-2 hover:bg-gray-100 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
 									>
-										<span className="material-symbols-rounded">chevron_left</span>
+										<span className="material-symbols-rounded" aria-hidden="true">
+											chevron_left
+										</span>
 									</button>
 									<button
 										type="button"
@@ -336,9 +375,11 @@ function ParentAttendanceView() {
 											next.setMonth(next.getMonth() + 1);
 											setCurrentMonth(next);
 										}}
-										className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+										className="p-2 hover:bg-gray-100 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
 									>
-										<span className="material-symbols-rounded">chevron_right</span>
+										<span className="material-symbols-rounded" aria-hidden="true">
+											chevron_right
+										</span>
 									</button>
 								</div>
 							</div>
@@ -441,14 +482,19 @@ function ParentAttendanceView() {
 							<div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-6 rounded-2xl border border-yellow-100">
 								<div className="flex items-start gap-4">
 									<div className="bg-secondary p-3 rounded-full text-white shadow-md">
-										<span className="material-symbols-rounded text-2xl">wb_sunny</span>
+										<span className="material-symbols-rounded" aria-hidden="true">
+											wb_sunny
+										</span>
 									</div>
 									<div>
 										<h4 className="font-bold text-lg mb-1">{activeChild.firstName} is at School</h4>
 										<p className="text-sm text-gray-500">Checked in at 8:15 AM • On Time</p>
 									</div>
 									<div className="ml-auto">
-										<span className="material-symbols-rounded text-green-500 bg-white rounded-full p-1">
+										<span
+											className="material-symbols-rounded text-green-500 bg-white rounded-full p-1"
+											aria-hidden="true"
+										>
 											check_circle
 										</span>
 									</div>
@@ -459,7 +505,7 @@ function ParentAttendanceView() {
 						{/* Absence Report Form */}
 						<Card className="p-6 md:p-8 rounded-2xl shadow-soft">
 							<h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-								<span className="material-symbols-rounded text-primary text-2xl">
+								<span className="material-symbols-rounded text-primary text-2xl" aria-hidden="true">
 									add_moderator
 								</span>
 								Report Upcoming Absence
@@ -474,7 +520,10 @@ function ParentAttendanceView() {
 										Select Date(s)
 									</label>
 									<div className="relative">
-										<span className="material-symbols-rounded absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+										<span
+											className="material-symbols-rounded absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+											aria-hidden="true"
+										>
 											date_range
 										</span>
 										<input
@@ -515,7 +564,9 @@ function ParentAttendanceView() {
 													<div
 														className={`w-12 h-12 rounded-full bg-${reason.color}-100 text-${reason.color}-500 flex items-center justify-center mb-1`}
 													>
-														<span className="material-symbols-rounded text-2xl">{reason.icon}</span>
+														<span className="material-symbols-rounded text-2xl" aria-hidden="true">
+															{reason.icon}
+														</span>
 													</div>
 													<span className="font-bold text-sm text-gray-700">{reason.label}</span>
 												</div>
@@ -545,7 +596,9 @@ function ParentAttendanceView() {
 									className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02]"
 								>
 									Submit Absence Report
-									<span className="material-symbols-rounded">send</span>
+									<span className="material-symbols-rounded" aria-hidden="true">
+										send
+									</span>
 								</button>
 
 								<p className="text-center text-xs text-gray-500">

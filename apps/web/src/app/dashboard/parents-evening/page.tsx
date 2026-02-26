@@ -68,7 +68,9 @@ function CreateEveningDialog({ schoolId }: { schoolId: string }) {
 	if (!open) {
 		return (
 			<Button onClick={() => setOpen(true)} data-testid="create-evening-button">
-				<span className="material-symbols-rounded mr-2">add</span>
+				<span className="material-symbols-rounded mr-2" aria-hidden="true">
+					add
+				</span>
 				Create Evening
 			</Button>
 		);
@@ -216,7 +218,10 @@ function AdminView({ schoolId }: { schoolId: string }) {
 			{data?.items.length === 0 && (
 				<Card className="rounded-2xl border border-gray-100">
 					<CardContent className="py-12 text-center text-gray-500">
-						<span className="material-symbols-rounded text-5xl mb-3 text-gray-300 block">
+						<span
+							className="material-symbols-rounded text-5xl mb-3 text-gray-300 block"
+							aria-hidden="true"
+						>
 							groups
 						</span>
 						<p>No parents' evenings created yet</p>
@@ -357,7 +362,12 @@ function ParentView() {
 		return (
 			<Card className="rounded-2xl border border-gray-100">
 				<CardContent className="py-12 text-center text-gray-500">
-					<span className="material-symbols-rounded text-5xl mb-3 text-gray-300 block">groups</span>
+					<span
+						className="material-symbols-rounded text-5xl mb-3 text-gray-300 block"
+						aria-hidden="true"
+					>
+						groups
+					</span>
 					<p>No upcoming parents' evenings</p>
 				</CardContent>
 			</Card>
@@ -396,7 +406,9 @@ function ParentView() {
 								</span>
 								{evening.allowVideoCall && (
 									<span className="text-blue-600 flex items-center gap-1">
-										<span className="material-symbols-rounded text-sm">videocam</span>
+										<span className="material-symbols-rounded text-sm" aria-hidden="true">
+											videocam
+										</span>
 										Video available
 									</span>
 								)}
@@ -467,7 +479,9 @@ function SlotBookingView({
 			{Array.from(grouped.entries()).map(([staffId, { staffName, slots }]) => (
 				<div key={staffId}>
 					<h3 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
-						<span className="material-symbols-rounded text-primary">person</span>
+						<span className="material-symbols-rounded text-primary" aria-hidden="true">
+							person
+						</span>
 						{staffName}
 					</h3>
 					<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">

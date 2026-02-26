@@ -26,7 +26,9 @@ function StaffPaymentsView({ schoolId }: { schoolId: string }) {
 				</div>
 				<Link href="/dashboard/payments/new">
 					<Button data-testid="create-payment-button">
-						<span className="material-symbols-rounded text-base mr-1">add</span>
+						<span className="material-symbols-rounded text-base mr-1" aria-hidden="true">
+							add
+						</span>
 						Create Payment Item
 					</Button>
 				</Link>
@@ -45,7 +47,9 @@ function StaffPaymentsView({ schoolId }: { schoolId: string }) {
 							<div className="flex items-center justify-between">
 								<div className="flex items-center gap-3">
 									<div className="p-2 bg-primary/10 rounded-xl">
-										<span className="material-symbols-rounded text-primary">payments</span>
+										<span className="material-symbols-rounded text-primary" aria-hidden="true">
+											payments
+										</span>
 									</div>
 									<div>
 										<h4 className="font-medium text-foreground">{item.title}</h4>
@@ -62,7 +66,10 @@ function StaffPaymentsView({ schoolId }: { schoolId: string }) {
 				</div>
 			) : (
 				<div className="bg-muted rounded-lg p-12 text-center border border-dashed border-border">
-					<span className="material-symbols-rounded text-4xl text-muted-foreground mb-4">
+					<span
+						className="material-symbols-rounded text-4xl text-muted-foreground mb-4"
+						aria-hidden="true"
+					>
 						payments
 					</span>
 					<p className="text-muted-foreground">No payment items yet. Create one to get started.</p>
@@ -179,7 +186,9 @@ export default function PaymentsDashboardPage() {
 						<>
 							{/* Due Soon Section */}
 							<div className="flex items-center gap-2 mb-4">
-								<span className="material-symbols-rounded text-amber-500">warning_amber</span>
+								<span className="material-symbols-rounded text-amber-500" aria-hidden="true">
+									warning_amber
+								</span>
 								<h3 className="text-lg font-bold text-gray-800">Due Soon</h3>
 							</div>
 
@@ -192,7 +201,9 @@ export default function PaymentsDashboardPage() {
 									<div
 										className={`w-16 h-16 rounded-xl bg-${payment.iconColor}-100 flex items-center justify-center text-${payment.iconColor}-600 mr-5 shrink-0`}
 									>
-										<span className="material-symbols-rounded text-3xl">{payment.icon}</span>
+										<span className="material-symbols-rounded text-3xl" aria-hidden="true">
+											{payment.icon}
+										</span>
 									</div>
 									<div className="flex-grow">
 										<div className="flex justify-between items-start mb-1">
@@ -211,7 +222,10 @@ export default function PaymentsDashboardPage() {
 										{payment.teacher && (
 											<div className="flex items-center gap-2">
 												<div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
-													<span className="material-symbols-rounded text-xs text-primary">
+													<span
+														className="material-symbols-rounded text-xs text-primary"
+														aria-hidden="true"
+													>
 														person
 													</span>
 												</div>
@@ -220,7 +234,9 @@ export default function PaymentsDashboardPage() {
 										)}
 										{payment.autoRenew && (
 											<div className="flex items-center gap-2 text-xs text-gray-500 mt-2">
-												<span className="material-symbols-rounded text-sm">schedule</span>
+												<span className="material-symbols-rounded text-sm" aria-hidden="true">
+													schedule
+												</span>
 												Auto-renew available
 											</div>
 										)}
@@ -246,7 +262,9 @@ export default function PaymentsDashboardPage() {
 
 							{/* Recently Paid Section */}
 							<div className="flex items-center gap-2 mb-4 mt-8 opacity-60">
-								<span className="material-symbols-rounded">check_circle</span>
+								<span className="material-symbols-rounded" aria-hidden="true">
+									check_circle
+								</span>
 								<h3 className="text-lg font-bold">Recently Paid</h3>
 							</div>
 
@@ -256,7 +274,9 @@ export default function PaymentsDashboardPage() {
 									className="flex items-center p-4 mb-4 rounded-2xl border border-transparent bg-gray-50 opacity-75 hover:opacity-100 transition"
 								>
 									<div className="w-12 h-12 rounded-xl bg-gray-200 flex items-center justify-center text-gray-500 mr-5 shrink-0">
-										<span className="material-symbols-rounded text-2xl">{payment.icon}</span>
+										<span className="material-symbols-rounded text-2xl" aria-hidden="true">
+											{payment.icon}
+										</span>
 									</div>
 									<div className="flex-grow">
 										<h4 className="text-lg font-bold text-gray-700">{payment.title}</h4>
@@ -273,7 +293,12 @@ export default function PaymentsDashboardPage() {
 						</>
 					) : (
 						<div className="text-center py-12 text-gray-500">
-							<span className="material-symbols-rounded text-4xl mb-2 text-gray-300">history</span>
+							<span
+								className="material-symbols-rounded text-4xl mb-2 text-gray-300"
+								aria-hidden="true"
+							>
+								history
+							</span>
 							<p>Payment history coming soon</p>
 						</div>
 					)}
@@ -296,10 +321,14 @@ export default function PaymentsDashboardPage() {
 
 						{/* Floating Coins */}
 						<div className="absolute bottom-10 left-4 text-yellow-600 opacity-80 z-20">
-							<span className="material-symbols-rounded text-3xl">monetization_on</span>
+							<span className="material-symbols-rounded text-3xl" aria-hidden="true">
+								monetization_on
+							</span>
 						</div>
 						<div className="absolute bottom-20 right-8 text-yellow-500 opacity-60 z-20">
-							<span className="material-symbols-rounded text-2xl">monetization_on</span>
+							<span className="material-symbols-rounded text-2xl" aria-hidden="true">
+								monetization_on
+							</span>
 						</div>
 
 						{/* Balance Amount */}
@@ -332,7 +361,9 @@ export default function PaymentsDashboardPage() {
 				{/* Quick Top-Up */}
 				<Card className="bg-primary/5 rounded-3xl p-6 border-2 border-dashed border-primary/20">
 					<h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-						<span className="material-symbols-rounded text-primary">add_card</span>
+						<span className="material-symbols-rounded text-primary" aria-hidden="true">
+							add_card
+						</span>
 						Quick Top-Up
 					</h3>
 
@@ -358,13 +389,16 @@ export default function PaymentsDashboardPage() {
 							onChange={(e) => setCustomAmount(e.target.value)}
 							className="w-full pl-8 pr-32 py-4 rounded-xl border-none ring-1 ring-gray-200 bg-white focus:ring-2 focus:ring-primary shadow-sm text-lg font-bold text-gray-800"
 							placeholder="Custom Amount"
+							aria-label="Custom top-up amount in pounds"
 						/>
 						<button
 							type="button"
 							className="absolute right-2 top-2 bottom-2 bg-gray-900 text-white px-6 rounded-lg font-bold hover:bg-gray-800 transition flex items-center gap-2"
 						>
 							Add
-							<span className="material-symbols-rounded text-sm">arrow_forward</span>
+							<span className="material-symbols-rounded text-sm" aria-hidden="true">
+								arrow_forward
+							</span>
 						</button>
 					</div>
 				</Card>

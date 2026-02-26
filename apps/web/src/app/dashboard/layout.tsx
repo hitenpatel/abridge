@@ -150,7 +150,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 	};
 
 	const NavContent = ({ onClick }: { onClick?: () => void }) => (
-		<nav className="flex-1 space-y-2">
+		<nav className="flex-1 space-y-2" aria-label="Main navigation">
 			{navItems.map((item) => {
 				const isActive = pathname === item.href;
 				return (
@@ -161,18 +161,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 						aria-current={isActive ? "page" : undefined}
 						data-testid={`${item.name.toLowerCase().replace(/\s+/g, "-")}-link`}
 						className={cn(
-							"flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all group",
+							"flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
 							isActive
 								? "bg-primary/10 text-primary font-semibold"
 								: "text-gray-500 hover:bg-gray-50 hover:text-slate-800",
 						)}
 					>
-						<span className="material-symbols-rounded group-hover:text-primary transition-colors">
+						<span
+							className="material-symbols-rounded group-hover:text-primary transition-colors"
+							aria-hidden="true"
+						>
 							{item.icon}
 						</span>
 						{item.name}
 						{item.badge !== undefined && item.badge > 0 && (
-							<span className="ml-auto w-5 h-5 flex items-center justify-center bg-red-500 text-white text-xs font-bold rounded-full">
+							<span
+								className="ml-auto w-5 h-5 flex items-center justify-center bg-red-500 text-white text-xs font-bold rounded-full"
+								aria-label={`${item.badge} unread`}
+							>
 								{item.badge}
 							</span>
 						)}
@@ -186,10 +192,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 		<FeatureToggleProvider schoolId={session?.schoolId}>
 			<div className="min-h-screen bg-background flex">
 				{/* Desktop Sidebar */}
-				<aside className="w-64 h-screen bg-card border-r shadow-soft fixed left-0 top-0 z-30 hidden lg:flex flex-col p-6">
+				<aside
+					className="w-64 h-screen bg-card border-r shadow-soft fixed left-0 top-0 z-30 hidden lg:flex flex-col p-6"
+					aria-label="Sidebar"
+				>
 					<div className="flex items-center gap-3 mb-10 px-2">
 						<div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-glow">
-							<span className="material-symbols-rounded text-2xl">school</span>
+							<span className="material-symbols-rounded text-2xl" aria-hidden="true">
+								school
+							</span>
 						</div>
 						<h1 className="text-2xl font-bold tracking-tight text-slate-800">Abridge</h1>
 					</div>
@@ -213,7 +224,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 											{userRole?.staffRole ? `Staff (${userRole.staffRole})` : "Parent Account"}
 										</p>
 									</div>
-									<span className="material-symbols-rounded ml-auto text-gray-400">
+									<span
+										className="material-symbols-rounded ml-auto text-gray-400"
+										aria-hidden="true"
+									>
 										expand_more
 									</span>
 								</button>
@@ -227,7 +241,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 								</DropdownMenuLabel>
 								<DropdownMenuSeparator />
 								<DropdownMenuItem onClick={handleSignOut} data-testid="logout-button">
-									<span className="material-symbols-rounded mr-2 text-base">logout</span>
+									<span className="material-symbols-rounded mr-2 text-base" aria-hidden="true">
+										logout
+									</span>
 									Sign Out
 								</DropdownMenuItem>
 							</DropdownMenuContent>
@@ -263,7 +279,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 						<div className="flex items-center justify-between mb-10">
 							<div className="flex items-center gap-2">
 								<div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
-									<span className="material-symbols-rounded text-lg">school</span>
+									<span className="material-symbols-rounded text-lg" aria-hidden="true">
+										school
+									</span>
 								</div>
 								<h1 className="text-xl font-bold">Abridge</h1>
 							</div>
@@ -273,7 +291,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 								onClick={() => setIsMobileMenuOpen(false)}
 								aria-label="Close menu"
 							>
-								<span className="material-symbols-rounded">close</span>
+								<span className="material-symbols-rounded" aria-hidden="true">
+									close
+								</span>
 							</Button>
 						</div>
 						<NavContent onClick={() => setIsMobileMenuOpen(false)} />
@@ -289,16 +309,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 					<div className="lg:hidden flex justify-between items-center mb-6">
 						<div className="flex items-center gap-2">
 							<div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
-								<span className="material-symbols-rounded text-lg">school</span>
+								<span className="material-symbols-rounded text-lg" aria-hidden="true">
+									school
+								</span>
 							</div>
 							<h1 className="text-xl font-bold text-slate-800">Abridge</h1>
 						</div>
 						<button
 							type="button"
 							onClick={() => setIsMobileMenuOpen(true)}
-							className="p-2 rounded-lg bg-white shadow-sm"
+							className="p-2 rounded-lg bg-white shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+							aria-label="Open navigation menu"
 						>
-							<span className="material-symbols-rounded text-slate-800">menu</span>
+							<span className="material-symbols-rounded text-slate-800" aria-hidden="true">
+								menu
+							</span>
 						</button>
 					</div>
 

@@ -43,7 +43,9 @@ export default function LoginPage() {
 				<CardHeader className="text-center space-y-4">
 					<div className="flex items-center justify-center gap-2 mb-2">
 						<div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-							<span className="material-symbols-rounded text-white text-[20px]">school</span>
+							<span className="material-symbols-rounded text-white text-[20px]" aria-hidden="true">
+								school
+							</span>
 						</div>
 						<span className="text-xl font-bold font-heading">Abridge</span>
 					</div>
@@ -54,6 +56,7 @@ export default function LoginPage() {
 					<form onSubmit={handleLogin} className="space-y-4">
 						{error && (
 							<p
+								role="alert"
 								data-testid="login-error"
 								className="text-sm text-destructive bg-destructive/10 p-3 rounded-lg border border-destructive/20"
 							>

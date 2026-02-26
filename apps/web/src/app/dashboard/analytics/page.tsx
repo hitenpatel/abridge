@@ -216,7 +216,7 @@ export default function AnalyticsPage() {
 						<div className="flex items-center justify-between mb-4">
 							<div className="flex items-center gap-3">
 								<div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
-									<span className="material-symbols-rounded text-green-600">
+									<span className="material-symbols-rounded text-green-600" aria-hidden="true">
 										assignment_turned_in
 									</span>
 								</div>
@@ -245,7 +245,7 @@ export default function AnalyticsPage() {
 							/>
 						) : null}
 						<div className="mt-3 text-xs text-gray-400 flex items-center gap-1">
-							<span className="material-symbols-rounded text-sm">
+							<span className="material-symbols-rounded text-sm" aria-hidden="true">
 								{expanded === "attendance" ? "expand_less" : "expand_more"}
 							</span>
 							{expanded === "attendance" ? "Collapse" : "View by class"}
@@ -265,7 +265,9 @@ export default function AnalyticsPage() {
 						<div className="flex items-center justify-between mb-4">
 							<div className="flex items-center gap-3">
 								<div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-									<span className="material-symbols-rounded text-blue-600">payments</span>
+									<span className="material-symbols-rounded text-blue-600" aria-hidden="true">
+										payments
+									</span>
 								</div>
 								<h3 className="text-lg font-semibold text-gray-800">Payments</h3>
 							</div>
@@ -299,7 +301,7 @@ export default function AnalyticsPage() {
 							/>
 						) : null}
 						<div className="mt-3 text-xs text-gray-400 flex items-center gap-1">
-							<span className="material-symbols-rounded text-sm">
+							<span className="material-symbols-rounded text-sm" aria-hidden="true">
 								{expanded === "payments" ? "expand_less" : "expand_more"}
 							</span>
 							{expanded === "payments" ? "Collapse" : "View by item"}
@@ -319,7 +321,9 @@ export default function AnalyticsPage() {
 						<div className="flex items-center justify-between mb-4">
 							<div className="flex items-center gap-3">
 								<div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
-									<span className="material-symbols-rounded text-purple-600">description</span>
+									<span className="material-symbols-rounded text-purple-600" aria-hidden="true">
+										description
+									</span>
 								</div>
 								<h3 className="text-lg font-semibold text-gray-800">Forms</h3>
 							</div>
@@ -342,7 +346,7 @@ export default function AnalyticsPage() {
 							/>
 						) : null}
 						<div className="mt-3 text-xs text-gray-400 flex items-center gap-1">
-							<span className="material-symbols-rounded text-sm">
+							<span className="material-symbols-rounded text-sm" aria-hidden="true">
 								{expanded === "forms" ? "expand_less" : "expand_more"}
 							</span>
 							{expanded === "forms" ? "Collapse" : "View by template"}
@@ -362,7 +366,9 @@ export default function AnalyticsPage() {
 						<div className="flex items-center justify-between mb-4">
 							<div className="flex items-center gap-3">
 								<div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-									<span className="material-symbols-rounded text-amber-600">chat_bubble</span>
+									<span className="material-symbols-rounded text-amber-600" aria-hidden="true">
+										chat_bubble
+									</span>
 								</div>
 								<h3 className="text-lg font-semibold text-gray-800">Messages</h3>
 							</div>
@@ -386,7 +392,7 @@ export default function AnalyticsPage() {
 							/>
 						) : null}
 						<div className="mt-3 text-xs text-gray-400 flex items-center gap-1">
-							<span className="material-symbols-rounded text-sm">
+							<span className="material-symbols-rounded text-sm" aria-hidden="true">
 								{expanded === "messages" ? "expand_less" : "expand_more"}
 							</span>
 							{expanded === "messages" ? "Collapse" : "View by message"}
