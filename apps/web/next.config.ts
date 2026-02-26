@@ -1,8 +1,8 @@
 import { withSentryConfig } from "@sentry/nextjs";
+import type { NextConfig } from "next";
 import withPWA from "next-pwa";
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
 	output: "standalone",
 	transpilePackages: ["@schoolconnect/db"],
 	turbopack: {
