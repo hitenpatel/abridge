@@ -28,7 +28,11 @@ interface NavItem {
 		| "paymentsEnabled"
 		| "attendanceEnabled"
 		| "calendarEnabled"
-		| "formsEnabled";
+		| "formsEnabled"
+		| "parentsEveningEnabled"
+		| "analyticsEnabled"
+		| "wellbeingEnabled"
+		| "emergencyCommsEnabled";
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -81,6 +85,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 			icon: "groups",
 			featureKey: "parentsEveningEnabled",
 		},
+		{
+			name: "Wellbeing",
+			href: "/dashboard/wellbeing",
+			icon: "favorite",
+			featureKey: "wellbeingEnabled",
+		},
 		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];
 
@@ -110,12 +120,29 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 			icon: "payments",
 			featureKey: "paymentsEnabled",
 		},
-		{ name: "Analytics", href: "/dashboard/analytics", icon: "analytics" },
+		{
+			name: "Analytics",
+			href: "/dashboard/analytics",
+			icon: "analytics",
+			featureKey: "analyticsEnabled",
+		},
 		{
 			name: "Parents' Evening",
 			href: "/dashboard/parents-evening",
 			icon: "groups",
 			featureKey: "parentsEveningEnabled",
+		},
+		{
+			name: "Wellbeing",
+			href: "/dashboard/wellbeing",
+			icon: "favorite",
+			featureKey: "wellbeingEnabled",
+		},
+		{
+			name: "Emergency",
+			href: "/dashboard/emergency",
+			icon: "shield",
+			featureKey: "emergencyCommsEnabled",
 		},
 		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];
