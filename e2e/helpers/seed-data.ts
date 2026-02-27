@@ -359,4 +359,136 @@ export async function seedEvent(params: {
 	};
 }
 
+/**
+ * Seed wellbeing check-ins for a child
+ */
+export async function seedWellbeingCheckIns(params: {
+	childId: string;
+	schoolId: string;
+	daysBack?: number;
+	moods?: ("GREAT" | "GOOD" | "OK" | "LOW" | "STRUGGLING")[];
+}): Promise<{ count: number }> {
+	const daysBack = params.daysBack || 5;
+	const defaultMoods: ("GREAT" | "GOOD" | "OK" | "LOW" | "STRUGGLING")[] = [
+		"GOOD",
+		"GREAT",
+		"OK",
+		"LOW",
+		"GOOD",
+	];
+	const moods = params.moods || defaultMoods;
+	let count = 0;
+
+	for (let i = 0; i < daysBack; i++) {
+		const date = new Date();
+		date.setDate(date.getDate() - i);
+		date.setHours(0, 0, 0, 0);
+
+		const dayOfWeek = date.getDay();
+		if (dayOfWeek === 0 || dayOfWeek === 6) continue;
+
+		await prisma.wellbeingCheckIn.upsert({
+			where: {
+				childId_date: { childId: params.childId, date },
+			},
+			update: {},
+			create: {
+				childId: params.childId,
+				schoolId: params.schoolId,
+				mood: moods[i % moods.length],
+				checkedInBy: "PARENT",
+				date,
+			},
+		});
+		count++;
+	}
+
+	return { count };
+}
+
+/**
+ * Seed wellbeing check-ins that trigger a THREE_LOW_DAYS alert pattern
+ */
+export async function seedLowMoodPattern(params: {
+	childId: string;
+	schoolId: string;
+}): Promise<{ count: number }> {
+	return seedWellbeingCheckIns({
+		...params,
+		daysBack: 5,
+		moods: ["LOW", "STRUGGLING", "LOW", "STRUGGLING", "LOW"],
+	});
+}
+
+/**
+ * Seed a wellbeing alert for a child
+ */
+export async function seedWellbeingAlert(params: {
+	childId: string;
+	schoolId: string;
+	triggerRule?: "THREE_LOW_DAYS" | "FIVE_ABSENT_DAYS" | "MOOD_DROP" | "MANUAL";
+	status?: "OPEN" | "ACKNOWLEDGED" | "RESOLVED";
+}): Promise<{ id: string }> {
+	const alert = await prisma.wellbeingAlert.create({
+		data: {
+			childId: params.childId,
+			schoolId: params.schoolId,
+			triggerRule: params.triggerRule || "THREE_LOW_DAYS",
+			status: params.status || "OPEN",
+		},
+	});
+
+	return { id: alert.id };
+}
+
+/**
+ * Seed an emergency alert for a school
+ */
+export async function seedEmergencyAlert(params: {
+	schoolId: string;
+	initiatedBy: string;
+	type?: "LOCKDOWN" | "EVACUATION" | "SHELTER_IN_PLACE" | "MEDICAL" | "OTHER";
+	status?: "ACTIVE" | "ALL_CLEAR" | "CANCELLED";
+	message?: string;
+}): Promise<{ id: string; title: string }> {
+	const type = params.type || "LOCKDOWN";
+	const titles: Record<string, string> = {
+		LOCKDOWN: "Lockdown in Effect",
+		EVACUATION: "Evacuation in Progress",
+		SHELTER_IN_PLACE: "Shelter in Place",
+		MEDICAL: "Medical Emergency",
+		OTHER: "Emergency Alert",
+	};
+
+	const alert = await prisma.emergencyAlert.create({
+		data: {
+			schoolId: params.schoolId,
+			type,
+			title: titles[type],
+			message: params.message || null,
+			status: params.status || "ACTIVE",
+			initiatedBy: params.initiatedBy,
+		},
+	});
+
+	return { id: alert.id, title: alert.title };
+}
+
+/**
+ * Enable specific feature toggles for a school
+ */
+export async function enableSchoolFeature(params: {
+	schoolId: string;
+	features: Partial<{
+		wellbeingEnabled: boolean;
+		emergencyCommsEnabled: boolean;
+		analyticsEnabled: boolean;
+	}>;
+}): Promise<void> {
+	await prisma.school.update({
+		where: { id: params.schoolId },
+		data: params.features,
+	});
+}
+
 export { prisma };
