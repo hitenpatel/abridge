@@ -1,13 +1,13 @@
 "use client";
 
+import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FeatureDisabled } from "@/components/feature-disabled";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
+import { AlertTriangle, CheckCircle, Heart, SmilePlus } from "lucide-react";
 import { useState } from "react";
-import { Heart, AlertTriangle, CheckCircle, SmilePlus } from "lucide-react";
 
 const MOOD_EMOJI: Record<string, string> = {
 	GREAT: "\u{1F604}",
@@ -74,9 +74,7 @@ function ParentCheckIn() {
 							type="button"
 							onClick={() => setSelectedChild(child.id)}
 							className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
-								childId === child.id
-									? "bg-primary text-primary-foreground"
-									: "hover:bg-muted"
+								childId === child.id ? "bg-primary text-primary-foreground" : "hover:bg-muted"
 							}`}
 						>
 							{child.firstName}
@@ -151,20 +149,11 @@ function ParentCheckIn() {
 							<p className="text-sm text-muted-foreground">No check-ins yet.</p>
 						)}
 						{checkIns?.map((ci) => (
-							<div
-								key={ci.id}
-								className="flex items-center gap-3 rounded-md border p-2"
-							>
+							<div key={ci.id} className="flex items-center gap-3 rounded-md border p-2">
 								<span className="text-xl">{MOOD_EMOJI[ci.mood]}</span>
 								<div className="flex-1">
-									<Badge className={MOOD_COLORS[ci.mood]}>
-										{ci.mood.toLowerCase()}
-									</Badge>
-									{ci.note && (
-										<p className="text-sm text-muted-foreground mt-1">
-											{ci.note}
-										</p>
-									)}
+									<Badge className={MOOD_COLORS[ci.mood]}>{ci.mood.toLowerCase()}</Badge>
+									{ci.note && <p className="text-sm text-muted-foreground mt-1">{ci.note}</p>}
 								</div>
 								<span className="text-xs text-muted-foreground">
 									{new Date(ci.date).toLocaleDateString("en-GB")}
@@ -179,11 +168,14 @@ function ParentCheckIn() {
 }
 
 function StaffView({ schoolId }: { schoolId: string }) {
-	const { data: overview, isLoading: overviewLoading } =
-		trpc.wellbeing.getClassOverview.useQuery({ schoolId });
+	const { data: overview, isLoading: overviewLoading } = trpc.wellbeing.getClassOverview.useQuery({
+		schoolId,
+	});
 
-	const { data: alerts, isLoading: alertsLoading } =
-		trpc.wellbeing.getAlerts.useQuery({ schoolId, status: "OPEN" });
+	const { data: alerts, isLoading: alertsLoading } = trpc.wellbeing.getAlerts.useQuery({
+		schoolId,
+		status: "OPEN",
+	});
 
 	const acknowledgeMutation = trpc.wellbeing.acknowledgeAlert.useMutation();
 	const resolveMutation = trpc.wellbeing.resolveAlert.useMutation();
@@ -214,7 +206,8 @@ function StaffView({ schoolId }: { schoolId: string }) {
 											{alert.child.firstName} {alert.child.lastName}
 										</p>
 										<p className="text-sm text-muted-foreground">
-											{alert.child.yearGroup} &middot; {alert.triggerRule.replace(/_/g, " ").toLowerCase()}
+											{alert.child.yearGroup} &middot;{" "}
+											{alert.triggerRule.replace(/_/g, " ").toLowerCase()}
 										</p>
 									</div>
 									<Badge className={ALERT_STATUS_COLORS[alert.status]}>
@@ -235,8 +228,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 												Acknowledge
 											</button>
 										)}
-										{(alert.status === "OPEN" ||
-											alert.status === "ACKNOWLEDGED") && (
+										{(alert.status === "OPEN" || alert.status === "ACKNOWLEDGED") && (
 											<button
 												type="button"
 												onClick={() =>
@@ -267,9 +259,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 				</CardHeader>
 				<CardContent>
 					{overview?.length === 0 && (
-						<p className="text-sm text-muted-foreground">
-							No check-ins submitted today.
-						</p>
+						<p className="text-sm text-muted-foreground">No check-ins submitted today.</p>
 					)}
 					<div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
 						{overview?.map((ci) => (
@@ -308,11 +298,7 @@ export default function WellbeingPage() {
 				</p>
 			</div>
 
-			{isStaff && session.schoolId ? (
-				<StaffView schoolId={session.schoolId} />
-			) : (
-				<ParentCheckIn />
-			)}
+			{isStaff && session.schoolId ? <StaffView schoolId={session.schoolId} /> : <ParentCheckIn />}
 		</div>
 	);
 }

@@ -706,7 +706,7 @@ function BrandingCard({ schoolId }: { schoolId: string }) {
 							brandColor,
 							secondaryColor: secondaryColor || null,
 							schoolMotto: schoolMotto || null,
-							brandFont: brandFont as typeof FONT_OPTIONS[number]["value"],
+							brandFont: brandFont as (typeof FONT_OPTIONS)[number]["value"],
 						});
 					}}
 					className="space-y-4"

@@ -17,13 +17,7 @@ export const emergencyRouter = router({
 		.input(
 			z.object({
 				schoolId: z.string(),
-				type: z.enum([
-					"LOCKDOWN",
-					"EVACUATION",
-					"SHELTER_IN_PLACE",
-					"MEDICAL",
-					"OTHER",
-				]),
+				type: z.enum(["LOCKDOWN", "EVACUATION", "SHELTER_IN_PLACE", "MEDICAL", "OTHER"]),
 				message: z.string().max(500).optional(),
 			}),
 		)
@@ -40,8 +34,7 @@ export const emergencyRouter = router({
 			if (activeAlert) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
-					message:
-						"An emergency alert is already active. Resolve it before creating a new one.",
+					message: "An emergency alert is already active. Resolve it before creating a new one.",
 				});
 			}
 
@@ -107,10 +100,7 @@ export const emergencyRouter = router({
 				},
 			});
 
-			logger.info(
-				{ alertId: input.alertId, updateId: update.id },
-				"Emergency update posted",
-			);
+			logger.info({ alertId: input.alertId, updateId: update.id }, "Emergency update posted");
 
 			return update;
 		}),

@@ -1,13 +1,13 @@
 "use client";
 
+import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FeatureDisabled } from "@/components/feature-disabled";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
-import { useState } from "react";
 import { AlertTriangle, CheckCircle, Clock, Shield } from "lucide-react";
+import { useState } from "react";
 
 const EMERGENCY_TYPE_LABELS: Record<string, string> = {
 	LOCKDOWN: "Lockdown",
@@ -44,9 +44,7 @@ function ActiveAlert({ schoolId }: { schoolId: string }) {
 				</CardTitle>
 			</CardHeader>
 			<CardContent className="space-y-4">
-				{alert.message && (
-					<p className="text-sm font-medium">{alert.message}</p>
-				)}
+				{alert.message && <p className="text-sm font-medium">{alert.message}</p>}
 				<p className="text-xs text-muted-foreground">
 					Initiated by {alert.initiator.name} at{" "}
 					{new Date(alert.createdAt).toLocaleTimeString("en-GB")}
@@ -143,13 +141,7 @@ function InitiateAlert({ schoolId }: { schoolId: string }) {
 		},
 	});
 
-	const types = [
-		"LOCKDOWN",
-		"EVACUATION",
-		"SHELTER_IN_PLACE",
-		"MEDICAL",
-		"OTHER",
-	];
+	const types = ["LOCKDOWN", "EVACUATION", "SHELTER_IN_PLACE", "MEDICAL", "OTHER"];
 
 	return (
 		<Card className="border-red-200">
@@ -167,9 +159,7 @@ function InitiateAlert({ schoolId }: { schoolId: string }) {
 							type="button"
 							onClick={() => setType(t)}
 							className={`rounded-md border p-3 text-sm font-medium transition-colors ${
-								type === t
-									? "border-red-500 bg-red-50 text-red-700"
-									: "hover:bg-muted"
+								type === t ? "border-red-500 bg-red-50 text-red-700" : "hover:bg-muted"
 							}`}
 						>
 							{EMERGENCY_TYPE_LABELS[t]}
@@ -199,8 +189,8 @@ function InitiateAlert({ schoolId }: { schoolId: string }) {
 						) : (
 							<div className="rounded-md border-2 border-red-500 bg-red-50 p-4">
 								<p className="text-sm font-bold text-red-700 mb-3">
-									This will immediately notify ALL parents at the school via
-									push, SMS, and email. Are you sure?
+									This will immediately notify ALL parents at the school via push, SMS, and email.
+									Are you sure?
 								</p>
 								<div className="flex gap-2">
 									<button
@@ -220,9 +210,7 @@ function InitiateAlert({ schoolId }: { schoolId: string }) {
 										disabled={initiateMutation.isPending}
 										className="rounded-md bg-red-600 px-6 py-2 text-sm font-bold text-white hover:bg-red-700 disabled:opacity-50"
 									>
-										{initiateMutation.isPending
-											? "Sending..."
-											: "CONFIRM \u2014 Send Alert Now"}
+										{initiateMutation.isPending ? "Sending..." : "CONFIRM \u2014 Send Alert Now"}
 									</button>
 									<button
 										type="button"
@@ -265,24 +253,17 @@ function AlertHistory({ schoolId }: { schoolId: string }) {
 			</CardHeader>
 			<CardContent>
 				{data?.items.length === 0 && (
-					<p className="text-sm text-muted-foreground">
-						No previous emergency alerts.
-					</p>
+					<p className="text-sm text-muted-foreground">No previous emergency alerts.</p>
 				)}
 				<div className="space-y-2">
 					{data?.items.map((alert) => (
-						<div
-							key={alert.id}
-							className="flex items-center gap-3 rounded-md border p-3"
-						>
+						<div key={alert.id} className="flex items-center gap-3 rounded-md border p-3">
 							<div className="flex-1">
-								<p className="font-medium">
-									{EMERGENCY_TYPE_LABELS[alert.type]}
-								</p>
+								<p className="font-medium">{EMERGENCY_TYPE_LABELS[alert.type]}</p>
 								<p className="text-xs text-muted-foreground">
 									{new Date(alert.createdAt).toLocaleDateString("en-GB")}{" "}
-									{new Date(alert.createdAt).toLocaleTimeString("en-GB")} ·{" "}
-									{alert.initiator.name} · {alert._count.updates} updates
+									{new Date(alert.createdAt).toLocaleTimeString("en-GB")} · {alert.initiator.name} ·{" "}
+									{alert._count.updates} updates
 								</p>
 							</div>
 							<Badge className={statusColors[alert.status]}>

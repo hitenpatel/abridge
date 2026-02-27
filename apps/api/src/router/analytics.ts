@@ -309,16 +309,11 @@ export const analyticsRouter = router({
 				_count: { id: true },
 			});
 
-			const totalRecords = breakdown.reduce(
-				(sum, row) => sum + row._count.id,
-				0,
-			);
+			const totalRecords = breakdown.reduce((sum, row) => sum + row._count.id, 0);
 
-			const present =
-				breakdown.find((r) => r.mark === "PRESENT")?._count.id ?? 0;
+			const present = breakdown.find((r) => r.mark === "PRESENT")?._count.id ?? 0;
 			const late = breakdown.find((r) => r.mark === "LATE")?._count.id ?? 0;
-			const attendanceRate =
-				totalRecords > 0 ? ((present + late) / totalRecords) * 100 : 0;
+			const attendanceRate = totalRecords > 0 ? ((present + late) / totalRecords) * 100 : 0;
 
 			return {
 				totalRecords,

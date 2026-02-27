@@ -46,34 +46,19 @@ async function processSchoolAlerts(prisma: PrismaClient, schoolId: string) {
 	}
 
 	for (const [childId, checkIns] of byChild) {
-		const lowDays = checkIns.filter(
-			(ci) => ci.mood === "LOW" || ci.mood === "STRUGGLING",
-		).length;
+		const lowDays = checkIns.filter((ci) => ci.mood === "LOW" || ci.mood === "STRUGGLING").length;
 
 		if (lowDays >= 3) {
-			await createAlertIfNoCooldown(
-				prisma,
-				childId,
-				schoolId,
-				"THREE_LOW_DAYS",
-				7,
-			);
+			await createAlertIfNoCooldown(prisma, childId, schoolId, "THREE_LOW_DAYS", 7);
 		}
 
 		if (checkIns.length >= 2) {
 			const avgMood =
-				checkIns.reduce((sum, ci) => sum + (MOOD_VALUES[ci.mood] ?? 3), 0) /
-				checkIns.length;
+				checkIns.reduce((sum, ci) => sum + (MOOD_VALUES[ci.mood] ?? 3), 0) / checkIns.length;
 			const latestMood = MOOD_VALUES[checkIns[0].mood] ?? 3;
 
 			if (avgMood - latestMood >= 2) {
-				await createAlertIfNoCooldown(
-					prisma,
-					childId,
-					schoolId,
-					"MOOD_DROP",
-					7,
-				);
+				await createAlertIfNoCooldown(prisma, childId, schoolId, "MOOD_DROP", 7);
 			}
 		}
 	}
@@ -92,13 +77,7 @@ async function processSchoolAlerts(prisma: PrismaClient, schoolId: string) {
 	});
 
 	for (const absence of absences) {
-		await createAlertIfNoCooldown(
-			prisma,
-			absence.childId,
-			schoolId,
-			"FIVE_ABSENT_DAYS",
-			14,
-		);
+		await createAlertIfNoCooldown(prisma, absence.childId, schoolId, "FIVE_ABSENT_DAYS", 14);
 	}
 }
 
@@ -131,8 +110,5 @@ async function createAlertIfNoCooldown(
 		},
 	});
 
-	logger.info(
-		{ childId, schoolId, triggerRule },
-		"Wellbeing alert created",
-	);
+	logger.info({ childId, schoolId, triggerRule }, "Wellbeing alert created");
 }
