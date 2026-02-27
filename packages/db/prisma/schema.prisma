@@ -34,6 +34,16 @@ model School {
   paymentUniformEnabled     Boolean  @default(true)
   paymentOtherEnabled       Boolean  @default(true)
   parentsEveningEnabled     Boolean  @default(false)
+  wellbeingEnabled          Boolean  @default(false)
+  emergencyCommsEnabled     Boolean  @default(false)
+  analyticsEnabled          Boolean  @default(false)
+
+  // School branding
+  brandColor                String?  @default("#1E3A5F")
+  secondaryColor            String?
+  schoolMotto               String?
+  brandFont                 String?  @default("DEFAULT")
+
   createdAt        DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -48,6 +58,10 @@ model School {
   classPosts ClassPost[]
   conversations Conversation[]
   parentsEvenings ParentsEvening[]
+  analyticsSnapshots AnalyticsSnapshot[]
+  wellbeingCheckIns  WellbeingCheckIn[]
+  wellbeingAlerts    WellbeingAlert[]
+  emergencyAlerts    EmergencyAlert[]
 
   @@map("schools")
 }
@@ -99,6 +113,11 @@ model User {
   notificationDeliveries NotificationDelivery[]
   conversationsAsParent Conversation[] @relation("ConversationParent")
   conversationsAsStaff  Conversation[] @relation("ConversationStaff")
+  wellbeingAlertsAcknowledged WellbeingAlert[] @relation("WellbeingAlertAcknowledger")
+  wellbeingAlertsResolved     WellbeingAlert[] @relation("WellbeingAlertResolver")
+  emergencyAlertsInitiated    EmergencyAlert[] @relation("EmergencyAlertInitiator")
+  emergencyAlertsResolved     EmergencyAlert[] @relation("EmergencyAlertResolver")
+  emergencyUpdatesPosted      EmergencyUpdate[] @relation("EmergencyUpdatePoster")
 
   @@map("users")
 }
@@ -188,6 +207,8 @@ model Child {
   payments    PaymentItemChild[]
   lineItems   PaymentLineItem[]
   formResponses FormResponse[]
+  wellbeingCheckIns WellbeingCheckIn[]
+  wellbeingAlerts   WellbeingAlert[]
 
   @@map("children")
 }
@@ -600,4 +621,145 @@ model ClassPostReaction {
 
   @@unique([postId, userId])
   @@map("class_post_reactions")
+}
+
+// ─── Analytics ──────────────────────────────────────────────
+
+enum AnalyticsPeriod {
+  DAILY
+  WEEKLY
+  TERMLY
+}
+
+model AnalyticsSnapshot {
+  id        String          @id @default(cuid())
+  schoolId  String
+  school    School          @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  period    AnalyticsPeriod
+  date      DateTime        @db.Date
+  data      Json
+  createdAt DateTime        @default(now())
+
+  @@unique([schoolId, period, date])
+  @@index([schoolId, date])
+  @@map("analytics_snapshot")
+}
+
+// ─── Wellbeing ──────────────────────────────────────────────
+
+enum Mood {
+  GREAT
+  GOOD
+  OK
+  LOW
+  STRUGGLING
+}
+
+enum CheckInBy {
+  STUDENT
+  PARENT
+  STAFF
+}
+
+enum WellbeingTriggerRule {
+  THREE_LOW_DAYS
+  FIVE_ABSENT_DAYS
+  MOOD_DROP
+  MANUAL
+}
+
+enum WellbeingAlertStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+}
+
+model WellbeingCheckIn {
+  id          String    @id @default(cuid())
+  childId     String
+  child       Child     @relation(fields: [childId], references: [id], onDelete: Cascade)
+  schoolId    String
+  school      School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  mood        Mood
+  note        String?
+  checkedInBy CheckInBy
+  date        DateTime  @db.Date
+  createdAt   DateTime  @default(now())
+
+  @@unique([childId, date])
+  @@index([schoolId, date])
+  @@map("wellbeing_check_in")
+}
+
+model WellbeingAlert {
+  id              String                @id @default(cuid())
+  childId         String
+  child           Child                 @relation(fields: [childId], references: [id], onDelete: Cascade)
+  schoolId        String
+  school          School                @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  triggerRule     WellbeingTriggerRule
+  status          WellbeingAlertStatus  @default(OPEN)
+  acknowledgedBy  String?
+  acknowledger    User?                 @relation("WellbeingAlertAcknowledger", fields: [acknowledgedBy], references: [id])
+  resolvedBy      String?
+  resolver        User?                 @relation("WellbeingAlertResolver", fields: [resolvedBy], references: [id])
+  note            String?
+  createdAt       DateTime              @default(now())
+  acknowledgedAt  DateTime?
+  resolvedAt      DateTime?
+
+  @@index([schoolId, status])
+  @@index([childId, createdAt])
+  @@map("wellbeing_alert")
+}
+
+// ─── Emergency Communications ───────────────────────────────
+
+enum EmergencyType {
+  LOCKDOWN
+  EVACUATION
+  SHELTER_IN_PLACE
+  MEDICAL
+  OTHER
+}
+
+enum EmergencyStatus {
+  ACTIVE
+  ALL_CLEAR
+  CANCELLED
+}
+
+model EmergencyAlert {
+  id          String           @id @default(cuid())
+  schoolId    String
+  school      School           @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  type        EmergencyType
+  status      EmergencyStatus  @default(ACTIVE)
+  title       String
+  message     String?
+  initiatedBy String
+  initiator   User             @relation("EmergencyAlertInitiator", fields: [initiatedBy], references: [id])
+  resolvedBy  String?
+  resolver    User?            @relation("EmergencyAlertResolver", fields: [resolvedBy], references: [id])
+  resolvedAt  DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  updates     EmergencyUpdate[]
+
+  @@index([schoolId, status])
+  @@map("emergency_alert")
+}
+
+model EmergencyUpdate {
+  id        String         @id @default(cuid())
+  alertId   String
+  alert     EmergencyAlert @relation(fields: [alertId], references: [id], onDelete: Cascade)
+  message   String
+  postedBy  String
+  poster    User           @relation("EmergencyUpdatePoster", fields: [postedBy], references: [id])
+  createdAt DateTime       @default(now())
+
+  @@index([alertId, createdAt])
+  @@map("emergency_update")
 }
