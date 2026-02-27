@@ -18,6 +18,7 @@ import { staffRouter } from "./staff";
 import { stripeRouter } from "./stripe";
 import { translationRouter } from "./translation";
 import { userRouter } from "./user";
+import { wellbeingRouter } from "./wellbeing";
 
 export const appRouter = router({
 	health: healthRouter,
@@ -38,6 +39,7 @@ export const appRouter = router({
 	staff: staffRouter,
 	translation: translationRouter,
 	parentsEvening: parentsEveningRouter,
+	wellbeing: wellbeingRouter,
 	dbInit: dbInitRouter,
 });
 
