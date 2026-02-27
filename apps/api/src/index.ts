@@ -11,6 +11,7 @@ import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 import Fastify from "fastify";
 import rawBody from "fastify-raw-body";
 import { createContext } from "./context";
+import { processWellbeingAlerts } from "./crons/wellbeing-alerts";
 import { checkUndeliveredNotifications } from "./jobs/notification-fallback";
 import { auth } from "./lib/auth";
 import { logger } from "./lib/logger";
@@ -177,6 +178,17 @@ async function main() {
 			});
 		},
 		5 * 60 * 1000,
+	);
+
+	// Run wellbeing alert processing every 15 minutes
+	setInterval(
+		() => {
+			processWellbeingAlerts(prisma).catch((err) => {
+				Sentry.captureException(err);
+				logger.error({ err }, "Wellbeing alert cron failed");
+			});
+		},
+		15 * 60 * 1000,
 	);
 }
 
