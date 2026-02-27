@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { assertFeatureEnabled } from "../lib/feature-guards";
+import { generateReportPdf } from "../lib/report-pdf";
 import { protectedProcedure, router, schoolFeatureProcedure } from "../trpc";
 
 export const reportCardRouter = router({
@@ -152,7 +153,7 @@ export const reportCardRouter = router({
 		.query(async ({ ctx, input }) => {
 			// Verify access
 			const parentChild = await ctx.prisma.parentChild.findFirst({
-				where: { parentId: ctx.user.id, childId: input.childId },
+				where: { userId: ctx.user.id, childId: input.childId },
 			});
 
 			if (!parentChild) {
@@ -210,7 +211,7 @@ export const reportCardRouter = router({
 		.input(z.object({ childId: z.string() }))
 		.query(async ({ ctx, input }) => {
 			const parentChild = await ctx.prisma.parentChild.findFirst({
-				where: { parentId: ctx.user.id, childId: input.childId },
+				where: { userId: ctx.user.id, childId: input.childId },
 			});
 
 			if (!parentChild) {
@@ -274,5 +275,113 @@ export const reportCardRouter = router({
 				hasReport: child.reportCards.length > 0,
 				gradeCount: child.reportCards[0]?._count.subjectGrades ?? 0,
 			}));
+		}),
+
+	generatePdf: protectedProcedure
+		.input(
+			z.object({
+				childId: z.string(),
+				cycleId: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// Verify access (same as getReportCard)
+			const parentChild = await ctx.prisma.parentChild.findFirst({
+				where: { userId: ctx.user.id, childId: input.childId },
+			});
+
+			if (!parentChild) {
+				const child = await ctx.prisma.child.findUnique({
+					where: { id: input.childId },
+				});
+				if (child) {
+					const staff = await ctx.prisma.staffMember.findUnique({
+						where: {
+							userId_schoolId: {
+								userId: ctx.user.id,
+								schoolId: child.schoolId,
+							},
+						},
+					});
+					if (!staff) {
+						throw new TRPCError({
+							code: "FORBIDDEN",
+							message: "No access",
+						});
+					}
+				}
+			}
+
+			const reportCard = await ctx.prisma.reportCard.findUnique({
+				where: {
+					cycleId_childId: {
+						cycleId: input.cycleId,
+						childId: input.childId,
+					},
+				},
+				include: {
+					subjectGrades: { orderBy: { sortOrder: "asc" } },
+					child: {
+						select: {
+							firstName: true,
+							lastName: true,
+							yearGroup: true,
+							className: true,
+						},
+					},
+					cycle: {
+						select: {
+							name: true,
+							assessmentModel: true,
+							publishDate: true,
+						},
+					},
+					school: {
+						select: {
+							name: true,
+							brandColor: true,
+							secondaryColor: true,
+							schoolMotto: true,
+							brandFont: true,
+						},
+					},
+				},
+			});
+
+			if (!reportCard) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Report card not found",
+				});
+			}
+
+			const pdfBuffer = await generateReportPdf({
+				schoolName: reportCard.school.name,
+				schoolMotto: reportCard.school.schoolMotto,
+				brandColor: reportCard.school.brandColor ?? "#1E3A5F",
+				secondaryColor: reportCard.school.secondaryColor,
+				brandFont: reportCard.school.brandFont ?? "DEFAULT",
+				childName: `${reportCard.child.firstName} ${reportCard.child.lastName}`,
+				yearGroup: reportCard.child.yearGroup ?? "",
+				className: reportCard.child.className,
+				cycleName: reportCard.cycle.name,
+				publishDate: reportCard.cycle.publishDate.toLocaleDateString("en-GB"),
+				attendancePct: reportCard.attendancePct,
+				assessmentModel: reportCard.cycle.assessmentModel,
+				generalComment: reportCard.generalComment,
+				grades: reportCard.subjectGrades.map((g) => ({
+					subject: g.subject,
+					level: g.level,
+					effort: g.effort,
+					currentGrade: g.currentGrade,
+					targetGrade: g.targetGrade,
+					comment: g.comment,
+				})),
+			});
+
+			return {
+				pdf: pdfBuffer.toString("base64"),
+				filename: `Report-${reportCard.child.firstName}-${reportCard.child.lastName}-${reportCard.cycle.name.replace(/\s+/g, "-")}.pdf`,
+			};
 		}),
 });

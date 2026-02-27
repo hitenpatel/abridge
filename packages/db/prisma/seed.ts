@@ -2,6 +2,8 @@ import {
 	type AttendanceMark,
 	type CheckInBy,
 	type ClassPostEmoji,
+	type DayOfWeek,
+	type MealCategory,
 	type Mood,
 	PrismaClient,
 	type SchoolSession,
@@ -40,6 +42,10 @@ async function main() {
 			wellbeingEnabled: true,
 			emergencyCommsEnabled: true,
 			analyticsEnabled: true,
+			mealBookingEnabled: true,
+			reportCardsEnabled: true,
+			communityHubEnabled: true,
+			communityTags: ["General", "Events", "Help Needed", "PTA", "Lost & Found"],
 			brandColor: "#1E3A5F",
 			brandFont: "DEFAULT",
 		},
@@ -416,6 +422,141 @@ async function main() {
 				},
 			});
 		}
+	}
+
+	// 11. Meal Booking — sample menu for this week
+	const monday = new Date(today);
+	monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7)); // current Monday
+	const existingMenu = await prisma.mealMenu.findFirst({
+		where: { schoolId: school.id, weekStarting: monday },
+	});
+	if (!existingMenu) {
+		await prisma.mealMenu.create({
+			data: {
+				schoolId: school.id,
+				weekStarting: monday,
+				published: true,
+				createdById: admin.id,
+				options: {
+					create: [
+						{
+							day: "MONDAY" as DayOfWeek,
+							category: "MAIN" as MealCategory,
+							name: "Fish Fingers & Chips",
+							allergens: ["FISH", "GLUTEN"],
+							sortOrder: 1,
+						},
+						{
+							day: "MONDAY" as DayOfWeek,
+							category: "VEGETARIAN" as MealCategory,
+							name: "Veggie Burger & Chips",
+							allergens: ["GLUTEN", "SOYA"],
+							sortOrder: 2,
+						},
+						{
+							day: "TUESDAY" as DayOfWeek,
+							category: "MAIN" as MealCategory,
+							name: "Roast Chicken & Veg",
+							allergens: [],
+							sortOrder: 1,
+						},
+						{
+							day: "TUESDAY" as DayOfWeek,
+							category: "VEGETARIAN" as MealCategory,
+							name: "Pasta Bake",
+							allergens: ["GLUTEN", "MILK"],
+							sortOrder: 2,
+						},
+						{
+							day: "WEDNESDAY" as DayOfWeek,
+							category: "MAIN" as MealCategory,
+							name: "Beef Bolognese",
+							allergens: ["GLUTEN"],
+							sortOrder: 1,
+						},
+						{
+							day: "WEDNESDAY" as DayOfWeek,
+							category: "VEGETARIAN" as MealCategory,
+							name: "Jacket Potato & Beans",
+							allergens: [],
+							sortOrder: 2,
+						},
+					],
+				},
+			},
+		});
+	}
+
+	// 12. Community Hub — sample post
+	const existingCommunityPost = await prisma.communityPost.findFirst({
+		where: { schoolId: school.id },
+	});
+	if (!existingCommunityPost) {
+		await prisma.communityPost.create({
+			data: {
+				schoolId: school.id,
+				authorId: parent.id,
+				type: "DISCUSSION",
+				title: "Best after-school clubs this term?",
+				body: "Hi everyone! My daughter is in Year 2 and wants to try some after-school clubs. Which ones have your children enjoyed? We're particularly interested in art or sports clubs.",
+				tags: ["General"],
+				isPinned: false,
+			},
+		});
+	}
+
+	// 13. Report Cards — sample cycle
+	const existingCycle = await prisma.reportCycle.findFirst({
+		where: { schoolId: school.id },
+	});
+	if (!existingCycle) {
+		const cycle = await prisma.reportCycle.create({
+			data: {
+				schoolId: school.id,
+				name: "Spring Term 2026",
+				type: "TERMLY",
+				assessmentModel: "PRIMARY_DESCRIPTIVE",
+				publishDate: new Date("2026-04-01"),
+				status: "PUBLISHED",
+				createdById: admin.id,
+			},
+		});
+
+		await prisma.reportCard.create({
+			data: {
+				cycleId: cycle.id,
+				childId: child1.id,
+				schoolId: school.id,
+				teacherId: teacher.id,
+				generalComment:
+					"Emily has had a wonderful spring term. She is making excellent progress in reading and is always enthusiastic in class.",
+				subjectGrades: {
+					create: [
+						{
+							subject: "English",
+							sortOrder: 1,
+							level: "EXCEEDING",
+							effort: "OUTSTANDING",
+							comment: "Excellent reading progress",
+						},
+						{
+							subject: "Mathematics",
+							sortOrder: 2,
+							level: "EXPECTED",
+							effort: "GOOD",
+							comment: "Good number work",
+						},
+						{
+							subject: "Science",
+							sortOrder: 3,
+							level: "EXPECTED",
+							effort: "GOOD",
+							comment: "Enjoys experiments",
+						},
+					],
+				},
+			},
+		});
 	}
 
 	console.log("Seed data created successfully");

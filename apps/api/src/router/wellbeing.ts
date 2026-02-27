@@ -15,7 +15,7 @@ export const wellbeingRouter = router({
 		.mutation(async ({ ctx, input }) => {
 			const parentChild = await ctx.prisma.parentChild.findFirst({
 				where: {
-					parentId: ctx.user.id,
+					userId: ctx.user.id,
 					childId: input.childId,
 				},
 			});
@@ -112,7 +112,7 @@ export const wellbeingRouter = router({
 		.query(async ({ ctx, input }) => {
 			const parentChild = await ctx.prisma.parentChild.findFirst({
 				where: {
-					parentId: ctx.user.id,
+					userId: ctx.user.id,
 					childId: input.childId,
 				},
 			});

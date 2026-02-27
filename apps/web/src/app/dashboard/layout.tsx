@@ -32,7 +32,10 @@ interface NavItem {
 		| "parentsEveningEnabled"
 		| "analyticsEnabled"
 		| "wellbeingEnabled"
-		| "emergencyCommsEnabled";
+		| "emergencyCommsEnabled"
+		| "mealBookingEnabled"
+		| "reportCardsEnabled"
+		| "communityHubEnabled";
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -91,6 +94,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 			icon: "favorite",
 			featureKey: "wellbeingEnabled",
 		},
+		{
+			name: "Meals",
+			href: "/dashboard/meals",
+			icon: "restaurant",
+			featureKey: "mealBookingEnabled",
+		},
+		{
+			name: "Reports",
+			href: "/dashboard/reports",
+			icon: "description",
+			featureKey: "reportCardsEnabled",
+		},
+		{
+			name: "Community",
+			href: "/dashboard/community",
+			icon: "groups",
+			featureKey: "communityHubEnabled",
+		},
 		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];
 
@@ -143,6 +164,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 			href: "/dashboard/emergency",
 			icon: "shield",
 			featureKey: "emergencyCommsEnabled",
+		},
+		{
+			name: "Meals",
+			href: "/dashboard/meals",
+			icon: "restaurant",
+			featureKey: "mealBookingEnabled",
+		},
+		{
+			name: "Reports",
+			href: "/dashboard/reports",
+			icon: "description",
+			featureKey: "reportCardsEnabled",
+		},
+		{
+			name: "Community",
+			href: "/dashboard/community",
+			icon: "groups",
+			featureKey: "communityHubEnabled",
 		},
 		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];

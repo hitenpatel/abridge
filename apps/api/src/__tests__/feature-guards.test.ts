@@ -18,6 +18,9 @@ function allTogglesEnabled() {
 		wellbeingEnabled: true,
 		emergencyCommsEnabled: true,
 		analyticsEnabled: true,
+		mealBookingEnabled: true,
+		reportCardsEnabled: true,
+		communityHubEnabled: true,
 	};
 }
 
@@ -38,6 +41,9 @@ function allTogglesDisabled() {
 		wellbeingEnabled: false,
 		emergencyCommsEnabled: false,
 		analyticsEnabled: false,
+		mealBookingEnabled: false,
+		reportCardsEnabled: false,
+		communityHubEnabled: false,
 	};
 }
 

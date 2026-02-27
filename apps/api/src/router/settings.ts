@@ -17,6 +17,9 @@ const featureToggleSelect = {
 	wellbeingEnabled: true,
 	emergencyCommsEnabled: true,
 	analyticsEnabled: true,
+	mealBookingEnabled: true,
+	reportCardsEnabled: true,
+	communityHubEnabled: true,
 } as const;
 
 export const settingsRouter = router({
@@ -164,6 +167,9 @@ export const settingsRouter = router({
 				wellbeingEnabled: z.boolean().optional(),
 				emergencyCommsEnabled: z.boolean().optional(),
 				analyticsEnabled: z.boolean().optional(),
+				mealBookingEnabled: z.boolean().optional(),
+				reportCardsEnabled: z.boolean().optional(),
+				communityHubEnabled: z.boolean().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

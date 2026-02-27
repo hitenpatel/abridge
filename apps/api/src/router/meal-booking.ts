@@ -118,7 +118,7 @@ export const mealBookingRouter = router({
 		)
 		.mutation(async ({ ctx, input }) => {
 			const parentChild = await ctx.prisma.parentChild.findFirst({
-				where: { parentId: ctx.user.id, childId: input.childId },
+				where: { userId: ctx.user.id, childId: input.childId },
 			});
 			if (!parentChild) {
 				throw new TRPCError({
@@ -206,7 +206,7 @@ export const mealBookingRouter = router({
 		)
 		.mutation(async ({ ctx, input }) => {
 			const parentChild = await ctx.prisma.parentChild.findFirst({
-				where: { parentId: ctx.user.id, childId: input.childId },
+				where: { userId: ctx.user.id, childId: input.childId },
 			});
 			if (!parentChild) {
 				throw new TRPCError({

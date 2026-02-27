@@ -399,6 +399,9 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 	const [wellbeing, setWellbeing] = useState(false);
 	const [emergencyComms, setEmergencyComms] = useState(false);
 	const [analytics, setAnalytics] = useState(false);
+	const [mealBooking, setMealBooking] = useState(false);
+	const [reportCards, setReportCards] = useState(false);
+	const [communityHub, setCommunityHub] = useState(false);
 
 	useEffect(() => {
 		if (data) {
@@ -417,6 +420,9 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 			setWellbeing(data.wellbeingEnabled);
 			setEmergencyComms(data.emergencyCommsEnabled);
 			setAnalytics(data.analyticsEnabled);
+			setMealBooking(data.mealBookingEnabled);
+			setReportCards(data.reportCardsEnabled);
+			setCommunityHub(data.communityHubEnabled);
 		}
 	}, [data]);
 
@@ -474,6 +480,9 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							wellbeingEnabled: wellbeing,
 							emergencyCommsEnabled: emergencyComms,
 							analyticsEnabled: analytics,
+							mealBookingEnabled: mealBooking,
+							reportCardsEnabled: reportCards,
+							communityHubEnabled: communityHub,
 						});
 					}}
 					className="space-y-4"
@@ -573,6 +582,24 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							onChange={setAnalytics}
 							label="Admin Analytics"
 							data-testid="toggle-analytics"
+						/>
+						<Toggle
+							checked={mealBooking}
+							onChange={setMealBooking}
+							label="Meal Booking"
+							data-testid="toggle-meal-booking"
+						/>
+						<Toggle
+							checked={reportCards}
+							onChange={setReportCards}
+							label="Report Cards"
+							data-testid="toggle-report-cards"
+						/>
+						<Toggle
+							checked={communityHub}
+							onChange={setCommunityHub}
+							label="Community Hub"
+							data-testid="toggle-community-hub"
 						/>
 					</div>
 
