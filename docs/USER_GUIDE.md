@@ -230,7 +230,7 @@ Chrome, Safari, Firefox, and Edge (last 2 versions). The app is fully responsive
 SchoolConnect uses a multi-channel notification system:
 1. **Push notifications** — primary channel (via mobile app)
 2. **SMS fallback** — if push is not delivered within 15 minutes
-3. **Email fallback** — if SMS is unavailable (coming soon)
+3. **Email fallback** — if SMS is unavailable (via Resend)
 
 You can configure **quiet hours** in your notification preferences to suppress non-urgent notifications during specific times. Urgent messages always come through.
 
@@ -258,14 +258,12 @@ Results appear in a dropdown with category icons. Click a result to navigate to 
 
 These items are planned but not yet available:
 
-- **Email notifications** — SMS fallback works; email fallback is coming soon.
-- **PDF receipt downloads** — receipt data is generated but PDF file download is not yet implemented.
+- **PDF receipt downloads** — backend PDF generation exists but download buttons are not yet in the UI.
 - **MIS integration** — attendance data is entered manually; live sync with school MIS systems is planned.
 - **Achievement/reward tracking** — planned for Phase 3.
-- **Photo/video sharing** — planned for Phase 3.
-- **Parents' evening booking** — planned for Phase 3.
-- **Offline mode / PWA** — the web app does not yet work offline.
+- **Photo/video sharing** — schema ready (ClassPost model), UI not yet built.
+- **Parents' evening booking** — schema ready (ParentsEvening model), UI not yet built.
 
 ---
 
-*Last updated: 2026-02-05*
+*Last updated: 2026-02-27*

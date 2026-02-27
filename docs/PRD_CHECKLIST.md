@@ -1,7 +1,7 @@
 # SchoolConnect: PRD vs Implementation Checklist
 
-**Date:** 2026-02-05
-**E2E Test Status:** 42/42 passing (Playwright)
+**Last Updated:** 2026-02-27
+**E2E Test Status:** ~219 tests across 19 files (Playwright)
 
 ---
 
@@ -218,7 +218,7 @@
 | 14 | `setup` | createInitialSchool | ✅ |
 | 15 | `dbInit` | initTables | ✅ |
 
-### 5.2 Database Models (16)
+### 5.2 Database Models (27)
 | # | Model | Status | Notes |
 |---|-------|--------|-------|
 | 1 | School | ✅ | Multi-tenant with Ofsted URN |
@@ -242,6 +242,12 @@
 | 19 | Payment | ✅ | Stripe checkout sessions |
 | 20 | PaymentLineItem | ✅ | Cart items |
 | 21 | NotificationDelivery | ✅ | Multi-channel tracking |
+| 22 | Conversation | ✅ | Two-way messaging threads |
+| 23 | TranslationCache | ✅ | Cached translations |
+| 24 | ParentsEvening | ✅ | Parents' evening sessions |
+| 25 | ParentsEveningSlot | ✅ | Booking slots |
+| 26 | ClassPost | ✅ | Teacher class updates |
+| 27 | ClassPostReaction | ✅ | Emoji reactions |
 
 ### 5.3 Authorization Middleware
 | # | Procedure Type | Status |
@@ -284,8 +290,8 @@
 | 3 | M3: Register button issue | ✅ Fixed |
 | 4 | M4: Leftover plan comments | ✅ Fixed (removed TODOs, fixed hardcoded schoolId) |
 | 5 | M5: console.log vs Fastify logger | ✅ Fixed (logger utility) |
-| 6 | M6: Verify Tailwind primary colour | ❌ Not fixed |
-| 7 | M7: next.config.mjs vs .ts | ❌ Not fixed |
+| 6 | M6: Verify Tailwind primary colour | ✅ Fixed (coral orange #FF7D45) |
+| 7 | M7: next.config.mjs vs .ts | ✅ Fixed (next.config.ts) |
 
 ---
 
@@ -301,9 +307,9 @@
 | 6 | GitHub Actions CI | ✅ | lint, test, build |
 | 7 | Playwright E2E test config | ✅ | Chromium, HTML reporter |
 | 8 | API unit tests (10 files) | ✅ | Vitest |
-| 9 | E2E tests (42 tests) | ✅ | All passing |
+| 9 | E2E tests (~219 tests, 19 files) | ✅ | Playwright |
 | 10 | PWA configuration | ✅ | Configured with manifest, icons, offline support |
-| 11 | Monitoring (Sentry) | ❌ | Not set up |
+| 11 | Monitoring (Sentry) | ✅ | @sentry/node + @sentry/profiling-node |
 | 12 | CI/CD deployment pipeline | ❌ | GitHub Actions only for lint/test |
 
 ---
@@ -346,14 +352,14 @@
 2. ✅ **I4: RBAC school scoping audit** - Verify all procedures use school-scoped variants
 3. ✅ **Email service** - Resend integration complete (staff invitations, notification fallback, payment receipts)
 4. ❌ **Security audit** - External penetration testing required (children's data)
-5. ❌ **WCAG accessibility audit** - Legal requirement for schools
+5. ✅ **WCAG accessibility audit** - WCAG 2.1 AA fixes applied
 
 ### Recommended before pilot
-6. ❌ **Monitoring & alerting** - Sentry, CloudWatch, or similar
+6. ✅ **Monitoring & alerting** - Sentry integrated (API + web)
 7. ✅ **PDF generation** - Payment receipts (backend complete, frontend TODO)
 8. ✅ **PWA configuration** - Web app installable + offline support
 9. ✅ **M1: Mobile API URL** - Environment variable based
-10. ❌ **Load testing** - 50+ concurrent users
+10. ✅ **Load testing** - k6 load test scripts in packages/load-test
 
 ### Nice to have
 11. ✅ Console.log → Fastify logger migration (centralized logger utility)
@@ -366,45 +372,32 @@
 
 ## 10. E2E Test Coverage Summary
 
-| Test File | Tests | Status |
-|-----------|-------|--------|
-| `landing.test.ts` | 5 | ✅ All passing |
-| `auth.test.ts` | 8 | ✅ All passing |
-| `setup-flow.test.ts` | 4 | ✅ All passing |
-| `admin-staff-journey.test.ts` | 3 | ✅ All passing |
-| `parent-dashboard.test.ts` | 8 | ✅ All passing |
-| `attendance.test.ts` | 2 | ✅ All passing |
-| `calendar.test.ts` | 2 | ✅ All passing |
-| `messages.test.ts` | 2 | ✅ All passing |
-| `forms.test.ts` | 2 | ✅ All passing |
-| `payments.test.ts` | 3 | ✅ All passing |
-| `setup.test.ts` (original) | 1 | ✅ Passing |
-| `parent-journey.test.ts` (original) | 1 | ✅ Passing |
-| `staff-journey.test.ts` (original) | 1 | ✅ Passing |
-| **TOTAL** | **42** | **✅ All passing** |
+19 test files with ~219 tests in `e2e/` directory:
 
-### Flows Covered
-- Landing page rendering and navigation
-- Login form, registration form, login/logout cycle
-- Protected route redirection
-- School setup → success → registration redirect
-- Parent registration → dashboard access
-- Parent dashboard navigation to all 6 sections
-- Role-based navigation (parent vs staff vs admin)
-- Admin: school setup → register → staff management → invite teacher
-- Staff invitation acceptance and role assignment
-- Page load verification for all dashboard sections
+| Test File | Coverage |
+|-----------|----------|
+| `landing.test.ts` | Landing page, navigation, branding |
+| `auth.test.ts` | Login, registration, logout, protected routes |
+| `setup-flow.test.ts` | School setup, validation, redirects |
+| `admin-staff-journey.test.ts` | Staff management, invitations, role assignment |
+| `parent-dashboard.test.ts` | Dashboard widgets, navigation, children |
+| `attendance.test.ts` | Attendance page, empty states |
+| `parent-attendance.test.ts` | Attendance calendar with data, absence reporting |
+| `calendar.test.ts` | Calendar page, events |
+| `messages.test.ts` | Messages page, compose |
+| `forms.test.ts` | Forms page, empty states |
+| `parent-forms.test.ts` | Form listing by child |
+| `parent-form-submission.test.ts` | Form fill, signature, submit |
+| `payments.test.ts` | Payments page, create items |
+| `parent-payments.test.ts` | Outstanding payments, cart, history |
+| `search.test.ts` | Global search |
+| `settings.test.ts` | Settings page |
+| `error-cases.test.ts` | Error handling, invalid input |
+| `role-route-access.test.ts` | RBAC route protection |
+| `staff-operations.test.ts` | Staff dashboard, class operations |
 
-### Flows NOT Covered (require seed data)
-- Attendance calendar with records (needs linked children)
-- Absence reporting form submission
-- Message composition and sending
-- Form submission with signature
-- Payment checkout via Stripe
-- Search results display
-- Calendar event creation (staff)
+Additionally, `packages/e2e/` contains a YAML-based journey spec infrastructure for generating cross-platform tests (web + mobile).
 
 ---
 
-**Report Generated:** 2026-02-05
-**Next Steps:** Fix blockers from Section 9, then deploy to staging for pilot testing
+**Last Updated:** 2026-02-27

@@ -119,13 +119,15 @@ We use [Playwright](https://playwright.dev/) for end-to-end testing of the web a
     ```bash
     npx playwright test
     ```
-    
+
     This command runs tests in headless mode. To run in UI mode for debugging:
     ```bash
     npx playwright test --ui
     ```
 
-    The E2E tests are located in the `e2e/` directory at the root.
+    The E2E test files are located in `e2e/` at the project root (~219 tests across 19 files).
+
+    Additionally, `packages/e2e/` contains a YAML-based journey spec infrastructure for generating cross-platform tests (web Playwright + mobile Maestro).
 
 ## Building
 
@@ -165,8 +167,8 @@ pnpm lint:fix
 
 Database commands are generally run from the root or filtered to `@schoolconnect/api` / `@schoolconnect/db`.
 
-- **Migrate (Dev)**: `pnpm db:migrate` - Creates migrations.
-- **Push Schema (Proto/Dev)**: `pnpm db:push` - Pushes schema directly (use for rapid prototyping).
+- **Push Schema (Dev)**: `pnpm db:push` - Pushes schema directly (recommended for development).
+- **Migrate (Production)**: `pnpm db:migrate` - Creates and applies migrations.
 - **Prisma Studio**: `pnpm db:studio` - Opens a web UI to view/edit data.
 
 ## Troubleshooting
@@ -197,4 +199,6 @@ Database commands are generally run from the root or filtered to `@schoolconnect
 - **`packages/`**: Shared packages.
     - **`db`**: Prisma database schema and client.
     - **`tsconfig`**: Shared TypeScript configurations.
+    - **`e2e`**: YAML journey specs and cross-platform test generation.
+    - **`load-test`**: k6 load testing scripts.
 - **`e2e/`**: Playwright end-to-end tests.
