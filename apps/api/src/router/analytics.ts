@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { router, schoolStaffProcedure } from "../trpc";
+import { assertFeatureEnabled } from "../lib/feature-guards";
+import { router, schoolFeatureProcedure, schoolStaffProcedure } from "../trpc";
 
 const dateRangeInput = z.object({
 	schoolId: z.string(),
@@ -283,5 +284,203 @@ export const analyticsRouter = router({
 			const avgReadRate = sentCount > 0 ? Math.round(totalReadRate / sentCount) : 0;
 
 			return { sentCount, avgReadRate, byMessage };
+		}),
+
+	getAttendanceSummary: schoolFeatureProcedure
+		.input(
+			z.object({
+				schoolId: z.string(),
+				startDate: z.date(),
+				endDate: z.date(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "analytics");
+
+			const breakdown = await ctx.prisma.attendanceRecord.groupBy({
+				by: ["mark"],
+				where: {
+					schoolId: input.schoolId,
+					date: {
+						gte: input.startDate,
+						lte: input.endDate,
+					},
+				},
+				_count: { id: true },
+			});
+
+			const totalRecords = breakdown.reduce(
+				(sum, row) => sum + row._count.id,
+				0,
+			);
+
+			const present =
+				breakdown.find((r) => r.mark === "PRESENT")?._count.id ?? 0;
+			const late = breakdown.find((r) => r.mark === "LATE")?._count.id ?? 0;
+			const attendanceRate =
+				totalRecords > 0 ? ((present + late) / totalRecords) * 100 : 0;
+
+			return {
+				totalRecords,
+				attendanceRate: Math.round(attendanceRate * 10) / 10,
+				breakdown: breakdown.map((row) => ({
+					mark: row.mark,
+					count: row._count.id,
+				})),
+			};
+		}),
+
+	getPaymentSummary: schoolFeatureProcedure
+		.input(
+			z.object({
+				schoolId: z.string(),
+				startDate: z.date(),
+				endDate: z.date(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "analytics");
+
+			const [totalCollected, totalOutstanding] = await Promise.all([
+				ctx.prisma.payment.aggregate({
+					where: {
+						schoolId: input.schoolId,
+						status: "PAID",
+						createdAt: {
+							gte: input.startDate,
+							lte: input.endDate,
+						},
+					},
+					_sum: { amountInPence: true },
+				}),
+				ctx.prisma.paymentItemChild.count({
+					where: {
+						paymentItem: { schoolId: input.schoolId },
+						payment: null,
+					},
+				}),
+			]);
+
+			return {
+				totalCollectedPence: totalCollected._sum.amountInPence ?? 0,
+				outstandingCount: totalOutstanding,
+			};
+		}),
+
+	getMessageEngagement: schoolFeatureProcedure
+		.input(
+			z.object({
+				schoolId: z.string(),
+				startDate: z.date(),
+				endDate: z.date(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "analytics");
+
+			const [totalSent, totalRead] = await Promise.all([
+				ctx.prisma.message.count({
+					where: {
+						schoolId: input.schoolId,
+						createdAt: {
+							gte: input.startDate,
+							lte: input.endDate,
+						},
+					},
+				}),
+				ctx.prisma.messageRead.count({
+					where: {
+						message: {
+							schoolId: input.schoolId,
+							createdAt: {
+								gte: input.startDate,
+								lte: input.endDate,
+							},
+						},
+					},
+				}),
+			]);
+
+			const readRate = totalSent > 0 ? (totalRead / totalSent) * 100 : 0;
+
+			return {
+				totalSent,
+				totalRead,
+				readRate: Math.round(readRate * 10) / 10,
+			};
+		}),
+
+	getFormCompletion: schoolFeatureProcedure
+		.input(
+			z.object({
+				schoolId: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "analytics");
+
+			const templates = await ctx.prisma.formTemplate.findMany({
+				where: { schoolId: input.schoolId },
+				include: {
+					_count: { select: { responses: true } },
+				},
+				orderBy: { createdAt: "desc" },
+				take: 20,
+			});
+
+			return templates.map((t) => ({
+				id: t.id,
+				title: t.title,
+				responseCount: t._count.responses,
+			}));
+		}),
+
+	getDashboardSummary: schoolFeatureProcedure
+		.input(
+			z.object({
+				schoolId: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "analytics");
+
+			const today = new Date();
+			today.setHours(0, 0, 0, 0);
+
+			const [attendanceToday, unreadMessages, outstandingPayments, pendingForms] =
+				await Promise.all([
+					ctx.prisma.attendanceRecord.count({
+						where: {
+							schoolId: input.schoolId,
+							date: today,
+							mark: { in: ["PRESENT", "LATE"] },
+						},
+					}),
+					ctx.prisma.messageChild.count({
+						where: {
+							message: { schoolId: input.schoolId },
+							messageRead: { none: {} },
+						},
+					}),
+					ctx.prisma.paymentItemChild.count({
+						where: {
+							paymentItem: { schoolId: input.schoolId },
+							payment: null,
+						},
+					}),
+					ctx.prisma.formTemplate.count({
+						where: {
+							schoolId: input.schoolId,
+							responses: { none: {} },
+						},
+					}),
+				]);
+
+			return {
+				attendanceToday,
+				unreadMessages,
+				outstandingPayments,
+				pendingForms,
+			};
 		}),
 });

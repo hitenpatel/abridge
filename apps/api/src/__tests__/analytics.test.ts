@@ -1,6 +1,11 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { Context } from "../context";
 import { appRouter } from "../router";
+
+vi.mock("../lib/redis", () => ({
+	getCachedStaffMembership: vi.fn().mockResolvedValue(null),
+	setCachedStaffMembership: vi.fn().mockResolvedValue(undefined),
+}));
 
 const mockUser = {
 	id: "user-1",
@@ -257,6 +262,65 @@ describe("analytics router", () => {
 			expect(result.sentCount).toBe(0);
 			expect(result.avgReadRate).toBe(0);
 			expect(result.byMessage).toHaveLength(0);
+		});
+	});
+
+	describe("getAttendanceSummary", () => {
+		it("returns attendance percentages for date range", async () => {
+			const ctx = createTestContext({
+				user: mockUser,
+				session: mockSession,
+				prisma: {
+					staffMember: {
+						findUnique: async () => ({
+							id: "staff-1",
+							userId: "user-1",
+							schoolId,
+							role: "ADMIN",
+						}),
+					},
+					school: {
+						findUnique: async () => ({
+							messagingEnabled: true,
+							paymentsEnabled: true,
+							attendanceEnabled: true,
+							calendarEnabled: true,
+							formsEnabled: true,
+							translationEnabled: false,
+							parentsEveningEnabled: false,
+							wellbeingEnabled: false,
+							emergencyCommsEnabled: false,
+							analyticsEnabled: true,
+							paymentDinnerMoneyEnabled: true,
+							paymentTripsEnabled: true,
+							paymentClubsEnabled: true,
+							paymentUniformEnabled: true,
+							paymentOtherEnabled: true,
+						}),
+					},
+					attendanceRecord: {
+						groupBy: async () => [
+							{ mark: "PRESENT", _count: { id: 85 } },
+							{ mark: "LATE", _count: { id: 5 } },
+							{ mark: "ABSENT_AUTH", _count: { id: 7 } },
+							{ mark: "ABSENT_UNAUTH", _count: { id: 3 } },
+						],
+					},
+				} as unknown as Context["prisma"],
+			});
+
+			const caller = appRouter.createCaller(ctx);
+			const result = await caller.analytics.getAttendanceSummary({
+				schoolId,
+				startDate: new Date("2026-01-01"),
+				endDate: new Date("2026-01-31"),
+			});
+
+			expect(result).toHaveProperty("totalRecords");
+			expect(result).toHaveProperty("breakdown");
+			expect(result.totalRecords).toBe(100);
+			expect(result.attendanceRate).toBe(90);
+			expect(result.breakdown).toHaveLength(4);
 		});
 	});
 
