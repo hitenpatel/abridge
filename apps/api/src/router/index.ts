@@ -6,6 +6,7 @@ import { calendarRouter } from "./calendar";
 import { classPostRouter } from "./class-post";
 import { dashboardRouter } from "./dashboard";
 import { dbInitRouter } from "./db-init";
+import { emergencyRouter } from "./emergency";
 import { formsRouter } from "./forms";
 import { healthRouter } from "./health";
 import { invitationRouter } from "./invitation";
@@ -27,6 +28,7 @@ export const appRouter = router({
 	calendar: calendarRouter,
 	classPost: classPostRouter,
 	dashboard: dashboardRouter,
+	emergency: emergencyRouter,
 	messaging: messagingRouter,
 	payments: paymentsRouter,
 	stripe: stripeRouter,
