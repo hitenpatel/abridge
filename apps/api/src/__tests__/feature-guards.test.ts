@@ -15,6 +15,9 @@ function allTogglesEnabled() {
 		paymentOtherEnabled: true,
 		translationEnabled: true,
 		parentsEveningEnabled: true,
+		wellbeingEnabled: true,
+		emergencyCommsEnabled: true,
+		analyticsEnabled: true,
 	};
 }
 
@@ -32,6 +35,9 @@ function allTogglesDisabled() {
 		paymentOtherEnabled: false,
 		translationEnabled: false,
 		parentsEveningEnabled: false,
+		wellbeingEnabled: false,
+		emergencyCommsEnabled: false,
+		analyticsEnabled: false,
 	};
 }
 

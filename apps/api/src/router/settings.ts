@@ -182,4 +182,61 @@ export const settingsRouter = router({
 			});
 			return school;
 		}),
+
+	getBranding: schoolAdminProcedure.query(async ({ ctx }) => {
+		const school = await ctx.prisma.school.findUniqueOrThrow({
+			where: { id: ctx.schoolId },
+			select: {
+				brandColor: true,
+				secondaryColor: true,
+				schoolMotto: true,
+				brandFont: true,
+			},
+		});
+		return school;
+	}),
+
+	updateBranding: schoolAdminProcedure
+		.input(
+			z.object({
+				brandColor: z
+					.string()
+					.regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex colour")
+					.optional(),
+				secondaryColor: z
+					.string()
+					.regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex colour")
+					.nullable()
+					.optional(),
+				schoolMotto: z.string().max(200).nullable().optional(),
+				brandFont: z
+					.enum([
+						"DEFAULT",
+						"ARIAL",
+						"TIMES_NEW_ROMAN",
+						"GEORGIA",
+						"VERDANA",
+						"COMIC_SANS",
+						"OPEN_SANS",
+						"ROBOTO",
+						"LATO",
+						"MONTSERRAT",
+					])
+					.optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const { schoolId, ...data } = input;
+			const school = await ctx.prisma.school.update({
+				where: { id: ctx.schoolId },
+				data,
+				select: {
+					brandColor: true,
+					secondaryColor: true,
+					schoolMotto: true,
+					brandFont: true,
+				},
+			});
+			return school;
+		}),
 });

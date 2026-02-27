@@ -396,6 +396,9 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 	const [other, setOther] = useState(true);
 	const [translation, setTranslation] = useState(false);
 	const [parentsEvening, setParentsEvening] = useState(false);
+	const [wellbeing, setWellbeing] = useState(false);
+	const [emergencyComms, setEmergencyComms] = useState(false);
+	const [analytics, setAnalytics] = useState(false);
 
 	useEffect(() => {
 		if (data) {
@@ -411,6 +414,9 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 			setOther(data.paymentOtherEnabled);
 			setTranslation(data.translationEnabled);
 			setParentsEvening(data.parentsEveningEnabled);
+			setWellbeing(data.wellbeingEnabled);
+			setEmergencyComms(data.emergencyCommsEnabled);
+			setAnalytics(data.analyticsEnabled);
 		}
 	}, [data]);
 
@@ -465,6 +471,9 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							paymentOtherEnabled: other,
 							translationEnabled: translation,
 							parentsEveningEnabled: parentsEvening,
+							wellbeingEnabled: wellbeing,
+							emergencyCommsEnabled: emergencyComms,
+							analyticsEnabled: analytics,
 						});
 					}}
 					className="space-y-4"
@@ -547,6 +556,24 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							label="Parents' Evening"
 							data-testid="toggle-parents-evening"
 						/>
+						<Toggle
+							checked={wellbeing}
+							onChange={setWellbeing}
+							label="Wellbeing Check-ins"
+							data-testid="toggle-wellbeing"
+						/>
+						<Toggle
+							checked={emergencyComms}
+							onChange={setEmergencyComms}
+							label="Emergency Communications"
+							data-testid="toggle-emergency-comms"
+						/>
+						<Toggle
+							checked={analytics}
+							onChange={setAnalytics}
+							label="Admin Analytics"
+							data-testid="toggle-analytics"
+						/>
 					</div>
 
 					<Button
@@ -609,6 +636,178 @@ function StripeCard({ schoolId }: { schoolId: string }) {
 	);
 }
 
+const FONT_OPTIONS = [
+	{ value: "DEFAULT", label: "Default" },
+	{ value: "ARIAL", label: "Arial" },
+	{ value: "TIMES_NEW_ROMAN", label: "Times New Roman" },
+	{ value: "GEORGIA", label: "Georgia" },
+	{ value: "VERDANA", label: "Verdana" },
+	{ value: "COMIC_SANS", label: "Comic Sans" },
+	{ value: "OPEN_SANS", label: "Open Sans" },
+	{ value: "ROBOTO", label: "Roboto" },
+	{ value: "LATO", label: "Lato" },
+	{ value: "MONTSERRAT", label: "Montserrat" },
+] as const;
+
+function BrandingCard({ schoolId }: { schoolId: string }) {
+	const { data, isLoading } = trpc.settings.getBranding.useQuery({ schoolId });
+	const [brandColor, setBrandColor] = useState("#1E3A5F");
+	const [secondaryColor, setSecondaryColor] = useState("");
+	const [schoolMotto, setSchoolMotto] = useState("");
+	const [brandFont, setBrandFont] = useState("DEFAULT");
+
+	useEffect(() => {
+		if (data) {
+			setBrandColor(data.brandColor ?? "#1E3A5F");
+			setSecondaryColor(data.secondaryColor ?? "");
+			setSchoolMotto(data.schoolMotto ?? "");
+			setBrandFont(data.brandFont ?? "DEFAULT");
+		}
+	}, [data]);
+
+	const updateBranding = trpc.settings.updateBranding.useMutation({
+		onSuccess: () => toast.success("Branding settings saved"),
+		onError: (err) => toast.error(err.message),
+	});
+
+	const isValidHex = (color: string) => /^#[0-9A-Fa-f]{6}$/.test(color);
+
+	if (isLoading) {
+		return (
+			<Card className="rounded-2xl border border-gray-100">
+				<CardHeader>
+					<Skeleton className="h-6 w-40" />
+				</CardHeader>
+				<CardContent className="space-y-4">
+					<Skeleton className="h-10 w-full" />
+					<Skeleton className="h-10 w-full" />
+					<Skeleton className="h-10 w-full" />
+				</CardContent>
+			</Card>
+		);
+	}
+
+	return (
+		<Card className="rounded-2xl border border-gray-100" data-testid="branding-card">
+			<CardHeader>
+				<CardTitle className="flex items-center gap-2">
+					<span className="material-symbols-rounded text-primary" aria-hidden="true">
+						palette
+					</span>
+					School Branding
+				</CardTitle>
+			</CardHeader>
+			<CardContent>
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						updateBranding.mutate({
+							schoolId,
+							brandColor,
+							secondaryColor: secondaryColor || null,
+							schoolMotto: schoolMotto || null,
+							brandFont: brandFont as typeof FONT_OPTIONS[number]["value"],
+						});
+					}}
+					className="space-y-4"
+				>
+					<p className="text-sm text-gray-500">
+						Customise your school's branding. These settings affect how your school appears to
+						parents and staff.
+					</p>
+
+					<div className="space-y-1">
+						<Label htmlFor="brand-color">Brand Colour</Label>
+						<div className="flex items-center gap-3">
+							<div
+								className="w-10 h-10 rounded-lg border border-gray-200 shrink-0"
+								style={{ backgroundColor: isValidHex(brandColor) ? brandColor : "#cccccc" }}
+							/>
+							<Input
+								id="brand-color"
+								data-testid="brand-color-input"
+								value={brandColor}
+								onChange={(e) => setBrandColor(e.target.value)}
+								placeholder="#1E3A5F"
+								maxLength={7}
+							/>
+						</div>
+						{brandColor && !isValidHex(brandColor) && (
+							<p className="text-xs text-red-500">Enter a valid hex colour (e.g. #1E3A5F)</p>
+						)}
+					</div>
+
+					<div className="space-y-1">
+						<Label htmlFor="secondary-color">Secondary Colour</Label>
+						<div className="flex items-center gap-3">
+							<div
+								className="w-10 h-10 rounded-lg border border-gray-200 shrink-0"
+								style={{
+									backgroundColor:
+										secondaryColor && isValidHex(secondaryColor) ? secondaryColor : "#e5e7eb",
+								}}
+							/>
+							<Input
+								id="secondary-color"
+								data-testid="secondary-color-input"
+								value={secondaryColor}
+								onChange={(e) => setSecondaryColor(e.target.value)}
+								placeholder="#4A90D9"
+								maxLength={7}
+							/>
+						</div>
+						{secondaryColor && !isValidHex(secondaryColor) && (
+							<p className="text-xs text-red-500">Enter a valid hex colour (e.g. #4A90D9)</p>
+						)}
+					</div>
+
+					<div className="space-y-1">
+						<Label htmlFor="school-motto">School Motto</Label>
+						<Input
+							id="school-motto"
+							data-testid="school-motto-input"
+							value={schoolMotto}
+							onChange={(e) => setSchoolMotto(e.target.value)}
+							placeholder="Enter your school's motto"
+							maxLength={200}
+						/>
+						<p className="text-xs text-gray-400">{schoolMotto.length}/200 characters</p>
+					</div>
+
+					<div className="space-y-1">
+						<Label htmlFor="brand-font">Font</Label>
+						<select
+							id="brand-font"
+							data-testid="brand-font-select"
+							value={brandFont}
+							onChange={(e) => setBrandFont(e.target.value)}
+							className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+						>
+							{FONT_OPTIONS.map((font) => (
+								<option key={font.value} value={font.value}>
+									{font.label}
+								</option>
+							))}
+						</select>
+					</div>
+
+					<Button
+						type="submit"
+						data-testid="branding-save-button"
+						disabled={
+							updateBranding.isPending ||
+							(brandColor !== "" && !isValidHex(brandColor)) ||
+							(secondaryColor !== "" && !isValidHex(secondaryColor))
+						}
+					>
+						{updateBranding.isPending ? "Saving..." : "Save Branding"}
+					</Button>
+				</form>
+			</CardContent>
+		</Card>
+	);
+}
+
 export default function SettingsPage() {
 	const { data: session, isLoading } = trpc.auth.getSession.useQuery();
 
@@ -638,6 +837,7 @@ export default function SettingsPage() {
 				{isAdmin && schoolId && <SchoolSettingsCard schoolId={schoolId} />}
 				{isAdmin && schoolId && <FeatureTogglesCard schoolId={schoolId} />}
 				{isAdmin && schoolId && <StripeCard schoolId={schoolId} />}
+				{isAdmin && schoolId && <BrandingCard schoolId={schoolId} />}
 			</div>
 		</div>
 	);
