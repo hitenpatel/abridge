@@ -1,6 +1,8 @@
 import {
 	type AttendanceMark,
+	type CheckInBy,
 	type ClassPostEmoji,
+	type Mood,
 	PrismaClient,
 	type SchoolSession,
 } from "@prisma/client";
@@ -35,6 +37,11 @@ async function main() {
 			paymentClubsEnabled: true,
 			paymentUniformEnabled: true,
 			paymentOtherEnabled: true,
+			wellbeingEnabled: true,
+			emergencyCommsEnabled: true,
+			analyticsEnabled: true,
+			brandColor: "#1E3A5F",
+			brandFont: "DEFAULT",
 		},
 	});
 
@@ -387,6 +394,28 @@ async function main() {
 				emoji: "WOW" as ClassPostEmoji,
 			},
 		});
+	}
+
+	// 10. Wellbeing Check-Ins
+	const moods: Mood[] = ["GREAT", "GOOD", "OK", "LOW", "GOOD"];
+	for (const child of [child1, child2]) {
+		for (let i = 0; i < 5; i++) {
+			const date = new Date(today);
+			date.setDate(date.getDate() - i);
+			await prisma.wellbeingCheckIn.upsert({
+				where: {
+					childId_date: { childId: child.id, date },
+				},
+				update: {},
+				create: {
+					childId: child.id,
+					schoolId: school.id,
+					mood: moods[i],
+					checkedInBy: "PARENT" as CheckInBy,
+					date,
+				},
+			});
+		}
 	}
 
 	console.log("Seed data created successfully");
