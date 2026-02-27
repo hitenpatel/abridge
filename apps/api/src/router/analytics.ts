@@ -337,27 +337,28 @@ export const analyticsRouter = router({
 			assertFeatureEnabled(ctx, "analytics");
 
 			const [totalCollected, totalOutstanding] = await Promise.all([
-				ctx.prisma.payment.aggregate({
+				ctx.prisma.paymentLineItem.aggregate({
 					where: {
-						schoolId: input.schoolId,
-						status: "PAID",
-						createdAt: {
-							gte: input.startDate,
-							lte: input.endDate,
+						paymentItem: { schoolId: input.schoolId },
+						payment: {
+							status: "COMPLETED",
+							createdAt: {
+								gte: input.startDate,
+								lte: input.endDate,
+							},
 						},
 					},
-					_sum: { amountInPence: true },
+					_sum: { amount: true },
 				}),
 				ctx.prisma.paymentItemChild.count({
 					where: {
 						paymentItem: { schoolId: input.schoolId },
-						payment: null,
 					},
 				}),
 			]);
 
 			return {
-				totalCollectedPence: totalCollected._sum.amountInPence ?? 0,
+				totalCollectedPence: totalCollected._sum?.amount ?? 0,
 				outstandingCount: totalOutstanding,
 			};
 		}),
@@ -451,16 +452,15 @@ export const analyticsRouter = router({
 							mark: { in: ["PRESENT", "LATE"] },
 						},
 					}),
-					ctx.prisma.messageChild.count({
+					ctx.prisma.message.count({
 						where: {
-							message: { schoolId: input.schoolId },
-							messageRead: { none: {} },
+							schoolId: input.schoolId,
+							reads: { none: {} },
 						},
 					}),
 					ctx.prisma.paymentItemChild.count({
 						where: {
 							paymentItem: { schoolId: input.schoolId },
-							payment: null,
 						},
 					}),
 					ctx.prisma.formTemplate.count({

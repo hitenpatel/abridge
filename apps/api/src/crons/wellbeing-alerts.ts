@@ -55,10 +55,12 @@ async function processSchoolAlerts(prisma: PrismaClient, schoolId: string) {
 		if (checkIns.length >= 2) {
 			const avgMood =
 				checkIns.reduce((sum, ci) => sum + (MOOD_VALUES[ci.mood] ?? 3), 0) / checkIns.length;
-			const latestMood = MOOD_VALUES[checkIns[0].mood] ?? 3;
-
-			if (avgMood - latestMood >= 2) {
-				await createAlertIfNoCooldown(prisma, childId, schoolId, "MOOD_DROP", 7);
+			const firstCheckIn = checkIns[0];
+			if (firstCheckIn) {
+				const latestMood = MOOD_VALUES[firstCheckIn.mood] ?? 3;
+				if (avgMood - latestMood >= 2) {
+					await createAlertIfNoCooldown(prisma, childId, schoolId, "MOOD_DROP", 7);
+				}
 			}
 		}
 	}

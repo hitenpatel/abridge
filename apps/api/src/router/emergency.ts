@@ -42,7 +42,7 @@ export const emergencyRouter = router({
 				data: {
 					schoolId: input.schoolId,
 					type: input.type,
-					title: EMERGENCY_TITLES[input.type],
+					title: EMERGENCY_TITLES[input.type] ?? "Emergency Alert",
 					message: input.message ?? null,
 					initiatedBy: ctx.user.id,
 				},
