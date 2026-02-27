@@ -16,6 +16,9 @@ interface FeatureToggles {
 	paymentOtherEnabled: boolean;
 	translationEnabled: boolean;
 	parentsEveningEnabled: boolean;
+	wellbeingEnabled: boolean;
+	emergencyCommsEnabled: boolean;
+	analyticsEnabled: boolean;
 }
 
 const defaultToggles: FeatureToggles = {
@@ -31,6 +34,9 @@ const defaultToggles: FeatureToggles = {
 	paymentOtherEnabled: true,
 	translationEnabled: false,
 	parentsEveningEnabled: false,
+	wellbeingEnabled: false,
+	emergencyCommsEnabled: false,
+	analyticsEnabled: false,
 };
 
 const FeatureToggleContext = createContext<FeatureToggles>(defaultToggles);
