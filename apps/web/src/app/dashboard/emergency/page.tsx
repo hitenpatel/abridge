@@ -1,0 +1,332 @@
+"use client";
+
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { FeatureDisabled } from "@/components/feature-disabled";
+import { useFeatureToggles } from "@/lib/feature-toggles";
+import { trpc } from "@/lib/trpc";
+import { useState } from "react";
+import { AlertTriangle, CheckCircle, Clock, Shield } from "lucide-react";
+
+const EMERGENCY_TYPE_LABELS: Record<string, string> = {
+	LOCKDOWN: "Lockdown",
+	EVACUATION: "Evacuation",
+	SHELTER_IN_PLACE: "Shelter in Place",
+	MEDICAL: "Medical Emergency",
+	OTHER: "Emergency",
+};
+
+function ActiveAlert({ schoolId }: { schoolId: string }) {
+	const { data: alert, isLoading } = trpc.emergency.getActiveAlert.useQuery(
+		{ schoolId },
+		{ refetchInterval: 10000 },
+	);
+
+	const [updateMessage, setUpdateMessage] = useState("");
+
+	const postUpdateMutation = trpc.emergency.postUpdate.useMutation({
+		onSuccess: () => setUpdateMessage(""),
+	});
+
+	const resolveMutation = trpc.emergency.resolveAlert.useMutation();
+
+	if (isLoading) return <Skeleton className="h-48" />;
+
+	if (!alert) return null;
+
+	return (
+		<Card className="border-red-500 border-2 bg-red-50">
+			<CardHeader>
+				<CardTitle className="flex items-center gap-2 text-red-700">
+					<AlertTriangle className="h-6 w-6 animate-pulse" />
+					{alert.title}
+				</CardTitle>
+			</CardHeader>
+			<CardContent className="space-y-4">
+				{alert.message && (
+					<p className="text-sm font-medium">{alert.message}</p>
+				)}
+				<p className="text-xs text-muted-foreground">
+					Initiated by {alert.initiator.name} at{" "}
+					{new Date(alert.createdAt).toLocaleTimeString("en-GB")}
+				</p>
+
+				{alert.updates.length > 0 && (
+					<div className="space-y-2 border-l-2 border-red-300 pl-3">
+						{alert.updates.map((update) => (
+							<div key={update.id}>
+								<p className="text-sm">{update.message}</p>
+								<p className="text-xs text-muted-foreground">
+									{new Date(update.createdAt).toLocaleTimeString("en-GB")}
+								</p>
+							</div>
+						))}
+					</div>
+				)}
+
+				<div className="flex gap-2">
+					<input
+						type="text"
+						placeholder="Post an update..."
+						maxLength={500}
+						value={updateMessage}
+						onChange={(e) => setUpdateMessage(e.target.value)}
+						className="flex-1 rounded-md border p-2 text-sm"
+					/>
+					<button
+						type="button"
+						onClick={() =>
+							postUpdateMutation.mutate({
+								schoolId,
+								alertId: alert.id,
+								message: updateMessage,
+							})
+						}
+						disabled={!updateMessage.trim() || postUpdateMutation.isPending}
+						className="rounded-md bg-red-600 px-3 py-2 text-sm text-white hover:bg-red-700 disabled:opacity-50"
+					>
+						Post
+					</button>
+				</div>
+
+				<div className="flex gap-2 pt-2 border-t">
+					<button
+						type="button"
+						onClick={() =>
+							resolveMutation.mutate({
+								schoolId,
+								alertId: alert.id,
+								status: "ALL_CLEAR",
+							})
+						}
+						disabled={resolveMutation.isPending}
+						className="rounded-md bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-700 disabled:opacity-50"
+					>
+						<CheckCircle className="inline h-4 w-4 mr-1" />
+						All Clear
+					</button>
+					<button
+						type="button"
+						onClick={() => {
+							const reason = prompt("Reason for cancellation:");
+							if (reason) {
+								resolveMutation.mutate({
+									schoolId,
+									alertId: alert.id,
+									status: "CANCELLED",
+									reason,
+								});
+							}
+						}}
+						disabled={resolveMutation.isPending}
+						className="rounded-md border px-4 py-2 text-sm hover:bg-muted disabled:opacity-50"
+					>
+						Cancel Alert
+					</button>
+				</div>
+			</CardContent>
+		</Card>
+	);
+}
+
+function InitiateAlert({ schoolId }: { schoolId: string }) {
+	const [type, setType] = useState<string>("");
+	const [message, setMessage] = useState("");
+	const [confirming, setConfirming] = useState(false);
+
+	const initiateMutation = trpc.emergency.initiateAlert.useMutation({
+		onSuccess: () => {
+			setType("");
+			setMessage("");
+			setConfirming(false);
+		},
+	});
+
+	const types = [
+		"LOCKDOWN",
+		"EVACUATION",
+		"SHELTER_IN_PLACE",
+		"MEDICAL",
+		"OTHER",
+	];
+
+	return (
+		<Card className="border-red-200">
+			<CardHeader>
+				<CardTitle className="flex items-center gap-2 text-red-700">
+					<Shield className="h-5 w-5" />
+					Initiate Emergency Alert
+				</CardTitle>
+			</CardHeader>
+			<CardContent className="space-y-4">
+				<div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+					{types.map((t) => (
+						<button
+							key={t}
+							type="button"
+							onClick={() => setType(t)}
+							className={`rounded-md border p-3 text-sm font-medium transition-colors ${
+								type === t
+									? "border-red-500 bg-red-50 text-red-700"
+									: "hover:bg-muted"
+							}`}
+						>
+							{EMERGENCY_TYPE_LABELS[t]}
+						</button>
+					))}
+				</div>
+
+				{type && (
+					<>
+						<textarea
+							placeholder="Optional message to parents (max 500 characters)"
+							maxLength={500}
+							value={message}
+							onChange={(e) => setMessage(e.target.value)}
+							className="w-full rounded-md border p-2 text-sm resize-none"
+							rows={2}
+						/>
+
+						{!confirming ? (
+							<button
+								type="button"
+								onClick={() => setConfirming(true)}
+								className="rounded-md bg-red-600 px-6 py-3 text-sm font-bold text-white hover:bg-red-700"
+							>
+								Send Alert
+							</button>
+						) : (
+							<div className="rounded-md border-2 border-red-500 bg-red-50 p-4">
+								<p className="text-sm font-bold text-red-700 mb-3">
+									This will immediately notify ALL parents at the school via
+									push, SMS, and email. Are you sure?
+								</p>
+								<div className="flex gap-2">
+									<button
+										type="button"
+										onClick={() =>
+											initiateMutation.mutate({
+												schoolId,
+												type: type as
+													| "LOCKDOWN"
+													| "EVACUATION"
+													| "SHELTER_IN_PLACE"
+													| "MEDICAL"
+													| "OTHER",
+												message: message || undefined,
+											})
+										}
+										disabled={initiateMutation.isPending}
+										className="rounded-md bg-red-600 px-6 py-2 text-sm font-bold text-white hover:bg-red-700 disabled:opacity-50"
+									>
+										{initiateMutation.isPending
+											? "Sending..."
+											: "CONFIRM \u2014 Send Alert Now"}
+									</button>
+									<button
+										type="button"
+										onClick={() => setConfirming(false)}
+										className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
+									>
+										Go Back
+									</button>
+								</div>
+							</div>
+						)}
+					</>
+				)}
+			</CardContent>
+		</Card>
+	);
+}
+
+function AlertHistory({ schoolId }: { schoolId: string }) {
+	const { data, isLoading } = trpc.emergency.getAlertHistory.useQuery({
+		schoolId,
+		limit: 10,
+	});
+
+	if (isLoading) return <Skeleton className="h-48" />;
+
+	const statusColors: Record<string, string> = {
+		ACTIVE: "bg-red-100 text-red-800",
+		ALL_CLEAR: "bg-green-100 text-green-800",
+		CANCELLED: "bg-gray-100 text-gray-800",
+	};
+
+	return (
+		<Card>
+			<CardHeader>
+				<CardTitle className="flex items-center gap-2">
+					<Clock className="h-5 w-5" />
+					Alert History
+				</CardTitle>
+			</CardHeader>
+			<CardContent>
+				{data?.items.length === 0 && (
+					<p className="text-sm text-muted-foreground">
+						No previous emergency alerts.
+					</p>
+				)}
+				<div className="space-y-2">
+					{data?.items.map((alert) => (
+						<div
+							key={alert.id}
+							className="flex items-center gap-3 rounded-md border p-3"
+						>
+							<div className="flex-1">
+								<p className="font-medium">
+									{EMERGENCY_TYPE_LABELS[alert.type]}
+								</p>
+								<p className="text-xs text-muted-foreground">
+									{new Date(alert.createdAt).toLocaleDateString("en-GB")}{" "}
+									{new Date(alert.createdAt).toLocaleTimeString("en-GB")} ·{" "}
+									{alert.initiator.name} · {alert._count.updates} updates
+								</p>
+							</div>
+							<Badge className={statusColors[alert.status]}>
+								{alert.status.replace("_", " ").toLowerCase()}
+							</Badge>
+						</div>
+					))}
+				</div>
+			</CardContent>
+		</Card>
+	);
+}
+
+export default function EmergencyPage() {
+	const features = useFeatureToggles();
+	const { data: session } = trpc.auth.getSession.useQuery();
+	const isStaff = !!session?.staffRole && !!session?.schoolId;
+
+	if (!features.emergencyCommsEnabled) {
+		return <FeatureDisabled featureName="Emergency Communications" />;
+	}
+
+	if (!isStaff || !session?.schoolId) {
+		return (
+			<div className="p-6">
+				<p className="text-muted-foreground">
+					Emergency communications is only available to staff.
+				</p>
+			</div>
+		);
+	}
+
+	return (
+		<div className="space-y-6 p-6">
+			<div>
+				<h1 className="text-2xl font-bold">Emergency Communications</h1>
+				<p className="text-muted-foreground">
+					Alert all parents immediately during critical incidents
+				</p>
+			</div>
+
+			<ActiveAlert schoolId={session.schoolId} />
+			<InitiateAlert schoolId={session.schoolId} />
+			<AlertHistory schoolId={session.schoolId} />
+		</div>
+	);
+}
