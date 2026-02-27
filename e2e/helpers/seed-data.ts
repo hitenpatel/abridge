@@ -483,12 +483,200 @@ export async function enableSchoolFeature(params: {
 		wellbeingEnabled: boolean;
 		emergencyCommsEnabled: boolean;
 		analyticsEnabled: boolean;
+		mealBookingEnabled: boolean;
+		reportCardsEnabled: boolean;
+		communityHubEnabled: boolean;
 	}>;
 }): Promise<void> {
 	await prisma.school.update({
 		where: { id: params.schoolId },
 		data: params.features,
 	});
+}
+
+/**
+ * Seed a meal menu for a school
+ */
+export async function seedMealMenu(params: {
+	schoolId: string;
+	createdBy: string;
+	weekStarting?: Date;
+	published?: boolean;
+}): Promise<{ id: string; weekStarting: Date }> {
+	const monday =
+		params.weekStarting ||
+		(() => {
+			const d = new Date();
+			d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+			d.setHours(0, 0, 0, 0);
+			return d;
+		})();
+
+	const menu = await prisma.mealMenu.create({
+		data: {
+			schoolId: params.schoolId,
+			weekStarting: monday,
+			published: params.published ?? true,
+			createdById: params.createdBy,
+			options: {
+				create: [
+					{
+						day: "MONDAY",
+						category: "MAIN",
+						name: "Fish Fingers & Chips",
+						allergens: ["FISH", "GLUTEN"],
+						sortOrder: 1,
+					},
+					{
+						day: "MONDAY",
+						category: "VEGETARIAN",
+						name: "Veggie Pasta",
+						allergens: ["GLUTEN"],
+						sortOrder: 2,
+					},
+					{ day: "TUESDAY", category: "MAIN", name: "Roast Chicken", allergens: [], sortOrder: 1 },
+					{
+						day: "TUESDAY",
+						category: "VEGETARIAN",
+						name: "Pasta Bake",
+						allergens: ["GLUTEN", "MILK"],
+						sortOrder: 2,
+					},
+				],
+			},
+		},
+	});
+
+	return { id: menu.id, weekStarting: monday };
+}
+
+/**
+ * Seed a community post for a school
+ */
+export async function seedCommunityPost(params: {
+	schoolId: string;
+	authorId: string;
+	type?: "DISCUSSION" | "EVENT" | "VOLUNTEER_REQUEST";
+	title?: string;
+	body?: string;
+	tags?: string[];
+	isPinned?: boolean;
+}): Promise<{ id: string; title: string }> {
+	const post = await prisma.communityPost.create({
+		data: {
+			schoolId: params.schoolId,
+			authorId: params.authorId,
+			type: params.type || "DISCUSSION",
+			title: params.title || "Test Discussion Post",
+			body: params.body || "This is a test community post for E2E testing.",
+			tags: params.tags || [],
+			isPinned: params.isPinned || false,
+		},
+	});
+	return { id: post.id, title: post.title };
+}
+
+/**
+ * Seed a volunteer post with slots
+ */
+export async function seedVolunteerPost(params: {
+	schoolId: string;
+	authorId: string;
+	title?: string;
+	spotsTotal?: number;
+}): Promise<{ id: string; slotIds: string[] }> {
+	const post = await prisma.communityPost.create({
+		data: {
+			schoolId: params.schoolId,
+			authorId: params.authorId,
+			type: "VOLUNTEER_REQUEST",
+			title: params.title || "Volunteers Needed",
+			body: "We need help setting up for the school fair.",
+			tags: ["Help Needed"],
+			volunteerSlots: {
+				create: [
+					{
+						description: "Set up chairs",
+						date: new Date(),
+						startTime: "14:00",
+						endTime: "15:00",
+						spotsTotal: params.spotsTotal || 4,
+					},
+				],
+			},
+		},
+		include: { volunteerSlots: true },
+	});
+	return { id: post.id, slotIds: post.volunteerSlots.map((s) => s.id) };
+}
+
+/**
+ * Seed a report cycle with report card and grades
+ */
+export async function seedReportCycle(params: {
+	schoolId: string;
+	createdBy: string;
+	name?: string;
+	status?: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+}): Promise<{ id: string; name: string }> {
+	const name = params.name || "Autumn Term 2026";
+	const cycle = await prisma.reportCycle.create({
+		data: {
+			schoolId: params.schoolId,
+			name,
+			type: "TERMLY",
+			assessmentModel: "PRIMARY_DESCRIPTIVE",
+			publishDate: new Date(),
+			status: params.status || "PUBLISHED",
+			createdBy: params.createdBy,
+		},
+	});
+	return { id: cycle.id, name: cycle.name };
+}
+
+export async function seedReportCard(params: {
+	cycleId: string;
+	childId: string;
+	schoolId: string;
+	teacherId: string;
+	generalComment?: string;
+}): Promise<{ id: string }> {
+	const card = await prisma.reportCard.create({
+		data: {
+			cycleId: params.cycleId,
+			childId: params.childId,
+			schoolId: params.schoolId,
+			teacherId: params.teacherId,
+			generalComment: params.generalComment || "Good progress this term.",
+			attendancePct: 95.5,
+			subjectGrades: {
+				create: [
+					{
+						subject: "Mathematics",
+						sortOrder: 0,
+						level: "EXPECTED",
+						effort: "GOOD",
+						comment: "Solid number work.",
+					},
+					{
+						subject: "English",
+						sortOrder: 1,
+						level: "EXCEEDING",
+						effort: "OUTSTANDING",
+						comment: "Excellent reader.",
+					},
+					{
+						subject: "Science",
+						sortOrder: 2,
+						level: "EXPECTED",
+						effort: "GOOD",
+						comment: "Enjoys experiments.",
+					},
+				],
+			},
+		},
+	});
+	return { id: card.id };
 }
 
 export { prisma };
