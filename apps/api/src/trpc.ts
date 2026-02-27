@@ -132,6 +132,9 @@ export const schoolFeatureProcedure = schoolStaffProcedure.use(async ({ ctx, nex
 			wellbeingEnabled: true,
 			emergencyCommsEnabled: true,
 			analyticsEnabled: true,
+			mealBookingEnabled: true,
+			reportCardsEnabled: true,
+			communityHubEnabled: true,
 		},
 	});
 

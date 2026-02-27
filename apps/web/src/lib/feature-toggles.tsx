@@ -19,6 +19,9 @@ interface FeatureToggles {
 	wellbeingEnabled: boolean;
 	emergencyCommsEnabled: boolean;
 	analyticsEnabled: boolean;
+	mealBookingEnabled: boolean;
+	reportCardsEnabled: boolean;
+	communityHubEnabled: boolean;
 }
 
 const defaultToggles: FeatureToggles = {
@@ -37,6 +40,9 @@ const defaultToggles: FeatureToggles = {
 	wellbeingEnabled: false,
 	emergencyCommsEnabled: false,
 	analyticsEnabled: false,
+	mealBookingEnabled: false,
+	reportCardsEnabled: false,
+	communityHubEnabled: false,
 };
 
 const FeatureToggleContext = createContext<FeatureToggles>(defaultToggles);

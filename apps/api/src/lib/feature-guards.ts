@@ -11,7 +11,10 @@ type FeatureName =
 	| "parentsEvening"
 	| "wellbeing"
 	| "emergencyComms"
-	| "analytics";
+	| "analytics"
+	| "mealBooking"
+	| "reportCards"
+	| "communityHub";
 
 interface SchoolFeatures {
 	messagingEnabled: boolean;
@@ -29,6 +32,9 @@ interface SchoolFeatures {
 	wellbeingEnabled: boolean;
 	emergencyCommsEnabled: boolean;
 	analyticsEnabled: boolean;
+	mealBookingEnabled: boolean;
+	reportCardsEnabled: boolean;
+	communityHubEnabled: boolean;
 }
 
 const featureFieldMap: Record<FeatureName, keyof SchoolFeatures> = {
@@ -42,6 +48,9 @@ const featureFieldMap: Record<FeatureName, keyof SchoolFeatures> = {
 	wellbeing: "wellbeingEnabled",
 	emergencyComms: "emergencyCommsEnabled",
 	analytics: "analyticsEnabled",
+	mealBooking: "mealBookingEnabled",
+	reportCards: "reportCardsEnabled",
+	communityHub: "communityHubEnabled",
 };
 
 const featureLabel: Record<FeatureName, string> = {
@@ -55,6 +64,9 @@ const featureLabel: Record<FeatureName, string> = {
 	wellbeing: "Wellbeing Check-ins",
 	emergencyComms: "Emergency Communications",
 	analytics: "Analytics",
+	mealBooking: "Meal Booking",
+	reportCards: "Report Cards",
+	communityHub: "Community Hub",
 };
 
 const categoryFieldMap: Record<PaymentCategory, keyof SchoolFeatures> = {
