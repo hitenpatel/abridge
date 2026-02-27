@@ -4,15 +4,18 @@ import { attendanceRouter } from "./attendance";
 import { authRouter } from "./auth";
 import { calendarRouter } from "./calendar";
 import { classPostRouter } from "./class-post";
+import { communityRouter } from "./community";
 import { dashboardRouter } from "./dashboard";
 import { dbInitRouter } from "./db-init";
 import { emergencyRouter } from "./emergency";
 import { formsRouter } from "./forms";
 import { healthRouter } from "./health";
 import { invitationRouter } from "./invitation";
+import { mealBookingRouter } from "./meal-booking";
 import { messagingRouter } from "./messaging";
 import { parentsEveningRouter } from "./parents-evening";
 import { paymentsRouter } from "./payments";
+import { reportCardRouter } from "./report-card";
 import { settingsRouter } from "./settings";
 import { setupRouter } from "./setup";
 import { staffRouter } from "./staff";
@@ -43,6 +46,9 @@ export const appRouter = router({
 	parentsEvening: parentsEveningRouter,
 	wellbeing: wellbeingRouter,
 	dbInit: dbInitRouter,
+	mealBooking: mealBookingRouter,
+	community: communityRouter,
+	reportCard: reportCardRouter,
 });
 
 export type AppRouter = typeof appRouter;
