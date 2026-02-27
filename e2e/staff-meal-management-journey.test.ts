@@ -56,7 +56,7 @@ test.describe("Staff Meal Management", () => {
 		await expect(page).toHaveURL(/\/dashboard\/meals/);
 
 		// === STEP 5: Verify staff meal management view ===
-		await expect(page.getByText("Create Menu")).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: "Create Menu" })).toBeVisible({ timeout: 10000 });
 		await expect(page.getByText("Manage school meal menus")).toBeVisible({ timeout: 10000 });
 	});
 

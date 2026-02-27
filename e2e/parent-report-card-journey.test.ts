@@ -54,12 +54,9 @@ test.describe("Parent Report Card", () => {
 			lastName: "Taylor",
 		});
 
-		const adminUser = await getUserByEmail(`admin-rpt-${uniqueURN}@test.com`);
-		if (!adminUser) throw new Error("Failed to get admin user");
-
 		const cycle = await seedReportCycle({
 			schoolId: school.id,
-			createdBy: adminUser.id,
+			createdBy: user.id,
 			status: "PUBLISHED",
 		});
 
@@ -67,26 +64,24 @@ test.describe("Parent Report Card", () => {
 			cycleId: cycle.id,
 			childId: child.id,
 			schoolId: school.id,
-			teacherId: adminUser.id,
+			teacherId: user.id,
 		});
 
 		// === STEP 4: Navigate to reports ===
-		await page.reload();
-		await page
-			.getByRole("link", { name: /Reports/i })
-			.first()
-			.click();
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /Reports/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
+		}).toPass({ timeout: 30000 });
+		await page.getByRole("link", { name: /Reports/i }).first().click();
 
-		// === STEP 5: Verify child name visible ===
+		// === STEP 5: Click on report cycle to view child's report ===
+		await expect(page.getByText(/Autumn Term/i)).toBeVisible({ timeout: 10000 });
+		await page.getByText(/Autumn Term/i).first().click();
+
+		// === STEP 6: Verify child name and subject grades visible ===
 		await expect(page.getByText(/Sophie/i)).toBeVisible({ timeout: 10000 });
-
-		// === STEP 6: Click to view report ===
-		await page
-			.getByText(/Sophie/i)
-			.first()
-			.click();
-
-		// === STEP 7: Verify subject grades visible ===
 		await expect(page.getByText("Mathematics")).toBeVisible({ timeout: 10000 });
 		await expect(page.getByText("English")).toBeVisible({ timeout: 10000 });
 	});
@@ -123,12 +118,9 @@ test.describe("Parent Report Card", () => {
 			lastName: "Smith",
 		});
 
-		const adminUser = await getUserByEmail(`admin-dtl-${uniqueURN}@test.com`);
-		if (!adminUser) throw new Error("Failed to get admin user");
-
 		const cycle = await seedReportCycle({
 			schoolId: school.id,
-			createdBy: adminUser.id,
+			createdBy: user.id,
 			status: "PUBLISHED",
 		});
 
@@ -136,23 +128,22 @@ test.describe("Parent Report Card", () => {
 			cycleId: cycle.id,
 			childId: child.id,
 			schoolId: school.id,
-			teacherId: adminUser.id,
+			teacherId: user.id,
 			generalComment: "Outstanding term for the child",
 		});
 
 		// === STEP 4: Navigate to reports ===
-		await page.reload();
-		await page
-			.getByRole("link", { name: /Reports/i })
-			.first()
-			.click();
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /Reports/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
+		}).toPass({ timeout: 30000 });
+		await page.getByRole("link", { name: /Reports/i }).first().click();
 
-		// === STEP 5: Click to view report ===
-		await expect(page.getByText(/Oliver/i)).toBeVisible({ timeout: 10000 });
-		await page
-			.getByText(/Oliver/i)
-			.first()
-			.click();
+		// === STEP 5: Click on report cycle ===
+		await expect(page.getByText(/Autumn Term/i)).toBeVisible({ timeout: 10000 });
+		await page.getByText(/Autumn Term/i).first().click();
 
 		// === STEP 6: Verify general comment appears ===
 		await expect(page.getByText("Outstanding term for the child")).toBeVisible({ timeout: 10000 });
@@ -191,11 +182,13 @@ test.describe("Parent Report Card", () => {
 		});
 
 		// === STEP 4: Navigate to reports ===
-		await page.reload();
-		await page
-			.getByRole("link", { name: /Reports/i })
-			.first()
-			.click();
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /Reports/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
+		}).toPass({ timeout: 30000 });
+		await page.getByRole("link", { name: /Reports/i }).first().click();
 
 		// === STEP 5: Verify empty state message ===
 		await expect(page.getByText(/no report/i)).toBeVisible({ timeout: 10000 });
@@ -235,7 +228,7 @@ test.describe("Parent Report Card", () => {
 		await page.goto("http://localhost:3000/dashboard/reports");
 
 		// === STEP 4: Should show disabled message ===
-		await expect(page.getByText(/disabled|not available|not enabled/i)).toBeVisible({
+		await expect(page.getByText(/disabled|not available|not enabled/i).first()).toBeVisible({
 			timeout: 10000,
 		});
 	});

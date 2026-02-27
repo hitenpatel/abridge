@@ -51,10 +51,18 @@ export function FeatureToggleProvider({
 	schoolId,
 	children,
 }: { schoolId: string | undefined; children: React.ReactNode }) {
-	const { data } = trpc.settings.getFeatureToggles.useQuery(
+	// Staff path: use school-scoped query when schoolId is available
+	const { data: staffData } = trpc.settings.getFeatureToggles.useQuery(
 		{ schoolId: schoolId as string },
 		{ enabled: !!schoolId },
 	);
+
+	// Parent path: derive school from parent's child link
+	const { data: parentData } = trpc.settings.getFeatureTogglesForParent.useQuery(undefined, {
+		enabled: !schoolId,
+	});
+
+	const data = staffData ?? parentData;
 
 	return (
 		<FeatureToggleContext.Provider value={data ?? defaultToggles}>

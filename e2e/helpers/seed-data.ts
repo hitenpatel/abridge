@@ -4,10 +4,27 @@
  */
 
 import { PrismaClient } from "@schoolconnect/db";
-import { elasticsearchClient } from "../../apps/api/src/lib/elasticsearch";
-import { indexEvent, indexMessage, indexPaymentItem } from "../../apps/api/src/lib/search-indexer";
 
 const prisma = new PrismaClient();
+
+// Elasticsearch indexing helpers (optional — skip if module unavailable)
+let elasticsearchClient: {
+	indices: { refresh: (opts: { index: string }) => Promise<void> };
+} | null = null;
+let indexMessage: ((data: Record<string, unknown>) => Promise<void>) | null = null;
+let indexPaymentItem: ((data: Record<string, unknown>) => Promise<void>) | null = null;
+let indexEvent: ((data: Record<string, unknown>) => Promise<void>) | null = null;
+
+try {
+	const es = require("../../apps/api/src/lib/elasticsearch");
+	const si = require("../../apps/api/src/lib/search-indexer");
+	elasticsearchClient = es.elasticsearchClient;
+	indexMessage = si.indexMessage;
+	indexPaymentItem = si.indexPaymentItem;
+	indexEvent = si.indexEvent;
+} catch {
+	// Elasticsearch not available — search indexing will be skipped
+}
 
 export interface TestChild {
 	id: string;
@@ -139,16 +156,18 @@ export async function seedPaymentItem(params: {
 
 	// Index in Elasticsearch for search (optional - skip if ES unavailable)
 	try {
-		await indexPaymentItem({
-			id: paymentItem.id,
-			schoolId: paymentItem.schoolId,
-			title: paymentItem.title,
-			description: paymentItem.description,
-			category: paymentItem.category,
-			amount: paymentItem.amount,
-			dueDate: paymentItem.dueDate,
-		});
-		await elasticsearchClient.indices.refresh({ index: "payment_items" });
+		if (indexPaymentItem && elasticsearchClient) {
+			await indexPaymentItem({
+				id: paymentItem.id,
+				schoolId: paymentItem.schoolId,
+				title: paymentItem.title,
+				description: paymentItem.description,
+				category: paymentItem.category,
+				amount: paymentItem.amount,
+				dueDate: paymentItem.dueDate,
+			});
+			await elasticsearchClient.indices.refresh({ index: "payment_items" });
+		}
 	} catch (error) {
 		console.warn("Could not index payment item in Elasticsearch:", (error as Error).message);
 	}
@@ -290,15 +309,17 @@ export async function seedMessage(params: {
 
 	// Index in Elasticsearch for search (optional - skip if ES unavailable)
 	try {
-		await indexMessage({
-			id: message.id,
-			schoolId: message.schoolId,
-			subject: message.subject,
-			body: message.body,
-			category: message.category,
-			createdAt: message.createdAt,
-		});
-		await elasticsearchClient.indices.refresh({ index: "messages" });
+		if (indexMessage && elasticsearchClient) {
+			await indexMessage({
+				id: message.id,
+				schoolId: message.schoolId,
+				subject: message.subject,
+				body: message.body,
+				category: message.category,
+				createdAt: message.createdAt,
+			});
+			await elasticsearchClient.indices.refresh({ index: "messages" });
+		}
 	} catch (error) {
 		console.warn("Could not index message in Elasticsearch:", (error as Error).message);
 	}
@@ -338,19 +359,21 @@ export async function seedEvent(params: {
 	});
 
 	// Index in Elasticsearch for search (optional - skip if ES unavailable)
-	try {
-		await indexEvent({
-			id: event.id,
-			schoolId: event.schoolId,
-			title: event.title,
-			body: event.body,
-			category: event.category,
-			startDate: event.startDate,
-			endDate: event.endDate,
-		});
-		await elasticsearchClient.indices.refresh({ index: "events" });
-	} catch (error) {
-		console.warn("Could not index event in Elasticsearch:", (error as Error).message);
+	if (indexEvent && elasticsearchClient) {
+		try {
+			await indexEvent({
+				id: event.id,
+				schoolId: event.schoolId,
+				title: event.title,
+				body: event.body,
+				category: event.category,
+				startDate: event.startDate,
+				endDate: event.endDate,
+			});
+			await elasticsearchClient.indices.refresh({ index: "events" });
+		} catch (error) {
+			console.warn("Could not index event in Elasticsearch:", (error as Error).message);
+		}
 	}
 
 	return {
@@ -516,15 +539,16 @@ export async function seedMealMenu(params: {
 		data: {
 			schoolId: params.schoolId,
 			weekStarting: monday,
-			published: params.published ?? true,
-			createdById: params.createdBy,
+			publishedAt: (params.published ?? true) ? new Date() : undefined,
+			createdBy: params.createdBy,
 			options: {
 				create: [
 					{
 						day: "MONDAY",
-						category: "MAIN",
+						category: "HOT_MAIN",
 						name: "Fish Fingers & Chips",
 						allergens: ["FISH", "GLUTEN"],
+						priceInPence: 250,
 						sortOrder: 1,
 					},
 					{
@@ -532,14 +556,23 @@ export async function seedMealMenu(params: {
 						category: "VEGETARIAN",
 						name: "Veggie Pasta",
 						allergens: ["GLUTEN"],
+						priceInPence: 250,
 						sortOrder: 2,
 					},
-					{ day: "TUESDAY", category: "MAIN", name: "Roast Chicken", allergens: [], sortOrder: 1 },
+					{
+						day: "TUESDAY",
+						category: "HOT_MAIN",
+						name: "Roast Chicken",
+						allergens: [],
+						priceInPence: 250,
+						sortOrder: 1,
+					},
 					{
 						day: "TUESDAY",
 						category: "VEGETARIAN",
 						name: "Pasta Bake",
 						allergens: ["GLUTEN", "MILK"],
+						priceInPence: 250,
 						sortOrder: 2,
 					},
 				],
@@ -638,7 +671,7 @@ export async function seedReportCard(params: {
 	cycleId: string;
 	childId: string;
 	schoolId: string;
-	teacherId: string;
+	teacherId?: string;
 	generalComment?: string;
 }): Promise<{ id: string }> {
 	const card = await prisma.reportCard.create({
@@ -646,7 +679,6 @@ export async function seedReportCard(params: {
 			cycleId: params.cycleId,
 			childId: params.childId,
 			schoolId: params.schoolId,
-			teacherId: params.teacherId,
 			generalComment: params.generalComment || "Good progress this term.",
 			attendancePct: 95.5,
 			subjectGrades: {

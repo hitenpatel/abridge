@@ -435,15 +435,16 @@ async function main() {
 			data: {
 				schoolId: school.id,
 				weekStarting: monday,
-				published: true,
-				createdById: admin.id,
+				publishedAt: new Date(),
+				createdBy: admin.id,
 				options: {
 					create: [
 						{
 							day: "MONDAY" as DayOfWeek,
-							category: "MAIN" as MealCategory,
+							category: "HOT_MAIN" as MealCategory,
 							name: "Fish Fingers & Chips",
 							allergens: ["FISH", "GLUTEN"],
+							priceInPence: 250,
 							sortOrder: 1,
 						},
 						{
@@ -451,13 +452,15 @@ async function main() {
 							category: "VEGETARIAN" as MealCategory,
 							name: "Veggie Burger & Chips",
 							allergens: ["GLUTEN", "SOYA"],
+							priceInPence: 250,
 							sortOrder: 2,
 						},
 						{
 							day: "TUESDAY" as DayOfWeek,
-							category: "MAIN" as MealCategory,
+							category: "HOT_MAIN" as MealCategory,
 							name: "Roast Chicken & Veg",
 							allergens: [],
+							priceInPence: 250,
 							sortOrder: 1,
 						},
 						{
@@ -465,13 +468,15 @@ async function main() {
 							category: "VEGETARIAN" as MealCategory,
 							name: "Pasta Bake",
 							allergens: ["GLUTEN", "MILK"],
+							priceInPence: 250,
 							sortOrder: 2,
 						},
 						{
 							day: "WEDNESDAY" as DayOfWeek,
-							category: "MAIN" as MealCategory,
+							category: "HOT_MAIN" as MealCategory,
 							name: "Beef Bolognese",
 							allergens: ["GLUTEN"],
+							priceInPence: 250,
 							sortOrder: 1,
 						},
 						{
@@ -479,6 +484,7 @@ async function main() {
 							category: "VEGETARIAN" as MealCategory,
 							name: "Jacket Potato & Beans",
 							allergens: [],
+							priceInPence: 250,
 							sortOrder: 2,
 						},
 					],
@@ -518,7 +524,7 @@ async function main() {
 				assessmentModel: "PRIMARY_DESCRIPTIVE",
 				publishDate: new Date("2026-04-01"),
 				status: "PUBLISHED",
-				createdById: admin.id,
+				createdBy: admin.id,
 			},
 		});
 
@@ -527,7 +533,6 @@ async function main() {
 				cycleId: cycle.id,
 				childId: child1.id,
 				schoolId: school.id,
-				teacherId: teacher.id,
 				generalComment:
 					"Emily has had a wonderful spring term. She is making excellent progress in reading and is always enthusiastic in class.",
 				subjectGrades: {

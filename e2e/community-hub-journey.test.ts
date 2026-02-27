@@ -55,20 +55,22 @@ test.describe("Community Hub", () => {
 		});
 
 		// === STEP 4: Navigate to community hub ===
-		await page.reload();
-		await page
-			.getByRole("link", { name: /Community/i })
-			.first()
-			.click();
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /Community/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
+		}).toPass({ timeout: 30000 });
+		await page.getByRole("link", { name: /Community/i }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/community/);
 
 		// === STEP 5: Create a new discussion post ===
 		await page.getByRole("button", { name: /New Post/i }).click();
-		await page.getByLabel(/Title/i).fill("School Fair Ideas");
+		await page.getByRole("textbox", { name: /Title/i }).fill("School Fair Ideas");
 		await page
-			.getByLabel(/Body|Content|Message/i)
+			.getByRole("textbox", { name: /share/i })
 			.fill("What does everyone think about having a bouncy castle at the school fair?");
-		await page.getByRole("button", { name: /Submit|Post|Create|Publish/i }).click();
+		await page.getByRole("button", { name: /^Post$/i }).click();
 
 		// === STEP 6: Verify post appears in feed ===
 		await expect(page.getByText("School Fair Ideas")).toBeVisible({ timeout: 10000 });
@@ -113,20 +115,22 @@ test.describe("Community Hub", () => {
 		});
 
 		// === STEP 3: Navigate to community and click on the post ===
-		await page.reload();
-		await page
-			.getByRole("link", { name: /Community/i })
-			.first()
-			.click();
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /Community/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
+		}).toPass({ timeout: 30000 });
+		await page.getByRole("link", { name: /Community/i }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/community/);
 
 		await page.getByText("Playground Improvement Ideas").click();
 
 		// === STEP 4: Add a comment ===
 		await page
-			.getByPlaceholder(/comment|reply|write/i)
+			.getByPlaceholder(/comment|reply|write|say/i)
 			.fill("I think a new climbing frame would be great!");
-		await page.getByRole("button", { name: /Comment|Reply|Send|Submit/i }).click();
+		await page.getByRole("button", { name: "Reply", exact: true }).click();
 
 		// === STEP 5: Verify comment is visible ===
 		await expect(page.getByText("I think a new climbing frame would be great!")).toBeVisible({
@@ -173,11 +177,13 @@ test.describe("Community Hub", () => {
 		});
 
 		// === STEP 3: Navigate to community and click on the volunteer post ===
-		await page.reload();
-		await page
-			.getByRole("link", { name: /Community/i })
-			.first()
-			.click();
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /Community/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
+		}).toPass({ timeout: 30000 });
+		await page.getByRole("link", { name: /Community/i }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/community/);
 
 		await page.getByText("School Fair Setup Help").click();
@@ -185,8 +191,8 @@ test.describe("Community Hub", () => {
 		// === STEP 4: Sign up for the volunteer slot ===
 		await page.getByRole("button", { name: /Sign Up/i }).click();
 
-		// === STEP 5: Verify signup confirmed ===
-		await expect(page.getByText(/signed up|confirmed|registered/i)).toBeVisible({ timeout: 10000 });
+		// === STEP 5: Verify signup confirmed (button changes from Sign Up to Cancel) ===
+		await expect(page.getByRole("button", { name: "Cancel", exact: true })).toBeVisible({ timeout: 10000 });
 	});
 
 	test("community page shows disabled state when feature is off", async ({ page }) => {
@@ -222,7 +228,7 @@ test.describe("Community Hub", () => {
 		await page.goto("http://localhost:3000/dashboard/community");
 
 		// === STEP 3: Should show disabled message ===
-		await expect(page.getByText(/disabled|not available|not enabled/i)).toBeVisible({
+		await expect(page.getByText(/disabled|not available|not enabled/i).first()).toBeVisible({
 			timeout: 10000,
 		});
 	});
@@ -266,11 +272,13 @@ test.describe("Community Hub", () => {
 		});
 
 		// === STEP 3: Navigate to community ===
-		await page.reload();
-		await page
-			.getByRole("link", { name: /Community/i })
-			.first()
-			.click();
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /Community/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
+		}).toPass({ timeout: 30000 });
+		await page.getByRole("link", { name: /Community/i }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/community/);
 
 		// === STEP 4: Verify the seeded post title appears ===

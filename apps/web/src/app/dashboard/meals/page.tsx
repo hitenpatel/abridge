@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
 import { CalendarDays, ChefHat, ClipboardList, Plus, UtensilsCrossed, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const UK_ALLERGENS = [
 	"Celery",
@@ -89,16 +89,17 @@ function ParentView() {
 	const { data: children } = trpc.user.listChildren.useQuery();
 	const [selectedChild, setSelectedChild] = useState<string | null>(null);
 
-	const childId = selectedChild ?? children?.[0]?.id;
-	const schoolId = "school-1";
+	const childId = selectedChild ?? children?.[0]?.child?.id;
+	const selectedChildData = children?.find((c) => c.child.id === childId);
+	const schoolId = selectedChildData?.child?.schoolId;
 	const weekStarting = getMonday(new Date());
 
 	const { data: dietaryProfile, isLoading: profileLoading } =
 		trpc.mealBooking.getDietaryProfile.useQuery({ childId: childId ?? "" }, { enabled: !!childId });
 
 	const { data: menu, isLoading: menuLoading } = trpc.mealBooking.getMenuForWeek.useQuery(
-		{ schoolId, weekStarting },
-		{ enabled: true },
+		{ schoolId: schoolId ?? "", weekStarting },
+		{ enabled: !!schoolId },
 	);
 
 	const { data: bookings, isLoading: bookingsLoading } =
@@ -110,22 +111,19 @@ function ParentView() {
 	const [allergies, setAllergies] = useState<string[]>([]);
 	const [dietaryNeeds, setDietaryNeeds] = useState<string[]>([]);
 	const [otherNotes, setOtherNotes] = useState("");
-	const [profileInitialized, setProfileInitialized] = useState(false);
+	const prevChildIdRef = useRef<string | null>(null);
 
-	// Sync form state when dietary profile loads
-	if (dietaryProfile && !profileInitialized) {
-		setAllergies(dietaryProfile.allergies ?? []);
-		setDietaryNeeds(dietaryProfile.dietaryNeeds ?? []);
-		setOtherNotes(dietaryProfile.otherNotes ?? "");
-		setProfileInitialized(true);
-	}
-
-	// Reset form initialization when child changes
-	const [prevChildId, setPrevChildId] = useState<string | null>(null);
-	if (childId !== prevChildId) {
-		setPrevChildId(childId ?? null);
-		setProfileInitialized(false);
-	}
+	// Sync form state when dietary profile loads or child changes
+	useEffect(() => {
+		if (childId !== prevChildIdRef.current) {
+			prevChildIdRef.current = childId ?? null;
+		}
+		if (dietaryProfile) {
+			setAllergies(dietaryProfile.allergies ?? []);
+			setDietaryNeeds(dietaryProfile.dietaryNeeds ?? []);
+			setOtherNotes(dietaryProfile.otherNotes ?? "");
+		}
+	}, [dietaryProfile, childId]);
 
 	const utils = trpc.useUtils();
 
@@ -184,16 +182,16 @@ function ParentView() {
 		<div className="space-y-6">
 			{children.length > 1 && (
 				<div className="flex gap-2">
-					{children.map((child) => (
+					{children.map((pc) => (
 						<button
-							key={child.id}
+							key={pc.child.id}
 							type="button"
-							onClick={() => setSelectedChild(child.id)}
+							onClick={() => setSelectedChild(pc.child.id)}
 							className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
-								childId === child.id ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+								childId === pc.child.id ? "bg-primary text-primary-foreground" : "hover:bg-muted"
 							}`}
 						>
-							{child.firstName}
+							{pc.child.firstName}
 						</button>
 					))}
 				</div>

@@ -39,11 +39,22 @@ interface NavItem {
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+	const { data: session } = trpc.auth.getSession.useQuery();
+
+	return (
+		<FeatureToggleProvider schoolId={session?.schoolId}>
+			<DashboardLayoutInner session={session}>{children}</DashboardLayoutInner>
+		</FeatureToggleProvider>
+	);
+}
+
+function DashboardLayoutInner({
+	session,
+	children,
+}: { session: { name?: string; isParent?: boolean; staffRole?: string; schoolId?: string } | undefined; children: React.ReactNode }) {
 	const pathname = usePathname();
 	const router = useRouter();
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-	const { data: session } = trpc.auth.getSession.useQuery();
 
 	const userRole = session
 		? {
@@ -255,7 +266,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 	);
 
 	return (
-		<FeatureToggleProvider schoolId={session?.schoolId}>
 			<div className="min-h-screen bg-background flex">
 				{/* Desktop Sidebar */}
 				<aside
@@ -397,6 +407,5 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 					{children}
 				</main>
 			</div>
-		</FeatureToggleProvider>
 	);
 }

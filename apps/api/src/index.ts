@@ -81,9 +81,9 @@ async function main() {
 		routes: ["/api/webhooks/stripe"],
 	});
 
-	// Global rate limit: 100 req/min per IP
+	// Global rate limit per IP
 	await server.register(rateLimit, {
-		max: 100,
+		max: process.env.NODE_ENV === "production" ? 100 : 1000,
 		timeWindow: "1 minute",
 	});
 
@@ -114,7 +114,7 @@ async function main() {
 		url: "/api/auth/*",
 		config: {
 			rateLimit: {
-				max: 5,
+				max: process.env.NODE_ENV === "production" ? 5 : 500,
 				timeWindow: "15 minutes",
 			},
 		},

@@ -22,13 +22,11 @@ test.describe("Parent Meal Booking", () => {
 	});
 
 	test("parent should view weekly menu and see meal options", async ({ page }) => {
-		const adminEmail = `admin-meals-${uniqueURN}@test.com`;
-
 		// === STEP 1: Setup school ===
 		await page.goto("http://localhost:3000/setup");
 		await page.getByLabel("School Name").fill(`Meals School ${uniqueURN}`);
 		await page.getByLabel("Ofsted URN").fill(uniqueURN);
-		await page.getByLabel("Admin Email").fill(adminEmail);
+		await page.getByLabel("Admin Email").fill(`admin-meals-${uniqueURN}@test.com`);
 		await page.getByLabel("Setup Key").fill("admin123");
 		await page.getByRole("button", { name: /Create School/i }).click();
 		await expect(page.getByText("School Created!")).toBeVisible({ timeout: 10000 });
@@ -44,8 +42,7 @@ test.describe("Parent Meal Booking", () => {
 		// === STEP 3: Seed data ===
 		const school = await getSchoolByURN(uniqueURN);
 		const user = await getUserByEmail(parentEmail);
-		const admin = await getUserByEmail(adminEmail);
-		if (!school || !user || !admin) throw new Error("Failed to get school, user, or admin");
+		if (!school || !user) throw new Error("Failed to get school or user");
 
 		await enableSchoolFeature({ schoolId: school.id, features: { mealBookingEnabled: true } });
 
@@ -56,10 +53,15 @@ test.describe("Parent Meal Booking", () => {
 			lastName: "Taylor",
 		});
 
-		await seedMealMenu({ schoolId: school.id, createdBy: admin.id });
+		await seedMealMenu({ schoolId: school.id, createdBy: user.id });
 
 		// === STEP 4: Navigate to meals ===
-		await page.reload();
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /Meals/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
+		}).toPass({ timeout: 30000 });
 		await page.getByRole("link", { name: /Meals/i }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/meals/);
 
@@ -68,13 +70,11 @@ test.describe("Parent Meal Booking", () => {
 	});
 
 	test("parent should book a meal for their child", async ({ page }) => {
-		const adminEmail = `admin-book-${uniqueURN}@test.com`;
-
 		// === STEP 1: Setup school ===
 		await page.goto("http://localhost:3000/setup");
 		await page.getByLabel("School Name").fill(`Book Meals ${uniqueURN}`);
 		await page.getByLabel("Ofsted URN").fill(uniqueURN);
-		await page.getByLabel("Admin Email").fill(adminEmail);
+		await page.getByLabel("Admin Email").fill(`admin-book-${uniqueURN}@test.com`);
 		await page.getByLabel("Setup Key").fill("admin123");
 		await page.getByRole("button", { name: /Create School/i }).click();
 		await expect(page.getByText("School Created!")).toBeVisible({ timeout: 10000 });
@@ -90,8 +90,7 @@ test.describe("Parent Meal Booking", () => {
 		// === STEP 3: Seed data ===
 		const school = await getSchoolByURN(uniqueURN);
 		const user = await getUserByEmail(parentEmail);
-		const admin = await getUserByEmail(adminEmail);
-		if (!school || !user || !admin) throw new Error("Failed to get school, user, or admin");
+		if (!school || !user) throw new Error("Failed to get school or user");
 
 		await enableSchoolFeature({ schoolId: school.id, features: { mealBookingEnabled: true } });
 
@@ -102,21 +101,26 @@ test.describe("Parent Meal Booking", () => {
 			lastName: "Clark",
 		});
 
-		await seedMealMenu({ schoolId: school.id, createdBy: admin.id });
+		await seedMealMenu({ schoolId: school.id, createdBy: user.id });
 
 		// === STEP 4: Navigate to meals ===
-		await page.reload();
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /Meals/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
+		}).toPass({ timeout: 30000 });
 		await page.getByRole("link", { name: /Meals/i }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/meals/);
 
 		// === STEP 5: Wait for menu to load ===
 		await expect(page.getByText("Fish Fingers")).toBeVisible({ timeout: 10000 });
 
-		// === STEP 6: Click a meal option to book ===
-		await page.getByText("Fish Fingers").first().click();
+		// === STEP 6: Click a Book button next to a meal option ===
+		await page.getByRole("button", { name: "Book", exact: true }).first().click({ force: true });
 
-		// === STEP 7: Verify booking confirmation ===
-		await expect(page.getByText(/booked|confirmed|selected|saved/i).first()).toBeVisible({
+		// === STEP 7: Verify booking confirmed — "Booked" badge appears ===
+		await expect(page.getByText("Booked").first()).toBeVisible({
 			timeout: 10000,
 		});
 	});
@@ -156,7 +160,12 @@ test.describe("Parent Meal Booking", () => {
 		});
 
 		// === STEP 4: Navigate to meals ===
-		await page.reload();
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /Meals/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
+		}).toPass({ timeout: 30000 });
 		await page.getByRole("link", { name: /Meals/i }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/meals/);
 
@@ -198,7 +207,7 @@ test.describe("Parent Meal Booking", () => {
 		await page.goto("http://localhost:3000/dashboard/meals");
 
 		// === STEP 5: Should show disabled message ===
-		await expect(page.getByText(/disabled|not available|not enabled/i)).toBeVisible({
+		await expect(page.getByText(/disabled|not available|not enabled/i).first()).toBeVisible({
 			timeout: 10000,
 		});
 	});

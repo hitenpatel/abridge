@@ -697,8 +697,23 @@ export default function CommunityPage() {
 	const { data: session } = trpc.auth.getSession.useQuery();
 	const isStaff = !!session?.staffRole && !!session?.schoolId;
 
+	// For parents, derive schoolId from their child link
+	const { data: children } = trpc.user.listChildren.useQuery(undefined, {
+		enabled: !isStaff,
+	});
+	const schoolId = isStaff ? session?.schoolId : children?.[0]?.child?.schoolId;
+
 	if (!features.communityHubEnabled) {
 		return <FeatureDisabled featureName="Community Hub" />;
+	}
+
+	if (!schoolId) {
+		return (
+			<div className="space-y-6 p-6">
+				<h1 className="text-2xl font-bold">Community</h1>
+				<p className="text-muted-foreground">Loading...</p>
+			</div>
+		);
 	}
 
 	return (
@@ -712,7 +727,7 @@ export default function CommunityPage() {
 				</p>
 			</div>
 
-			<PostList schoolId="school-1" isStaff={isStaff} userId={session?.id} />
+			<PostList schoolId={schoolId} isStaff={isStaff} userId={session?.id} />
 		</div>
 	);
 }

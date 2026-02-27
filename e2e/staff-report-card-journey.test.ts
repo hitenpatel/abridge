@@ -60,8 +60,8 @@ test.describe("Staff Report Card Management", () => {
 		await expect(page).toHaveURL(/\/dashboard\/reports/);
 
 		// === STEP 5: Verify staff management view elements ===
-		await expect(page.getByText("Report Cycles")).toBeVisible({ timeout: 10000 });
-		await expect(page.getByText("Create Cycle")).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: "Report Cycles" })).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("button", { name: /Create Cycle/i })).toBeVisible({ timeout: 10000 });
 		await expect(page.getByText("Manage report cards and cycles")).toBeVisible({ timeout: 10000 });
 	});
 
