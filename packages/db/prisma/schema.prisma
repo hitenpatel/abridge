@@ -38,6 +38,12 @@ model School {
   emergencyCommsEnabled     Boolean  @default(false)
   analyticsEnabled          Boolean  @default(false)
 
+  // Phase 3B feature toggles
+  mealBookingEnabled        Boolean  @default(false)
+  reportCardsEnabled        Boolean  @default(false)
+  communityHubEnabled       Boolean  @default(false)
+  communityTags             String[] @default([])
+
   // School branding
   brandColor                String?  @default("#1E3A5F")
   secondaryColor            String?
@@ -62,6 +68,11 @@ model School {
   wellbeingCheckIns  WellbeingCheckIn[]
   wellbeingAlerts    WellbeingAlert[]
   emergencyAlerts    EmergencyAlert[]
+  mealMenus          MealMenu[]
+  mealBookings       MealBooking[]
+  communityPosts     CommunityPost[]
+  reportCycles       ReportCycle[]
+  reportCards        ReportCard[]
 
   @@map("schools")
 }
@@ -118,6 +129,13 @@ model User {
   emergencyAlertsInitiated    EmergencyAlert[] @relation("EmergencyAlertInitiator")
   emergencyAlertsResolved     EmergencyAlert[] @relation("EmergencyAlertResolver")
   emergencyUpdatesPosted      EmergencyUpdate[] @relation("EmergencyUpdatePoster")
+  mealMenusCreated            MealMenu[]        @relation("MealMenuCreator")
+  mealBookingsMade            MealBooking[]     @relation("MealBookingBooker")
+  communityPosts              CommunityPost[]   @relation("CommunityPostAuthor")
+  communityPostsRemoved       CommunityPost[]   @relation("CommunityPostRemover")
+  communityComments           CommunityComment[] @relation("CommunityCommentAuthor")
+  volunteerSignups            VolunteerSignup[] @relation("VolunteerSignupUser")
+  reportCyclesCreated         ReportCycle[]     @relation("ReportCycleCreator")
 
   @@map("users")
 }
@@ -209,6 +227,9 @@ model Child {
   formResponses FormResponse[]
   wellbeingCheckIns WellbeingCheckIn[]
   wellbeingAlerts   WellbeingAlert[]
+  mealBookings      MealBooking[]
+  dietaryProfile    DietaryProfile?
+  reportCards       ReportCard[]
 
   @@map("children")
 }
@@ -762,4 +783,285 @@ model EmergencyUpdate {
 
   @@index([alertId, createdAt])
   @@map("emergency_update")
+}
+
+// ─── Meal Booking ──────────────────────────────────────────
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+}
+
+enum MealCategory {
+  HOT_MAIN
+  VEGETARIAN
+  JACKET_POTATO
+  SANDWICH
+  DESSERT
+}
+
+enum MealBookingStatus {
+  BOOKED
+  CANCELLED
+}
+
+enum DietaryNeed {
+  VEGETARIAN
+  VEGAN
+  HALAL
+  KOSHER
+  GLUTEN_FREE
+  DAIRY_FREE
+  OTHER
+}
+
+model MealMenu {
+  id           String       @id @default(cuid())
+  schoolId     String
+  school       School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  weekStarting DateTime     @db.Date
+  publishedAt  DateTime?
+  createdBy    String
+  creator      User         @relation("MealMenuCreator", fields: [createdBy], references: [id])
+  createdAt    DateTime     @default(now())
+
+  options      MealOption[]
+
+  @@unique([schoolId, weekStarting])
+  @@index([schoolId, weekStarting])
+  @@map("meal_menu")
+}
+
+model MealOption {
+  id           String       @id @default(cuid())
+  menuId       String
+  menu         MealMenu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  day          DayOfWeek
+  name         String
+  description  String?
+  category     MealCategory
+  allergens    String[]
+  priceInPence Int
+  available    Boolean      @default(true)
+  sortOrder    Int          @default(0)
+  createdAt    DateTime     @default(now())
+
+  bookings     MealBooking[]
+
+  @@index([menuId, day])
+  @@map("meal_option")
+}
+
+model MealBooking {
+  id           String            @id @default(cuid())
+  childId      String
+  child        Child             @relation(fields: [childId], references: [id], onDelete: Cascade)
+  schoolId     String
+  school       School            @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  mealOptionId String
+  mealOption   MealOption        @relation(fields: [mealOptionId], references: [id], onDelete: Cascade)
+  date         DateTime          @db.Date
+  status       MealBookingStatus @default(BOOKED)
+  bookedBy     String
+  booker       User              @relation("MealBookingBooker", fields: [bookedBy], references: [id])
+  createdAt    DateTime          @default(now())
+
+  @@unique([childId, date])
+  @@index([schoolId, date])
+  @@map("meal_booking")
+}
+
+model DietaryProfile {
+  id           String        @id @default(cuid())
+  childId      String        @unique
+  child        Child         @relation(fields: [childId], references: [id], onDelete: Cascade)
+  allergies    String[]
+  dietaryNeeds DietaryNeed[]
+  otherNotes   String?
+  updatedAt    DateTime      @updatedAt
+  createdAt    DateTime      @default(now())
+
+  @@map("dietary_profile")
+}
+
+// ─── Community Hub ─────────────────────────────────────────
+
+enum CommunityPostType {
+  DISCUSSION
+  EVENT
+  VOLUNTEER_REQUEST
+}
+
+enum CommunityPostStatus {
+  ACTIVE
+  CLOSED
+  REMOVED
+}
+
+enum CommunityCommentStatus {
+  ACTIVE
+  REMOVED
+}
+
+model CommunityPost {
+  id            String               @id @default(cuid())
+  schoolId      String
+  school        School               @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  authorId      String
+  author        User                 @relation("CommunityPostAuthor", fields: [authorId], references: [id])
+  type          CommunityPostType
+  title         String
+  body          String
+  tags          String[]
+  imageUrls     String[]
+  isPinned      Boolean              @default(false)
+  status        CommunityPostStatus  @default(ACTIVE)
+  removedBy     String?
+  remover       User?                @relation("CommunityPostRemover", fields: [removedBy], references: [id])
+  removedReason String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  comments       CommunityComment[]
+  volunteerSlots VolunteerSlot[]
+
+  @@index([schoolId, status, createdAt(sort: Desc)])
+  @@map("community_post")
+}
+
+model CommunityComment {
+  id       String                 @id @default(cuid())
+  postId   String
+  post     CommunityPost          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId String
+  author   User                   @relation("CommunityCommentAuthor", fields: [authorId], references: [id])
+  body     String
+  status   CommunityCommentStatus @default(ACTIVE)
+  createdAt DateTime              @default(now())
+
+  @@index([postId, createdAt])
+  @@map("community_comment")
+}
+
+model VolunteerSlot {
+  id          String        @id @default(cuid())
+  postId      String
+  post        CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  description String
+  date        DateTime      @db.Date
+  startTime   String
+  endTime     String
+  spotsTotal  Int
+  spotsTaken  Int           @default(0)
+
+  signups     VolunteerSignup[]
+
+  @@index([postId])
+  @@map("volunteer_slot")
+}
+
+model VolunteerSignup {
+  id        String        @id @default(cuid())
+  slotId    String
+  slot      VolunteerSlot @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User          @relation("VolunteerSignupUser", fields: [userId], references: [id])
+  createdAt DateTime      @default(now())
+
+  @@unique([slotId, userId])
+  @@map("volunteer_signup")
+}
+
+// ─── Report Cards ──────────────────────────────────────────
+
+enum ReportCycleType {
+  TERMLY
+  HALF_TERMLY
+  END_OF_YEAR
+  MOCK
+  CUSTOM
+}
+
+enum AssessmentModel {
+  PRIMARY_DESCRIPTIVE
+  SECONDARY_GRADES
+}
+
+enum ReportCycleStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum PrimaryLevel {
+  EMERGING
+  DEVELOPING
+  EXPECTED
+  EXCEEDING
+}
+
+enum EffortLevel {
+  OUTSTANDING
+  GOOD
+  SATISFACTORY
+  NEEDS_IMPROVEMENT
+}
+
+model ReportCycle {
+  id              String            @id @default(cuid())
+  schoolId        String
+  school          School            @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  name            String
+  type            ReportCycleType
+  assessmentModel AssessmentModel
+  publishDate     DateTime          @db.Date
+  status          ReportCycleStatus @default(DRAFT)
+  createdBy       String
+  creator         User              @relation("ReportCycleCreator", fields: [createdBy], references: [id])
+  createdAt       DateTime          @default(now())
+
+  reportCards     ReportCard[]
+
+  @@unique([schoolId, name])
+  @@index([schoolId, status])
+  @@map("report_cycle")
+}
+
+model ReportCard {
+  id             String      @id @default(cuid())
+  cycleId        String
+  cycle          ReportCycle @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+  childId        String
+  child          Child       @relation(fields: [childId], references: [id], onDelete: Cascade)
+  schoolId       String
+  school         School      @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  generalComment String?
+  attendancePct  Float?
+  createdAt      DateTime    @default(now())
+
+  subjectGrades  SubjectGrade[]
+
+  @@unique([cycleId, childId])
+  @@index([childId])
+  @@map("report_card")
+}
+
+model SubjectGrade {
+  id           String        @id @default(cuid())
+  reportCardId String
+  reportCard   ReportCard    @relation(fields: [reportCardId], references: [id], onDelete: Cascade)
+  subject      String
+  sortOrder    Int           @default(0)
+  level        PrimaryLevel?
+  effort       EffortLevel?
+  currentGrade String?
+  targetGrade  String?
+  comment      String?
+  createdAt    DateTime      @default(now())
+
+  @@index([reportCardId])
+  @@map("subject_grade")
 }
