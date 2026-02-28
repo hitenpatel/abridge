@@ -183,7 +183,7 @@ jobs:
             --type instrumentation \
             --app app-release.apk \
             --test app-release-androidTest.apk \
-            --device model=Pixel2,version=33,locale=en,orientation=portrait \
+            --device model=MediumPhone.arm,version=34,locale=en,orientation=portrait \
             --timeout 10m \
             --use-orchestrator \
             --num-flaky-test-attempts 1 \
@@ -196,6 +196,6 @@ jobs:
           gcloud firebase test android run \
             --type robo \
             --app app-release.apk \
-            --device model=Pixel2,version=33,locale=en,orientation=portrait \
+            --device model=MediumPhone.arm,version=34,locale=en,orientation=portrait \
             --timeout 300s \
             --client-details matrixLabel="Robo crawl"

@@ -30,8 +30,11 @@ One-time manual setup steps required before the CI pipeline can run mobile E2E t
 npm install -g eas-cli
 cd apps/mobile
 eas login
+eas init          # Links project to your Expo account (adds projectId to app.config.ts)
 eas build:configure
 ```
+
+After `eas init`, commit the changes it makes to `app.config.ts`.
 
 Generate an access token at https://expo.dev/settings/access-tokens
 
