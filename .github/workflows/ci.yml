@@ -31,23 +31,16 @@ jobs:
           node-version: 24
           cache: pnpm
 
-      - name: Start PostgreSQL
+      - name: Install and start PostgreSQL
         run: |
-          docker run -d --name postgres \
-            -e POSTGRES_USER=postgres \
-            -e POSTGRES_PASSWORD=postgres \
-            -e POSTGRES_DB=schoolconnect_test \
-            -p 5432:5432 \
-            postgres:16-alpine
-          # Wait for PostgreSQL to be ready
-          for i in $(seq 1 30); do
-            if docker exec postgres pg_isready -U postgres > /dev/null 2>&1; then
-              echo "PostgreSQL is ready"
-              break
-            fi
-            echo "Waiting for PostgreSQL... ($i/30)"
-            sleep 1
-          done
+          apt-get update && apt-get install -y postgresql postgresql-client
+          pg_lsclusters
+          PG_VER=$(pg_lsclusters -h | head -1 | awk '{print $1}')
+          pg_ctlcluster "$PG_VER" main start
+          su - postgres -c "psql -c \"ALTER USER postgres PASSWORD 'postgres';\""
+          su - postgres -c "createdb schoolconnect_test"
+          # Verify connection
+          PGPASSWORD=postgres psql -h localhost -U postgres -d schoolconnect_test -c "SELECT 1;"
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
@@ -77,22 +70,14 @@ jobs:
           node-version: 24
           cache: pnpm
 
-      - name: Start PostgreSQL
+      - name: Install and start PostgreSQL
         run: |
-          docker run -d --name postgres \
-            -e POSTGRES_USER=postgres \
-            -e POSTGRES_PASSWORD=postgres \
-            -e POSTGRES_DB=schoolconnect_test \
-            -p 5432:5432 \
-            postgres:16-alpine
-          for i in $(seq 1 30); do
-            if docker exec postgres pg_isready -U postgres > /dev/null 2>&1; then
-              echo "PostgreSQL is ready"
-              break
-            fi
-            echo "Waiting for PostgreSQL... ($i/30)"
-            sleep 1
-          done
+          apt-get update && apt-get install -y postgresql postgresql-client
+          PG_VER=$(pg_lsclusters -h | head -1 | awk '{print $1}')
+          pg_ctlcluster "$PG_VER" main start
+          su - postgres -c "psql -c \"ALTER USER postgres PASSWORD 'postgres';\""
+          su - postgres -c "createdb schoolconnect_test"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d schoolconnect_test -c "SELECT 1;"
 
       - run: pnpm install --frozen-lockfile
 
@@ -190,22 +175,14 @@ jobs:
           node-version: 24
           cache: pnpm
 
-      - name: Start PostgreSQL
+      - name: Install and start PostgreSQL
         run: |
-          docker run -d --name postgres \
-            -e POSTGRES_USER=postgres \
-            -e POSTGRES_PASSWORD=postgres \
-            -e POSTGRES_DB=schoolconnect_test \
-            -p 5432:5432 \
-            postgres:16-alpine
-          for i in $(seq 1 30); do
-            if docker exec postgres pg_isready -U postgres > /dev/null 2>&1; then
-              echo "PostgreSQL is ready"
-              break
-            fi
-            echo "Waiting for PostgreSQL... ($i/30)"
-            sleep 1
-          done
+          apt-get update && apt-get install -y postgresql postgresql-client
+          PG_VER=$(pg_lsclusters -h | head -1 | awk '{print $1}')
+          pg_ctlcluster "$PG_VER" main start
+          su - postgres -c "psql -c \"ALTER USER postgres PASSWORD 'postgres';\""
+          su - postgres -c "createdb schoolconnect_test"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d schoolconnect_test -c "SELECT 1;"
 
       - run: pnpm install --frozen-lockfile
 
