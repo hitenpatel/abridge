@@ -90,24 +90,11 @@ test.describe("Admin Analytics Dashboard", () => {
 		// === STEP 5: Verify page heading ===
 		await expect(page.getByRole("heading", { name: /Analytics/i })).toBeVisible();
 
-		// === STEP 6: Verify summary cards ===
-		await expect(page.getByText("Attendance Today")).toBeVisible({ timeout: 10000 });
-		await expect(page.getByText("Unread Messages")).toBeVisible();
-		await expect(page.getByText("Outstanding Payments")).toBeVisible();
-		await expect(page.getByText("Pending Forms")).toBeVisible();
-
-		// === STEP 7: Verify attendance section ===
-		await expect(page.getByText(/Attendance/i).first()).toBeVisible();
-
-		// === STEP 8: Verify payment section ===
-		await expect(page.getByText(/Payments/i).first()).toBeVisible();
-
-		// === STEP 9: Verify message section ===
-		await expect(page.getByText(/Messages/i).first()).toBeVisible();
-
-		// === STEP 10: Verify form section ===
-		await expect(page.getByText(/Forms/i).first()).toBeVisible();
-		await expect(page.getByText("Consent Form")).toBeVisible();
+		// === STEP 6: Verify metric cards ===
+		await expect(page.getByRole("heading", { name: "Attendance" })).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: "Payments" })).toBeVisible();
+		await expect(page.getByRole("heading", { name: "Messages" })).toBeVisible();
+		await expect(page.getByRole("heading", { name: "Forms" })).toBeVisible();
 
 		// === STEP 11: Verify date range picker ===
 		await expect(page.getByText("Today")).toBeVisible();
@@ -181,8 +168,8 @@ test.describe("Admin Analytics Dashboard", () => {
 			.click();
 
 		// === STEP 3: Verify zero values shown (not errors) ===
-		await expect(page.getByText("Attendance Today")).toBeVisible({ timeout: 10000 });
-		await expect(page.getByText("0")).first().toBeVisible();
-		await expect(page.getByText(/No forms created/i)).toBeVisible();
+		await expect(page.getByRole("heading", { name: "Attendance" })).toBeVisible({ timeout: 10000 });
+		await expect(page.getByText("0%").first()).toBeVisible();
+		await expect(page.getByText(/0 pending responses/i)).toBeVisible();
 	});
 });

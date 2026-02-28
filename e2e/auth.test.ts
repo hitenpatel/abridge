@@ -5,10 +5,10 @@ test.describe("Authentication Flows", () => {
 		test("should display login form", async ({ page }) => {
 			await page.goto("http://localhost:3000/login");
 
-			await expect(page.getByRole("heading", { name: "Login" })).toBeVisible();
+			await expect(page.getByRole("heading", { name: "Welcome back" })).toBeVisible();
 			await expect(page.getByLabel("Email")).toBeVisible();
 			await expect(page.getByLabel("Password")).toBeVisible();
-			await expect(page.getByRole("button", { name: /Login/i })).toBeVisible();
+			await expect(page.getByRole("button", { name: /Sign In/i })).toBeVisible();
 		});
 
 		test("should have link to register page", async ({ page }) => {
@@ -26,13 +26,10 @@ test.describe("Authentication Flows", () => {
 			await page.getByLabel("Email").fill("nonexistent@example.com");
 			await page.getByLabel("Password").fill("wrongpassword");
 
-			// Listen for alert dialog
-			page.on("dialog", async (dialog) => {
-				expect(dialog.message()).toBeTruthy();
-				await dialog.accept();
-			});
+			await page.getByRole("button", { name: /Sign In/i }).click();
 
-			await page.getByRole("button", { name: /Login/i }).click();
+			// Should show inline error text or toast
+			await expect(page.getByTestId("login-error")).toBeVisible({ timeout: 5000 });
 		});
 	});
 
@@ -41,7 +38,7 @@ test.describe("Authentication Flows", () => {
 			await page.goto("http://localhost:3000/register");
 
 			await expect(page.getByRole("heading", { name: /Create Account/i })).toBeVisible();
-			await expect(page.getByText("Join SchoolConnect today")).toBeVisible();
+			await expect(page.getByText("Join Abridge today")).toBeVisible();
 			await expect(page.getByLabel("Full Name")).toBeVisible();
 			await expect(page.getByLabel("Email Address")).toBeVisible();
 			await expect(page.getByLabel("Password")).toBeVisible();
@@ -88,8 +85,9 @@ test.describe("Authentication Flows", () => {
 			// Verify user is logged in
 			await expect(page.getByText("Logout Test User").first()).toBeVisible();
 
-			// Click Sign Out
-			await page.getByRole("button", { name: /Sign Out/i }).click();
+			// Open user dropdown menu, then click Sign Out
+			await page.getByRole("button", { name: /Logout Test User/i }).click();
+			await page.getByRole("menuitem", { name: /Sign Out/i }).click();
 
 			// Should redirect to login
 			await expect(page).toHaveURL(/\/login/, { timeout: 10000 });

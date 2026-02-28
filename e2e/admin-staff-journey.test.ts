@@ -61,12 +61,16 @@ test.describe("Admin & Staff Management Journey", () => {
 		await page.getByRole("button", { name: "Invite", exact: true }).click();
 
 		const teacherEmail = `teacher-${uniqueURN}@e2e-test.com`;
-		await page.getByLabel("Email Address").fill(teacherEmail);
-		await page.getByLabel("Role").selectOption("TEACHER");
-		await page.getByRole("button", { name: /Send Invitation/i }).click();
+		await page.getByTestId("invite-email-input").fill(teacherEmail);
+		await page.getByTestId("invite-role-select").click();
+		await page.getByRole("option", { name: /Teacher/i }).click();
+		await page.getByTestId("invite-send-button").click();
 
 		// Verify invitation appears
-		await expect(page.getByText(teacherEmail)).toBeVisible({ timeout: 10000 });
+		await expect(async () => {
+			await page.waitForTimeout(500);
+			await expect(page.getByText(teacherEmail)).toBeVisible({ timeout: 5000 });
+		}).toPass({ timeout: 15000 });
 		await expect(page.getByText("Pending Invitations")).toBeVisible();
 	});
 
@@ -103,10 +107,14 @@ test.describe("Admin & Staff Management Journey", () => {
 		// Invite teacher
 		await page.getByRole("button", { name: "Invite", exact: true }).click();
 		const teacherEmail = `teacher-invite-${uniqueURN}@e2e-test.com`;
-		await page.getByLabel("Email Address").fill(teacherEmail);
-		await page.getByLabel("Role").selectOption("TEACHER");
-		await page.getByRole("button", { name: /Send Invitation/i }).click();
-		await expect(page.getByText(teacherEmail)).toBeVisible({ timeout: 10000 });
+		await page.getByTestId("invite-email-input").fill(teacherEmail);
+		await page.getByTestId("invite-role-select").click();
+		await page.getByRole("option", { name: /Teacher/i }).click();
+		await page.getByTestId("invite-send-button").click();
+		await expect(async () => {
+			await page.waitForTimeout(500);
+			await expect(page.getByText(teacherEmail)).toBeVisible({ timeout: 5000 });
+		}).toPass({ timeout: 15000 });
 
 		// Get the invitation link - click "Copy Link"
 		// Since we can't easily copy from clipboard in tests, we'll navigate directly
@@ -119,9 +127,10 @@ test.describe("Admin & Staff Management Journey", () => {
 		// For testing, we'll navigate to register page directly
 		// (In real usage, the teacher would click the copied link)
 
-		// Sign out first - go to main dashboard to find sign out
+		// Sign out first - go to main dashboard to find sign out (in dropdown menu)
 		await page.goto("http://localhost:3000/dashboard");
-		await page.getByRole("button", { name: /Sign Out/i }).click();
+		await page.getByTestId("user-menu-trigger").click();
+		await page.getByTestId("logout-button").click();
 		await expect(page).toHaveURL(/\/login/, { timeout: 10000 });
 
 		// Teacher registers (without token, they register as a regular parent)
@@ -167,7 +176,7 @@ test.describe("Admin & Staff Management Journey", () => {
 		}).toPass({ timeout: 30000 });
 
 		// Admin should see staff navigation
-		await expect(page.getByRole("link", { name: "Dashboard", exact: true }).first()).toBeVisible();
+		await expect(page.getByRole("link", { name: "Home", exact: true }).first()).toBeVisible();
 		await expect(page.getByRole("link", { name: "Attendance", exact: true }).first()).toBeVisible();
 		await expect(page.getByRole("link", { name: "Payments", exact: true }).first()).toBeVisible();
 		await expect(page.getByRole("link", { name: "Messages", exact: true }).first()).toBeVisible();

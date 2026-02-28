@@ -41,7 +41,7 @@ test.describe("Role-based Route Access", () => {
 
 		// Admin nav routes to test (staff nav + admin nav)
 		const adminRoutes = [
-			{ name: "Dashboard", href: "/dashboard" },
+			{ name: "Home", href: "/dashboard" },
 			{ name: "Attendance", href: "/dashboard/attendance" },
 			{ name: "Payments", href: "/dashboard/payments" },
 			{ name: "Messages", href: "/dashboard/messages" },
@@ -70,7 +70,7 @@ test.describe("Role-based Route Access", () => {
 
 		// Parent nav routes
 		const parentRoutes = [
-			{ name: "Dashboard", href: "/dashboard" },
+			{ name: "Home", href: "/dashboard" },
 			{ name: "Attendance", href: "/dashboard/attendance" },
 			{ name: "Calendar", href: "/dashboard/calendar" },
 			{ name: "Messages", href: "/dashboard/messages" },

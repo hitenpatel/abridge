@@ -18,14 +18,11 @@ test.describe("Payments Page", () => {
 		await page.getByRole("link", { name: "Payments" }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/payments/);
 
-		// Parent view
+		// Parent view shows Outstanding Payments heading
 		await expect(
 			page.getByRole("heading", { name: "Outstanding Payments", exact: true }),
 		).toBeVisible();
 		await expect(page.getByRole("link", { name: /View Payment History/i })).toBeVisible();
-
-		// Staff view section (visible to all but functional for staff)
-		await expect(page.getByRole("heading", { name: "Manage School Payments" })).toBeVisible();
 	});
 
 	test("should have link to payment history", async ({ page }) => {
@@ -39,11 +36,11 @@ test.describe("Payments Page", () => {
 		await expect(page).toHaveURL(/\/dashboard\/payments\/history/);
 	});
 
-	test("should have link to create new payment item", async ({ page }) => {
+	test("parent should not see staff-only create payment button", async ({ page }) => {
 		await page.getByRole("link", { name: "Payments" }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/payments/);
 
-		const newItemLink = page.getByRole("link", { name: /Create New Item/i });
-		await expect(newItemLink).toBeVisible();
+		// "Create Payment Item" is staff-only, parent should not see it
+		await expect(page.getByRole("link", { name: /Create Payment Item/i })).not.toBeVisible();
 	});
 });

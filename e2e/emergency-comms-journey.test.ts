@@ -195,8 +195,9 @@ test.describe("Emergency Communications", () => {
 
 		// === STEP 3: Verify history ===
 		await expect(page.getByText("Alert History")).toBeVisible({ timeout: 10000 });
-		await expect(page.getByText("Medical Emergency")).toBeVisible();
-		await expect(page.getByText(/all clear/i)).toBeVisible();
+		// "Medical Emergency" appears both as a button (type selector) and in history - target the paragraph
+		await expect(page.getByRole("paragraph").filter({ hasText: "Medical Emergency" })).toBeVisible();
+		await expect(page.getByText(/all clear/i).first()).toBeVisible();
 	});
 
 	test("emergency page should show disabled state when feature is off", async ({ page }) => {
@@ -222,8 +223,8 @@ test.describe("Emergency Communications", () => {
 		await page.goto("http://localhost:3000/dashboard/emergency");
 
 		// === STEP 3: Should show disabled ===
-		await expect(page.getByText(/disabled|not available|not enabled/i)).toBeVisible({
-			timeout: 10000,
-		});
+		await expect(
+			page.getByRole("heading", { name: /Emergency Communications is not enabled/i }),
+		).toBeVisible({ timeout: 10000 });
 	});
 });

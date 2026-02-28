@@ -50,15 +50,20 @@ test.describe("Staff Operations", () => {
 		await expect(page.getByRole("heading", { name: /Staff Management/i })).toBeVisible();
 
 		await page.getByRole("button", { name: "Invite", exact: true }).click();
-		await page.getByLabel("Email Address").fill(staffEmail);
-		await page.getByLabel("Role").selectOption("TEACHER");
-		await page.getByRole("button", { name: /Send Invitation/i }).click();
+		await page.getByTestId("invite-email-input").fill(staffEmail);
+		await page.getByTestId("invite-role-select").click();
+		await page.getByRole("option", { name: /Teacher/i }).click();
+		await page.getByTestId("invite-send-button").click();
 
-		await expect(page.getByText(staffEmail)).toBeVisible({ timeout: 10000 });
+		await expect(async () => {
+			await page.waitForTimeout(500);
+			await expect(page.getByText(staffEmail)).toBeVisible({ timeout: 5000 });
+		}).toPass({ timeout: 15000 });
 
 		// Step 3: Sign out and register as staff
 		await page.goto("http://localhost:3000/dashboard");
-		await page.getByRole("button", { name: /Sign Out/i }).click();
+		await page.getByTestId("user-menu-trigger").click();
+		await page.getByTestId("logout-button").click();
 		await expect(page).toHaveURL(/\/login/, { timeout: 10000 });
 
 		await page.goto("http://localhost:3000/register");
@@ -75,7 +80,7 @@ test.describe("Staff Operations", () => {
 		}).toPass({ timeout: 30000 });
 
 		// Verify staff navigation items
-		await expect(page.getByRole("link", { name: "Dashboard", exact: true }).first()).toBeVisible();
+		await expect(page.getByRole("link", { name: "Home", exact: true }).first()).toBeVisible();
 		await expect(page.getByRole("link", { name: "Attendance", exact: true }).first()).toBeVisible();
 		await expect(page.getByRole("link", { name: "Payments", exact: true }).first()).toBeVisible();
 		await expect(page.getByRole("link", { name: "Messages", exact: true }).first()).toBeVisible();
@@ -123,7 +128,7 @@ test.describe("Staff Operations", () => {
 		// Note: Staff don't have Calendar in their nav (parent-only feature)
 		// But they can still access it via URL or search
 		// For now, just verify they can access the dashboard
-		await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: "Recent Posts" })).toBeVisible({ timeout: 10000 });
 	});
 
 	test("staff member should access messages page", async ({ page }) => {
@@ -161,14 +166,19 @@ test.describe("Staff Operations", () => {
 			.first()
 			.click();
 		await page.getByRole("button", { name: "Invite", exact: true }).click();
-		await page.getByLabel("Email Address").fill(staffEmail);
-		await page.getByLabel("Role").selectOption("OFFICE");
-		await page.getByRole("button", { name: /Send Invitation/i }).click();
-		await expect(page.getByText(staffEmail)).toBeVisible({ timeout: 10000 });
+		await page.getByTestId("invite-email-input").fill(staffEmail);
+		await page.getByTestId("invite-role-select").click();
+		await page.getByRole("option", { name: /Office/i }).click();
+		await page.getByTestId("invite-send-button").click();
+		await expect(async () => {
+			await page.waitForTimeout(500);
+			await expect(page.getByText(staffEmail)).toBeVisible({ timeout: 5000 });
+		}).toPass({ timeout: 15000 });
 
 		// Sign out and register as staff
 		await page.goto("http://localhost:3000/dashboard");
-		await page.getByRole("button", { name: /Sign Out/i }).click();
+		await page.getByTestId("user-menu-trigger").click();
+		await page.getByTestId("logout-button").click();
 		await expect(page).toHaveURL(/\/login/, { timeout: 10000 });
 
 		await page.goto("http://localhost:3000/register");
@@ -188,11 +198,9 @@ test.describe("Staff Operations", () => {
 		await page.getByRole("link", { name: "Messages", exact: true }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/messages/);
 
-		// Verify messages page loads
-		await expect(page.getByRole("heading", { name: /Sent Messages/i })).toBeVisible();
-
-		// Verify "Compose New" button exists (staff can send messages)
-		await expect(page.getByRole("link", { name: /Compose New/i }).first()).toBeVisible();
+		// Verify messages page loads (staff sees Messages and Direct tabs)
+		await expect(page.getByRole("button", { name: "Messages" })).toBeVisible();
+		await expect(page.getByTestId("direct-tab")).toBeVisible();
 	});
 
 	test("staff member should access payments page", async ({ page }) => {
@@ -228,9 +236,9 @@ test.describe("Staff Operations", () => {
 		await expect(page).toHaveURL(/\/dashboard\/payments/);
 
 		// Verify staff section appears
-		await expect(page.getByRole("heading", { name: /Manage School Payments/i })).toBeVisible();
+		await expect(page.getByRole("heading", { name: /Payment Items/i })).toBeVisible();
 
-		// Verify "Create New Item" button exists (staff can create payment items)
-		await expect(page.getByRole("link", { name: /Create New Item/i })).toBeVisible();
+		// Verify "Create Payment Item" button exists (staff can create payment items)
+		await expect(page.getByRole("link", { name: /Create Payment Item/i })).toBeVisible();
 	});
 });

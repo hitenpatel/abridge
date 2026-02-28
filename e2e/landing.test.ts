@@ -5,15 +5,14 @@ test.describe("Landing Page", () => {
 		await page.goto("http://localhost:3000");
 
 		// Verify branding
-		await expect(page.getByText("SchoolConnect").first()).toBeVisible();
+		await expect(page.getByText("Abridge").first()).toBeVisible();
 
 		// Verify hero heading
-		await expect(page.getByRole("heading", { name: /Simplify School/i })).toBeVisible();
-		await expect(page.getByText("Communication")).toBeVisible();
+		await expect(page.getByRole("heading", { name: /School communications, simplified/i })).toBeVisible();
 
 		// Verify CTA buttons
 		await expect(page.getByRole("link", { name: /Start Free Trial/i })).toBeVisible();
-		await expect(page.getByRole("link", { name: /View Demo/i })).toBeVisible();
+		await expect(page.getByRole("link", { name: /View Features/i })).toBeVisible();
 	});
 
 	test("should display features section", async ({ page }) => {
@@ -52,6 +51,6 @@ test.describe("Landing Page", () => {
 	test("should display footer with copyright", async ({ page }) => {
 		await page.goto("http://localhost:3000");
 
-		await expect(page.getByText(/SchoolConnect. All rights reserved/i)).toBeVisible();
+		await expect(page.getByText("© 2026 Abridge. All rights reserved.")).toBeVisible();
 	});
 });

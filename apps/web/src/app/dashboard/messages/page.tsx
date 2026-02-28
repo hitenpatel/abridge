@@ -105,26 +105,6 @@ export default function MessagesPage() {
 		},
 	});
 
-	if (!features.messagingEnabled) return <FeatureDisabled featureName="Messaging" />;
-
-	const messagesLoading = isStaff ? sentLoading : receivedLoading;
-
-	if (sessionLoading || messagesLoading) {
-		return (
-			<div className="flex h-[calc(100vh-120px)]">
-				<div className="w-80 lg:w-96 border-r p-4 space-y-4">
-					<Skeleton className="h-10 w-full" />
-					<Skeleton className="h-16 w-full" />
-					<Skeleton className="h-16 w-full" />
-					<Skeleton className="h-16 w-full" />
-				</div>
-				<div className="flex-1 p-4">
-					<Skeleton className="h-full w-full" />
-				</div>
-			</div>
-		);
-	}
-
 	// Normalize message list
 	// biome-ignore lint/suspicious/noExplicitAny: merging two different tRPC response shapes
 	const allMessages: any[] = isStaff ? (sentMessages?.data ?? []) : (receivedMessages?.items ?? []);
@@ -145,14 +125,36 @@ export default function MessagesPage() {
 		});
 	}, [selectedMessage, selectedMessage?.subject, selectedMessage?.body, userLang, translate]);
 
+	// Auto-select first message if none selected
+	useEffect(() => {
+		if (activeTab === "messages" && !selectedMessageId && allMessages.length > 0) {
+			setSelectedMessageId(allMessages[0].id);
+		}
+	}, [activeTab, selectedMessageId, allMessages]);
+
+	if (!features.messagingEnabled) return <FeatureDisabled featureName="Messaging" />;
+
+	const messagesLoading = isStaff ? sentLoading : receivedLoading;
+
+	if (sessionLoading || messagesLoading) {
+		return (
+			<div className="flex h-[calc(100vh-120px)]">
+				<div className="w-80 lg:w-96 border-r p-4 space-y-4">
+					<Skeleton className="h-10 w-full" />
+					<Skeleton className="h-16 w-full" />
+					<Skeleton className="h-16 w-full" />
+					<Skeleton className="h-16 w-full" />
+				</div>
+				<div className="flex-1 p-4">
+					<Skeleton className="h-full w-full" />
+				</div>
+			</div>
+		);
+	}
+
 	const filteredMessages = categoryFilter
 		? allMessages.filter((m) => m.category === categoryFilter)
 		: allMessages;
-
-	// Auto-select first message if none selected
-	if (activeTab === "messages" && !selectedMessageId && allMessages.length > 0) {
-		setSelectedMessageId(allMessages[0].id);
-	}
 
 	const handleSendReply = () => {
 		if (!replyInput.trim() || !selectedMessageId) return;

@@ -44,7 +44,7 @@ function ParentCheckIn() {
 		},
 	});
 
-	const childId = selectedChild ?? children?.[0]?.id;
+	const childId = selectedChild ?? children?.[0]?.child?.id;
 
 	const today = new Date();
 	today.setHours(0, 0, 0, 0);
@@ -68,16 +68,16 @@ function ParentCheckIn() {
 		<div className="space-y-6">
 			{children.length > 1 && (
 				<div className="flex gap-2">
-					{children.map((child) => (
+					{children.map((pc) => (
 						<button
-							key={child.id}
+							key={pc.child.id}
 							type="button"
-							onClick={() => setSelectedChild(child.id)}
+							onClick={() => setSelectedChild(pc.child.id)}
 							className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
-								childId === child.id ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+								childId === pc.child.id ? "bg-primary text-primary-foreground" : "hover:bg-muted"
 							}`}
 						>
-							{child.firstName}
+							{pc.child.firstName}
 						</button>
 					))}
 				</div>
@@ -87,7 +87,7 @@ function ParentCheckIn() {
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
 						<SmilePlus className="h-5 w-5" />
-						How is {children.find((c) => c.id === childId)?.firstName} feeling today?
+						How is {children.find((c) => c.child.id === childId)?.child?.firstName} feeling today?
 					</CardTitle>
 				</CardHeader>
 				<CardContent>

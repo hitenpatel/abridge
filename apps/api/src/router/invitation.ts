@@ -46,7 +46,7 @@ export const invitationRouter = router({
 
 			await ctx.prisma.$executeRawUnsafe(
 				`INSERT INTO invitations (id, email, "schoolId", role, token, "expiresAt", "createdAt")
-				 VALUES ($1, $2, $3, $4, $5, $6, NOW())`,
+				 VALUES ($1, $2, $3, $4::"StaffRole", $5, $6, NOW())`,
 				id,
 				input.email,
 				ctx.schoolId,

@@ -170,7 +170,7 @@ test.describe("Parent Meal Booking", () => {
 		await expect(page).toHaveURL(/\/dashboard\/meals/);
 
 		// === STEP 5: Verify empty state ===
-		await expect(page.getByText(/no menu|no meals/i)).toBeVisible({ timeout: 10000 });
+		await expect(page.getByText("No menu published this week.")).toBeVisible({ timeout: 10000 });
 	});
 
 	test("meals page shows disabled state when feature is off", async ({ page }) => {

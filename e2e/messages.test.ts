@@ -18,13 +18,13 @@ test.describe("Messages Page", () => {
 		await page.getByRole("link", { name: "Messages" }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/messages/);
 
-		await expect(page.getByRole("heading", { name: /Sent Messages/i })).toBeVisible();
+		await expect(page.getByRole("button", { name: "Messages" })).toBeVisible();
 	});
 
 	test("should have compose new button", async ({ page }) => {
 		await page.getByRole("link", { name: "Messages" }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/messages/);
 
-		await expect(page.getByRole("link", { name: /Compose New/i })).toBeVisible();
+		await expect(page.getByTestId("new-conversation-button")).toBeVisible();
 	});
 });

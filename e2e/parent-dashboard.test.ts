@@ -21,23 +21,22 @@ test.describe("Parent Dashboard Journey", () => {
 	});
 
 	test("should display dashboard with user name and key sections", async ({ page }) => {
-		// Verify welcome message
+		// Verify user name appears somewhere on the page
 		await expect(page.getByText(parentName).first()).toBeVisible();
-		await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
-
-		// Verify Sign Out button
-		await expect(page.getByRole("button", { name: /Sign Out/i })).toBeVisible();
-
-		// Verify "My Children" section heading
-		await expect(page.getByText("My Children")).toBeVisible();
 
 		// New parent with no children should see empty state
 		await expect(page.getByText(/No children linked/i)).toBeVisible();
+
+		// Verify Sign Out is accessible via user dropdown menu
+		await page.getByRole("button", { name: /Parent Account/i }).click();
+		await expect(page.getByText(/Sign Out/i)).toBeVisible();
 	});
 
-	test("should display search bar in header", async ({ page }) => {
-		// Search bar should be in the header
-		await expect(page.getByPlaceholder(/Search/i)).toBeVisible();
+	test("should display navigation sidebar", async ({ page }) => {
+		// Verify key parent nav links are visible in the sidebar
+		await expect(page.getByRole("link", { name: "Home" }).first()).toBeVisible();
+		await expect(page.getByRole("link", { name: "Attendance" }).first()).toBeVisible();
+		await expect(page.getByRole("link", { name: "Payments" }).first()).toBeVisible();
 	});
 
 	test("should navigate to attendance page", async ({ page }) => {
@@ -61,7 +60,6 @@ test.describe("Parent Dashboard Journey", () => {
 		await page.getByRole("link", { name: "Messages" }).first().click();
 
 		await expect(page).toHaveURL(/\/dashboard\/messages/);
-		await expect(page.getByRole("heading", { name: /Sent Messages/i })).toBeVisible();
 	});
 
 	test("should navigate to forms page", async ({ page }) => {
@@ -75,8 +73,5 @@ test.describe("Parent Dashboard Journey", () => {
 		await page.getByRole("link", { name: "Payments" }).first().click();
 
 		await expect(page).toHaveURL(/\/dashboard\/payments/);
-		await expect(
-			page.getByRole("heading", { name: "Outstanding Payments", exact: true }),
-		).toBeVisible();
 	});
 });

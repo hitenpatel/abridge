@@ -179,15 +179,12 @@ test.describe("Parent Wellbeing Check-In", () => {
 		await expect(page.getByText(/Amelia/i)).toBeVisible({ timeout: 10000 });
 
 		// Switch to second child
-		if (
-			await page
-				.getByRole("button", { name: /James/i })
-				.isVisible({ timeout: 3000 })
-				.catch(() => false)
-		) {
-			await page.getByRole("button", { name: /James/i }).click();
-			await expect(page.getByText(/How is James feeling/i)).toBeVisible();
-		}
+		const jamesButton = page.getByRole("button", { name: /James/i });
+		await expect(jamesButton).toBeVisible({ timeout: 5000 });
+		await expect(async () => {
+			await jamesButton.click();
+			await expect(page.getByText(/How is James feeling/i)).toBeVisible({ timeout: 3000 });
+		}).toPass({ timeout: 15000 });
 	});
 
 	test("wellbeing page should show disabled state when feature is off", async ({ page }) => {
@@ -223,8 +220,8 @@ test.describe("Parent Wellbeing Check-In", () => {
 		await page.goto("http://localhost:3000/dashboard/wellbeing");
 
 		// === STEP 3: Should show disabled message ===
-		await expect(page.getByText(/disabled|not available|not enabled/i)).toBeVisible({
-			timeout: 10000,
-		});
+		await expect(
+			page.getByRole("heading", { name: /Wellbeing Check-ins is not enabled/i }),
+		).toBeVisible({ timeout: 10000 });
 	});
 });

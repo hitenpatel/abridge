@@ -26,16 +26,16 @@ test.describe("Settings Page - Parent", () => {
 		await expect(page).toHaveURL(/\/dashboard\/settings/);
 
 		await expect(page.getByRole("heading", { name: /Settings/i })).toBeVisible();
-		await expect(page.getByText("Profile")).toBeVisible();
-		await expect(page.getByText("Notifications")).toBeVisible();
+		await expect(page.getByRole("heading", { name: "Profile" })).toBeVisible();
+		await expect(page.getByRole("heading", { name: "Notifications" })).toBeVisible();
 	});
 
 	test("should not show School Settings card for parent", async ({ page }) => {
 		await page.getByRole("link", { name: "Settings" }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/settings/);
 
-		await expect(page.getByText("Profile")).toBeVisible();
-		await expect(page.getByText("School Settings")).not.toBeVisible();
+		await expect(page.getByRole("heading", { name: "Profile" })).toBeVisible();
+		await expect(page.getByRole("heading", { name: "School Settings" })).not.toBeVisible();
 	});
 
 	test("should update profile name", async ({ page }) => {
@@ -96,10 +96,10 @@ test.describe("Settings Page - Admin", () => {
 		await page.getByRole("button", { name: /Register/i }).click();
 		await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 
-		// Wait for admin role to sync
+		// Wait for admin role to sync (Staff Management is admin-only)
 		await expect(async () => {
 			await page.reload();
-			await expect(page.getByRole("link", { name: /Settings/i }).first()).toBeVisible({
+			await expect(page.getByRole("link", { name: /Staff Management/i }).first()).toBeVisible({
 				timeout: 3000,
 			});
 		}).toPass({ timeout: 30000 });
@@ -108,10 +108,10 @@ test.describe("Settings Page - Admin", () => {
 		await page.getByRole("link", { name: "Settings" }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/settings/);
 
-		// All three cards should be visible
-		await expect(page.getByText("Profile")).toBeVisible();
-		await expect(page.getByText("Notifications")).toBeVisible();
-		await expect(page.getByText("School Settings")).toBeVisible({ timeout: 10000 });
+		// All three cards should be visible (Profile/Notifications load async)
+		await expect(page.getByRole("heading", { name: "Profile" })).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: "Notifications" })).toBeVisible();
+		await expect(page.getByRole("heading", { name: "School Settings" })).toBeVisible({ timeout: 10000 });
 	});
 
 	test("admin should update school settings", async ({ page }) => {
@@ -145,7 +145,7 @@ test.describe("Settings Page - Admin", () => {
 		await expect(page).toHaveURL(/\/dashboard\/settings/);
 
 		// Wait for School Settings card to appear
-		await expect(page.getByText("School Settings")).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: "School Settings" })).toBeVisible({ timeout: 10000 });
 
 		// Update school name
 		const schoolNameInput = page.locator("#school-name");

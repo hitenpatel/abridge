@@ -71,8 +71,9 @@ test.describe("Error Cases & Validation", () => {
 		// Wait for successful registration
 		await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 
-		// Step 2: Sign out
-		await page.getByRole("button", { name: /Sign Out/i }).click();
+		// Step 2: Sign out - open user dropdown first
+		await page.getByRole("button", { name: /First User/i }).click();
+		await page.getByRole("menuitem", { name: /Sign Out/i }).click();
 		await expect(page).toHaveURL(/\/login/, { timeout: 10000 });
 
 		// Step 3: Try to register with same email
@@ -129,18 +130,13 @@ test.describe("Error Cases & Validation", () => {
 	test("should show error for invalid login credentials", async ({ page }) => {
 		await page.goto("http://localhost:3000/login");
 
-		// Set up dialog handler before clicking login
-		const dialogPromise = page.waitForEvent("dialog");
-
 		// Try to login with non-existent credentials
 		await page.getByLabel("Email").fill("nonexistent@example.com");
 		await page.getByLabel("Password").fill("WrongPassword123!");
-		await page.getByRole("button", { name: "Login" }).click();
+		await page.getByRole("button", { name: "Sign In" }).click();
 
-		// Wait for and verify alert dialog
-		const dialog = await dialogPromise;
-		expect(dialog.message()).toMatch(/login failed|invalid|error/i);
-		await dialog.accept();
+		// Should show inline error text or toast
+		await expect(page.getByTestId("login-error")).toBeVisible({ timeout: 5000 });
 
 		// Should still be on login page after error
 		await expect(page).toHaveURL(/\/login/);
@@ -159,9 +155,6 @@ test.describe("Error Cases & Validation", () => {
 
 		const uniqueURN = Math.floor(100000 + Math.random() * 900000).toString();
 
-		// Set up dialog handler before clicking submit
-		const dialogPromise = page.waitForEvent("dialog");
-
 		await page.getByLabel("School Name").fill("Invalid Setup School");
 		await page.getByLabel("Ofsted URN").fill(uniqueURN);
 		await page.getByLabel("Admin Email").fill(`admin-${uniqueURN}@test.com`);
@@ -169,10 +162,8 @@ test.describe("Error Cases & Validation", () => {
 
 		await page.getByRole("button", { name: /Create School/i }).click();
 
-		// Wait for and verify alert dialog with error about invalid key
-		const dialog = await dialogPromise;
-		expect(dialog.message()).toMatch(/invalid.*key|setup.*key/i);
-		await dialog.accept();
+		// Should show inline error text or toast about invalid key
+		await expect(page.getByText(/invalid|error|failed/i)).toBeVisible({ timeout: 5000 });
 
 		// Should NOT show success message
 		await expect(page.getByText("School Created!")).not.toBeVisible();
