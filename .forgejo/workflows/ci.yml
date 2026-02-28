@@ -1,0 +1,143 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: docker
+    container: node:24-bookworm
+    steps:
+      - uses: https://code.forgejo.org/actions/checkout@v4
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.0 --activate
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+
+  test:
+    runs-on: docker
+    container: node:24-bookworm
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: schoolconnect_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: https://code.forgejo.org/actions/checkout@v4
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.0 --activate
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm test
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@postgres:5432/schoolconnect_test
+
+  build:
+    runs-on: docker
+    container: node:24-bookworm
+    steps:
+      - uses: https://code.forgejo.org/actions/checkout@v4
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.0 --activate
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+  e2e-web:
+    runs-on: docker
+    container:
+      image: node:24-bookworm
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@postgres:5432/schoolconnect_test
+        BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
+        BETTER_AUTH_URL: http://localhost:4000
+        NEXT_PUBLIC_API_URL: http://localhost:4000
+        NODE_ENV: test
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: schoolconnect_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: https://code.forgejo.org/actions/checkout@v4
+
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.0 --activate
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+        working-directory: packages/e2e
+
+      - name: Push database schema
+        run: pnpm --filter @schoolconnect/db db:push
+
+      - name: Create API .env
+        run: |
+          cat > apps/api/.env << 'EOF'
+          DATABASE_URL=postgresql://postgres:postgres@postgres:5432/schoolconnect_test
+          BETTER_AUTH_SECRET=test-secret-for-ci-e2e-testing-only
+          BETTER_AUTH_URL=http://localhost:4000
+          NODE_ENV=test
+          EOF
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Generate Playwright tests
+        run: pnpm --filter @schoolconnect/e2e generate:playwright --tags=smoke
+
+      - name: Start servers and run tests
+        run: |
+          pnpm --filter @schoolconnect/api dev &
+          pnpm --filter @schoolconnect/web dev &
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:4000/trpc/health.check > /dev/null 2>&1; then
+              echo "API is ready"
+              break
+            fi
+            echo "Waiting for API... ($i/60)"
+            sleep 2
+            if [ "$i" -eq 60 ]; then
+              echo "ERROR: API server failed to start"
+              exit 1
+            fi
+          done
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:3000 > /dev/null 2>&1; then
+              echo "Web server is ready"
+              break
+            fi
+            echo "Waiting for Web... ($i/60)"
+            sleep 2
+            if [ "$i" -eq 60 ]; then
+              echo "ERROR: Web server failed to start"
+              exit 1
+            fi
+          done
+          pnpm --filter @schoolconnect/e2e test:web
