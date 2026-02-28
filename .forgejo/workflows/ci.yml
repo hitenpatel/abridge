@@ -28,9 +28,11 @@ jobs:
       - name: Install and start PostgreSQL
         run: |
           apt-get update && apt-get install -y postgresql postgresql-client
-          pg_ctlcluster 15 main start
+          PG_VER=$(pg_lsclusters -h | head -1 | awk '{print $1}')
+          pg_ctlcluster "$PG_VER" main start
           su - postgres -c "psql -c \"ALTER USER postgres PASSWORD 'postgres';\""
           su - postgres -c "createdb schoolconnect_test"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d schoolconnect_test -c "SELECT 1;"
 
       - name: Setup pnpm
         run: |
@@ -57,22 +59,25 @@ jobs:
 
   e2e-web:
     runs-on: docker
-    container: node:24-bookworm
-    env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
-      BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
-      BETTER_AUTH_URL: http://localhost:4000
-      NEXT_PUBLIC_API_URL: http://localhost:4000
-      NODE_ENV: test
+    container:
+      image: node:24-bookworm
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
+        BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
+        BETTER_AUTH_URL: http://localhost:4000
+        NEXT_PUBLIC_API_URL: http://localhost:4000
+        NODE_ENV: test
     steps:
       - uses: https://code.forgejo.org/actions/checkout@v4
 
       - name: Install and start PostgreSQL
         run: |
           apt-get update && apt-get install -y postgresql postgresql-client curl
-          pg_ctlcluster 15 main start
+          PG_VER=$(pg_lsclusters -h | head -1 | awk '{print $1}')
+          pg_ctlcluster "$PG_VER" main start
           su - postgres -c "psql -c \"ALTER USER postgres PASSWORD 'postgres';\""
           su - postgres -c "createdb schoolconnect_test"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d schoolconnect_test -c "SELECT 1;"
 
       - name: Setup pnpm
         run: |
@@ -90,12 +95,12 @@ jobs:
 
       - name: Create API .env
         run: |
-          cat > apps/api/.env << 'EOF'
-          DATABASE_URL=postgresql://postgres:postgres@localhost:5432/schoolconnect_test
-          BETTER_AUTH_SECRET=test-secret-for-ci-e2e-testing-only
-          BETTER_AUTH_URL=http://localhost:4000
-          NODE_ENV=test
-          EOF
+          printf '%s\n' \
+            'DATABASE_URL=postgresql://postgres:postgres@localhost:5432/schoolconnect_test' \
+            'BETTER_AUTH_SECRET=test-secret-for-ci-e2e-testing-only' \
+            'BETTER_AUTH_URL=http://localhost:4000' \
+            'NODE_ENV=test' \
+            > apps/api/.env
 
       - name: Build packages
         run: pnpm build
