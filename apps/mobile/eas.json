@@ -1,0 +1,22 @@
+{
+	"build": {
+		"development": {
+			"developmentClient": true,
+			"distribution": "internal"
+		},
+		"detox-test": {
+			"android": {
+				"gradleCommand": ":app:assembleRelease :app:assembleAndroidTest -DtestBuildType=release",
+				"withoutCredentials": true
+			},
+			"env": {
+				"EXPO_USE_UPDATES": "0"
+			},
+			"distribution": "internal",
+			"channel": "detox-test"
+		},
+		"production": {
+			"channel": "production"
+		}
+	}
+}
