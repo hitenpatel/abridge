@@ -19,8 +19,8 @@ One-time manual setup steps required before the CI pipeline can run mobile E2E t
 1. Go to Google Cloud Console → IAM & Admin → Service Accounts
 2. Create a new service account named `firebase-test-lab-ci`
 3. Grant these roles:
-   - `Firebase Test Lab Admin`
-   - `Cloud Test Service Agent`
+   - `Firebase Test Lab Admin` (`roles/cloudtesting.admin`)
+   - `Cloud Tool Results Editor` (`roles/cloudtoolresults.editor`)
 4. Go to the Keys tab → Add Key → Create new key → JSON
 5. Download the JSON key file
 
