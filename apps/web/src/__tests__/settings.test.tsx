@@ -50,6 +50,12 @@ vi.mock("@/lib/trpc", () => ({
 			updateFeatureToggles: {
 				useMutation: vi.fn(),
 			},
+			getBranding: {
+				useQuery: vi.fn(),
+			},
+			updateBranding: {
+				useMutation: vi.fn(),
+			},
 		},
 	},
 }));
@@ -93,6 +99,14 @@ describe("SettingsPage", () => {
 		mockSchoolMutation.mockReturnValue({ mutate: vi.fn(), isPending: false });
 		mockFeatureTogglesMutation.mockReturnValue({ mutate: vi.fn(), isPending: false });
 		mockFeatureTogglesQuery.mockReturnValue({ data: undefined, isLoading: false });
+		(trpcLib.trpc.settings.getBranding.useQuery as any) = () => ({
+			data: undefined,
+			isLoading: false,
+		});
+		(trpcLib.trpc.settings.updateBranding.useMutation as any) = () => ({
+			mutate: vi.fn(),
+			isPending: false,
+		});
 	});
 
 	it("shows loading skeleton while session loads", () => {

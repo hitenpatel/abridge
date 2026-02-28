@@ -1,5 +1,5 @@
 import * as trpcLib from "@/lib/trpc";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import PaymentsDashboardPage from "../app/dashboard/payments/page";
 
@@ -33,12 +33,16 @@ vi.mock("@/lib/trpc", () => ({
 			listPaymentItems: {
 				useQuery: vi.fn(),
 			},
+			listOutstandingPayments: {
+				useQuery: vi.fn(),
+			},
 		},
 	},
 }));
 
 describe("PaymentsDashboardPage", () => {
 	const mockSessionQuery = vi.fn();
+	const mockOutstandingQuery = vi.fn();
 
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -47,136 +51,100 @@ describe("PaymentsDashboardPage", () => {
 			data: undefined,
 			isLoading: false,
 		});
+		(trpcLib.trpc.payments.listOutstandingPayments.useQuery as any) = mockOutstandingQuery;
 	});
 
-	it("renders payment list with upcoming payments", () => {
+	it("renders parent payments view with outstanding payments heading", () => {
 		mockSessionQuery.mockReturnValue({
-			data: { name: "John Smith" },
+			data: { staffRole: null, schoolId: null },
+		});
+		mockOutstandingQuery.mockReturnValue({
+			data: [],
+			isLoading: false,
 		});
 
 		render(<PaymentsDashboardPage />);
 
+		expect(screen.getByText("Outstanding Payments")).toBeDefined();
 		expect(screen.getByTestId("payments-list")).toBeDefined();
+	});
+
+	it("shows empty state when no outstanding payments", () => {
+		mockSessionQuery.mockReturnValue({
+			data: { staffRole: null, schoolId: null },
+		});
+		mockOutstandingQuery.mockReturnValue({
+			data: [],
+			isLoading: false,
+		});
+
+		render(<PaymentsDashboardPage />);
+
+		expect(screen.getByText("No outstanding payments. You're all paid up!")).toBeDefined();
+	});
+
+	it("renders outstanding payment items", () => {
+		mockSessionQuery.mockReturnValue({
+			data: { staffRole: null, schoolId: null },
+		});
+		mockOutstandingQuery.mockReturnValue({
+			data: [
+				{
+					id: "1",
+					childId: "c1",
+					title: "Science Museum Trip",
+					childName: "Emma",
+					description: "Year 5 outing",
+					amount: 2500,
+					category: "TRIPS",
+				},
+			],
+			isLoading: false,
+		});
+
+		render(<PaymentsDashboardPage />);
+
 		expect(screen.getByText("Science Museum Trip")).toBeDefined();
-		expect(screen.getByText("November Lunch Plan")).toBeDefined();
-	});
-
-	it("displays user name in expenses header", () => {
-		mockSessionQuery.mockReturnValue({
-			data: { name: "John Smith" },
-		});
-
-		render(<PaymentsDashboardPage />);
-
-		expect(screen.getByText("John's School Expenses")).toBeDefined();
-	});
-
-	it("shows payment amounts", () => {
-		mockSessionQuery.mockReturnValue({
-			data: { name: "Jane Doe" },
-		});
-
-		render(<PaymentsDashboardPage />);
-
 		expect(screen.getByText("£25.00")).toBeDefined();
-		expect(screen.getByText("£85.00")).toBeDefined();
+		expect(screen.getByText("TRIPS")).toBeDefined();
 	});
 
-	it("shows due dates for upcoming payments", () => {
+	it("shows view payment history link", () => {
 		mockSessionQuery.mockReturnValue({
-			data: { name: "Parent" },
+			data: { staffRole: null, schoolId: null },
+		});
+		mockOutstandingQuery.mockReturnValue({
+			data: [],
+			isLoading: false,
 		});
 
 		render(<PaymentsDashboardPage />);
 
-		expect(screen.getByText("Due Tomorrow")).toBeDefined();
-		expect(screen.getByText("Due Nov 1")).toBeDefined();
+		expect(screen.getByText("View Payment History")).toBeDefined();
 	});
 
-	it("shows recently paid section", () => {
+	it("renders staff view for staff users", () => {
 		mockSessionQuery.mockReturnValue({
-			data: { name: "Parent" },
+			data: { staffRole: "ADMIN", schoolId: "school-1" },
 		});
 
 		render(<PaymentsDashboardPage />);
 
-		expect(screen.getByText("Recently Paid")).toBeDefined();
-		expect(screen.getByText("Art Supplies Fee")).toBeDefined();
-		expect(screen.getByText("Fall Festival Ticket")).toBeDefined();
+		expect(screen.getByText("Payment Items")).toBeDefined();
+		expect(screen.getByText("Create Payment Item")).toBeDefined();
 	});
 
-	it("shows current balance", () => {
+	it("shows staff empty state when no payment items", () => {
 		mockSessionQuery.mockReturnValue({
-			data: { name: "Parent" },
+			data: { staffRole: "ADMIN", schoolId: "school-1" },
+		});
+		(trpcLib.trpc.payments.listPaymentItems.useQuery as any) = () => ({
+			data: { data: [] },
+			isLoading: false,
 		});
 
 		render(<PaymentsDashboardPage />);
 
-		expect(screen.getByText("Current Balance")).toBeDefined();
-		expect(screen.getByText("£142.50")).toBeDefined();
-	});
-
-	it("renders quick top-up section with preset amounts", () => {
-		mockSessionQuery.mockReturnValue({
-			data: { name: "Parent" },
-		});
-
-		render(<PaymentsDashboardPage />);
-
-		expect(screen.getByText("Quick Top-Up")).toBeDefined();
-		expect(screen.getByText("+£20")).toBeDefined();
-		expect(screen.getByText("+£50")).toBeDefined();
-		expect(screen.getByText("+£100")).toBeDefined();
-	});
-
-	it("renders payment methods section", () => {
-		mockSessionQuery.mockReturnValue({
-			data: { name: "Parent" },
-		});
-
-		render(<PaymentsDashboardPage />);
-
-		expect(screen.getByText("Payment Methods")).toBeDefined();
-		expect(screen.getByText("Visa ending in 4242")).toBeDefined();
-	});
-
-	it("switches between upcoming and history views", () => {
-		mockSessionQuery.mockReturnValue({
-			data: { name: "Parent" },
-		});
-
-		render(<PaymentsDashboardPage />);
-
-		// Click history tab
-		fireEvent.click(screen.getByText("History"));
-
-		expect(screen.getByText("Payment history coming soon")).toBeDefined();
-
-		// Click back to upcoming
-		fireEvent.click(screen.getByText("Upcoming"));
-
-		expect(screen.getByText("Science Museum Trip")).toBeDefined();
-	});
-
-	it("renders pay button for urgent payments", () => {
-		mockSessionQuery.mockReturnValue({
-			data: { name: "Parent" },
-		});
-
-		render(<PaymentsDashboardPage />);
-
-		const payButtons = screen.getAllByTestId("pay-button");
-		expect(payButtons.length).toBeGreaterThanOrEqual(1);
-		expect(payButtons[0].textContent).toBe("Pay");
-	});
-
-	it("falls back to Student when no session name", () => {
-		mockSessionQuery.mockReturnValue({
-			data: null,
-		});
-
-		render(<PaymentsDashboardPage />);
-
-		expect(screen.getByText("Student's School Expenses")).toBeDefined();
+		expect(screen.getByText("No payment items yet. Create one to get started.")).toBeDefined();
 	});
 });
