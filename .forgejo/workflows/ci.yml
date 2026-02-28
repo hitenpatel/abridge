@@ -131,3 +131,71 @@ jobs:
             fi
           done
           npx playwright test --reporter=list
+
+  e2e-mobile-android:
+    runs-on: docker
+    container: node:24-bookworm
+    steps:
+      - uses: https://code.forgejo.org/actions/checkout@v4
+
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.0 --activate
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install gcloud CLI
+        run: |
+          apt-get update -qq && apt-get install -y -qq apt-transport-https ca-certificates gnupg curl > /dev/null
+          curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" > /etc/apt/sources.list.d/google-cloud-sdk.list
+          apt-get update -qq && apt-get install -y -qq google-cloud-cli > /dev/null
+
+      - name: Authenticate gcloud
+        run: |
+          echo '${{ secrets.GCLOUD_SERVICE_KEY }}' > /tmp/gcloud-key.json
+          gcloud auth activate-service-account --key-file=/tmp/gcloud-key.json
+          gcloud config set project ${{ secrets.FIREBASE_PROJECT_ID }}
+          rm /tmp/gcloud-key.json
+
+      - name: Install EAS CLI and build APKs
+        run: |
+          npm install -g eas-cli
+          cd apps/mobile
+          EXPO_TOKEN=${{ secrets.EXPO_TOKEN }} eas build --platform android --profile detox-test --non-interactive --wait
+          EXPO_TOKEN=${{ secrets.EXPO_TOKEN }} eas build:list --platform android --status finished --limit 1 --json > build-info.json
+          BUILD_URL=$(node -e "console.log(JSON.parse(require('fs').readFileSync('build-info.json','utf8'))[0].artifacts.buildUrl)")
+          curl -fsSL -o app-release.apk "$BUILD_URL"
+
+      - name: Download test APK from EAS
+        run: |
+          cd apps/mobile
+          BUILD_URL=$(node -e "console.log(JSON.parse(require('fs').readFileSync('build-info.json','utf8'))[0].artifacts.applicationArchiveUrl || '')")
+          if [ -n "$BUILD_URL" ]; then
+            curl -fsSL -o app-release-androidTest.apk "$BUILD_URL"
+          fi
+
+      - name: Run Detox instrumentation tests on Firebase Test Lab
+        run: |
+          cd apps/mobile
+          gcloud firebase test android run \
+            --type instrumentation \
+            --app app-release.apk \
+            --test app-release-androidTest.apk \
+            --device model=Pixel2,version=33,locale=en,orientation=portrait \
+            --timeout 10m \
+            --use-orchestrator \
+            --num-flaky-test-attempts 1 \
+            --client-details matrixLabel="Detox E2E"
+
+      - name: Run Robo test on Firebase Test Lab
+        if: always()
+        run: |
+          cd apps/mobile
+          gcloud firebase test android run \
+            --type robo \
+            --app app-release.apk \
+            --device model=Pixel2,version=33,locale=en,orientation=portrait \
+            --timeout 300s \
+            --client-details matrixLabel="Robo crawl"
