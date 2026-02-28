@@ -74,11 +74,17 @@ test.describe("Parent Report Card", () => {
 				timeout: 3000,
 			});
 		}).toPass({ timeout: 30000 });
-		await page.getByRole("link", { name: /Reports/i }).first().click();
+		await page
+			.getByRole("link", { name: /Reports/i })
+			.first()
+			.click();
 
 		// === STEP 5: Click on report cycle to view child's report ===
 		await expect(page.getByText(/Autumn Term/i)).toBeVisible({ timeout: 10000 });
-		await page.getByText(/Autumn Term/i).first().click();
+		await page
+			.getByText(/Autumn Term/i)
+			.first()
+			.click();
 
 		// === STEP 6: Verify child name and subject grades visible ===
 		await expect(page.getByText(/Sophie/i)).toBeVisible({ timeout: 10000 });
@@ -139,11 +145,17 @@ test.describe("Parent Report Card", () => {
 				timeout: 3000,
 			});
 		}).toPass({ timeout: 30000 });
-		await page.getByRole("link", { name: /Reports/i }).first().click();
+		await page
+			.getByRole("link", { name: /Reports/i })
+			.first()
+			.click();
 
 		// === STEP 5: Click on report cycle ===
 		await expect(page.getByText(/Autumn Term/i)).toBeVisible({ timeout: 10000 });
-		await page.getByText(/Autumn Term/i).first().click();
+		await page
+			.getByText(/Autumn Term/i)
+			.first()
+			.click();
 
 		// === STEP 6: Verify general comment appears ===
 		await expect(page.getByText("Outstanding term for the child")).toBeVisible({ timeout: 10000 });
@@ -188,7 +200,10 @@ test.describe("Parent Report Card", () => {
 				timeout: 3000,
 			});
 		}).toPass({ timeout: 30000 });
-		await page.getByRole("link", { name: /Reports/i }).first().click();
+		await page
+			.getByRole("link", { name: /Reports/i })
+			.first()
+			.click();
 
 		// === STEP 5: Verify empty state message ===
 		await expect(page.getByText(/no report/i)).toBeVisible({ timeout: 10000 });

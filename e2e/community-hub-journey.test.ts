@@ -61,7 +61,10 @@ test.describe("Community Hub", () => {
 				timeout: 3000,
 			});
 		}).toPass({ timeout: 30000 });
-		await page.getByRole("link", { name: /Community/i }).first().click();
+		await page
+			.getByRole("link", { name: /Community/i })
+			.first()
+			.click();
 		await expect(page).toHaveURL(/\/dashboard\/community/);
 
 		// === STEP 5: Create a new discussion post ===
@@ -121,7 +124,10 @@ test.describe("Community Hub", () => {
 				timeout: 3000,
 			});
 		}).toPass({ timeout: 30000 });
-		await page.getByRole("link", { name: /Community/i }).first().click();
+		await page
+			.getByRole("link", { name: /Community/i })
+			.first()
+			.click();
 		await expect(page).toHaveURL(/\/dashboard\/community/);
 
 		await page.getByText("Playground Improvement Ideas").click();
@@ -183,7 +189,10 @@ test.describe("Community Hub", () => {
 				timeout: 3000,
 			});
 		}).toPass({ timeout: 30000 });
-		await page.getByRole("link", { name: /Community/i }).first().click();
+		await page
+			.getByRole("link", { name: /Community/i })
+			.first()
+			.click();
 		await expect(page).toHaveURL(/\/dashboard\/community/);
 
 		await page.getByText("School Fair Setup Help").click();
@@ -192,7 +201,9 @@ test.describe("Community Hub", () => {
 		await page.getByRole("button", { name: /Sign Up/i }).click();
 
 		// === STEP 5: Verify signup confirmed (button changes from Sign Up to Cancel) ===
-		await expect(page.getByRole("button", { name: "Cancel", exact: true })).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("button", { name: "Cancel", exact: true })).toBeVisible({
+			timeout: 10000,
+		});
 	});
 
 	test("community page shows disabled state when feature is off", async ({ page }) => {
@@ -278,7 +289,10 @@ test.describe("Community Hub", () => {
 				timeout: 3000,
 			});
 		}).toPass({ timeout: 30000 });
-		await page.getByRole("link", { name: /Community/i }).first().click();
+		await page
+			.getByRole("link", { name: /Community/i })
+			.first()
+			.click();
 		await expect(page).toHaveURL(/\/dashboard\/community/);
 
 		// === STEP 4: Verify the seeded post title appears ===

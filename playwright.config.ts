@@ -1,5 +1,5 @@
-import { config } from "dotenv";
 import { defineConfig, devices } from "@playwright/test";
+import { config } from "dotenv";
 
 config({ path: "./apps/api/.env" });
 

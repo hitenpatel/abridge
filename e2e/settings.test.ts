@@ -111,7 +111,9 @@ test.describe("Settings Page - Admin", () => {
 		// All three cards should be visible (Profile/Notifications load async)
 		await expect(page.getByRole("heading", { name: "Profile" })).toBeVisible({ timeout: 10000 });
 		await expect(page.getByRole("heading", { name: "Notifications" })).toBeVisible();
-		await expect(page.getByRole("heading", { name: "School Settings" })).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: "School Settings" })).toBeVisible({
+			timeout: 10000,
+		});
 	});
 
 	test("admin should update school settings", async ({ page }) => {
@@ -145,7 +147,9 @@ test.describe("Settings Page - Admin", () => {
 		await expect(page).toHaveURL(/\/dashboard\/settings/);
 
 		// Wait for School Settings card to appear
-		await expect(page.getByRole("heading", { name: "School Settings" })).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: "School Settings" })).toBeVisible({
+			timeout: 10000,
+		});
 
 		// Update school name
 		const schoolNameInput = page.locator("#school-name");

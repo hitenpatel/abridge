@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { getSchoolByURN, getUserByEmail, seedChildForParent, seedMessage } from "./helpers/seed-data";
+import {
+	getSchoolByURN,
+	getUserByEmail,
+	seedChildForParent,
+	seedMessage,
+} from "./helpers/seed-data";
 
 /**
  * Search functionality tests

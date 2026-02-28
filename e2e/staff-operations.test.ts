@@ -128,7 +128,9 @@ test.describe("Staff Operations", () => {
 		// Note: Staff don't have Calendar in their nav (parent-only feature)
 		// But they can still access it via URL or search
 		// For now, just verify they can access the dashboard
-		await expect(page.getByRole("heading", { name: "Recent Posts" })).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: "Recent Posts" })).toBeVisible({
+			timeout: 10000,
+		});
 	});
 
 	test("staff member should access messages page", async ({ page }) => {

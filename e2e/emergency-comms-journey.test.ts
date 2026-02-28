@@ -196,7 +196,9 @@ test.describe("Emergency Communications", () => {
 		// === STEP 3: Verify history ===
 		await expect(page.getByText("Alert History")).toBeVisible({ timeout: 10000 });
 		// "Medical Emergency" appears both as a button (type selector) and in history - target the paragraph
-		await expect(page.getByRole("paragraph").filter({ hasText: "Medical Emergency" })).toBeVisible();
+		await expect(
+			page.getByRole("paragraph").filter({ hasText: "Medical Emergency" }),
+		).toBeVisible();
 		await expect(page.getByText(/all clear/i).first()).toBeVisible();
 	});
 

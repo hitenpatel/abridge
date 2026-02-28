@@ -8,7 +8,9 @@ test.describe("Landing Page", () => {
 		await expect(page.getByText("Abridge").first()).toBeVisible();
 
 		// Verify hero heading
-		await expect(page.getByRole("heading", { name: /School communications, simplified/i })).toBeVisible();
+		await expect(
+			page.getByRole("heading", { name: /School communications, simplified/i }),
+		).toBeVisible();
 
 		// Verify CTA buttons
 		await expect(page.getByRole("link", { name: /Start Free Trial/i })).toBeVisible();
