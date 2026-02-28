@@ -1,4 +1,3 @@
-import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 import withPWA from "next-pwa";
 
@@ -44,12 +43,4 @@ const pwaConfig = withPWA({
 	buildExcludes: [/middleware-manifest\.json$/],
 });
 
-const sentryConfig = withSentryConfig(pwaConfig(nextConfig), {
-	silent: true,
-	org: process.env.SENTRY_ORG,
-	project: process.env.SENTRY_PROJECT,
-	authToken: process.env.SENTRY_AUTH_TOKEN,
-	disableSourceMapUpload: !process.env.SENTRY_AUTH_TOKEN,
-});
-
-export default sentryConfig;
+export default pwaConfig(nextConfig);
