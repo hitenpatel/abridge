@@ -40,5 +40,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 	],
 	extra: {
 		apiUrl: process.env.EXPO_PUBLIC_API_URL ?? `http://${getLocalIp()}:4000`,
+		eas: {
+			projectId: "4a6b4126-1ef0-41fc-8b58-90192c447005",
+		},
 	},
 });
