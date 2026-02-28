@@ -30,6 +30,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 			backgroundColor: "#FF7D45",
 		},
 	},
+	plugins: [
+		[
+			"@config-plugins/detox",
+			{
+				subdomains: ["10.0.2.2", "localhost"],
+			},
+		],
+	],
 	extra: {
 		apiUrl: process.env.EXPO_PUBLIC_API_URL ?? `http://${getLocalIp()}:4000`,
 	},
