@@ -55,84 +55,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
 
-  e2e-web:
-    runs-on: docker
-    container:
-      image: node:24-bookworm
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
-        BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
-        BETTER_AUTH_URL: http://localhost:4000
-        NEXT_PUBLIC_API_URL: http://localhost:4000
-        NODE_ENV: test
-    steps:
-      - uses: https://code.forgejo.org/actions/checkout@v4
-
-      - name: Install system dependencies
-        run: |
-          apt-get update -qq && apt-get install -y -qq postgresql postgresql-client curl \
-            libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libxkbcommon0 \
-            libxdamage1 libgbm1 libpango-1.0-0 libcairo2 libasound2 libxrandr2 \
-            libxcomposite1 libxfixes3 > /dev/null
-          PG_VER=$(pg_lsclusters -h | head -1 | awk '{print $1}')
-          pg_ctlcluster "$PG_VER" main start
-          su - postgres -c "psql -c \"ALTER USER postgres PASSWORD 'postgres';\""
-          su - postgres -c "createdb schoolconnect_test"
-
-      - name: Setup pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@9.15.0 --activate
-
-      - run: pnpm install --frozen-lockfile
-
-      - name: Install Playwright Chromium
-        run: pnpm exec playwright install chromium
-
-      - name: Push database schema
-        run: pnpm --filter @schoolconnect/db db:push
-
-      - name: Create API .env
-        run: |
-          printf '%s\n' \
-            'DATABASE_URL=postgresql://postgres:postgres@localhost:5432/schoolconnect_test' \
-            'BETTER_AUTH_SECRET=test-secret-for-ci-e2e-testing-only' \
-            'BETTER_AUTH_URL=http://localhost:4000' \
-            'NODE_ENV=test' \
-            > apps/api/.env
-
-      - name: Build packages
-        run: TURBO_CONCURRENCY=1 pnpm build
-
-      - name: Start servers and run E2E tests
-        run: |
-          pnpm --filter @schoolconnect/api dev &
-          pnpm --filter @schoolconnect/web dev &
-          for i in $(seq 1 60); do
-            if curl -sf http://localhost:4000/trpc/health.check > /dev/null 2>&1; then
-              echo "API is ready"
-              break
-            fi
-            echo "Waiting for API... ($i/60)"
-            sleep 2
-            if [ "$i" -eq 60 ]; then
-              echo "ERROR: API server failed to start"
-              exit 1
-            fi
-          done
-          for i in $(seq 1 60); do
-            if curl -sf http://localhost:3000 > /dev/null 2>&1; then
-              echo "Web server is ready"
-              break
-            fi
-            echo "Waiting for Web... ($i/60)"
-            sleep 2
-            if [ "$i" -eq 60 ]; then
-              echo "ERROR: Web server failed to start"
-              exit 1
-            fi
-          done
-          npx playwright test --reporter=list
+  # e2e-web runs on GitHub Actions (Forgejo runner AUFS driver is unstable for heavy jobs)
 
   e2e-mobile-android:
     if: ${{ secrets.GCLOUD_SERVICE_KEY != '' && secrets.EXPO_TOKEN != '' }}
@@ -183,7 +106,7 @@ jobs:
 
   deploy-web:
     if: ${{ secrets.VERCEL_TOKEN != '' }}
-    needs: [lint, test, build, e2e-web]
+    needs: [lint, test, build]
     runs-on: docker
     container: node:24-bookworm
     steps:
@@ -224,7 +147,7 @@ jobs:
 
   deploy-api:
     if: ${{ github.ref == 'refs/heads/main' && secrets.RAILWAY_TOKEN != '' }}
-    needs: [lint, test, build, e2e-web]
+    needs: [lint, test, build]
     runs-on: docker
     container: node:24-bookworm
     steps:
