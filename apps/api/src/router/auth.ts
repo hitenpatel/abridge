@@ -26,12 +26,11 @@ export const authRouter = router({
 		// (handles case where the signup hook failed to process them)
 		if (!staffMember) {
 			try {
-				const invitations: { id: string; schoolId: string; role: StaffRole }[] =
-					await ctx.prisma.$queryRawUnsafe(
-						`SELECT * FROM invitations
-					 WHERE email = $1 AND "acceptedAt" IS NULL AND "expiresAt" > NOW()`,
-						ctx.user.email,
-					);
+				const invitations: { id: string; schoolId: string; role: StaffRole }[] = await ctx.prisma
+					.$queryRaw`
+						SELECT id, "schoolId", role FROM invitations
+						WHERE email = ${ctx.user.email} AND "acceptedAt" IS NULL AND "expiresAt" > NOW()
+					`;
 
 				for (const invite of invitations) {
 					await ctx.prisma.staffMember.create({
@@ -48,10 +47,9 @@ export const authRouter = router({
 
 					await invalidateStaffCache(ctx.user.id, invite.schoolId);
 
-					await ctx.prisma.$executeRawUnsafe(
-						`UPDATE invitations SET "acceptedAt" = NOW() WHERE id = $1`,
-						invite.id,
-					);
+					await ctx.prisma.$executeRaw`
+						UPDATE invitations SET "acceptedAt" = NOW() WHERE id = ${invite.id}
+					`;
 				}
 
 				// Re-fetch staff member if invitations were processed

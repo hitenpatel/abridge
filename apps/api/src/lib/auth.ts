@@ -44,13 +44,11 @@ export const auth = betterAuth({
 					try {
 						logger.info({ email: user.email }, "Creating user, checking invites");
 						// Check for pending invitations for this email
-						// Using raw SQL to bypass Prisma client generation issues
 						const invitations: { id: string; schoolId: string; role: StaffRole }[] =
-							await prisma.$queryRawUnsafe(
-								`SELECT * FROM invitations
-							 WHERE email = $1 AND "acceptedAt" IS NULL AND "expiresAt" > NOW()`,
-								user.email,
-							);
+							await prisma.$queryRaw`
+								SELECT id, "schoolId", role FROM invitations
+								WHERE email = ${user.email} AND "acceptedAt" IS NULL AND "expiresAt" > NOW()
+							`;
 						logger.info({ count: invitations.length }, "Found invitations");
 
 						for (const invite of invitations) {
@@ -66,10 +64,9 @@ export const auth = betterAuth({
 							// Invalidate staff cache for the new member
 							await invalidateStaffCache(user.id, invite.schoolId);
 
-							await prisma.$executeRawUnsafe(
-								`UPDATE invitations SET "acceptedAt" = NOW() WHERE id = $1`,
-								invite.id,
-							);
+							await prisma.$executeRaw`
+								UPDATE invitations SET "acceptedAt" = NOW() WHERE id = ${invite.id}
+							`;
 						}
 					} catch (error) {
 						logger.error(
@@ -91,10 +88,12 @@ export const auth = betterAuth({
 	trustedOrigins: [
 		process.env.WEB_URL || (process.env.NODE_ENV !== "production" ? "http://localhost:3000" : ""),
 		process.env.MOBILE_APP_SCHEME ?? "schoolconnect://",
-		"http://192.168.1.197:8081",
+		...(process.env.EXPO_DEV_URL ? [process.env.EXPO_DEV_URL] : []),
 	].filter(Boolean),
 	advanced: {
 		crossSubDomainCookies: { enabled: false },
 		disableCSRFCheck: process.env.NODE_ENV !== "production",
+		cookiePrefix: "schoolconnect",
+		useSecureCookies: process.env.NODE_ENV === "production",
 	},
 });

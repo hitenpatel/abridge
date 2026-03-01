@@ -29,7 +29,7 @@ export const invitationRouter = router({
 			const token = randomBytes(32).toString("hex");
 			const expiresAt = new Date();
 			expiresAt.setDate(expiresAt.getDate() + 7); // 7 days expiry
-			const id = `inv_${Math.random().toString(36).substring(2, 11)}`;
+			const id = `inv_${randomBytes(8).toString("hex")}`;
 
 			// Get school details for email
 			const school = await ctx.prisma.school.findUnique({
@@ -44,16 +44,10 @@ export const invitationRouter = router({
 				});
 			}
 
-			await ctx.prisma.$executeRawUnsafe(
-				`INSERT INTO invitations (id, email, "schoolId", role, token, "expiresAt", "createdAt")
-				 VALUES ($1, $2, $3, $4::"StaffRole", $5, $6, NOW())`,
-				id,
-				input.email,
-				ctx.schoolId,
-				input.role,
-				token,
-				expiresAt,
-			);
+			await ctx.prisma.$executeRaw`
+				INSERT INTO invitations (id, email, "schoolId", role, token, "expiresAt", "createdAt")
+				VALUES (${id}, ${input.email}, ${ctx.schoolId}, ${input.role}::"StaffRole", ${token}, ${expiresAt}, NOW())
+			`;
 
 			// Send invitation email
 			const emailResult = await sendStaffInvitationEmail({
@@ -77,14 +71,12 @@ export const invitationRouter = router({
 	accept: publicProcedure
 		.input(z.object({ token: z.string() }))
 		.mutation(async ({ ctx, input }) => {
-			// Using queryRaw to bypass client model check
-			const results: RawInvitation[] = await ctx.prisma.$queryRawUnsafe(
-				`SELECT i.*, s.name as "schoolName" 
-				 FROM invitations i 
-				 JOIN schools s ON i."schoolId" = s.id 
-				 WHERE i.token = $1 LIMIT 1`,
-				input.token,
-			);
+			const results: RawInvitation[] = await ctx.prisma.$queryRaw`
+				SELECT i.id, i.email, i."schoolId", i.role, i."expiresAt", i."acceptedAt", s.name as "schoolName"
+				FROM invitations i
+				JOIN schools s ON i."schoolId" = s.id
+				WHERE i.token = ${input.token} LIMIT 1
+			`;
 
 			const invitation = results[0];
 
@@ -162,10 +154,9 @@ export const invitationRouter = router({
 			await invalidateStaffCache(user.id, invitation.schoolId);
 
 			// Mark invitation as accepted
-			await ctx.prisma.$executeRawUnsafe(
-				`UPDATE invitations SET "acceptedAt" = NOW() WHERE id = $1`,
-				invitation.id,
-			);
+			await ctx.prisma.$executeRaw`
+				UPDATE invitations SET "acceptedAt" = NOW() WHERE id = ${invitation.id}
+			`;
 
 			logger.info(
 				{ email: user.email, schoolName: invitation.schoolName, role: invitation.role },
@@ -176,13 +167,12 @@ export const invitationRouter = router({
 		}),
 
 	verify: publicProcedure.input(z.object({ token: z.string() })).query(async ({ ctx, input }) => {
-		const results: RawInvitation[] = await ctx.prisma.$queryRawUnsafe(
-			`SELECT i.*, s.name as "schoolName" 
-				 FROM invitations i 
-				 JOIN schools s ON i."schoolId" = s.id 
-				 WHERE i.token = $1 LIMIT 1`,
-			input.token,
-		);
+		const results: RawInvitation[] = await ctx.prisma.$queryRaw`
+			SELECT i.id, i.email, i."schoolId", i.role, i."expiresAt", i."acceptedAt", s.name as "schoolName"
+			FROM invitations i
+			JOIN schools s ON i."schoolId" = s.id
+			WHERE i.token = ${input.token} LIMIT 1
+		`;
 
 		const invitation = results[0];
 
@@ -216,9 +206,9 @@ export const invitationRouter = router({
 	}),
 
 	list: schoolAdminProcedure.query(async ({ ctx }) => {
-		return ctx.prisma.$queryRawUnsafe(
-			`SELECT * FROM invitations WHERE "schoolId" = $1 ORDER BY "createdAt" DESC`,
-			ctx.schoolId,
-		);
+		return ctx.prisma.$queryRaw`
+			SELECT id, email, "schoolId", role, token, "expiresAt", "createdAt", "acceptedAt"
+			FROM invitations WHERE "schoolId" = ${ctx.schoolId} ORDER BY "createdAt" DESC
+		`;
 	}),
 });

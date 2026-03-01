@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { publicProcedure, router } from "../trpc";
@@ -9,7 +10,7 @@ export const setupRouter = router({
 				name: z.string().min(1),
 				urn: z.string().min(1),
 				adminEmail: z.string().email(),
-				setupKey: z.string(), // Simple protection
+				setupKey: z.string(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -33,21 +34,14 @@ export const setupRouter = router({
 				},
 			});
 
-			// Create a special invitation for the admin
-			// Using raw SQL to bypass Prisma client generation issues in this environment
-			const token = `initial-setup-${Math.random().toString(36).substring(7)}`;
+			const token = `initial-setup-${randomBytes(16).toString("hex")}`;
 			const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24); // 24 hours
-			const id = `inv_${Math.random().toString(36).substring(2, 11)}`;
+			const id = `inv_${randomBytes(8).toString("hex")}`;
 
-			await ctx.prisma.$executeRawUnsafe(
-				`INSERT INTO invitations (id, email, "schoolId", role, token, "expiresAt", "createdAt") 
-				 VALUES ($1, $2, $3, 'ADMIN', $4, $5, NOW())`,
-				id,
-				input.adminEmail,
-				school.id,
-				token,
-				expiresAt,
-			);
+			await ctx.prisma.$executeRaw`
+				INSERT INTO invitations (id, email, "schoolId", role, token, "expiresAt", "createdAt")
+				VALUES (${id}, ${input.adminEmail}, ${school.id}, 'ADMIN', ${token}, ${expiresAt}, NOW())
+			`;
 
 			return { success: true, schoolId: school.id };
 		}),

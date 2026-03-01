@@ -49,7 +49,7 @@ describe("auth router", () => {
 					prisma: {
 						parentChild: { findMany: async () => [] },
 						staffMember: { findFirst: async () => null },
-						$queryRawUnsafe: async () => [],
+						$queryRaw: async () => [],
 					} as unknown as Context["prisma"],
 				}),
 			);

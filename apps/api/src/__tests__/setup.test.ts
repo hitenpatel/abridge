@@ -20,7 +20,7 @@ function createTestContext(overrides?: Record<string, any>): any {
 					urn: "123456",
 				}),
 			},
-			$executeRawUnsafe: vi.fn().mockResolvedValue(1),
+			$executeRaw: vi.fn().mockResolvedValue(1),
 		},
 		req: {},
 		res: {},
@@ -55,7 +55,7 @@ describe("setup router", () => {
 			expect(ctx.prisma.school.create).toHaveBeenCalledWith({
 				data: { name: "Test School", urn: "123456" },
 			});
-			expect(ctx.prisma.$executeRawUnsafe).toHaveBeenCalled();
+			expect(ctx.prisma.$executeRaw).toHaveBeenCalled();
 		});
 
 		it("rejects invalid setup key", async () => {
@@ -83,7 +83,7 @@ describe("setup router", () => {
 						}),
 						create: vi.fn(),
 					},
-					$executeRawUnsafe: vi.fn(),
+					$executeRaw: vi.fn(),
 				},
 			});
 			const caller = appRouter.createCaller(ctx);

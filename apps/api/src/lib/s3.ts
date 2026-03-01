@@ -1,3 +1,4 @@
+import path from "node:path";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
@@ -39,7 +40,9 @@ export async function getPresignedUploadUrl(opts: {
 	contentType: string;
 }): Promise<{ uploadUrl: string; publicUrl: string; key: string }> {
 	const yearMonth = new Date().toISOString().slice(0, 7); // e.g. "2026-02"
-	const key = `${opts.schoolId}/${yearMonth}/${crypto.randomUUID()}/${opts.filename}`;
+	// Sanitize filename: strip path components and non-safe characters
+	const basename = path.basename(opts.filename).replace(/[^a-zA-Z0-9._-]/g, "_");
+	const key = `${opts.schoolId}/${yearMonth}/${crypto.randomUUID()}/${basename}`;
 	const maxSize = getMaxSize(opts.contentType);
 
 	const command = new PutObjectCommand({

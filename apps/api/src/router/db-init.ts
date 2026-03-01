@@ -1,11 +1,16 @@
+import { TRPCError } from "@trpc/server";
 import { logger } from "../lib/logger";
 import { publicProcedure, router } from "../trpc";
 
 export const dbInitRouter = router({
 	initTables: publicProcedure.mutation(async ({ ctx }) => {
+		if (process.env.NODE_ENV === "production") {
+			throw new TRPCError({ code: "FORBIDDEN", message: "Not available in production" });
+		}
+
 		try {
 			logger.info("Creating invitations table");
-			await ctx.prisma.$executeRawUnsafe(`
+			await ctx.prisma.$executeRaw`
 				CREATE TABLE IF NOT EXISTS invitations (
 					id TEXT PRIMARY KEY,
 					email TEXT NOT NULL,
@@ -17,7 +22,7 @@ export const dbInitRouter = router({
 					"acceptedAt" TIMESTAMP(3),
 					CONSTRAINT "invitations_email_schoolId_key" UNIQUE (email, "schoolId")
 				);
-			`);
+			`;
 			return { success: true };
 		} catch (e) {
 			logger.error({ err: e }, "Failed to create table");

@@ -59,7 +59,7 @@ function getCorsOptions() {
 				.flatMap((u) => (u?.includes(",") ? u.split(",") : [u]))
 				.map((u) => u?.trim()) as string[];
 
-			if (allowedOrigins.includes(origin) || process.env.NODE_ENV !== "production") {
+			if (allowedOrigins.includes(origin)) {
 				cb(null, true);
 				return;
 			}

@@ -33,8 +33,8 @@ function createAdminContext(overrides?: Record<string, any>): any {
 					name: "invitee",
 				}),
 			},
-			$executeRawUnsafe: vi.fn().mockResolvedValue(1),
-			$queryRawUnsafe: vi.fn().mockResolvedValue([]),
+			$executeRaw: vi.fn().mockResolvedValue(1),
+			$queryRaw: vi.fn().mockResolvedValue([]),
 		},
 		req: {},
 		res: {},
@@ -58,8 +58,8 @@ function createPublicContext(overrides?: Record<string, any>): any {
 			staffMember: {
 				create: vi.fn().mockResolvedValue({}),
 			},
-			$queryRawUnsafe: vi.fn().mockResolvedValue([]),
-			$executeRawUnsafe: vi.fn().mockResolvedValue(1),
+			$queryRaw: vi.fn().mockResolvedValue([]),
+			$executeRaw: vi.fn().mockResolvedValue(1),
 		},
 		req: {},
 		res: {},
@@ -84,7 +84,7 @@ describe("invitation router", () => {
 			expect(result.success).toBe(true);
 			expect(result.token).toBeDefined();
 			expect(result.emailSent).toBe(true);
-			expect(ctx.prisma.$executeRawUnsafe).toHaveBeenCalled();
+			expect(ctx.prisma.$executeRaw).toHaveBeenCalled();
 		});
 
 		it("rejects when school not found", async () => {
@@ -98,7 +98,7 @@ describe("invitation router", () => {
 							role: "ADMIN",
 						}),
 					},
-					$executeRawUnsafe: vi.fn(),
+					$executeRaw: vi.fn(),
 				},
 			});
 			const caller = appRouter.createCaller(ctx);
@@ -167,7 +167,7 @@ describe("invitation router", () => {
 			const ctx = createPublicContext({
 				prisma: {
 					...createPublicContext().prisma,
-					$queryRawUnsafe: vi.fn().mockResolvedValue([
+					$queryRaw: vi.fn().mockResolvedValue([
 						{
 							id: "inv-1",
 							email: "test@example.com",
@@ -206,7 +206,7 @@ describe("invitation router", () => {
 			const ctx = createPublicContext({
 				prisma: {
 					...createPublicContext().prisma,
-					$queryRawUnsafe: vi.fn().mockResolvedValue([
+					$queryRaw: vi.fn().mockResolvedValue([
 						{
 							id: "inv-1",
 							email: "test@example.com",
@@ -227,7 +227,7 @@ describe("invitation router", () => {
 			const ctx = createPublicContext({
 				prisma: {
 					...createPublicContext().prisma,
-					$queryRawUnsafe: vi.fn().mockResolvedValue([
+					$queryRaw: vi.fn().mockResolvedValue([
 						{
 							id: "inv-1",
 							email: "test@example.com",
@@ -249,7 +249,7 @@ describe("invitation router", () => {
 		it("accepts a valid invitation", async () => {
 			const ctx = createPublicContext({
 				prisma: {
-					$queryRawUnsafe: vi.fn().mockResolvedValue([
+					$queryRaw: vi.fn().mockResolvedValue([
 						{
 							id: "inv-1",
 							email: "invitee@example.com",
@@ -261,7 +261,7 @@ describe("invitation router", () => {
 							acceptedAt: null,
 						},
 					]),
-					$executeRawUnsafe: vi.fn().mockResolvedValue(1),
+					$executeRaw: vi.fn().mockResolvedValue(1),
 					user: {
 						findUnique: vi.fn().mockResolvedValue(null),
 						upsert: vi.fn().mockResolvedValue({
@@ -295,7 +295,7 @@ describe("invitation router", () => {
 					role: "TEACHER",
 				},
 			});
-			expect(ctx.prisma.$executeRawUnsafe).toHaveBeenCalled();
+			expect(ctx.prisma.$executeRaw).toHaveBeenCalled();
 		});
 
 		it("rejects invalid token", async () => {
@@ -311,7 +311,7 @@ describe("invitation router", () => {
 			const ctx = createPublicContext({
 				prisma: {
 					...createPublicContext().prisma,
-					$queryRawUnsafe: vi.fn().mockResolvedValue([
+					$queryRaw: vi.fn().mockResolvedValue([
 						{
 							id: "inv-1",
 							email: "test@example.com",
@@ -345,7 +345,7 @@ describe("invitation router", () => {
 							role: "ADMIN",
 						}),
 					},
-					$queryRawUnsafe: vi.fn().mockResolvedValue(mockInvitations),
+					$queryRaw: vi.fn().mockResolvedValue(mockInvitations),
 				},
 			});
 			const caller = appRouter.createCaller(ctx);
@@ -353,7 +353,7 @@ describe("invitation router", () => {
 			const result = await caller.invitation.list({ schoolId: "school-1" });
 
 			expect(result).toHaveLength(2);
-			expect(ctx.prisma.$queryRawUnsafe).toHaveBeenCalled();
+			expect(ctx.prisma.$queryRaw).toHaveBeenCalled();
 		});
 
 		it("rejects non-admin users", async () => {
