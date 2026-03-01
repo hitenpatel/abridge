@@ -13,7 +13,14 @@ import {
 } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
 import { addMonths, endOfMonth, format, isSameDay, startOfMonth, subMonths } from "date-fns";
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, Trash2 } from "lucide-react";
+import {
+	Calendar as CalendarIcon,
+	ChevronLeft,
+	ChevronRight,
+	Clock,
+	Repeat,
+	Trash2,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -34,6 +41,13 @@ const CATEGORY_LABELS: Record<string, string> = {
 	EVENT: "Event",
 	DEADLINE: "Deadline",
 	CLUB: "Club",
+};
+
+const RECURRENCE_LABELS: Record<string, string> = {
+	DAILY: "Daily",
+	WEEKLY: "Weekly",
+	BIWEEKLY: "Fortnightly",
+	MONTHLY: "Monthly",
 };
 
 export function EventList() {
@@ -148,6 +162,12 @@ export function EventList() {
 												<Badge variant={CATEGORY_BADGE_VARIANT[event.category] || "secondary"}>
 													{CATEGORY_LABELS[event.category] || event.category}
 												</Badge>
+												{"recurrencePattern" in event && event.recurrencePattern && (
+													<Badge variant="outline" className="gap-1">
+														<Repeat className="w-3 h-3" />
+														{RECURRENCE_LABELS[event.recurrencePattern as string] || "Recurring"}
+													</Badge>
+												)}
 												<span className="text-sm text-muted-foreground flex items-center gap-1">
 													<CalendarIcon className="w-3 h-3" />
 													{format(event.startDate, "d MMM yyyy")}
@@ -204,6 +224,8 @@ export function EventList() {
 						<DialogTitle>Delete Event</DialogTitle>
 						<DialogDescription>
 							Are you sure you want to delete this event? This cannot be undone.
+							{eventToDelete?.includes("_") &&
+								" This will delete all occurrences of this recurring event."}
 						</DialogDescription>
 					</DialogHeader>
 					<DialogFooter>

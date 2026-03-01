@@ -41,6 +41,7 @@ model School {
   // Phase 3B feature toggles
   mealBookingEnabled        Boolean  @default(false)
   reportCardsEnabled        Boolean  @default(false)
+  clubBookingEnabled        Boolean  @default(false)
   communityHubEnabled       Boolean  @default(false)
   communityTags             String[] @default([])
 
@@ -73,6 +74,7 @@ model School {
   communityPosts     CommunityPost[]
   reportCycles       ReportCycle[]
   reportCards        ReportCard[]
+  clubs              Club[]
 
   @@map("schools")
 }
@@ -136,6 +138,8 @@ model User {
   communityComments           CommunityComment[] @relation("CommunityCommentAuthor")
   volunteerSignups            VolunteerSignup[] @relation("VolunteerSignupUser")
   reportCyclesCreated         ReportCycle[]     @relation("ReportCycleCreator")
+  clubsCreated                Club[]            @relation("ClubCreator")
+  clubEnrollmentsMade         ClubEnrollment[]  @relation("ClubEnroller")
 
   @@map("users")
 }
@@ -230,6 +234,7 @@ model Child {
   mealBookings      MealBooking[]
   dietaryProfile    DietaryProfile?
   reportCards       ReportCard[]
+  clubEnrollments   ClubEnrollment[]
 
   @@map("children")
 }
@@ -449,15 +454,17 @@ enum PaymentStatus {
 // ─── Calendar ────────────────────────────────────────────────
 
 model Event {
-  id        String    @id @default(cuid())
-  schoolId  String
-  title     String
-  body      String?
-  startDate DateTime
-  endDate   DateTime?
-  allDay    Boolean   @default(false)
-  category  EventCategory
-  createdAt DateTime  @default(now())
+  id                String             @id @default(cuid())
+  schoolId          String
+  title             String
+  body              String?
+  startDate         DateTime
+  endDate           DateTime?
+  allDay            Boolean            @default(false)
+  category          EventCategory
+  recurrencePattern RecurrencePattern?
+  recurrenceEndDate DateTime?
+  createdAt         DateTime           @default(now())
 
   school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
@@ -471,6 +478,13 @@ enum EventCategory {
   EVENT
   DEADLINE
   CLUB
+}
+
+enum RecurrencePattern {
+  DAILY
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
 }
 
 // ─── Forms & Consent ─────────────────────────────────────────
@@ -973,6 +987,68 @@ model VolunteerSignup {
 
   @@unique([slotId, userId])
   @@map("volunteer_signup")
+}
+
+// ─── Club Booking ───────────────────────────────────────────
+
+enum ClubDay {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum ClubEnrollmentStatus {
+  ACTIVE
+  CANCELLED
+  WAITLISTED
+}
+
+model Club {
+  id            String    @id @default(cuid())
+  schoolId      String
+  school        School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  name          String
+  description   String?
+  staffLead     String?
+  day           ClubDay
+  startTime     String    // e.g. "15:30"
+  endTime       String    // e.g. "16:30"
+  maxCapacity   Int
+  feeInPence    Int       @default(0)
+  yearGroups    String[]  // empty = all year groups
+  isActive      Boolean   @default(true)
+  termStartDate DateTime  @db.Date
+  termEndDate   DateTime  @db.Date
+  createdBy     String
+  creator       User      @relation("ClubCreator", fields: [createdBy], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  enrollments   ClubEnrollment[]
+
+  @@unique([schoolId, name, termStartDate])
+  @@index([schoolId, isActive])
+  @@map("clubs")
+}
+
+model ClubEnrollment {
+  id         String               @id @default(cuid())
+  clubId     String
+  club       Club                 @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  childId    String
+  child      Child                @relation(fields: [childId], references: [id], onDelete: Cascade)
+  status     ClubEnrollmentStatus @default(ACTIVE)
+  enrolledBy String
+  enroller   User                 @relation("ClubEnroller", fields: [enrolledBy], references: [id])
+  createdAt  DateTime             @default(now())
+
+  @@unique([clubId, childId])
+  @@index([childId])
+  @@map("club_enrollments")
 }
 
 // ─── Report Cards ──────────────────────────────────────────

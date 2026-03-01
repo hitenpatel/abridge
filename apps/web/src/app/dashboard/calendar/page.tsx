@@ -25,6 +25,14 @@ const CATEGORY_OPTIONS = [
 	{ value: "CLUB", label: "Club" },
 ];
 
+const RECURRENCE_OPTIONS = [
+	{ value: "", label: "No repeat" },
+	{ value: "DAILY", label: "Daily" },
+	{ value: "WEEKLY", label: "Weekly" },
+	{ value: "BIWEEKLY", label: "Every 2 weeks" },
+	{ value: "MONTHLY", label: "Monthly" },
+];
+
 export default function CalendarPage() {
 	const features = useFeatureToggles();
 	const { data: session } = trpc.auth.getSession.useQuery();
@@ -33,6 +41,8 @@ export default function CalendarPage() {
 	const [title, setTitle] = useState("");
 	const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0]);
 	const [category, setCategory] = useState("EVENT");
+	const [recurrencePattern, setRecurrencePattern] = useState("");
+	const [recurrenceEndDate, setRecurrenceEndDate] = useState("");
 
 	const createMutation = trpc.calendar.createEvent.useMutation({
 		onSuccess: () => {
@@ -41,6 +51,8 @@ export default function CalendarPage() {
 			setShowCreate(false);
 			setTitle("");
 			setCategory("EVENT");
+			setRecurrencePattern("");
+			setRecurrenceEndDate("");
 		},
 		onError: (err) => toast.error(err.message),
 	});
@@ -56,6 +68,9 @@ export default function CalendarPage() {
 			allDay: true,
 			// biome-ignore lint/suspicious/noExplicitAny: category string matches enum
 			category: category as any,
+			// biome-ignore lint/suspicious/noExplicitAny: recurrence string matches enum
+			...(recurrencePattern ? { recurrencePattern: recurrencePattern as any } : {}),
+			...(recurrenceEndDate ? { recurrenceEndDate: new Date(recurrenceEndDate) } : {}),
 		});
 	};
 
@@ -121,6 +136,35 @@ export default function CalendarPage() {
 								))}
 							</select>
 						</div>
+						<div className="space-y-2">
+							<Label htmlFor="event-recurrence">Repeat</Label>
+							<select
+								id="event-recurrence"
+								data-testid="event-recurrence-select"
+								value={recurrencePattern}
+								onChange={(e) => setRecurrencePattern(e.target.value)}
+								className="w-full border border-border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-ring bg-card"
+							>
+								{RECURRENCE_OPTIONS.map((opt) => (
+									<option key={opt.value} value={opt.value}>
+										{opt.label}
+									</option>
+								))}
+							</select>
+						</div>
+						{recurrencePattern && (
+							<div className="space-y-2">
+								<Label htmlFor="event-recurrence-end">Repeat Until</Label>
+								<Input
+									id="event-recurrence-end"
+									type="date"
+									data-testid="event-recurrence-end-date"
+									value={recurrenceEndDate}
+									onChange={(e) => setRecurrenceEndDate(e.target.value)}
+									min={startDate}
+								/>
+							</div>
+						)}
 					</div>
 					<DialogFooter>
 						<Button variant="outline" onClick={() => setShowCreate(false)}>
@@ -129,7 +173,11 @@ export default function CalendarPage() {
 						<Button
 							data-testid="event-create-submit"
 							onClick={handleCreate}
-							disabled={createMutation.isPending || !title.trim()}
+							disabled={
+								createMutation.isPending ||
+								!title.trim() ||
+								(!!recurrencePattern && !recurrenceEndDate)
+							}
 						>
 							{createMutation.isPending ? "Creating..." : "Create Event"}
 						</Button>

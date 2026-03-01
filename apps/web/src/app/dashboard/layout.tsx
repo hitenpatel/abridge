@@ -34,6 +34,7 @@ interface NavItem {
 		| "wellbeingEnabled"
 		| "emergencyCommsEnabled"
 		| "mealBookingEnabled"
+		| "clubBookingEnabled"
 		| "reportCardsEnabled"
 		| "communityHubEnabled";
 }
@@ -115,6 +116,12 @@ function DashboardLayoutInner({
 			featureKey: "mealBookingEnabled",
 		},
 		{
+			name: "Clubs",
+			href: "/dashboard/clubs",
+			icon: "sports_soccer",
+			featureKey: "clubBookingEnabled",
+		},
+		{
 			name: "Reports",
 			href: "/dashboard/reports",
 			icon: "description",
@@ -184,6 +191,12 @@ function DashboardLayoutInner({
 			href: "/dashboard/meals",
 			icon: "restaurant",
 			featureKey: "mealBookingEnabled",
+		},
+		{
+			name: "Clubs",
+			href: "/dashboard/clubs",
+			icon: "sports_soccer",
+			featureKey: "clubBookingEnabled",
 		},
 		{
 			name: "Reports",

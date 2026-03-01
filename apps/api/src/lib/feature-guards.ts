@@ -13,6 +13,7 @@ type FeatureName =
 	| "emergencyComms"
 	| "analytics"
 	| "mealBooking"
+	| "clubBooking"
 	| "reportCards"
 	| "communityHub";
 
@@ -33,6 +34,7 @@ interface SchoolFeatures {
 	emergencyCommsEnabled: boolean;
 	analyticsEnabled: boolean;
 	mealBookingEnabled: boolean;
+	clubBookingEnabled: boolean;
 	reportCardsEnabled: boolean;
 	communityHubEnabled: boolean;
 }
@@ -49,6 +51,7 @@ const featureFieldMap: Record<FeatureName, keyof SchoolFeatures> = {
 	emergencyComms: "emergencyCommsEnabled",
 	analytics: "analyticsEnabled",
 	mealBooking: "mealBookingEnabled",
+	clubBooking: "clubBookingEnabled",
 	reportCards: "reportCardsEnabled",
 	communityHub: "communityHubEnabled",
 };
@@ -65,6 +68,7 @@ const featureLabel: Record<FeatureName, string> = {
 	emergencyComms: "Emergency Communications",
 	analytics: "Analytics",
 	mealBooking: "Meal Booking",
+	clubBooking: "Club Booking",
 	reportCards: "Report Cards",
 	communityHub: "Community Hub",
 };

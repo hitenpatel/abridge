@@ -18,6 +18,7 @@ const featureToggleSelect = {
 	emergencyCommsEnabled: true,
 	analyticsEnabled: true,
 	mealBookingEnabled: true,
+	clubBookingEnabled: true,
 	reportCardsEnabled: true,
 	communityHubEnabled: true,
 } as const;
@@ -168,6 +169,7 @@ export const settingsRouter = router({
 				emergencyCommsEnabled: z.boolean().optional(),
 				analyticsEnabled: z.boolean().optional(),
 				mealBookingEnabled: z.boolean().optional(),
+				clubBookingEnabled: z.boolean().optional(),
 				reportCardsEnabled: z.boolean().optional(),
 				communityHubEnabled: z.boolean().optional(),
 			}),

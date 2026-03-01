@@ -20,6 +20,7 @@ interface FeatureToggles {
 	emergencyCommsEnabled: boolean;
 	analyticsEnabled: boolean;
 	mealBookingEnabled: boolean;
+	clubBookingEnabled: boolean;
 	reportCardsEnabled: boolean;
 	communityHubEnabled: boolean;
 }
@@ -41,6 +42,7 @@ const defaultToggles: FeatureToggles = {
 	emergencyCommsEnabled: false,
 	analyticsEnabled: false,
 	mealBookingEnabled: false,
+	clubBookingEnabled: false,
 	reportCardsEnabled: false,
 	communityHubEnabled: false,
 };

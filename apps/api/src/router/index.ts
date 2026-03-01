@@ -4,6 +4,7 @@ import { attendanceRouter } from "./attendance";
 import { authRouter } from "./auth";
 import { calendarRouter } from "./calendar";
 import { classPostRouter } from "./class-post";
+import { clubBookingRouter } from "./club-booking";
 import { communityRouter } from "./community";
 import { dashboardRouter } from "./dashboard";
 import { dbInitRouter } from "./db-init";
@@ -47,6 +48,7 @@ export const appRouter = router({
 	wellbeing: wellbeingRouter,
 	dbInit: dbInitRouter,
 	mealBooking: mealBookingRouter,
+	clubBooking: clubBookingRouter,
 	community: communityRouter,
 	reportCard: reportCardRouter,
 });

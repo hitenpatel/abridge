@@ -10,19 +10,24 @@ function createTestContext(overrides?: Record<string, any>): any {
 					.mockResolvedValue([{ childId: "child-1", child: { schoolId: "school-1" } }]),
 			},
 			event: {
-				findMany: vi.fn().mockResolvedValue([
-					{
-						id: "evt-1",
-						schoolId: "school-1",
-						title: "Sports Day",
-						body: "Annual sports day",
-						startDate: new Date("2026-06-15T09:00:00Z"),
-						endDate: new Date("2026-06-15T15:00:00Z"),
-						allDay: true,
-						category: "EVENT",
-						createdAt: new Date(),
-					},
-				]),
+				findMany: vi
+					.fn()
+					.mockResolvedValueOnce([
+						{
+							id: "evt-1",
+							schoolId: "school-1",
+							title: "Sports Day",
+							body: "Annual sports day",
+							startDate: new Date("2026-06-15T09:00:00Z"),
+							endDate: new Date("2026-06-15T15:00:00Z"),
+							allDay: true,
+							category: "EVENT",
+							recurrencePattern: null,
+							recurrenceEndDate: null,
+							createdAt: new Date(),
+						},
+					])
+					.mockResolvedValueOnce([]),
 				create: vi.fn().mockResolvedValue({ id: "evt-new", title: "New Event" }),
 				findUnique: vi.fn().mockResolvedValue({ id: "evt-1", schoolId: "school-1" }),
 				delete: vi.fn().mockResolvedValue({ id: "evt-1" }),

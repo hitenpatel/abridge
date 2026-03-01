@@ -22,6 +22,7 @@ function createTestContext(overrides?: Record<string, any>): any {
 					emergencyCommsEnabled: false,
 					analyticsEnabled: false,
 					mealBookingEnabled: false,
+					clubBookingEnabled: false,
 					reportCardsEnabled: false,
 					communityHubEnabled: true,
 					paymentDinnerMoneyEnabled: true,

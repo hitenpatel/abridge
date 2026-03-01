@@ -133,6 +133,7 @@ export const schoolFeatureProcedure = schoolStaffProcedure.use(async ({ ctx, nex
 			emergencyCommsEnabled: true,
 			analyticsEnabled: true,
 			mealBookingEnabled: true,
+			clubBookingEnabled: true,
 			reportCardsEnabled: true,
 			communityHubEnabled: true,
 		},
