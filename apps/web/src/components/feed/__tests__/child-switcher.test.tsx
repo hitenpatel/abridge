@@ -36,9 +36,7 @@ describe("ChildSwitcher", () => {
 	});
 
 	it("renders all children's first names", () => {
-		render(
-			<ChildSwitcher items={mockChildren} selectedChildId="child-1" onSelect={vi.fn()} />,
-		);
+		render(<ChildSwitcher items={mockChildren} selectedChildId="child-1" onSelect={vi.fn()} />);
 
 		expect(screen.getByText("Alice")).toBeDefined();
 		expect(screen.getByText("Bob")).toBeDefined();
@@ -46,9 +44,7 @@ describe("ChildSwitcher", () => {
 	});
 
 	it("shows initials as first letter of first + last name, uppercased", () => {
-		render(
-			<ChildSwitcher items={mockChildren} selectedChildId="child-1" onSelect={vi.fn()} />,
-		);
+		render(<ChildSwitcher items={mockChildren} selectedChildId="child-1" onSelect={vi.fn()} />);
 
 		expect(screen.getByText("AS")).toBeDefined();
 		expect(screen.getByText("BJ")).toBeDefined();
@@ -56,9 +52,7 @@ describe("ChildSwitcher", () => {
 	});
 
 	it("shows class label when yearGroup and/or className provided", () => {
-		render(
-			<ChildSwitcher items={mockChildren} selectedChildId="child-1" onSelect={vi.fn()} />,
-		);
+		render(<ChildSwitcher items={mockChildren} selectedChildId="child-1" onSelect={vi.fn()} />);
 
 		// Alice has both yearGroup and className
 		expect(screen.getByText("Year 3 Maple")).toBeDefined();
@@ -76,9 +70,7 @@ describe("ChildSwitcher", () => {
 
 	it("calls onSelect with correct childId when clicked", () => {
 		const onSelect = vi.fn();
-		render(
-			<ChildSwitcher items={mockChildren} selectedChildId="child-1" onSelect={onSelect} />,
-		);
+		render(<ChildSwitcher items={mockChildren} selectedChildId="child-1" onSelect={onSelect} />);
 
 		fireEvent.click(screen.getByTestId("child-option-2"));
 		expect(onSelect).toHaveBeenCalledWith("child-2");
@@ -90,9 +82,7 @@ describe("ChildSwitcher", () => {
 	});
 
 	it("applies different styling to the active child", () => {
-		render(
-			<ChildSwitcher items={mockChildren} selectedChildId="child-1" onSelect={vi.fn()} />,
-		);
+		render(<ChildSwitcher items={mockChildren} selectedChildId="child-1" onSelect={vi.fn()} />);
 
 		const activeButton = screen.getByTestId("child-option-1");
 		const inactiveButton = screen.getByTestId("child-option-2");

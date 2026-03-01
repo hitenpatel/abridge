@@ -41,18 +41,14 @@ describe("AbsenceReportForm", () => {
 	});
 
 	it("renders the form with title and description", () => {
-		render(
-			<AbsenceReportForm childrenLinks={mockChildren} onSuccess={mockOnSuccess} />,
-		);
+		render(<AbsenceReportForm childrenLinks={mockChildren} onSuccess={mockOnSuccess} />);
 
 		expect(screen.getByText("Report Future Absence")).toBeDefined();
 		expect(screen.getByText("Authorised absences will be marked in the records")).toBeDefined();
 	});
 
 	it("renders date inputs and reason textarea", () => {
-		render(
-			<AbsenceReportForm childrenLinks={mockChildren} onSuccess={mockOnSuccess} />,
-		);
+		render(<AbsenceReportForm childrenLinks={mockChildren} onSuccess={mockOnSuccess} />);
 
 		expect(screen.getByLabelText("Start Date")).toBeDefined();
 		expect(screen.getByLabelText("End Date")).toBeDefined();
@@ -60,9 +56,7 @@ describe("AbsenceReportForm", () => {
 	});
 
 	it("renders the submit button", () => {
-		render(
-			<AbsenceReportForm childrenLinks={mockChildren} onSuccess={mockOnSuccess} />,
-		);
+		render(<AbsenceReportForm childrenLinks={mockChildren} onSuccess={mockOnSuccess} />);
 
 		expect(screen.getByText("Submit Absence Report")).toBeDefined();
 	});
@@ -80,9 +74,7 @@ describe("AbsenceReportForm", () => {
 	});
 
 	it("does not render cancel button when onCancel is not provided", () => {
-		render(
-			<AbsenceReportForm childrenLinks={mockChildren} onSuccess={mockOnSuccess} />,
-		);
+		render(<AbsenceReportForm childrenLinks={mockChildren} onSuccess={mockOnSuccess} />);
 
 		expect(screen.queryByText("Cancel")).toBeNull();
 	});
@@ -107,9 +99,7 @@ describe("AbsenceReportForm", () => {
 			error: null,
 		});
 
-		render(
-			<AbsenceReportForm childrenLinks={mockChildren} onSuccess={mockOnSuccess} />,
-		);
+		render(<AbsenceReportForm childrenLinks={mockChildren} onSuccess={mockOnSuccess} />);
 
 		expect(screen.getByText("Submitting...")).toBeDefined();
 	});
@@ -121,9 +111,7 @@ describe("AbsenceReportForm", () => {
 			error: { message: "Network error" },
 		});
 
-		render(
-			<AbsenceReportForm childrenLinks={mockChildren} onSuccess={mockOnSuccess} />,
-		);
+		render(<AbsenceReportForm childrenLinks={mockChildren} onSuccess={mockOnSuccess} />);
 
 		expect(screen.getByText("Error")).toBeDefined();
 		expect(screen.getByText("Network error")).toBeDefined();
