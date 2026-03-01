@@ -133,6 +133,7 @@ jobs:
           npx playwright test --reporter=list
 
   e2e-mobile-android:
+    if: ${{ secrets.GCLOUD_SERVICE_KEY != '' && secrets.EXPO_TOKEN != '' }}
     runs-on: docker
     container: node:24-bookworm
     steps:
@@ -179,6 +180,7 @@ jobs:
             --client-details matrixLabel="Robo crawl"
 
   deploy-web:
+    if: ${{ secrets.VERCEL_TOKEN != '' }}
     needs: [lint, test, build, e2e-web]
     runs-on: docker
     container: node:24-bookworm
@@ -219,7 +221,7 @@ jobs:
             -d "{\"body\": \"Preview deployed: ${{ steps.deploy.outputs.DEPLOY_URL }}\"}"
 
   deploy-api:
-    if: github.ref == 'refs/heads/main'
+    if: ${{ github.ref == 'refs/heads/main' && secrets.RAILWAY_TOKEN != '' }}
     needs: [lint, test, build, e2e-web]
     runs-on: docker
     container: node:24-bookworm
