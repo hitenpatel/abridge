@@ -58,13 +58,14 @@ jobs:
   e2e-web:
     runs-on: docker
     container:
-      image: node:24-bookworm
+      image: mcr.microsoft.com/playwright:v1.52.0-noble
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
         BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
         BETTER_AUTH_URL: http://localhost:4000
         NEXT_PUBLIC_API_URL: http://localhost:4000
         NODE_ENV: test
+        HOME: /root
     steps:
       - uses: https://code.forgejo.org/actions/checkout@v4
 
@@ -83,9 +84,6 @@ jobs:
           corepack prepare pnpm@9.15.0 --activate
 
       - run: pnpm install --frozen-lockfile
-
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium
 
       - name: Push database schema
         run: pnpm --filter @schoolconnect/db db:push
