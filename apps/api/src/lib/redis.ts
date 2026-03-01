@@ -5,8 +5,8 @@ import { logger } from "./logger";
 let redis: Redis | null = null;
 
 export function getRedisClient(): Redis | null {
-	// Only initialize if REDIS_URL is provided
-	const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
+	const redisUrl = process.env.REDIS_URL;
+	if (!redisUrl) return null;
 
 	try {
 		if (!redis) {
