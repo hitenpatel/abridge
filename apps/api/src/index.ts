@@ -158,6 +158,10 @@ async function main() {
 		},
 	});
 
+	server.get("/health", async () => {
+		return { status: "ok" };
+	});
+
 	const rawPort = process.env.PORT || "4000";
 	const port = Number.parseInt(rawPort, 10);
 
