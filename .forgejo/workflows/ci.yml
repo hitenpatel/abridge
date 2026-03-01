@@ -58,25 +58,26 @@ jobs:
   e2e-web:
     runs-on: docker
     container:
-      image: mcr.microsoft.com/playwright:v1.52.0-noble
+      image: node:24-bookworm
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
         BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
         BETTER_AUTH_URL: http://localhost:4000
         NEXT_PUBLIC_API_URL: http://localhost:4000
         NODE_ENV: test
-        HOME: /root
     steps:
       - uses: https://code.forgejo.org/actions/checkout@v4
 
-      - name: Install PostgreSQL and curl
+      - name: Install system dependencies
         run: |
-          apt-get update -qq && apt-get install -y -qq postgresql postgresql-client curl > /dev/null
+          apt-get update -qq && apt-get install -y -qq postgresql postgresql-client curl \
+            libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libxkbcommon0 \
+            libxdamage1 libgbm1 libpango-1.0-0 libcairo2 libasound2 libxrandr2 \
+            libxcomposite1 libxfixes3 > /dev/null
           PG_VER=$(pg_lsclusters -h | head -1 | awk '{print $1}')
           pg_ctlcluster "$PG_VER" main start
           su - postgres -c "psql -c \"ALTER USER postgres PASSWORD 'postgres';\""
           su - postgres -c "createdb schoolconnect_test"
-          PGPASSWORD=postgres psql -h localhost -U postgres -d schoolconnect_test -c "SELECT 1;"
 
       - name: Setup pnpm
         run: |
@@ -84,6 +85,9 @@ jobs:
           corepack prepare pnpm@9.15.0 --activate
 
       - run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install chromium
 
       - name: Push database schema
         run: pnpm --filter @schoolconnect/db db:push
@@ -98,7 +102,7 @@ jobs:
             > apps/api/.env
 
       - name: Build packages
-        run: pnpm build
+        run: TURBO_CONCURRENCY=1 pnpm build
 
       - name: Start servers and run E2E tests
         run: |
