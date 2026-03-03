@@ -36,8 +36,10 @@ jobs:
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Push database schema
-        run: pnpm --filter @schoolconnect/db db:push
+      - name: Push database schema and seed
+        run: |
+          pnpm --filter @schoolconnect/db db:push
+          pnpm --filter @schoolconnect/db db:seed
 
       - name: Create API .env
         run: |
