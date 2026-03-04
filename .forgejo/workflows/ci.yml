@@ -55,54 +55,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
 
-  # e2e-web runs on GitHub Actions (Forgejo runner AUFS driver is unstable for heavy jobs)
-
-  e2e-mobile-android:
-    if: ${{ secrets.GCLOUD_SERVICE_KEY != '' && secrets.EXPO_TOKEN != '' }}
-    runs-on: docker
-    container: node:24-bookworm
-    steps:
-      - uses: https://code.forgejo.org/actions/checkout@v4
-
-      - name: Setup pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@9.15.0 --activate
-
-      - run: pnpm install --frozen-lockfile
-
-      - name: Install gcloud CLI
-        run: |
-          apt-get update -qq && apt-get install -y -qq apt-transport-https ca-certificates gnupg curl > /dev/null
-          curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
-          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" > /etc/apt/sources.list.d/google-cloud-sdk.list
-          apt-get update -qq && apt-get install -y -qq google-cloud-cli > /dev/null
-
-      - name: Authenticate gcloud
-        run: |
-          echo '${{ secrets.GCLOUD_SERVICE_KEY }}' > /tmp/gcloud-key.json
-          gcloud auth activate-service-account --key-file=/tmp/gcloud-key.json
-          gcloud config set project ${{ secrets.FIREBASE_PROJECT_ID }}
-          rm /tmp/gcloud-key.json
-
-      - name: Install EAS CLI and build APK
-        run: |
-          npm install -g eas-cli
-          cd apps/mobile
-          EXPO_TOKEN=${{ secrets.EXPO_TOKEN }} eas build --platform android --profile detox-test --non-interactive --wait
-          EXPO_TOKEN=${{ secrets.EXPO_TOKEN }} eas build:list --platform android --status finished --limit 1 --json > build-info.json
-          BUILD_URL=$(node -e "console.log(JSON.parse(require('fs').readFileSync('build-info.json','utf8'))[0].artifacts.buildUrl)")
-          curl -fsSL -o app-release.apk "$BUILD_URL"
-
-      - name: Run Robo test on Firebase Test Lab
-        run: |
-          cd apps/mobile
-          gcloud firebase test android run \
-            --type robo \
-            --app app-release.apk \
-            --device model=MediumPhone.arm,version=34,locale=en,orientation=portrait \
-            --timeout 300s \
-            --client-details matrixLabel="Robo crawl"
+  # e2e runs on GitHub Actions (Forgejo NAS runner can't run emulators)
 
   deploy-web:
     if: ${{ secrets.VERCEL_TOKEN != '' }}
