@@ -178,10 +178,20 @@ jobs:
           restore-keys: gradle-
           save-always: true
 
+      - name: Bundle JS for Android
+        run: |
+          cd apps/mobile
+          EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 npx react-native bundle \
+            --platform android \
+            --dev false \
+            --entry-file index.js \
+            --bundle-output android/app/src/main/assets/index.android.bundle \
+            --assets-dest android/app/src/main/res
+
       - name: Build debug APK
         run: |
           cd apps/mobile/android
-          EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 ./gradlew assembleDebug
+          ./gradlew assembleDebug
 
       - name: Install Maestro CLI
         run: |
