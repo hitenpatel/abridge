@@ -88,6 +88,11 @@ jobs:
 
   e2e-mobile-android:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
+      BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
+      BETTER_AUTH_URL: http://localhost:4000
+      NODE_ENV: test
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -96,37 +101,81 @@ jobs:
           node-version: 24
           cache: pnpm
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install and start PostgreSQL
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql postgresql-client > /dev/null
+          PG_VER=$(pg_lsclusters -h | head -1 | awk '{print $1}')
+          sudo pg_ctlcluster "$PG_VER" main start
+          sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
+          sudo -u postgres createdb schoolconnect_test
+
       - run: pnpm install --frozen-lockfile
 
-      - name: Set up Google Cloud CLI
-        uses: google-github-actions/setup-gcloud@v2
+      - name: Push database schema and seed
+        run: |
+          pnpm --filter @schoolconnect/db db:push
+          pnpm --filter @schoolconnect/db db:seed
+
+      - name: Create API .env
+        run: |
+          printf '%s\n' \
+            'DATABASE_URL=postgresql://postgres:postgres@localhost:5432/schoolconnect_test' \
+            'BETTER_AUTH_SECRET=test-secret-for-ci-e2e-testing-only' \
+            'BETTER_AUTH_URL=http://localhost:4000' \
+            'NODE_ENV=test' \
+            'SETUP_KEY=admin123' \
+            > apps/api/.env
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Start API server
+        run: |
+          pnpm --filter @schoolconnect/api dev &
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:4000/trpc/health.check > /dev/null 2>&1; then
+              echo "API is ready"
+              break
+            fi
+            echo "Waiting for API... ($i/60)"
+            sleep 2
+            if [ "$i" -eq 60 ]; then echo "ERROR: API failed to start"; exit 1; fi
+          done
+
+      - name: Build debug APK
+        run: |
+          cd apps/mobile
+          EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 npx expo prebuild --platform android --no-install
+          cd android
+          ./gradlew assembleDebug
+
+      - name: Install Maestro CLI
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Run Maestro tests on Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
         with:
-          version: latest
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          disable-animations: true
+          script: |
+            adb install apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
+            sleep 5
+            maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml
 
-      - name: Authenticate gcloud
-        run: |
-          echo '${{ secrets.GCLOUD_SERVICE_KEY }}' > /tmp/gcloud-key.json
-          gcloud auth activate-service-account --key-file=/tmp/gcloud-key.json
-          gcloud config set project ${{ secrets.FIREBASE_PROJECT_ID }}
-          rm /tmp/gcloud-key.json
-
-      - name: Install EAS CLI and build APK
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: |
-          npm install -g eas-cli
-          cd apps/mobile
-          eas build --platform android --profile detox-test --non-interactive --wait --json | tee build-result.json
-          BUILD_URL=$(node -e "const b=JSON.parse(require('fs').readFileSync('build-result.json','utf8'));console.log((Array.isArray(b)?b[0]:b).artifacts.buildUrl)")
-          echo "Downloading APK from: $BUILD_URL"
-          curl -fsSL -o app-release.apk "$BUILD_URL"
-
-      - name: Run Robo test on Firebase Test Lab
-        run: |
-          cd apps/mobile
-          gcloud firebase test android run \
-            --type robo \
-            --app app-release.apk \
-            --device model=MediumPhone.arm,version=34,locale=en,orientation=portrait \
-            --timeout 300s \
-            --client-details matrixLabel="Robo crawl"
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: maestro-report
+          path: maestro-report.xml
+          retention-days: 7
