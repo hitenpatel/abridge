@@ -1,0 +1,18 @@
+appId: com.abridge.app
+name: Parent Payments
+tags:
+  - parent
+  - payments
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Navigate to payments
+- tapOn: "Payments"
+- assertVisible:
+    text: "Wallet"
+    timeout: 5000
+
+# Verify seeded payment item (School Trip - Science Museum, £15.00)
+- assertVisible:
+    text: "Science Museum"
+    timeout: 5000
