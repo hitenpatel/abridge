@@ -179,3 +179,90 @@ jobs:
           name: maestro-report
           path: maestro-report.xml
           retention-days: 7
+
+  e2e-mobile-ios:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: macos-latest
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
+      BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
+      BETTER_AUTH_URL: http://localhost:4000
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install and start PostgreSQL
+        run: |
+          brew install postgresql@16
+          brew services start postgresql@16
+          sleep 3
+          createdb schoolconnect_test
+          psql -d schoolconnect_test -c "ALTER USER $(whoami) WITH PASSWORD 'postgres';"
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Push database schema and seed
+        env:
+          DATABASE_URL: postgresql://runner:postgres@localhost:5432/schoolconnect_test
+        run: |
+          pnpm --filter @schoolconnect/db db:push
+          pnpm --filter @schoolconnect/db db:seed
+
+      - name: Create API .env
+        run: |
+          printf '%s\n' \
+            "DATABASE_URL=postgresql://runner:postgres@localhost:5432/schoolconnect_test" \
+            'BETTER_AUTH_SECRET=test-secret-for-ci-e2e-testing-only' \
+            'BETTER_AUTH_URL=http://localhost:4000' \
+            'NODE_ENV=test' \
+            'SETUP_KEY=admin123' \
+            > apps/api/.env
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Start API server
+        run: |
+          pnpm --filter @schoolconnect/api dev &
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:4000/trpc/health.check > /dev/null 2>&1; then
+              echo "API is ready"
+              break
+            fi
+            echo "Waiting for API... ($i/60)"
+            sleep 2
+            if [ "$i" -eq 60 ]; then echo "ERROR: API failed to start"; exit 1; fi
+          done
+
+      - name: Build iOS app
+        run: |
+          cd apps/mobile
+          EXPO_PUBLIC_API_URL=http://localhost:4000 npx expo prebuild --platform ios --no-install
+          cd ios
+          pod install
+          xcodebuild -workspace abridge.xcworkspace -scheme abridge -sdk iphonesimulator -configuration Debug -derivedDataPath build build
+
+      - name: Install Maestro CLI
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Boot iOS simulator and run tests
+        run: |
+          DEVICE=$(xcrun simctl list devices available | grep "iPhone 16" | head -1 | sed 's/.*(\(.*\)).*/\1/')
+          xcrun simctl boot "$DEVICE"
+          xcrun simctl install "$DEVICE" apps/mobile/ios/build/Build/Products/Debug-iphonesimulator/abridge.app
+          sleep 5
+          maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: maestro-report-ios
+          path: maestro-report.xml
+          retention-days: 7
