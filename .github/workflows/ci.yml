@@ -121,15 +121,6 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Cache Gradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ hashFiles('apps/mobile/android/**/gradle-wrapper.properties', 'apps/mobile/package.json') }}
-          restore-keys: gradle-
-
       - name: Install and start PostgreSQL
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq postgresql postgresql-client > /dev/null
@@ -171,17 +162,25 @@ jobs:
             if [ "$i" -eq 60 ]; then echo "ERROR: API failed to start"; exit 1; fi
           done
 
-      - name: Build debug APK
+      - name: Expo prebuild Android
         run: |
           cd apps/mobile
           EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 npx expo prebuild --platform android --no-install
-          cd android
-          ./gradlew assembleDebug
 
-      - name: Free disk space before emulator
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            apps/mobile/android/.gradle
+          key: gradle-${{ hashFiles('apps/mobile/android/gradle/wrapper/gradle-wrapper.properties', 'apps/mobile/package.json') }}
+          restore-keys: gradle-
+
+      - name: Build debug APK
         run: |
-          rm -rf apps/mobile/android/.gradle
-          df -h /
+          cd apps/mobile/android
+          ./gradlew assembleDebug
 
       - name: Install Maestro CLI
         run: |
