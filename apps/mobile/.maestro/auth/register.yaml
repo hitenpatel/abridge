@@ -1,0 +1,14 @@
+appId: com.abridge.app
+name: Register Flow
+tags:
+  - auth
+---
+# Mobile app only has login - no register screen
+# This flow validates the login screen renders correctly
+- clearState
+- launchApp
+- assertVisible: "Abridge"
+- assertVisible: "Sign in to continue"
+- assertVisible: "Email"
+- assertVisible: "Password"
+- assertVisible: "Sign In"

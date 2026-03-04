@@ -1,0 +1,13 @@
+appId: com.abridge.app
+name: Logout Flow
+tags:
+  - auth
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Tap logout button (icon in header)
+- tapOn:
+    label: "Log Out"
+- assertVisible:
+    text: "Sign in to continue"
+    timeout: 10000

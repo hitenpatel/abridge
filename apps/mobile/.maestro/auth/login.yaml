@@ -1,0 +1,27 @@
+appId: com.abridge.app
+name: Login Flow
+tags:
+  - auth
+  - smoke
+---
+- clearState
+- launchApp
+
+# Verify login screen
+- assertVisible: "Abridge"
+- assertVisible: "Sign in to continue"
+
+# Login with valid credentials
+- tapOn:
+    text: "Email"
+- inputText: "sarah@example.com"
+- tapOn:
+    text: "Password"
+- inputText: "password123"
+- tapOn:
+    text: "Sign In"
+
+# Verify redirect to home
+- assertVisible:
+    text: "Home"
+    timeout: 15000
