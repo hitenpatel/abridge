@@ -111,12 +111,14 @@ jobs:
           rm /tmp/gcloud-key.json
 
       - name: Install EAS CLI and build APK
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           npm install -g eas-cli
           cd apps/mobile
-          EXPO_TOKEN=${{ secrets.EXPO_TOKEN }} eas build --platform android --profile detox-test --non-interactive --wait
-          EXPO_TOKEN=${{ secrets.EXPO_TOKEN }} eas build:list --platform android --status finished --limit 1 --json > build-info.json
-          BUILD_URL=$(node -e "console.log(JSON.parse(require('fs').readFileSync('build-info.json','utf8'))[0].artifacts.buildUrl)")
+          eas build --platform android --profile detox-test --non-interactive --wait --json | tee build-result.json
+          BUILD_URL=$(node -e "const b=JSON.parse(require('fs').readFileSync('build-result.json','utf8'));console.log((Array.isArray(b)?b[0]:b).artifacts.buildUrl)")
+          echo "Downloading APK from: $BUILD_URL"
           curl -fsSL -o app-release.apk "$BUILD_URL"
 
       - name: Run Robo test on Firebase Test Lab
