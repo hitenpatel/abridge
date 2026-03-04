@@ -199,14 +199,25 @@ jobs:
             adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
             adb install apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
             adb shell am start -n com.abridge.app/.MainActivity
-            sleep 15
+            sleep 20
+
+            # Diagnostic: capture what's on screen and any crash logs
+            adb exec-out screencap -p > /tmp/app-screenshot.png || true
+            adb logcat -d -s ReactNative:* ReactNativeJS:* AndroidRuntime:* ActivityManager:* | tail -80 || true
+
+            # Check if app is actually running
+            adb shell pidof com.abridge.app || echo "WARNING: App process not found!"
+            adb shell dumpsys activity activities | grep -A 5 "com.abridge.app" | head -10 || true
+
             MAESTRO_WAIT_TIMEOUT=30000 maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml
 
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()
         with:
           name: maestro-report
-          path: maestro-report.xml
+          path: |
+            maestro-report.xml
+            /tmp/app-screenshot.png
           retention-days: 7
 
       - name: Set up Google Cloud CLI
