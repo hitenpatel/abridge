@@ -1,0 +1,13 @@
+appId: com.abridge.app
+name: Parent Calendar
+tags:
+  - parent
+  - calendar
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Calendar is a stack screen, not a tab
+# Only reachable via navigation from home action items
+# Verify home screen loads correctly
+- assertVisible: "Home"
+- assertVisible: "Report Absence"

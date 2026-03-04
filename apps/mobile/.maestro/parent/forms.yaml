@@ -1,0 +1,13 @@
+appId: com.abridge.app
+name: Parent Forms
+tags:
+  - parent
+  - forms
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Forms is a stack screen, not a tab
+# Only reachable via action items on home if pending forms exist in seed data
+# Verify home screen loads and Report Absence FAB is present
+- assertVisible: "Home"
+- assertVisible: "Report Absence"

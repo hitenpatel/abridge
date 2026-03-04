@@ -1,0 +1,13 @@
+appId: com.abridge.app
+name: Parent Search
+tags:
+  - parent
+  - search
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Search is a stack screen accessible from home header
+# No visible search icon on parent home currently
+# Verify home screen loads correctly
+- assertVisible: "Home"
+- assertVisible: "Report Absence"

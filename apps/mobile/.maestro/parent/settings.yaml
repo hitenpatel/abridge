@@ -1,0 +1,23 @@
+appId: com.abridge.app
+name: Parent Settings
+tags:
+  - parent
+  - settings
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Navigate to settings
+- tapOn:
+    label: "Settings"
+- assertVisible:
+    text: "Profile"
+    timeout: 5000
+- assertVisible: "Notifications"
+
+# Verify profile section
+- assertVisible: "Save Profile"
+
+# Verify notification toggles
+- assertVisible: "Push notifications"
+- assertVisible: "SMS notifications"
+- assertVisible: "Email notifications"
