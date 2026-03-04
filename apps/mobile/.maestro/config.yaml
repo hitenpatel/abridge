@@ -1,0 +1,6 @@
+flows:
+  - "auth/*"
+  - "parent/*"
+  - "staff/*"
+  - "admin/*"
+  - "error-cases.yaml"
