@@ -121,6 +121,15 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ hashFiles('apps/mobile/android/**/gradle-wrapper.properties', 'apps/mobile/package.json') }}
+          restore-keys: gradle-
+
       - name: Install and start PostgreSQL
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq postgresql postgresql-client > /dev/null
@@ -198,6 +207,30 @@ jobs:
           name: maestro-report
           path: maestro-report.xml
           retention-days: 7
+
+      - name: Set up Google Cloud CLI
+        if: always()
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: latest
+
+      - name: Authenticate gcloud
+        if: always()
+        run: |
+          echo '${{ secrets.GCLOUD_SERVICE_KEY }}' > /tmp/gcloud-key.json
+          gcloud auth activate-service-account --key-file=/tmp/gcloud-key.json
+          gcloud config set project ${{ secrets.FIREBASE_PROJECT_ID }}
+          rm /tmp/gcloud-key.json
+
+      - name: Run Firebase Robo test
+        if: always()
+        run: |
+          gcloud firebase test android run \
+            --type robo \
+            --app apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk \
+            --device model=MediumPhone.arm,version=34,locale=en,orientation=portrait \
+            --timeout 300s \
+            --client-details matrixLabel="Robo crawl"
 
   e2e-mobile-ios:
     if: github.event_name == 'workflow_dispatch'
