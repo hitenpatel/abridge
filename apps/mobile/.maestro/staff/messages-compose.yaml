@@ -10,4 +10,3 @@ tags:
 - tapOn: "Messages"
 - assertVisible:
     text: "Inbox"
-    timeout: 5000

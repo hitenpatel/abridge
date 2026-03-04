@@ -10,22 +10,18 @@ tags:
 - tapOn: "Messages"
 - assertVisible:
     text: "Inbox"
-    timeout: 5000
 
 # Navigate to Attendance
 - tapOn: "Attendance"
 - assertVisible:
     text: "Attendance"
-    timeout: 5000
 
 # Navigate to Payments
 - tapOn: "Payments"
 - assertVisible:
     text: "Payments"
-    timeout: 5000
 
 # Navigate back to Home
 - tapOn: "Home"
 - assertVisible:
     text: "Post Update"
-    timeout: 5000

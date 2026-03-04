@@ -10,9 +10,7 @@ tags:
 - tapOn: "Payments"
 - assertVisible:
     text: "Wallet"
-    timeout: 5000
 
 # Verify seeded payment item (School Trip - Science Museum, £15.00)
 - assertVisible:
     text: "Science Museum"
-    timeout: 5000

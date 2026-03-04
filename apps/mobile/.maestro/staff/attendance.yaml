@@ -10,5 +10,4 @@ tags:
 - tapOn: "Attendance"
 - assertVisible:
     text: "Attendance"
-    timeout: 5000
 - assertVisible: "Today's attendance overview"

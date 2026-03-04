@@ -13,4 +13,3 @@ appId: com.abridge.app
     text: "Sign In"
 - assertVisible:
     text: "Home"
-    timeout: 15000

@@ -10,5 +10,4 @@ tags:
 - tapOn: "Payments"
 - assertVisible:
     text: "Payments"
-    timeout: 5000
 - assertVisible: "Manage payment items"

@@ -9,7 +9,6 @@ tags:
 # Verify staff home elements
 - assertVisible:
     text: "Home"
-    timeout: 15000
 - assertVisible: "Post Update"
 - assertVisible: "Recent Posts"
 

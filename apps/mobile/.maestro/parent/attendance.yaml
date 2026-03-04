@@ -10,7 +10,6 @@ tags:
 - tapOn: "Attendance"
 - assertVisible:
     text: "Attendance Hub"
-    timeout: 5000
 
 # Verify absence reporting section (text is "Report Absence", CSS uppercase is visual only)
 - assertVisible: "Report Absence"

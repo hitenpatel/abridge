@@ -10,4 +10,3 @@ tags:
     label: "Log Out"
 - assertVisible:
     text: "Sign in to continue"
-    timeout: 10000

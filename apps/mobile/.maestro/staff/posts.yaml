@@ -9,5 +9,4 @@ tags:
 # Verify recent posts section on home
 - assertVisible:
     text: "Recent Posts"
-    timeout: 10000
 - assertVisible: "View All"

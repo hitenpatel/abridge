@@ -199,7 +199,7 @@ jobs:
           script: |
             adb install apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
             sleep 5
-            maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml
+            MAESTRO_WAIT_TIMEOUT=15000 maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml
 
       - uses: actions/upload-artifact@v4
         if: failure()

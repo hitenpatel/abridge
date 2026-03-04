@@ -10,7 +10,6 @@ tags:
 - tapOn: "Staff Management"
 - assertVisible:
     text: "Invite Staff"
-    timeout: 5000
 
 # Verify sections
 - assertVisible: "Current Staff"

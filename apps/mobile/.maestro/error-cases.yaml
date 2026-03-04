@@ -20,7 +20,6 @@ tags:
 # Should show error alert
 - assertVisible:
     text: "Login Failed"
-    timeout: 5000
 - tapOn: "OK"
 
 # Test empty fields
@@ -31,5 +30,4 @@ tags:
     text: "Sign In"
 - assertVisible:
     text: "Please fill in all fields"
-    timeout: 5000
 - tapOn: "OK"

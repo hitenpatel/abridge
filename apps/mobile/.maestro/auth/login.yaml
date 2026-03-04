@@ -24,4 +24,3 @@ tags:
 # Verify redirect to home
 - assertVisible:
     text: "Home"
-    timeout: 15000
