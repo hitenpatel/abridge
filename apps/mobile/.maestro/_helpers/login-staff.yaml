@@ -1,0 +1,16 @@
+appId: com.abridge.app
+---
+- clearState
+- launchApp
+- assertVisible: "Sign in to continue"
+- tapOn:
+    text: "Email"
+- inputText: "claire@oakwood.sch.uk"
+- tapOn:
+    text: "Password"
+- inputText: "password123"
+- tapOn:
+    text: "Sign In"
+- assertVisible:
+    text: "Home"
+    timeout: 15000
