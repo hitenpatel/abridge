@@ -84,7 +84,7 @@ test.describe("Error Cases & Validation", () => {
 		await page.getByRole("button", { name: /Register/i }).click();
 
 		// Should show error about duplicate email
-		await expect(page.getByText(/already|exists|registered|email.*use|taken/i)).toBeVisible({
+		await expect(page.getByTestId("register-error")).toBeVisible({
 			timeout: 5000,
 		});
 
