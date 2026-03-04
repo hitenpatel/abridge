@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   e2e-web:
@@ -86,7 +87,6 @@ jobs:
           retention-days: 7
 
   e2e-mobile-android:
-    if: ${{ secrets.GCLOUD_SERVICE_KEY != '' && secrets.EXPO_TOKEN != '' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
