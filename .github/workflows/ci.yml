@@ -176,6 +176,7 @@ jobs:
             apps/mobile/android/.gradle
           key: gradle-${{ hashFiles('apps/mobile/android/gradle/wrapper/gradle-wrapper.properties', 'apps/mobile/package.json') }}
           restore-keys: gradle-
+          save-always: true
 
       - name: Build debug APK
         run: |
