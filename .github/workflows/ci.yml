@@ -48,6 +48,7 @@ jobs:
             'BETTER_AUTH_SECRET=test-secret-for-ci-e2e-testing-only' \
             'BETTER_AUTH_URL=http://localhost:4000' \
             'NODE_ENV=test' \
+            'SETUP_KEY=admin123' \
             > apps/api/.env
 
       - name: Build packages
