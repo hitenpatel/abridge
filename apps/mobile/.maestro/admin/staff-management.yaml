@@ -1,0 +1,21 @@
+appId: com.abridge.app
+name: Admin Staff Management
+tags:
+  - admin
+  - staff
+---
+- runFlow: ../_helpers/login-staff.yaml
+
+# Navigate to staff management from home
+- tapOn: "Staff Management"
+- assertVisible:
+    text: "Invite Staff"
+    timeout: 5000
+
+# Verify sections
+- assertVisible: "Current Staff"
+- assertVisible: "TEACHER"
+- assertVisible: "ADMIN"
+
+# Verify invite form elements
+- assertVisible: "Send Invite"
