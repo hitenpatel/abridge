@@ -1,0 +1,17 @@
+appId: com.abridge.app
+name: Staff Home Dashboard
+tags:
+  - staff
+  - dashboard
+---
+- runFlow: ../_helpers/login-staff.yaml
+
+# Verify staff home elements
+- assertVisible:
+    text: "Home"
+    timeout: 15000
+- assertVisible: "Post Update"
+- assertVisible: "Recent Posts"
+
+# Admin should see Staff Management
+- assertVisible: "Staff Management"
