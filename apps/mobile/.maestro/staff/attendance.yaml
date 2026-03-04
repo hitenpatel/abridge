@@ -1,0 +1,14 @@
+appId: com.abridge.app
+name: Staff Attendance
+tags:
+  - staff
+  - attendance
+---
+- runFlow: ../_helpers/login-staff.yaml
+
+# Navigate to attendance
+- tapOn: "Attendance"
+- assertVisible:
+    text: "Attendance"
+    timeout: 5000
+- assertVisible: "Today's attendance overview"

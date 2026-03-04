@@ -1,0 +1,13 @@
+appId: com.abridge.app
+name: Staff Posts
+tags:
+  - staff
+  - posts
+---
+- runFlow: ../_helpers/login-staff.yaml
+
+# Verify recent posts section on home
+- assertVisible:
+    text: "Recent Posts"
+    timeout: 10000
+- assertVisible: "View All"

@@ -1,0 +1,13 @@
+appId: com.abridge.app
+name: Staff Compose Message
+tags:
+  - staff
+  - messages
+---
+- runFlow: ../_helpers/login-staff.yaml
+
+# Navigate to messages
+- tapOn: "Messages"
+- assertVisible:
+    text: "Inbox"
+    timeout: 5000

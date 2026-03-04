@@ -1,0 +1,14 @@
+appId: com.abridge.app
+name: Staff Payments
+tags:
+  - staff
+  - payments
+---
+- runFlow: ../_helpers/login-staff.yaml
+
+# Navigate to payments
+- tapOn: "Payments"
+- assertVisible:
+    text: "Payments"
+    timeout: 5000
+- assertVisible: "Manage payment items"
