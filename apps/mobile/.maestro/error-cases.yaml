@@ -1,0 +1,35 @@
+appId: com.abridge.app
+name: Error Cases
+tags:
+  - errors
+---
+- clearState
+- launchApp
+- assertVisible: "Sign in to continue"
+
+# Test invalid login credentials
+- tapOn:
+    text: "Email"
+- inputText: "wrong@example.com"
+- tapOn:
+    text: "Password"
+- inputText: "wrongpassword"
+- tapOn:
+    text: "Sign In"
+
+# Should show error alert
+- assertVisible:
+    text: "Login Failed"
+    timeout: 5000
+- tapOn: "OK"
+
+# Test empty fields
+- clearState
+- launchApp
+- assertVisible: "Sign in to continue"
+- tapOn:
+    text: "Sign In"
+- assertVisible:
+    text: "Please fill in all fields"
+    timeout: 5000
+- tapOn: "OK"
