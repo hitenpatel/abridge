@@ -94,6 +94,14 @@ jobs:
       BETTER_AUTH_URL: http://localhost:4000
       NODE_ENV: test
     steps:
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android/sdk/ndk
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/share/boost
+          df -h /
+
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
@@ -154,6 +162,11 @@ jobs:
           EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 npx expo prebuild --platform android --no-install
           cd android
           ./gradlew assembleDebug
+
+      - name: Free disk space before emulator
+        run: |
+          rm -rf apps/mobile/android/.gradle
+          df -h /
 
       - name: Install Maestro CLI
         run: |
