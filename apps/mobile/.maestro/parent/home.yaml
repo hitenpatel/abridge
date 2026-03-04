@@ -1,0 +1,11 @@
+appId: com.abridge.app
+name: Parent Home Dashboard
+tags:
+  - parent
+  - dashboard
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Verify home screen elements
+- assertVisible: "Home"
+- assertVisible: "Report Absence"
