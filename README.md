@@ -9,7 +9,8 @@ A comprehensive school-parent communication platform built as a full-stack monor
 - **Database:** PostgreSQL + [Prisma ORM](https://www.prisma.io/) + Redis
 - **Web:** [Next.js 14](https://nextjs.org/) (App Router) + Tailwind CSS
 - **Mobile:** [Expo](https://expo.dev/) (React Native)
-- **CI/CD:** GitHub Actions
+- **CI/CD:** Forgejo (lint, test, build, deploy) + GitHub Actions (E2E tests)
+- **E2E:** Playwright (web) + Maestro (mobile) + Firebase Test Lab
 
 ## 📂 Project Structure
 
@@ -32,7 +33,7 @@ For a detailed guide on building and testing locally, please refer to the [Devel
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v20+)
+- [Node.js](https://nodejs.org/) (v24+)
 - [pnpm](https://pnpm.io/) (v9+)
 - [Docker Desktop](https://www.docker.com/) (for local database)
 
@@ -107,10 +108,14 @@ The database schema is located in `packages/db/prisma/schema.prisma`.
 
 ## 🧪 Testing
 
-We use [Vitest](https://vitest.dev/) for unit and integration testing.
+| Type | Tool | Command | Location |
+|------|------|---------|----------|
+| Unit/Integration | [Vitest](https://vitest.dev/) | `pnpm test` | `apps/api/src/__tests__/` |
+| Web E2E | [Playwright](https://playwright.dev/) | `npx playwright test` | `e2e/` (29 files, 111+ tests) |
+| Mobile E2E | [Maestro](https://maestro.mobile.dev/) | `maestro test apps/mobile/.maestro/` | `apps/mobile/.maestro/` |
+| Load | [k6](https://k6.io/) | `k6 run packages/load-test/` | `packages/load-test/` |
 
-- Run all tests: `pnpm test`
-- Run tests for a specific package: `pnpm --filter @schoolconnect/api test`
+E2E tests run automatically in GitHub Actions on every push. See [docs/CICD.md](docs/CICD.md) for details.
 
 ## 📝 Code Quality
 

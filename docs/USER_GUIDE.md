@@ -254,16 +254,162 @@ Results appear in a dropdown with category icons. Click a result to navigate to 
 
 ---
 
+## Settings
+
+Navigate to **Settings** from the sidebar (or gear icon on mobile).
+
+### Profile
+- Update your **name** and **phone number**.
+- Email is read-only (contact your school admin to change it).
+- Click **Save Profile** to apply changes.
+
+### Notification Preferences
+Configure how you receive notifications:
+- **Push notifications** — via the mobile app
+- **SMS notifications** — text messages
+- **Email notifications** — via email
+
+**Quiet hours:** Enable quiet hours to suppress non-urgent notifications during specific times (e.g., 9pm to 7am). Urgent messages always come through regardless.
+
+### School Settings (Admin only)
+Admins can update:
+- **School name**
+- **Default notification settings** for the school
+- **Feature toggles** — enable/disable features like wellbeing check-ins, meal booking, community hub, etc.
+- **School branding** — brand colour, secondary colour, motto, and font
+
+---
+
+## Wellbeing Check-ins
+
+### For Parents
+Navigate to **Wellbeing** from the sidebar (if enabled by your school).
+
+1. Select your child (if multiple).
+2. Choose a **mood**: Great, Good, OK, Low, or Struggling.
+3. Optionally add a **note** with more context.
+4. Click **Submit**.
+
+You can view historical check-ins for your child on the same page, showing mood trends over time.
+
+### For Staff
+Staff see a **Class Wellbeing Overview** showing:
+- Today's check-ins across all children
+- **Open Alerts** — flagged children needing attention (e.g., 3+ consecutive low moods)
+- Acknowledge or resolve alerts with optional notes
+
+---
+
+## Report Cards
+
+### For Parents
+Navigate to **Reports** from the sidebar (if enabled).
+
+- View published report cards for each child.
+- Each report shows: subjects, grades/descriptors, teacher comments, attendance percentage, and a general comment.
+- Reports are only visible once the staff publish the report cycle.
+
+### For Staff
+Navigate to **Reports** from the sidebar.
+
+- **Create a Report Cycle** — name it (e.g., "Autumn Term 2026"), select the type (Termly, Half-Termly, End of Year), and set a publish date.
+- **Enter Grades** — for each child, enter subject grades and comments.
+- **Publish** — makes reports visible to parents.
+
+---
+
+## Meal Booking
+
+### For Parents
+Navigate to **Meals** from the sidebar (if enabled).
+
+- View the **weekly menu** published by your school.
+- Each day shows available meal options with descriptions and allergen info.
+- Click **Book** to reserve a meal for your child.
+- Manage your child's **dietary profile** (allergies, dietary needs).
+
+### For Staff
+Navigate to **Meals** from the sidebar.
+
+- **Create a Menu** — add meal options for each day of the week with names, descriptions, categories, allergens, and prices.
+- **Publish** the menu to make it visible to parents.
+- **Kitchen Dashboard** — view booking counts per day to plan catering.
+
+---
+
+## Community Hub
+
+Navigate to **Community** from the sidebar (if enabled).
+
+### For Parents
+- **Create a Post** — start a discussion, share an event, or request volunteers.
+- **Comment** on posts from other parents.
+- **Sign up for volunteer slots** on volunteer request posts.
+- Posts can be tagged for easier filtering.
+
+### For Staff
+Staff can moderate the community:
+- **Pin** important posts to the top.
+- **Remove** posts that violate guidelines (with a reason).
+
+---
+
+## Emergency Communications
+
+### For Staff
+Navigate to **Emergency** from the sidebar (if enabled).
+
+1. **Initiate an Alert** — select the type (Lockdown, Evacuation, Shelter in Place, Medical, Other) and add an optional message.
+2. **Confirm** the alert (requires confirmation dialog for safety).
+3. **Post Updates** — send follow-up messages during an active alert.
+4. **Resolve** — click "All Clear" or "Cancel" with a reason.
+
+Parents receive immediate push notifications for all emergency alerts regardless of quiet hours.
+
+**Alert History** shows past resolved alerts for reference.
+
+---
+
+## Mobile App
+
+The SchoolConnect mobile app (iOS and Android) provides all parent and staff features on the go.
+
+### Getting Started
+1. Download from the App Store or Google Play (or scan the QR code provided by your school).
+2. Log in with the same email and password you use on the web.
+3. Allow push notifications when prompted.
+
+### Parent Features
+The mobile app has four main tabs:
+- **Home** — activity feed, action items (pending forms, outstanding payments), child switcher
+- **Messages** — inbox with category badges (Urgent, Announcement, Reminder, Newsletter)
+- **Attendance** — view records and quickly report absences (Sick, Appointment, Family, Other)
+- **Payments** — outstanding items, pay via Stripe
+
+Additional screens accessible from Home:
+- **Calendar** — month view with colour-coded events
+- **Forms** — pending and completed consent forms
+- **Search** — search across messages, events, and payments
+- **Settings** — profile, notifications, theme toggle
+
+### Staff Features
+Staff see a different set of tabs:
+- **Home** — stats cards (unread, absent, events), post class updates, recent posts
+- **Messages** — inbox + compose messages to parents
+- **Attendance** — today's attendance summary and per-child records
+- **Payments** — manage payment items
+
+Admin staff also see a **Staff Management** link to invite and manage team members.
+
+---
+
 ## Known Limitations
 
 These items are planned but not yet available:
 
-- **PDF receipt downloads** — backend PDF generation exists but download buttons are not yet in the UI.
 - **MIS integration** — attendance data is entered manually; live sync with school MIS systems is planned.
-- **Achievement/reward tracking** — planned for Phase 3.
-- **Photo/video sharing** — schema ready (ClassPost model), UI not yet built.
-- **Parents' evening booking** — schema ready (ParentsEvening model), UI not yet built.
+- **Achievement/reward tracking** — planned for a future phase.
 
 ---
 
-*Last updated: 2026-02-27*
+*Last updated: 2026-03-04*

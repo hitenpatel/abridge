@@ -1,6 +1,6 @@
 # SchoolConnect: PRD vs Implementation Checklist
 
-**Last Updated:** 2026-02-27
+**Last Updated:** 2026-03-04
 **E2E Test Status:** ~219 tests across 19 files (Playwright)
 
 ---
@@ -304,13 +304,15 @@
 | 3 | Docker Compose (Postgres + Redis) | ✅ | |
 | 4 | Prisma migrations | ✅ | 3 migrations applied |
 | 5 | Biome linting | ✅ | Replaces ESLint + Prettier |
-| 6 | GitHub Actions CI | ✅ | lint, test, build |
-| 7 | Playwright E2E test config | ✅ | Chromium, HTML reporter |
-| 8 | API unit tests (10 files) | ✅ | Vitest |
-| 9 | E2E tests (~219 tests, 19 files) | ✅ | Playwright |
-| 10 | PWA configuration | ✅ | Configured with manifest, icons, offline support |
-| 11 | Monitoring (Sentry) | ✅ | @sentry/node + @sentry/profiling-node |
-| 12 | CI/CD deployment pipeline | ❌ | GitHub Actions only for lint/test |
+| 6 | Forgejo CI | ✅ | lint, test, build, deploy (web + API) |
+| 7 | GitHub Actions E2E | ✅ | Playwright (web) + Firebase Test Lab (mobile) |
+| 8 | Playwright E2E test config | ✅ | Chromium, 29 files, 111+ tests |
+| 9 | API unit tests (10 files) | ✅ | Vitest |
+| 10 | Mobile E2E (Maestro) | ✅ | 4 flows + Firebase Robo test |
+| 11 | PWA configuration | ✅ | Configured with manifest, icons, offline support |
+| 12 | Monitoring (Sentry) | ✅ | @sentry/node + @sentry/profiling-node |
+| 13 | CI/CD deployment pipeline | ✅ | Forgejo deploy (Vercel + Railway) + GitHub Actions E2E |
+| 14 | Push mirror (Forgejo to GitHub) | ✅ | Auto-sync on commit |
 
 ---
 
@@ -400,4 +402,4 @@ Additionally, `packages/e2e/` contains a YAML-based journey spec infrastructure 
 
 ---
 
-**Last Updated:** 2026-02-27
+**Last Updated:** 2026-03-04

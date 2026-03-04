@@ -106,7 +106,7 @@ To run tests for a specific package:
 pnpm --filter @schoolconnect/api test
 ```
 
-### End-to-End (E2E) Tests (Playwright)
+### End-to-End (E2E) Tests — Web (Playwright)
 
 We use [Playwright](https://playwright.dev/) for end-to-end testing of the web application.
 
@@ -125,9 +125,53 @@ We use [Playwright](https://playwright.dev/) for end-to-end testing of the web a
     npx playwright test --ui
     ```
 
-    The E2E test files are located in `e2e/` at the project root (~219 tests across 19 files).
+    The E2E test files are located in `e2e/` at the project root (29 files, 111+ tests).
 
-    Additionally, `packages/e2e/` contains a YAML-based journey spec infrastructure for generating cross-platform tests (web Playwright + mobile Maestro).
+### End-to-End (E2E) Tests — Mobile (Maestro)
+
+We use [Maestro](https://maestro.mobile.dev/) for mobile e2e testing.
+
+1.  **Install Maestro CLI:**
+    ```bash
+    curl -fsSL "https://get.maestro.mobile.dev" | bash
+    ```
+
+2.  **Run Maestro flows locally** (requires a running emulator/simulator + API):
+    ```bash
+    # Start API first
+    pnpm --filter @schoolconnect/api dev &
+
+    # Run all flows
+    maestro test apps/mobile/.maestro/
+    ```
+
+    Maestro flows are YAML files in `apps/mobile/.maestro/` organised by role (auth, parent, staff, admin).
+
+### Mobile App Development
+
+1.  **Start the Expo dev server:**
+    ```bash
+    pnpm --filter @schoolconnect/mobile dev
+    ```
+
+2.  **Run on Android emulator:**
+    ```bash
+    pnpm --filter @schoolconnect/mobile android
+    ```
+
+3.  **Run on iOS simulator (macOS only):**
+    ```bash
+    pnpm --filter @schoolconnect/mobile ios
+    ```
+
+4.  **Build with EAS:**
+    ```bash
+    npm install -g eas-cli
+    eas login  # authenticate as hiten123
+    eas build --platform android --profile development
+    ```
+
+5.  **Environment:** Set `EXPO_PUBLIC_API_URL` in `apps/mobile/.env` to point to your API (defaults to auto-detected local IP on port 4000).
 
 ## Building
 
@@ -189,6 +233,17 @@ Database commands are generally run from the root or filtered to `@schoolconnect
       ```bash
       rm -rf .turbo node_modules/.cache
       ```
+
+## CI/CD
+
+The project uses a split CI/CD architecture:
+
+- **Forgejo** (self-hosted): lint, unit tests, build, deploy (web via Vercel, API via Railway)
+- **GitHub Actions**: E2E tests (web Playwright + mobile Firebase Test Lab)
+
+A push mirror automatically syncs Forgejo to GitHub on every commit, so both CI systems trigger from a single push.
+
+For full details see [docs/CICD.md](CICD.md).
 
 ## Project Structure
 
