@@ -1,0 +1,18 @@
+appId: com.abridge.app
+name: Parent Messages
+tags:
+  - parent
+  - messages
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Navigate to messages
+- tapOn: "Messages"
+- assertVisible:
+    text: "Inbox"
+    timeout: 5000
+
+# Verify seeded messages are visible (seed creates messages with URGENT category)
+- assertVisible:
+    text: "URGENT"
+    timeout: 5000
