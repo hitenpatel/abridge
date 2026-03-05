@@ -202,6 +202,8 @@ jobs:
           disable-animations: true
           script: |
             adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
+            adb reverse tcp:8099 tcp:8099
+            adb reverse tcp:4000 tcp:4000
             cd apps/mobile && PATH="$PWD/node_modules/.bin:$PATH" node_modules/.bin/detox test --configuration android.att.debug --record-logs all
 
       - uses: actions/upload-artifact@v4
