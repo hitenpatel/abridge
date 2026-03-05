@@ -203,7 +203,7 @@ jobs:
           script: |
             adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
             cd apps/mobile
-            pnpm detox test --configuration android.att.debug --headless --record-logs all
+            npx --no-install detox test --configuration android.att.debug --headless --record-logs all
 
       - uses: actions/upload-artifact@v4
         if: always()
