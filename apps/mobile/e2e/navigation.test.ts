@@ -2,9 +2,8 @@ import { by, device, element, expect } from "detox";
 
 describe("Tab Navigation Smoke Test", () => {
 	beforeAll(async () => {
-		await device.launchApp({
-			launchArgs: { detoxURLBlacklistRegex: '(".*10\\.0\\.2\\.2.*",".*localhost.*")' },
-		});
+		await device.launchApp();
+		await device.setURLBlacklist([".*10\\.0\\.2\\.2.*", ".*localhost.*"]);
 	});
 
 	it("should start on Home", async () => {
