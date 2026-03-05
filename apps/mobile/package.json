@@ -58,7 +58,7 @@
 		"@trpc/server": "^11.0.0",
 		"@types/jest": "29.5.14",
 		"@types/react": "^19.1.0",
-		"detox": "^20.47",
+		"detox": "21.0.2-rc.0",
 		"jest": "~29.7.0",
 		"jest-expo": "~54.0.17",
 		"react-dom": "19.1.0",
@@ -67,13 +67,22 @@
 	},
 	"jest": {
 		"preset": "jest-expo",
-		"testMatch": ["**/__tests__/**/*.test.{ts,tsx}", "**/*.test.{ts,tsx}"],
-		"modulePathIgnorePatterns": ["<rootDir>/e2e/"],
+		"testMatch": [
+			"**/__tests__/**/*.test.{ts,tsx}",
+			"**/*.test.{ts,tsx}"
+		],
+		"modulePathIgnorePatterns": [
+			"<rootDir>/e2e/"
+		],
 		"transformIgnorePatterns": [
 			"node_modules/(?!(?:\\.pnpm|react-native|@react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|expo-modules-core|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg|@tanstack/.*|@trpc/.*|superjson|lucide-react-native|better-auth|jest-expo|nativewind|react-native-css-interop|class-variance-authority|expo-secure-store|expo-font|expo-haptics|expo-clipboard)/)"
 		],
-		"setupFiles": ["./src/__tests__/__mocks__/expo-modules.ts"],
-		"setupFilesAfterEnv": ["@testing-library/react-native/build/matchers/extend-expect"],
+		"setupFiles": [
+			"./src/__tests__/__mocks__/expo-modules.ts"
+		],
+		"setupFilesAfterEnv": [
+			"@testing-library/react-native/build/matchers/extend-expect"
+		],
 		"moduleNameMapper": {
 			"^@/(.*)$": "<rootDir>/src/$1"
 		}

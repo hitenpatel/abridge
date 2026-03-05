@@ -180,7 +180,7 @@ jobs:
       - name: Build debug and test APKs
         run: |
           cd apps/mobile/android
-          EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug -PbundleInDebug=true -PnewArchEnabled=false
+          EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug -PbundleInDebug=true
 
       - name: Save Gradle cache
         if: always()
