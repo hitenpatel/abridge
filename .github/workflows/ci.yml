@@ -202,19 +202,7 @@ jobs:
           disable-animations: true
           script: |
             adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
-            adb reverse tcp:8099 tcp:8099
-            adb reverse tcp:4000 tcp:4000
-
-            # Install and launch app to check for crashes
-            adb install apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
-            adb shell am start -n com.abridge.app/.MainActivity
-            sleep 15
-
-            # Diagnostic: check if app survived launch
-            adb shell pidof com.abridge.app || echo "APP CRASHED"
-            adb logcat -d -s ReactNative:* ReactNativeJS:* AndroidRuntime:* | tail -40
-
-            cd apps/mobile && PATH="$PWD/node_modules/.bin:$PATH" node_modules/.bin/detox test --configuration android.att.debug --record-logs all
+            cd apps/mobile && PATH="$PWD/node_modules/.bin:$PATH" node_modules/.bin/detox test --configuration android.ci.debug --record-logs all --loglevel trace
 
       - uses: actions/upload-artifact@v4
         if: always()

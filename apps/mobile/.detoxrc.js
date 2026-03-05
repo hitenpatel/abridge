@@ -36,6 +36,12 @@ module.exports = {
 				avdName: "Pixel_7_API_34",
 			},
 		},
+		"ci.emulator": {
+			type: "android.emulator",
+			device: {
+				avdName: "test",
+			},
+		},
 		attached: {
 			type: "android.attached",
 			device: {
@@ -52,6 +58,10 @@ module.exports = {
 		"android.emu.release": {
 			device: "emulator",
 			app: "android.release",
+		},
+		"android.ci.debug": {
+			device: "ci.emulator",
+			app: "android.debug",
 		},
 		"android.att.debug": {
 			device: "attached",
