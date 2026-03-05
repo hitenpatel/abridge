@@ -53,6 +53,10 @@ module.exports = {
 			device: "emulator",
 			app: "android.release",
 		},
+		"android.att.debug": {
+			device: "attached",
+			app: "android.debug",
+		},
 		"android.att.release": {
 			device: "attached",
 			app: "android.release",

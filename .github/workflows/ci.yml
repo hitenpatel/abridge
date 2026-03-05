@@ -178,17 +178,12 @@ jobs:
           restore-keys: gradle-
           save-always: true
 
-      - name: Build debug APK
+      - name: Build debug and test APKs
         run: |
           cd apps/mobile/android
-          EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 ./gradlew assembleDebug -PbundleInDebug=true
+          EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug -PbundleInDebug=true
 
-      - name: Install Maestro CLI
-        run: |
-          curl -fsSL "https://get.maestro.mobile.dev" | bash
-          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
-
-      - name: Run Maestro tests on Android emulator
+      - name: Run Detox tests on Android emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
@@ -198,27 +193,14 @@ jobs:
           disable-animations: true
           script: |
             adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
-            adb install apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
-            adb shell am start -n com.abridge.app/.MainActivity
-            sleep 20
-
-            # Diagnostic: capture what's on screen and any crash logs
-            adb exec-out screencap -p > /tmp/app-screenshot.png || true
-            adb logcat -d -s ReactNative:* ReactNativeJS:* AndroidRuntime:* ActivityManager:* | tail -80 || true
-
-            # Check if app is actually running
-            adb shell pidof com.abridge.app || echo "WARNING: App process not found!"
-            adb shell dumpsys activity activities | grep -A 5 "com.abridge.app" | head -10 || true
-
-            MAESTRO_WAIT_TIMEOUT=30000 maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml
+            cd apps/mobile
+            npx detox test --configuration android.att.debug --headless --record-logs all
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: maestro-report
-          path: |
-            maestro-report.xml
-            /tmp/app-screenshot.png
+          name: detox-report
+          path: apps/mobile/artifacts/
           retention-days: 7
 
       - name: Set up Google Cloud CLI
