@@ -167,8 +167,8 @@ jobs:
           cd apps/mobile
           EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 npx expo prebuild --platform android --no-install
 
-      - name: Cache Gradle
-        uses: actions/cache@v4
+      - name: Restore Gradle cache
+        uses: actions/cache/restore@v4
         with:
           path: |
             ~/.gradle/caches
@@ -176,12 +176,21 @@ jobs:
             apps/mobile/android/.gradle
           key: gradle-${{ hashFiles('apps/mobile/android/gradle/wrapper/gradle-wrapper.properties', 'apps/mobile/package.json') }}
           restore-keys: gradle-
-          save-always: true
 
       - name: Build debug and test APKs
         run: |
           cd apps/mobile/android
           EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug -PbundleInDebug=true
+
+      - name: Save Gradle cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            apps/mobile/android/.gradle
+          key: gradle-${{ hashFiles('apps/mobile/android/gradle/wrapper/gradle-wrapper.properties', 'apps/mobile/package.json') }}
 
       - name: Run Detox tests on Android emulator
         uses: reactivecircus/android-emulator-runner@v2
