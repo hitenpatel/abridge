@@ -2,7 +2,9 @@ import { by, device, element, expect, waitFor } from "detox";
 
 describe("Dashboard Overview", () => {
 	beforeAll(async () => {
-		await device.launchApp();
+		await device.launchApp({
+			launchArgs: { detoxURLBlacklistRegex: '(".*10\\.0\\.2\\.2.*",".*localhost.*")' },
+		});
 	});
 
 	it("should show the Home screen", async () => {

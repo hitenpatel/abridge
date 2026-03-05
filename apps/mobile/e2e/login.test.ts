@@ -2,7 +2,10 @@ import { by, device, element, expect, waitFor } from "detox";
 
 describe("Login Flow", () => {
 	beforeAll(async () => {
-		await device.launchApp({ delete: true });
+		await device.launchApp({
+			delete: true,
+			launchArgs: { detoxURLBlacklistRegex: '(".*10\\.0\\.2\\.2.*",".*localhost.*")' },
+		});
 	});
 
 	it("should show the app title", async () => {
