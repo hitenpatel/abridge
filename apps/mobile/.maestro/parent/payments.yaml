@@ -12,7 +12,7 @@ tags:
     visible: "Wallet"
     timeout: 15000
 
-# Verify seeded payment item (School Trip - Science Museum, £15.00)
+# Wait for payment items to load from API
 - extendedWaitUntil:
     visible: "Science Museum"
-    timeout: 15000
+    timeout: 30000

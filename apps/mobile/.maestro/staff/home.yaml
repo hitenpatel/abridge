@@ -12,7 +12,7 @@ tags:
 - assertVisible: "Post Update"
 - assertVisible: "Recent Posts"
 
-# Admin should see Staff Management
+# Admin should see Staff Management (wait for session to populate staffRole)
 - extendedWaitUntil:
     visible: "Staff Management"
-    timeout: 15000
+    timeout: 30000

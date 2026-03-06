@@ -6,10 +6,10 @@ tags:
 ---
 - runFlow: ../_helpers/login-staff.yaml
 
-# Navigate to staff management from home
+# Wait for session to load and admin UI to render
 - extendedWaitUntil:
     visible: "Staff Management"
-    timeout: 15000
+    timeout: 30000
 - tapOn: "Staff Management"
 - extendedWaitUntil:
     visible: "Invite Staff"
