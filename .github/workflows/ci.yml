@@ -177,10 +177,10 @@ jobs:
           key: gradle-${{ hashFiles('apps/mobile/android/gradle/wrapper/gradle-wrapper.properties', 'apps/mobile/package.json') }}
           restore-keys: gradle-
 
-      - name: Build debug and test APKs
+      - name: Build debug APK
         run: |
           cd apps/mobile/android
-          EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug -PbundleInDebug=true -PnewArchEnabled=false
+          EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 ./gradlew assembleDebug -PbundleInDebug=true
 
       - name: Save Gradle cache
         if: always()
@@ -192,7 +192,12 @@ jobs:
             apps/mobile/android/.gradle
           key: gradle-${{ hashFiles('apps/mobile/android/gradle/wrapper/gradle-wrapper.properties', 'apps/mobile/package.json') }}
 
-      - name: Run Detox tests on Android emulator
+      - name: Install Maestro CLI
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Run Maestro tests on Android emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
@@ -202,13 +207,15 @@ jobs:
           disable-animations: true
           script: |
             adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
-            cd apps/mobile && PATH="$PWD/node_modules/.bin:$PATH" node_modules/.bin/detox test --configuration android.ci.debug --record-logs all
+            adb install apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
+            adb reverse tcp:4000 tcp:4000
+            $HOME/.maestro/bin/maestro test apps/mobile/.maestro/auth/login.yaml apps/mobile/.maestro/parent/navigation.yaml --format junit --output maestro-report.xml
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: detox-report
-          path: apps/mobile/artifacts/
+          name: maestro-report
+          path: maestro-report.xml
           retention-days: 7
 
       - name: Set up Google Cloud CLI
