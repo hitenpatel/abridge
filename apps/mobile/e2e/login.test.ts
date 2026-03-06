@@ -4,8 +4,11 @@ describe("Login Flow", () => {
 	beforeAll(async () => {
 		await device.launchApp({
 			delete: true,
-			launchArgs: { detoxURLBlacklistRegex: '(".*10\\.0\\.2\\.2.*",".*localhost.*")' },
+			newInstance: true,
+			launchArgs: { detoxEnableSynchronization: 0 },
 		});
+		await device.setURLBlacklist([".*10\\.0\\.2\\.2.*", ".*localhost.*"]);
+		await device.enableSynchronization();
 	});
 
 	it("should show the app title", async () => {

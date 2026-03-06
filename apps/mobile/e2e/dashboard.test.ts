@@ -2,8 +2,12 @@ import { by, device, element, expect, waitFor } from "detox";
 
 describe("Dashboard Overview", () => {
 	beforeAll(async () => {
-		await device.launchApp();
+		await device.launchApp({
+			newInstance: true,
+			launchArgs: { detoxEnableSynchronization: 0 },
+		});
 		await device.setURLBlacklist([".*10\\.0\\.2\\.2.*", ".*localhost.*"]);
+		await device.enableSynchronization();
 	});
 
 	it("should show the Home screen", async () => {
