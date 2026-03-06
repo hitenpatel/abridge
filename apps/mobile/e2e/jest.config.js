@@ -12,6 +12,7 @@ module.exports = {
 		"\\.[jt]sx?$": [
 			"babel-jest",
 			{
+				configFile: false,
 				presets: [
 					["babel-preset-expo", { jsxImportSource: "nativewind", reanimated: false }],
 					"nativewind/babel",
