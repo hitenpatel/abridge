@@ -184,7 +184,6 @@ jobs:
       - name: Build debug APK
         run: |
           cd apps/mobile/android
-          NODE_PATH="$GITHUB_WORKSPACE/apps/mobile/node_modules:$GITHUB_WORKSPACE/node_modules" \
           EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 ./gradlew assembleDebug
 
       - name: Save Gradle cache
