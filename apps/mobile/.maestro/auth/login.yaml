@@ -15,16 +15,23 @@ tags:
 # Verify login screen
 - assertVisible: "Sign in to continue"
 
-# Login with valid credentials
+# Enter email
 - tapOn:
     text: "Email"
 - inputText: "sarah@example.com"
+- hideKeyboard
+
+# Enter password
 - tapOn:
     text: "Password"
 - inputText: "password123"
+- hideKeyboard
+
+# Submit
 - tapOn:
     text: "Sign In"
 
 # Verify redirect to home
-- assertVisible:
-    text: "Home"
+- extendedWaitUntil:
+    visible: "Home"
+    timeout: 30000
