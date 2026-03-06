@@ -167,6 +167,11 @@ jobs:
           cd apps/mobile
           EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 npx expo prebuild --platform android --no-install
 
+      - name: Disable debug dev-server (use embedded bundle)
+        run: |
+          cd apps/mobile/android/app
+          sed -i '/autolinkLibrariesWithApp/i\    debuggableVariants = []' build.gradle
+
       - name: Restore Gradle cache
         uses: actions/cache/restore@v4
         with:
@@ -177,17 +182,9 @@ jobs:
           key: gradle-${{ hashFiles('apps/mobile/android/gradle/wrapper/gradle-wrapper.properties', 'apps/mobile/package.json') }}
           restore-keys: gradle-
 
-      - name: Bundle JS with Expo CLI
-        run: |
-          cd apps/mobile
-          mkdir -p android/app/src/main/assets
-          EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 npx expo export:embed \
-            --platform android \
-            --dev false \
-            --bundle-output android/app/src/main/assets/index.android.bundle \
-            --assets-dest android/app/src/main/res
-
       - name: Build debug APK
+        env:
+          EXPO_PUBLIC_API_URL: http://10.0.2.2:4000
         run: |
           cd apps/mobile/android
           ./gradlew assembleDebug
@@ -224,8 +221,8 @@ jobs:
             adb logcat -c
             adb shell am start -n com.abridge.app/.MainActivity
             sleep 20
-            echo "=== Logcat (last 100 lines) ==="
-            adb logcat -d -t 100 | grep -iE "ReactNative|com.abridge|FATAL|crash|Error" || true
+            echo "=== Logcat (last 200 lines) ==="
+            adb logcat -d -t 200 | grep -iE "ReactNative|com.abridge|FATAL|crash|Error|hermes|expo|bundle" || true
             echo "=== Running Maestro ==="
             $HOME/.maestro/bin/maestro test apps/mobile/.maestro/auth/login.yaml --format junit --output maestro-report.xml --debug-output maestro-debug
 
