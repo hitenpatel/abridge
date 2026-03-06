@@ -202,7 +202,7 @@ jobs:
           disable-animations: true
           script: |
             adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
-            cd apps/mobile && PATH="$PWD/node_modules/.bin:$PATH" node_modules/.bin/detox test --configuration android.ci.debug --record-logs all
+            cd apps/mobile && PATH="$PWD/node_modules/.bin:$PATH" node_modules/.bin/detox test --configuration android.ci.debug --record-logs all --loglevel trace
 
       - uses: actions/upload-artifact@v4
         if: always()
