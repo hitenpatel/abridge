@@ -13,6 +13,13 @@ config.resolver.nodeModulesPaths = [
 	path.resolve(monorepoRoot, "node_modules"),
 ];
 
+// Force single React instance to prevent duplicate context issues
+// (pnpm hoisting can create nested react copies in dependencies)
+config.resolver.extraNodeModules = {
+	react: path.resolve(projectRoot, "node_modules/react"),
+	"react-native": path.resolve(projectRoot, "node_modules/react-native"),
+};
+
 module.exports = withNativeWind(config, {
 	input: "./global.css",
 });
