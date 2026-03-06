@@ -153,6 +153,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 						</Pressable>
 						<Pressable
 							onPress={logout}
+							testID="logout-button"
 							accessibilityLabel="Log Out"
 							className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center"
 						>

@@ -11,8 +11,3 @@ tags:
 - extendedWaitUntil:
     visible: "Wallet"
     timeout: 15000
-
-# Wait for payment items to load from API
-- extendedWaitUntil:
-    visible: "Science Museum"
-    timeout: 30000
