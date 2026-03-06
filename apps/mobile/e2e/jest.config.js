@@ -13,11 +13,8 @@ module.exports = {
 			"babel-jest",
 			{
 				configFile: false,
-				presets: [
-					["babel-preset-expo", { jsxImportSource: "nativewind", reanimated: false }],
-					"nativewind/babel",
-				],
-				plugins: ["react-native-reanimated/plugin"],
+				babelrc: false,
+				presets: ["@babel/preset-typescript"],
 			},
 		],
 	},
