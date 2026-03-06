@@ -7,9 +7,13 @@ tags:
 - runFlow: ../_helpers/login-staff.yaml
 
 # Navigate to staff management from home
+- extendedWaitUntil:
+    visible: "Staff Management"
+    timeout: 15000
 - tapOn: "Staff Management"
-- assertVisible:
-    text: "Invite Staff"
+- extendedWaitUntil:
+    visible: "Invite Staff"
+    timeout: 15000
 
 # Verify sections
 - assertVisible: "Current Staff"

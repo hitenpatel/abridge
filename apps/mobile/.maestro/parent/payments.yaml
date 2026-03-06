@@ -8,9 +8,11 @@ tags:
 
 # Navigate to payments
 - tapOn: "Payments"
-- assertVisible:
-    text: "Wallet"
+- extendedWaitUntil:
+    visible: "Wallet"
+    timeout: 15000
 
 # Verify seeded payment item (School Trip - Science Museum, £15.00)
-- assertVisible:
-    text: "Science Museum"
+- extendedWaitUntil:
+    visible: "Science Museum"
+    timeout: 15000

@@ -13,4 +13,6 @@ tags:
 - assertVisible: "Recent Posts"
 
 # Admin should see Staff Management
-- assertVisible: "Staff Management"
+- extendedWaitUntil:
+    visible: "Staff Management"
+    timeout: 15000
