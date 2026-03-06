@@ -221,8 +221,12 @@ jobs:
             sleep 10
             adb install apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
             adb reverse tcp:4000 tcp:4000
+            adb logcat -c
             adb shell am start -n com.abridge.app/.MainActivity
-            sleep 15
+            sleep 20
+            echo "=== Logcat (last 100 lines) ==="
+            adb logcat -d -t 100 | grep -iE "ReactNative|com.abridge|FATAL|crash|Error" || true
+            echo "=== Running Maestro ==="
             $HOME/.maestro/bin/maestro test apps/mobile/.maestro/auth/login.yaml --format junit --output maestro-report.xml --debug-output maestro-debug
 
       - uses: actions/upload-artifact@v4
