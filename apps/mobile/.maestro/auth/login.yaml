@@ -7,8 +7,12 @@ tags:
 - clearState
 - launchApp
 
+# Wait for app to load (CI emulators are slow)
+- extendedWaitUntil:
+    visible: "Abridge"
+    timeout: 60000
+
 # Verify login screen
-- assertVisible: "Abridge"
 - assertVisible: "Sign in to continue"
 
 # Login with valid credentials
