@@ -8,5 +8,17 @@ module.exports = {
 	globalTeardown: "detox/runners/jest/globalTeardown",
 	reporters: ["detox/runners/jest/reporter"],
 	testEnvironment: "detox/runners/jest/testEnvironment",
+	transform: {
+		"\\.[jt]sx?$": [
+			"babel-jest",
+			{
+				presets: [
+					["babel-preset-expo", { jsxImportSource: "nativewind", reanimated: false }],
+					"nativewind/babel",
+				],
+				plugins: ["react-native-reanimated/plugin"],
+			},
+		],
+	},
 	verbose: true,
 };
