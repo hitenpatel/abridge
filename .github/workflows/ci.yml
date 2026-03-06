@@ -234,7 +234,7 @@ jobs:
             echo "=== Logcat (last 300 lines, filtered) ==="
             adb logcat -d -t 300 | grep -iE "ReactNative|com.abridge|FATAL|crash|Error|hermes|expo|bundle|useState|useContext" || true
             echo "=== Running Maestro ==="
-            $HOME/.maestro/bin/maestro test apps/mobile/.maestro/auth/login.yaml --format junit --output maestro-report.xml --debug-output maestro-debug
+            $HOME/.maestro/bin/maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml --debug-output maestro-debug
 
       - uses: actions/upload-artifact@v4
         if: always()

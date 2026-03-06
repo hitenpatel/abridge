@@ -2,14 +2,31 @@ appId: com.abridge.app
 ---
 - clearState
 - launchApp
+
+# Wait for app to load (CI emulators are slow)
+- extendedWaitUntil:
+    visible: "Abridge"
+    timeout: 60000
+
 - assertVisible: "Sign in to continue"
+
+# Enter email
 - tapOn:
     text: "Email"
 - inputText: "sarah@example.com"
+- hideKeyboard
+
+# Enter password
 - tapOn:
     text: "Password"
 - inputText: "password123"
+- hideKeyboard
+
+# Submit
 - tapOn:
     text: "Sign In"
-- assertVisible:
-    text: "Home"
+
+# Verify redirect to home
+- extendedWaitUntil:
+    visible: "Home"
+    timeout: 30000

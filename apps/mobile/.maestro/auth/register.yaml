@@ -7,7 +7,12 @@ tags:
 # This flow validates the login screen renders correctly
 - clearState
 - launchApp
-- assertVisible: "Abridge"
+
+# Wait for app to load (CI emulators are slow)
+- extendedWaitUntil:
+    visible: "Abridge"
+    timeout: 60000
+
 - assertVisible: "Sign in to continue"
 - assertVisible: "Email"
 - assertVisible: "Password"

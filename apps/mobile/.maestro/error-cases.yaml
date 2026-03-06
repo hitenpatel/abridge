@@ -5,29 +5,45 @@ tags:
 ---
 - clearState
 - launchApp
+
+# Wait for app to load (CI emulators are slow)
+- extendedWaitUntil:
+    visible: "Abridge"
+    timeout: 60000
+
 - assertVisible: "Sign in to continue"
 
 # Test invalid login credentials
 - tapOn:
     text: "Email"
 - inputText: "wrong@example.com"
+- hideKeyboard
 - tapOn:
     text: "Password"
 - inputText: "wrongpassword"
+- hideKeyboard
 - tapOn:
     text: "Sign In"
 
 # Should show error alert
-- assertVisible:
-    text: "Login Failed"
+- extendedWaitUntil:
+    visible: "Login Failed"
+    timeout: 10000
 - tapOn: "OK"
 
 # Test empty fields
 - clearState
 - launchApp
+
+# Wait for app to load again
+- extendedWaitUntil:
+    visible: "Abridge"
+    timeout: 60000
+
 - assertVisible: "Sign in to continue"
 - tapOn:
     text: "Sign In"
-- assertVisible:
-    text: "Please fill in all fields"
+- extendedWaitUntil:
+    visible: "Please fill in all fields"
+    timeout: 10000
 - tapOn: "OK"
