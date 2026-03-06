@@ -177,14 +177,21 @@ jobs:
           key: gradle-${{ hashFiles('apps/mobile/android/gradle/wrapper/gradle-wrapper.properties', 'apps/mobile/package.json') }}
           restore-keys: gradle-
 
-      - name: Enable JS bundling in debug build
+      - name: Bundle JS with Expo CLI
         run: |
-          sed -i '/react {/a\    debuggableVariants = []' apps/mobile/android/app/build.gradle
+          cd apps/mobile
+          mkdir -p android/app/src/main/assets
+          EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 npx expo export:embed \
+            --platform android \
+            --dev false \
+            --entry-file index.js \
+            --bundle-output android/app/src/main/assets/index.android.bundle \
+            --assets-dest android/app/src/main/res
 
       - name: Build debug APK
         run: |
           cd apps/mobile/android
-          EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 ./gradlew assembleDebug
+          ./gradlew assembleDebug
 
       - name: Save Gradle cache
         if: always()
