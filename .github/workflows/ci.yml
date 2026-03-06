@@ -131,6 +131,16 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - name: Deduplicate React for Metro bundling
+        run: |
+          # pnpm hoisting creates nested react copies inside dependencies.
+          # Metro bundles each copy as a separate module, breaking React contexts.
+          # Remove nested copies so all imports resolve to apps/mobile/node_modules/react.
+          find node_modules -path "*/node_modules/react/index.js" \
+            -not -path "node_modules/react/index.js" \
+            -not -path "apps/mobile/node_modules/react/index.js" \
+            | while read f; do rm -rf "$(dirname "$f")"; done
+
       - name: Push database schema and seed
         run: |
           pnpm --filter @schoolconnect/db db:push
