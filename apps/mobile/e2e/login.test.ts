@@ -2,13 +2,8 @@ import { by, device, element, expect, waitFor } from "detox";
 
 describe("Login Flow", () => {
 	beforeAll(async () => {
-		await device.launchApp({
-			delete: true,
-			newInstance: true,
-			launchArgs: { detoxEnableSynchronization: 0 },
-		});
+		await device.launchApp({ delete: true });
 		await device.setURLBlacklist([".*10\\.0\\.2\\.2.*", ".*localhost.*"]);
-		await device.enableSynchronization();
 	});
 
 	it("should show the app title", async () => {
