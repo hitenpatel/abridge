@@ -177,6 +177,20 @@ jobs:
           key: gradle-${{ hashFiles('apps/mobile/android/gradle/wrapper/gradle-wrapper.properties', 'apps/mobile/package.json') }}
           restore-keys: gradle-
 
+      - name: Debug module resolution
+        run: |
+          echo "=== Check babel config ==="
+          cat apps/mobile/babel.config.js
+          echo ""
+          echo "=== Check react-native-worklets resolution ==="
+          node -e "try { console.log('FOUND:', require.resolve('react-native-worklets')); } catch(e) { console.log('NOT FOUND:', e.code, e.message.substring(0, 100)); }"
+          echo "=== Check from babel-preset-expo ==="
+          node -e "const m = require('babel-preset-expo/build/common.js'); console.log('hasModule worklets:', m.hasModule('react-native-worklets')); console.log('hasModule reanimated:', m.hasModule('react-native-reanimated'));"
+          echo "=== List node_modules for worklets ==="
+          ls -la node_modules/react-native-worklets 2>&1 || echo "not at root"
+          ls -la apps/mobile/node_modules/react-native-worklets 2>&1 || echo "not in mobile"
+          find node_modules -maxdepth 2 -name "react-native-worklets" 2>/dev/null || echo "not found anywhere"
+
       - name: Bundle JS with Expo CLI
         run: |
           cd apps/mobile
