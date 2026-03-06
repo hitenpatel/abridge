@@ -200,22 +200,28 @@ jobs:
       - name: Run Maestro tests on Android emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: 31
           arch: x86_64
-          target: google_apis
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          target: default
+          ram-size: 4096
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -memory 4096
           disable-animations: true
           script: |
             adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
+            sleep 10
             adb install apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
             adb reverse tcp:4000 tcp:4000
-            $HOME/.maestro/bin/maestro test apps/mobile/.maestro/auth/login.yaml apps/mobile/.maestro/parent/navigation.yaml --format junit --output maestro-report.xml
+            adb shell am start -n com.abridge.app/.MainActivity
+            sleep 15
+            $HOME/.maestro/bin/maestro test apps/mobile/.maestro/auth/login.yaml --format junit --output maestro-report.xml --debug-output maestro-debug
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: maestro-report
-          path: maestro-report.xml
+          path: |
+            maestro-report.xml
+            maestro-debug/
           retention-days: 7
 
       - name: Set up Google Cloud CLI
