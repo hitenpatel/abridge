@@ -231,8 +231,15 @@ jobs:
             adb logcat -c
             adb shell am start -n com.abridge.app/.MainActivity
             sleep 20
-            echo "=== Logcat (last 200 lines) ==="
-            adb logcat -d -t 200 | grep -iE "ReactNative|com.abridge|FATAL|crash|Error|hermes|expo|bundle" || true
+            echo "=== Logcat (app process, last 500 lines) ==="
+            APP_PID=$(adb shell pidof com.abridge.app 2>/dev/null || echo "")
+            if [ -n "$APP_PID" ]; then
+              echo "App PID: $APP_PID"
+              adb logcat -d --pid=$APP_PID -t 500 || true
+            else
+              echo "App process not found, dumping full logcat"
+              adb logcat -d -t 200 || true
+            fi
             echo "=== Running Maestro ==="
             $HOME/.maestro/bin/maestro test apps/mobile/.maestro/auth/login.yaml --format junit --output maestro-report.xml --debug-output maestro-debug
 
