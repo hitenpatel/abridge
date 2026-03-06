@@ -177,10 +177,14 @@ jobs:
           key: gradle-${{ hashFiles('apps/mobile/android/gradle/wrapper/gradle-wrapper.properties', 'apps/mobile/package.json') }}
           restore-keys: gradle-
 
+      - name: Enable JS bundling in debug build
+        run: |
+          sed -i '/react {/a\    debuggableVariants = []' apps/mobile/android/app/build.gradle
+
       - name: Build debug APK
         run: |
           cd apps/mobile/android
-          EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 ./gradlew assembleDebug -PbundleInDebug=true
+          EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 ./gradlew assembleDebug
 
       - name: Save Gradle cache
         if: always()
