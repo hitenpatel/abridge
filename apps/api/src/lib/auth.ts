@@ -1,6 +1,7 @@
 import { type StaffRole, prisma } from "@schoolconnect/db";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { bearer } from "better-auth/plugins";
 import { logger } from "./logger";
 import { invalidateStaffCache } from "./redis";
 
@@ -33,6 +34,7 @@ export const auth = betterAuth({
 	verification: {
 		modelName: "Verification",
 	},
+	plugins: [bearer()],
 	emailAndPassword: {
 		enabled: true,
 		minPasswordLength: 8,
