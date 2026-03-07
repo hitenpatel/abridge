@@ -410,10 +410,20 @@ jobs:
           xcrun simctl boot "$DEVICE"
           xcrun simctl install "$DEVICE" apps/mobile/ios/build/Build/Products/Release-iphonesimulator/Abridge.app
           sleep 15
-          maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml
+          echo "=== Launch app and capture logs ==="
+          xcrun simctl launch --console-pty "$DEVICE" com.abridge.app 2>&1 | head -100 &
+          APP_LOG_PID=$!
+          sleep 10
+          kill $APP_LOG_PID 2>/dev/null || true
+          echo "=== App launched, running Maestro ==="
+          MAESTRO_EXIT=0
+          maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml || MAESTRO_EXIT=$?
+          echo "=== Simulator logs ==="
+          xcrun simctl spawn "$DEVICE" log show --predicate 'processImagePath CONTAINS "Abridge"' --last 5m --style compact 2>/dev/null | tail -50 || true
+          exit $MAESTRO_EXIT
 
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()
         with:
           name: maestro-report-ios
           path: maestro-report.xml
