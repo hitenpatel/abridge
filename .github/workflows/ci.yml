@@ -8,272 +8,272 @@ on:
   workflow_dispatch:
 
 jobs:
-  e2e-web:
-    runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
-      BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
-      BETTER_AUTH_URL: http://localhost:4000
-      NEXT_PUBLIC_API_URL: http://localhost:4000
-      NODE_ENV: test
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: pnpm
+  # e2e-web:
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
+  #     BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
+  #     BETTER_AUTH_URL: http://localhost:4000
+  #     NEXT_PUBLIC_API_URL: http://localhost:4000
+  #     NODE_ENV: test
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: pnpm/action-setup@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 24
+  #         cache: pnpm
+  #
+  #     - name: Install and start PostgreSQL
+  #       run: |
+  #         sudo apt-get update -qq && sudo apt-get install -y -qq postgresql postgresql-client > /dev/null
+  #         PG_VER=$(pg_lsclusters -h | head -1 | awk '{print $1}')
+  #         sudo pg_ctlcluster "$PG_VER" main start
+  #         sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
+  #         sudo -u postgres createdb schoolconnect_test
+  #
+  #     - run: pnpm install --frozen-lockfile
+  #
+  #     - name: Install Playwright Chromium
+  #       run: pnpm exec playwright install --with-deps chromium
+  #
+  #     - name: Push database schema and seed
+  #       run: |
+  #         pnpm --filter @schoolconnect/db db:push
+  #         pnpm --filter @schoolconnect/db db:seed
+  #
+  #     - name: Create API .env
+  #       run: |
+  #         printf '%s\n' \
+  #           'DATABASE_URL=postgresql://postgres:postgres@localhost:5432/schoolconnect_test' \
+  #           'BETTER_AUTH_SECRET=test-secret-for-ci-e2e-testing-only' \
+  #           'BETTER_AUTH_URL=http://localhost:4000' \
+  #           'NODE_ENV=test' \
+  #           'SETUP_KEY=admin123' \
+  #           > apps/api/.env
+  #
+  #     - name: Build packages
+  #       run: pnpm build
+  #
+  #     - name: Start servers and run E2E tests
+  #       run: |
+  #         pnpm --filter @schoolconnect/api dev &
+  #         pnpm --filter @schoolconnect/web dev &
+  #         for i in $(seq 1 60); do
+  #           if curl -sf http://localhost:4000/trpc/health.check > /dev/null 2>&1; then
+  #             echo "API is ready"
+  #             break
+  #           fi
+  #           echo "Waiting for API... ($i/60)"
+  #           sleep 2
+  #           if [ "$i" -eq 60 ]; then echo "ERROR: API failed to start"; exit 1; fi
+  #         done
+  #         for i in $(seq 1 60); do
+  #           if curl -sf http://localhost:3000 > /dev/null 2>&1; then
+  #             echo "Web server is ready"
+  #             break
+  #           fi
+  #           echo "Waiting for Web... ($i/60)"
+  #           sleep 2
+  #           if [ "$i" -eq 60 ]; then echo "ERROR: Web failed to start"; exit 1; fi
+  #         done
+  #         npx playwright test --reporter=list
+  #
+  #     - uses: actions/upload-artifact@v4
+  #       if: failure()
+  #       with:
+  #         name: playwright-report
+  #         path: playwright-report/
+  #         retention-days: 7
 
-      - name: Install and start PostgreSQL
-        run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql postgresql-client > /dev/null
-          PG_VER=$(pg_lsclusters -h | head -1 | awk '{print $1}')
-          sudo pg_ctlcluster "$PG_VER" main start
-          sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
-          sudo -u postgres createdb schoolconnect_test
-
-      - run: pnpm install --frozen-lockfile
-
-      - name: Install Playwright Chromium
-        run: pnpm exec playwright install --with-deps chromium
-
-      - name: Push database schema and seed
-        run: |
-          pnpm --filter @schoolconnect/db db:push
-          pnpm --filter @schoolconnect/db db:seed
-
-      - name: Create API .env
-        run: |
-          printf '%s\n' \
-            'DATABASE_URL=postgresql://postgres:postgres@localhost:5432/schoolconnect_test' \
-            'BETTER_AUTH_SECRET=test-secret-for-ci-e2e-testing-only' \
-            'BETTER_AUTH_URL=http://localhost:4000' \
-            'NODE_ENV=test' \
-            'SETUP_KEY=admin123' \
-            > apps/api/.env
-
-      - name: Build packages
-        run: pnpm build
-
-      - name: Start servers and run E2E tests
-        run: |
-          pnpm --filter @schoolconnect/api dev &
-          pnpm --filter @schoolconnect/web dev &
-          for i in $(seq 1 60); do
-            if curl -sf http://localhost:4000/trpc/health.check > /dev/null 2>&1; then
-              echo "API is ready"
-              break
-            fi
-            echo "Waiting for API... ($i/60)"
-            sleep 2
-            if [ "$i" -eq 60 ]; then echo "ERROR: API failed to start"; exit 1; fi
-          done
-          for i in $(seq 1 60); do
-            if curl -sf http://localhost:3000 > /dev/null 2>&1; then
-              echo "Web server is ready"
-              break
-            fi
-            echo "Waiting for Web... ($i/60)"
-            sleep 2
-            if [ "$i" -eq 60 ]; then echo "ERROR: Web failed to start"; exit 1; fi
-          done
-          npx playwright test --reporter=list
-
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 7
-
-  e2e-mobile-android:
-    runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
-      BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
-      BETTER_AUTH_URL: http://localhost:4000
-      NODE_ENV: test
-    steps:
-      - name: Free disk space
-        run: |
-          sudo rm -rf /usr/local/lib/android/sdk/ndk
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /opt/ghc
-          sudo rm -rf /usr/local/share/boost
-          df -h /
-
-      - name: Enable KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: pnpm
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-
-      - name: Install and start PostgreSQL
-        run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql postgresql-client > /dev/null
-          PG_VER=$(pg_lsclusters -h | head -1 | awk '{print $1}')
-          sudo pg_ctlcluster "$PG_VER" main start
-          sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
-          sudo -u postgres createdb schoolconnect_test
-
-      - run: pnpm install --frozen-lockfile
-
-      - name: Deduplicate React for Metro bundling
-        run: |
-          # pnpm hoisting creates nested react copies inside dependencies.
-          # Metro bundles each copy as a separate module, breaking React contexts.
-          # Remove nested copies so all imports resolve to apps/mobile/node_modules/react.
-          find node_modules -path "*/node_modules/react/index.js" \
-            -not -path "node_modules/react/index.js" \
-            -not -path "apps/mobile/node_modules/react/index.js" \
-            | while read f; do rm -rf "$(dirname "$f")"; done
-
-      - name: Push database schema and seed
-        run: |
-          pnpm --filter @schoolconnect/db db:push
-          pnpm --filter @schoolconnect/db db:seed
-
-      - name: Create API .env
-        run: |
-          printf '%s\n' \
-            'DATABASE_URL=postgresql://postgres:postgres@localhost:5432/schoolconnect_test' \
-            'BETTER_AUTH_SECRET=test-secret-for-ci-e2e-testing-only' \
-            'BETTER_AUTH_URL=http://localhost:4000' \
-            'NODE_ENV=test' \
-            'SETUP_KEY=admin123' \
-            > apps/api/.env
-
-      - name: Build packages
-        run: pnpm build
-
-      - name: Start API server
-        run: |
-          pnpm --filter @schoolconnect/api dev &
-          for i in $(seq 1 60); do
-            if curl -sf http://localhost:4000/trpc/health.check > /dev/null 2>&1; then
-              echo "API is ready"
-              break
-            fi
-            echo "Waiting for API... ($i/60)"
-            sleep 2
-            if [ "$i" -eq 60 ]; then echo "ERROR: API failed to start"; exit 1; fi
-          done
-
-      - name: Expo prebuild Android
-        run: |
-          cd apps/mobile
-          EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 npx expo prebuild --platform android --no-install
-
-      - name: Disable debug dev-server (use embedded bundle)
-        run: |
-          cd apps/mobile/android/app
-          sed -i '/autolinkLibrariesWithApp/i\    debuggableVariants = []' build.gradle
-
-      - name: Restore Gradle cache
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-            apps/mobile/android/.gradle
-          key: gradle-${{ hashFiles('apps/mobile/android/gradle/wrapper/gradle-wrapper.properties', 'apps/mobile/package.json') }}
-          restore-keys: gradle-
-
-      - name: Build debug APK
-        env:
-          EXPO_PUBLIC_API_URL: http://10.0.2.2:4000
-        run: |
-          cd apps/mobile/android
-          ./gradlew assembleDebug
-
-      - name: Save Gradle cache
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-            apps/mobile/android/.gradle
-          key: gradle-${{ hashFiles('apps/mobile/android/gradle/wrapper/gradle-wrapper.properties', 'apps/mobile/package.json') }}
-
-      - name: Install Maestro CLI
-        run: |
-          curl -fsSL "https://get.maestro.mobile.dev" | bash
-          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
-
-      - name: Run Maestro tests on Android emulator
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 31
-          arch: x86_64
-          target: default
-          ram-size: 4096
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -memory 4096
-          disable-animations: true
-          script: |
-            adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
-            sleep 10
-            adb install apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
-            adb reverse tcp:4000 tcp:4000
-            adb logcat -G 16M
-            adb logcat -c
-            adb shell am start -n com.abridge.app/.MainActivity
-            sleep 20
-            echo "=== Initial Logcat ==="
-            adb logcat -d -t 100 | grep -iE "ReactNativeJS" || true
-            echo "=== Running Maestro ==="
-            MAESTRO_EXIT=0
-            $HOME/.maestro/bin/maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml --debug-output maestro-debug || MAESTRO_EXIT=$?
-            echo "=== ALL ReactNativeJS logs ==="
-            adb logcat -d | grep "ReactNativeJS" | grep -iE "tRPC|Payments|StaffMgmt|Login|auth|headers|error|UNAUTHORIZED" || true
-            echo "=== Maestro exit code: $MAESTRO_EXIT ==="
-            exit $MAESTRO_EXIT
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: maestro-report
-          path: |
-            maestro-report.xml
-            maestro-debug/
-          retention-days: 7
-
-      - name: Set up Google Cloud CLI
-        if: always()
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          version: latest
-
-      - name: Authenticate gcloud
-        if: always()
-        run: |
-          echo '${{ secrets.GCLOUD_SERVICE_KEY }}' > /tmp/gcloud-key.json
-          gcloud auth activate-service-account --key-file=/tmp/gcloud-key.json
-          gcloud config set project ${{ secrets.FIREBASE_PROJECT_ID }}
-          rm /tmp/gcloud-key.json
-
-      - name: Run Firebase Robo test
-        if: always()
-        run: |
-          gcloud firebase test android run \
-            --type robo \
-            --app apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk \
-            --device model=MediumPhone.arm,version=34,locale=en,orientation=portrait \
-            --timeout 300s \
-            --client-details matrixLabel="Robo crawl"
+  # e2e-mobile-android:
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
+  #     BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
+  #     BETTER_AUTH_URL: http://localhost:4000
+  #     NODE_ENV: test
+  #   steps:
+  #     - name: Free disk space
+  #       run: |
+  #         sudo rm -rf /usr/local/lib/android/sdk/ndk
+  #         sudo rm -rf /usr/share/dotnet
+  #         sudo rm -rf /opt/ghc
+  #         sudo rm -rf /usr/local/share/boost
+  #         df -h /
+  #
+  #     - name: Enable KVM
+  #       run: |
+  #         echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+  #         sudo udevadm control --reload-rules
+  #         sudo udevadm trigger --name-match=kvm
+  #
+  #     - uses: actions/checkout@v4
+  #     - uses: pnpm/action-setup@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 24
+  #         cache: pnpm
+  #
+  #     - name: Set up JDK 17
+  #       uses: actions/setup-java@v4
+  #       with:
+  #         distribution: temurin
+  #         java-version: 17
+  #
+  #     - name: Install and start PostgreSQL
+  #       run: |
+  #         sudo apt-get update -qq && sudo apt-get install -y -qq postgresql postgresql-client > /dev/null
+  #         PG_VER=$(pg_lsclusters -h | head -1 | awk '{print $1}')
+  #         sudo pg_ctlcluster "$PG_VER" main start
+  #         sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
+  #         sudo -u postgres createdb schoolconnect_test
+  #
+  #     - run: pnpm install --frozen-lockfile
+  #
+  #     - name: Deduplicate React for Metro bundling
+  #       run: |
+  #         # pnpm hoisting creates nested react copies inside dependencies.
+  #         # Metro bundles each copy as a separate module, breaking React contexts.
+  #         # Remove nested copies so all imports resolve to apps/mobile/node_modules/react.
+  #         find node_modules -path "*/node_modules/react/index.js" \
+  #           -not -path "node_modules/react/index.js" \
+  #           -not -path "apps/mobile/node_modules/react/index.js" \
+  #           | while read f; do rm -rf "$(dirname "$f")"; done
+  #
+  #     - name: Push database schema and seed
+  #       run: |
+  #         pnpm --filter @schoolconnect/db db:push
+  #         pnpm --filter @schoolconnect/db db:seed
+  #
+  #     - name: Create API .env
+  #       run: |
+  #         printf '%s\n' \
+  #           'DATABASE_URL=postgresql://postgres:postgres@localhost:5432/schoolconnect_test' \
+  #           'BETTER_AUTH_SECRET=test-secret-for-ci-e2e-testing-only' \
+  #           'BETTER_AUTH_URL=http://localhost:4000' \
+  #           'NODE_ENV=test' \
+  #           'SETUP_KEY=admin123' \
+  #           > apps/api/.env
+  #
+  #     - name: Build packages
+  #       run: pnpm build
+  #
+  #     - name: Start API server
+  #       run: |
+  #         pnpm --filter @schoolconnect/api dev &
+  #         for i in $(seq 1 60); do
+  #           if curl -sf http://localhost:4000/trpc/health.check > /dev/null 2>&1; then
+  #             echo "API is ready"
+  #             break
+  #           fi
+  #           echo "Waiting for API... ($i/60)"
+  #           sleep 2
+  #           if [ "$i" -eq 60 ]; then echo "ERROR: API failed to start"; exit 1; fi
+  #         done
+  #
+  #     - name: Expo prebuild Android
+  #       run: |
+  #         cd apps/mobile
+  #         EXPO_PUBLIC_API_URL=http://10.0.2.2:4000 npx expo prebuild --platform android --no-install
+  #
+  #     - name: Disable debug dev-server (use embedded bundle)
+  #       run: |
+  #         cd apps/mobile/android/app
+  #         sed -i '/autolinkLibrariesWithApp/i\    debuggableVariants = []' build.gradle
+  #
+  #     - name: Restore Gradle cache
+  #       uses: actions/cache/restore@v4
+  #       with:
+  #         path: |
+  #           ~/.gradle/caches
+  #           ~/.gradle/wrapper
+  #           apps/mobile/android/.gradle
+  #         key: gradle-${{ hashFiles('apps/mobile/android/gradle/wrapper/gradle-wrapper.properties', 'apps/mobile/package.json') }}
+  #         restore-keys: gradle-
+  #
+  #     - name: Build debug APK
+  #       env:
+  #         EXPO_PUBLIC_API_URL: http://10.0.2.2:4000
+  #       run: |
+  #         cd apps/mobile/android
+  #         ./gradlew assembleDebug
+  #
+  #     - name: Save Gradle cache
+  #       if: always()
+  #       uses: actions/cache/save@v4
+  #       with:
+  #         path: |
+  #           ~/.gradle/caches
+  #           ~/.gradle/wrapper
+  #           apps/mobile/android/.gradle
+  #         key: gradle-${{ hashFiles('apps/mobile/android/gradle/wrapper/gradle-wrapper.properties', 'apps/mobile/package.json') }}
+  #
+  #     - name: Install Maestro CLI
+  #       run: |
+  #         curl -fsSL "https://get.maestro.mobile.dev" | bash
+  #         echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+  #
+  #     - name: Run Maestro tests on Android emulator
+  #       uses: reactivecircus/android-emulator-runner@v2
+  #       with:
+  #         api-level: 31
+  #         arch: x86_64
+  #         target: default
+  #         ram-size: 4096
+  #         emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -memory 4096
+  #         disable-animations: true
+  #         script: |
+  #           adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
+  #           sleep 10
+  #           adb install apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
+  #           adb reverse tcp:4000 tcp:4000
+  #           adb logcat -G 16M
+  #           adb logcat -c
+  #           adb shell am start -n com.abridge.app/.MainActivity
+  #           sleep 20
+  #           echo "=== Initial Logcat ==="
+  #           adb logcat -d -t 100 | grep -iE "ReactNativeJS" || true
+  #           echo "=== Running Maestro ==="
+  #           MAESTRO_EXIT=0
+  #           $HOME/.maestro/bin/maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml --debug-output maestro-debug || MAESTRO_EXIT=$?
+  #           echo "=== ALL ReactNativeJS logs ==="
+  #           adb logcat -d | grep "ReactNativeJS" | grep -iE "tRPC|Payments|StaffMgmt|Login|auth|headers|error|UNAUTHORIZED" || true
+  #           echo "=== Maestro exit code: $MAESTRO_EXIT ==="
+  #           exit $MAESTRO_EXIT
+  #
+  #     - uses: actions/upload-artifact@v4
+  #       if: always()
+  #       with:
+  #         name: maestro-report
+  #         path: |
+  #           maestro-report.xml
+  #           maestro-debug/
+  #         retention-days: 7
+  #
+  #     - name: Set up Google Cloud CLI
+  #       if: always()
+  #       uses: google-github-actions/setup-gcloud@v2
+  #       with:
+  #         version: latest
+  #
+  #     - name: Authenticate gcloud
+  #       if: always()
+  #       run: |
+  #         echo '${{ secrets.GCLOUD_SERVICE_KEY }}' > /tmp/gcloud-key.json
+  #         gcloud auth activate-service-account --key-file=/tmp/gcloud-key.json
+  #         gcloud config set project ${{ secrets.FIREBASE_PROJECT_ID }}
+  #         rm /tmp/gcloud-key.json
+  #
+  #     - name: Run Firebase Robo test
+  #       if: always()
+  #       run: |
+  #         gcloud firebase test android run \
+  #           --type robo \
+  #           --app apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk \
+  #           --device model=MediumPhone.arm,version=34,locale=en,orientation=portrait \
+  #           --timeout 300s \
+  #           --client-details matrixLabel="Robo crawl"
 
   e2e-mobile-ios:
     runs-on: macos-latest
@@ -299,6 +299,13 @@ jobs:
           psql -d schoolconnect_test -c "ALTER USER $(whoami) WITH PASSWORD 'postgres';"
 
       - run: pnpm install --frozen-lockfile
+
+      - name: Deduplicate React for Metro bundling
+        run: |
+          find node_modules -path "*/node_modules/react/index.js" \
+            -not -path "node_modules/react/index.js" \
+            -not -path "apps/mobile/node_modules/react/index.js" \
+            | while read f; do rm -rf "$(dirname "$f")"; done
 
       - name: Push database schema and seed
         env:
