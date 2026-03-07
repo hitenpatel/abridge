@@ -172,6 +172,23 @@ jobs:
             if [ "$i" -eq 60 ]; then echo "ERROR: API failed to start"; exit 1; fi
           done
 
+      - name: Verify Bearer auth works
+        run: |
+          echo "=== Login ==="
+          LOGIN_RESP=$(curl -s -X POST http://localhost:4000/api/auth/sign-in/email \
+            -H "Content-Type: application/json" \
+            -d '{"email":"sarah@example.com","password":"password123"}')
+          TOKEN=$(echo "$LOGIN_RESP" | node -e "const d=require('fs').readFileSync('/dev/stdin','utf8'); try{const j=JSON.parse(d); console.log(j.token || '')}catch(e){console.log('')}")
+          echo "Token length: ${#TOKEN}"
+          echo "=== getSession with Bearer ==="
+          curl -s "http://localhost:4000/trpc/auth.getSession" \
+            -H "Authorization: Bearer $TOKEN" | head -c 500
+          echo ""
+          echo "=== listOutstandingPayments with Bearer ==="
+          curl -s "http://localhost:4000/trpc/payments.listOutstandingPayments" \
+            -H "Authorization: Bearer $TOKEN" | head -c 1000
+          echo ""
+
       - name: Expo prebuild Android
         run: |
           cd apps/mobile
@@ -231,10 +248,14 @@ jobs:
             adb logcat -c
             adb shell am start -n com.abridge.app/.MainActivity
             sleep 20
-            echo "=== Logcat (last 300 lines, filtered) ==="
-            adb logcat -d -t 300 | grep -iE "ReactNative|com.abridge|FATAL|crash|Error|hermes|expo|bundle|useState|useContext" || true
+            echo "=== Initial Logcat ==="
+            adb logcat -d -t 100 | grep -iE "ReactNativeJS" || true
             echo "=== Running Maestro ==="
-            $HOME/.maestro/bin/maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml --debug-output maestro-debug
+            MAESTRO_EXIT=0
+            $HOME/.maestro/bin/maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml --debug-output maestro-debug || MAESTRO_EXIT=$?
+            echo "=== Post-test Logcat (ReactNativeJS) ==="
+            adb logcat -d -t 5000 | grep "ReactNativeJS" | grep -iE "tRPC|Payments|Login|auth|getSession|Bearer|error|UNAUTHORIZED" || true
+            exit $MAESTRO_EXIT
 
       - uses: actions/upload-artifact@v4
         if: always()
