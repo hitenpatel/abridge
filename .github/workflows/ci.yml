@@ -342,13 +342,48 @@ jobs:
             if [ "$i" -eq 60 ]; then echo "ERROR: API failed to start"; exit 1; fi
           done
 
-      - name: Build iOS app
+      - name: Expo prebuild iOS
         run: |
           cd apps/mobile
           EXPO_PUBLIC_API_URL=http://localhost:4000 npx expo prebuild --platform ios --no-install
-          cd ios
+
+      - name: Restore CocoaPods cache
+        uses: actions/cache/restore@v4
+        with:
+          path: apps/mobile/ios/Pods
+          key: pods-${{ hashFiles('apps/mobile/ios/Podfile.lock') }}
+          restore-keys: pods-
+
+      - name: Pod install
+        run: |
+          cd apps/mobile/ios
           pod install
+
+      - name: Save CocoaPods cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: apps/mobile/ios/Pods
+          key: pods-${{ hashFiles('apps/mobile/ios/Podfile.lock') }}
+
+      - name: Restore Xcode derived data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: apps/mobile/ios/build
+          key: xcode-${{ hashFiles('apps/mobile/ios/Podfile.lock', 'apps/mobile/package.json') }}
+          restore-keys: xcode-
+
+      - name: Build iOS app
+        run: |
+          cd apps/mobile/ios
           xcodebuild -workspace Abridge.xcworkspace -scheme Abridge -sdk iphonesimulator -configuration Debug -derivedDataPath build build
+
+      - name: Save Xcode derived data cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: apps/mobile/ios/build
+          key: xcode-${{ hashFiles('apps/mobile/ios/Podfile.lock', 'apps/mobile/package.json') }}
 
       - name: Install Maestro CLI
         run: |
