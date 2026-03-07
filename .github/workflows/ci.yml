@@ -148,6 +148,10 @@ jobs:
 
       - name: Verify seed data
         run: |
+          echo "=== Users ==="
+          PGPASSWORD=postgres psql -h localhost -U postgres schoolconnect_test -c "SELECT id, email, name FROM users LIMIT 5;"
+          echo "=== Accounts ==="
+          PGPASSWORD=postgres psql -h localhost -U postgres schoolconnect_test -c "SELECT id, \"userId\", \"providerId\", \"accountId\" FROM accounts LIMIT 5;"
           echo "=== Payment items ==="
           PGPASSWORD=postgres psql -h localhost -U postgres schoolconnect_test -c "SELECT id, title, amount FROM payment_items LIMIT 5;"
           echo "=== Payment item children ==="
@@ -155,7 +159,7 @@ jobs:
           echo "=== Parent-child links ==="
           PGPASSWORD=postgres psql -h localhost -U postgres schoolconnect_test -c "SELECT pc.\"userId\", c.\"firstName\", c.\"lastName\" FROM parent_children pc JOIN children c ON pc.\"childId\" = c.id LIMIT 5;"
           echo "=== Staff members ==="
-          PGPASSWORD=postgres psql -h localhost -U postgres schoolconnect_test -c "SELECT sm.\"userId\", sm.role, u.email FROM staff_members sm JOIN \"user\" u ON sm.\"userId\" = u.id LIMIT 5;"
+          PGPASSWORD=postgres psql -h localhost -U postgres schoolconnect_test -c "SELECT sm.\"userId\", sm.role, u.email FROM staff_members sm JOIN users u ON sm.\"userId\" = u.id LIMIT 5;"
 
       - name: Create API .env
         run: |
