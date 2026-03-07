@@ -13,9 +13,6 @@ tags:
     timeout: 20000
 - tapOn: "Staff Management"
 
-# Brief wait for navigation transition to settle
-- wait: 2000
-
 # Wait for staff management page to load (queries schoolId from session, then staff list)
 # Uses accessibilityLabel "Invite Staff" on the section View
 - extendedWaitUntil:
