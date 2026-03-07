@@ -6,8 +6,20 @@ tags:
 ---
 - runFlow: ../_helpers/login-staff.yaml
 
-# Verify staff home loads (Staff Management requires admin role
-# which may not populate in session immediately on CI)
-- assertVisible:
-    text: "Home"
-- assertVisible: "Post Update"
+# Scroll to find Staff Management button (below posts on small screens)
+- scrollUntilVisible:
+    element: "Staff Management"
+    direction: DOWN
+    timeout: 20000
+- tapOn: "Staff Management"
+- extendedWaitUntil:
+    visible: "Invite Staff"
+    timeout: 15000
+
+# Verify sections
+- assertVisible: "Current Staff"
+- assertVisible: "TEACHER"
+- assertVisible: "ADMIN"
+
+# Verify invite form elements
+- assertVisible: "Send Invite"

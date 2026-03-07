@@ -11,3 +11,9 @@ tags:
     text: "Home"
 - assertVisible: "Post Update"
 - assertVisible: "Recent Posts"
+
+# Admin should see Staff Management (may need scroll on small screens)
+- scrollUntilVisible:
+    element: "Staff Management"
+    direction: DOWN
+    timeout: 20000

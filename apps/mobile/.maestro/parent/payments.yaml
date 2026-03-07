@@ -11,3 +11,9 @@ tags:
 - extendedWaitUntil:
     visible: "Wallet"
     timeout: 15000
+
+# Verify seeded payment item loads (may need scroll)
+- scrollUntilVisible:
+    element: "Science Museum"
+    direction: DOWN
+    timeout: 20000

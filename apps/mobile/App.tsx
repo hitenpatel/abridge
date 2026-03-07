@@ -341,11 +341,13 @@ function AppContent() {
 		setAuthState("unauthenticated");
 	}, [utils]);
 
-	const handleLoginSuccess = React.useCallback(() => {
+	const handleLoginSuccess = React.useCallback(async () => {
+		// Invalidate any stale tRPC cache from before login
+		await utils.invalidate();
 		// Directly transition to authenticated — don't wait for useSession
 		// (better-auth's useSession has known reactivity issues)
 		setAuthState("authenticated");
-	}, []);
+	}, [utils]);
 
 	if (authState === "checking") {
 		return (
