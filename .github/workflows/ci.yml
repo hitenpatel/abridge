@@ -187,6 +187,25 @@ jobs:
             if [ "$i" -eq 60 ]; then echo "ERROR: API failed to start"; exit 1; fi
           done
 
+      - name: Test API payments endpoint
+        run: |
+          echo "=== Login as Sarah ==="
+          LOGIN_RESP=$(curl -s -X POST http://localhost:4000/api/auth/sign-in/email \
+            -H "Content-Type: application/json" \
+            -d '{"email":"sarah@example.com","password":"password123"}')
+          echo "$LOGIN_RESP" | head -c 500
+          echo ""
+          TOKEN=$(echo "$LOGIN_RESP" | node -e "const d=require('fs').readFileSync('/dev/stdin','utf8'); try{const j=JSON.parse(d); console.log(j.token || j.session?.token || 'NO_TOKEN')}catch(e){console.log('PARSE_ERROR')}")
+          echo "Token: ${TOKEN:0:20}..."
+          echo "=== Call getSession ==="
+          curl -s "http://localhost:4000/trpc/auth.getSession" \
+            -H "Authorization: Bearer $TOKEN" | head -c 500
+          echo ""
+          echo "=== Call listOutstandingPayments ==="
+          curl -s "http://localhost:4000/trpc/payments.listOutstandingPayments" \
+            -H "Authorization: Bearer $TOKEN" | head -c 500
+          echo ""
+
       - name: Expo prebuild Android
         run: |
           cd apps/mobile
