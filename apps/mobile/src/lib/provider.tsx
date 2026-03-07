@@ -21,8 +21,14 @@ export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({ children
 					transformer: superjson,
 					async headers() {
 						const session = await authClient.getSession();
+						const token = session?.data?.session?.token;
+						console.log("[tRPC] getSession result:", JSON.stringify({
+							hasUser: !!session?.data?.user,
+							hasToken: !!token,
+							userId: session?.data?.user?.id?.slice(0, 8),
+						}));
 						return {
-							authorization: session?.data?.user ? `Bearer ${session.data.session.token}` : "",
+							authorization: token ? `Bearer ${token}` : "",
 						};
 					},
 				}),
