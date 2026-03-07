@@ -391,9 +391,9 @@ jobs:
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
       - name: Boot iOS simulator and run tests
+        env:
+          MAESTRO_DRIVER_STARTUP_TIMEOUT: 120000
         run: |
-          echo "=== Available simulators ==="
-          xcrun simctl list devices available
           DEVICE=$(xcrun simctl list devices available -j | python3 -c "
           import json, sys
           data = json.load(sys.stdin)
@@ -407,7 +407,7 @@ jobs:
           echo "Using device: $DEVICE"
           xcrun simctl boot "$DEVICE"
           xcrun simctl install "$DEVICE" apps/mobile/ios/build/Build/Products/Debug-iphonesimulator/Abridge.app
-          sleep 5
+          sleep 15
           maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml
 
       - uses: actions/upload-artifact@v4
