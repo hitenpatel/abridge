@@ -281,6 +281,7 @@ jobs:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
       BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
       BETTER_AUTH_URL: http://localhost:4000
+      EXPO_PUBLIC_API_URL: http://localhost:4000
       NODE_ENV: test
     steps:
       - uses: actions/checkout@v4
@@ -345,7 +346,7 @@ jobs:
       - name: Expo prebuild iOS
         run: |
           cd apps/mobile
-          EXPO_PUBLIC_API_URL=http://localhost:4000 npx expo prebuild --platform ios --no-install
+          npx expo prebuild --platform ios --no-install
 
       - name: Restore CocoaPods cache
         uses: actions/cache/restore@v4
@@ -409,7 +410,7 @@ jobs:
           xcrun simctl install "$DEVICE" apps/mobile/ios/build/Build/Products/Debug-iphonesimulator/Abridge.app
           echo "=== Starting Metro bundler ==="
           cd apps/mobile
-          EXPO_PUBLIC_API_URL=http://localhost:4000 npx expo start --port 8081 --no-dev &
+          npx expo start --port 8081 --no-dev &
           METRO_PID=$!
           cd ../..
           sleep 15
