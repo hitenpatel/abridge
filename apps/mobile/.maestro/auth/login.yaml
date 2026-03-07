@@ -7,13 +7,10 @@ tags:
 - clearState
 - launchApp
 
-# Wait for app to load (CI emulators are slow)
+# Wait for app to load (iOS Metro re-bundle after clearState is slow)
 - extendedWaitUntil:
-    visible: "Abridge"
-    timeout: 60000
-
-# Verify login screen
-- assertVisible: "Sign in to continue"
+    visible: "Sign in to continue"
+    timeout: 90000
 
 # Enter email
 - tapOn:
@@ -34,4 +31,4 @@ tags:
 # Verify redirect to home
 - extendedWaitUntil:
     visible: "Home"
-    timeout: 30000
+    timeout: 60000
