@@ -293,10 +293,12 @@ jobs:
       - name: Install and start PostgreSQL
         run: |
           brew install postgresql@16
+          export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
           brew services start postgresql@16
           sleep 3
           createdb schoolconnect_test
           psql -d schoolconnect_test -c "ALTER USER $(whoami) WITH PASSWORD 'postgres';"
+          echo "/opt/homebrew/opt/postgresql@16/bin" >> $GITHUB_PATH
 
       - run: pnpm install --frozen-lockfile
 
