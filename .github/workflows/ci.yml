@@ -146,6 +146,17 @@ jobs:
           pnpm --filter @schoolconnect/db db:push
           pnpm --filter @schoolconnect/db db:seed
 
+      - name: Verify seed data
+        run: |
+          echo "=== Payment items ==="
+          PGPASSWORD=postgres psql -h localhost -U postgres schoolconnect_test -c "SELECT id, title, amount FROM payment_items LIMIT 5;"
+          echo "=== Payment item children ==="
+          PGPASSWORD=postgres psql -h localhost -U postgres schoolconnect_test -c "SELECT * FROM payment_item_children LIMIT 10;"
+          echo "=== Parent-child links ==="
+          PGPASSWORD=postgres psql -h localhost -U postgres schoolconnect_test -c "SELECT pc.\"userId\", c.\"firstName\", c.\"lastName\" FROM parent_children pc JOIN children c ON pc.\"childId\" = c.id LIMIT 5;"
+          echo "=== Staff members ==="
+          PGPASSWORD=postgres psql -h localhost -U postgres schoolconnect_test -c "SELECT sm.\"userId\", sm.role, u.email FROM staff_members sm JOIN \"user\" u ON sm.\"userId\" = u.id LIMIT 5;"
+
       - name: Create API .env
         run: |
           printf '%s\n' \

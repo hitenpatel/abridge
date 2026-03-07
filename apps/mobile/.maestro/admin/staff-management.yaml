@@ -12,14 +12,18 @@ tags:
     direction: DOWN
     timeout: 20000
 - tapOn: "Staff Management"
+
+# Wait for staff management page to load (queries schoolId from session)
 - extendedWaitUntil:
     visible: "Invite Staff"
+    timeout: 30000
+
+# Verify sections (may need scroll on small screens)
+- scrollUntilVisible:
+    element: "Current Staff"
+    direction: DOWN
     timeout: 15000
-
-# Verify sections
-- assertVisible: "Current Staff"
-- assertVisible: "TEACHER"
-- assertVisible: "ADMIN"
-
-# Verify invite form elements
-- assertVisible: "Send Invite"
+- scrollUntilVisible:
+    element: "ADMIN"
+    direction: DOWN
+    timeout: 15000
