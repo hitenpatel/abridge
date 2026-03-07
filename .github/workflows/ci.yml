@@ -276,7 +276,6 @@ jobs:
             --client-details matrixLabel="Robo crawl"
 
   e2e-mobile-ios:
-    if: github.event_name == 'workflow_dispatch'
     runs-on: macos-latest
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
