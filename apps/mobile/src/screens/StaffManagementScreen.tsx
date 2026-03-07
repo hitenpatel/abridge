@@ -1,6 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Clipboard from "expo-clipboard";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
 	ActivityIndicator,
 	Alert,
@@ -36,8 +36,20 @@ export function StaffManagementScreen() {
 	const {
 		data: staff,
 		isLoading: staffLoading,
+		isError: staffError,
+		error: staffErr,
 		refetch: refetchStaff,
 	} = trpc.staff.list.useQuery({ schoolId: schoolId as string }, { enabled: !!schoolId });
+
+	React.useEffect(() => {
+		console.log("[StaffMgmt] state:", JSON.stringify({
+			schoolId: schoolId?.slice(0, 8),
+			staffLoading,
+			staffError,
+			staffErrMsg: staffErr?.message,
+			staffCount: staff?.length,
+		}));
+	}, [schoolId, staffLoading, staffError, staffErr, staff]);
 
 	const { data: invitations, refetch: refetchInvitations } = trpc.invitation.list.useQuery(
 		{ schoolId: schoolId as string },

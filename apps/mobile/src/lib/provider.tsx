@@ -20,16 +20,23 @@ export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({ children
 					url: getApiUrl(),
 					transformer: superjson,
 					async headers() {
-						const session = await authClient.getSession();
-						const token = session?.data?.session?.token;
-						console.log("[tRPC] getSession result:", JSON.stringify({
-							hasUser: !!session?.data?.user,
-							hasToken: !!token,
-							userId: session?.data?.user?.id?.slice(0, 8),
-						}));
-						return {
-							authorization: token ? `Bearer ${token}` : "",
-						};
+						try {
+							const start = Date.now();
+							const session = await authClient.getSession();
+							const elapsed = Date.now() - start;
+							const token = session?.data?.session?.token;
+							console.log("[tRPC] headers:", JSON.stringify({
+								ms: elapsed,
+								hasToken: !!token,
+								userId: session?.data?.user?.id?.slice(0, 8),
+							}));
+							return {
+								authorization: token ? `Bearer ${token}` : "",
+							};
+						} catch (e) {
+							console.error("[tRPC] headers error:", e);
+							return { authorization: "" };
+						}
 					},
 				}),
 			],

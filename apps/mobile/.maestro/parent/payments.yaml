@@ -12,8 +12,9 @@ tags:
     visible: "Wallet"
     timeout: 15000
 
-# Verify seeded payment item loads (may need scroll)
-- scrollUntilVisible:
-    element: "Science Museum"
-    direction: DOWN
+# Wait for payment data to render (query completes when Wallet appears)
+# Use assertVisible instead of scrollUntilVisible — items render near top,
+# scrolling DOWN on short content can push them out of view on CI emulators
+- extendedWaitUntil:
+    visible: "Science Museum"
     timeout: 20000
