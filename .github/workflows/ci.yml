@@ -410,7 +410,7 @@ jobs:
 
           echo "=== Starting Metro bundler ==="
           cd apps/mobile
-          CI=false npx expo start --port 8081 --no-dev > /tmp/metro.log 2>&1 &
+          CI=false npx expo start --port 8081 > /tmp/metro.log 2>&1 &
           METRO_PID=$!
           cd ../..
           sleep 10
@@ -429,13 +429,14 @@ jobs:
           done
 
           echo "=== Verifying sign-in API ==="
-          curl -sv -X POST http://localhost:4000/api/auth/sign-in/email \
+          SIGNIN_BODY=$(curl -s -X POST http://localhost:4000/api/auth/sign-in/email \
             -H "Content-Type: application/json" \
-            -d '{"email":"sarah@example.com","password":"password123"}' 2>&1 | head -c 1000
-          echo ""
-          echo "=== Verifying get-session API ==="
-          curl -sv http://localhost:4000/api/auth/get-session 2>&1 | head -c 500
-          echo ""
+            -w "\n%{http_code}" \
+            -d '{"email":"sarah@example.com","password":"password123"}')
+          SIGNIN_CODE=$(echo "$SIGNIN_BODY" | tail -1)
+          SIGNIN_RESP=$(echo "$SIGNIN_BODY" | head -n -1)
+          echo "HTTP $SIGNIN_CODE"
+          echo "Body: $(echo "$SIGNIN_RESP" | head -c 500)"
 
           echo "=== Metro log (last 30 lines) ==="
           tail -30 /tmp/metro.log
@@ -447,8 +448,8 @@ jobs:
           echo "=== Metro log (post-test) ==="
           grep -E "LOG|ERROR|Bundled|Auth|tRPC|Login|sign" /tmp/metro.log | tail -50 || true
 
-          echo "=== Simulator logs ==="
-          xcrun simctl spawn "$DEVICE" log show --predicate 'processImagePath CONTAINS "Abridge"' --last 30m --style compact 2>/dev/null | grep -iE "error\|fatal\|crash\|exception\|nscurl\|ats\|http\|auth" | tail -30 || true
+          echo "=== Simulator logs (all app output) ==="
+          xcrun simctl spawn "$DEVICE" log show --predicate 'processImagePath CONTAINS "Abridge"' --last 30m --style compact 2>/dev/null | tail -50 || true
 
           kill $METRO_PID 2>/dev/null || true
           exit $MAESTRO_EXIT
