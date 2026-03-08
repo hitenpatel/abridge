@@ -411,7 +411,7 @@ jobs:
 
           echo "=== Starting Metro bundler ==="
           cd apps/mobile
-          npx expo start --port 8081 --no-dev > /tmp/metro.log 2>&1 &
+          CI='' npx expo start --port 8081 --no-dev > /tmp/metro.log 2>&1 &
           METRO_PID=$!
           cd ../..
           sleep 10
@@ -421,7 +421,7 @@ jobs:
 
           echo "=== Waiting for Metro initial bundle (up to 5 min) ==="
           for i in $(seq 1 60); do
-            if grep -q "Bundled" /tmp/metro.log 2>/dev/null; then
+            if grep -qE "Bundled|modules\)" /tmp/metro.log 2>/dev/null; then
               echo "Metro bundle ready after ${i}x5s"
               break
             fi
@@ -430,13 +430,16 @@ jobs:
           done
 
           echo "=== Verifying sign-in API ==="
-          curl -s -X POST http://localhost:4000/api/auth/sign-in/email \
+          curl -sv -X POST http://localhost:4000/api/auth/sign-in/email \
             -H "Content-Type: application/json" \
-            -d '{"email":"sarah@example.com","password":"password123"}' | head -c 500
+            -d '{"email":"sarah@example.com","password":"password123"}' 2>&1 | head -c 1000
+          echo ""
+          echo "=== Verifying get-session API ==="
+          curl -sv http://localhost:4000/api/auth/get-session 2>&1 | head -c 500
           echo ""
 
-          echo "=== Metro log (last 20 lines) ==="
-          tail -20 /tmp/metro.log
+          echo "=== Metro log (last 30 lines) ==="
+          tail -30 /tmp/metro.log
 
           echo "=== Running Maestro ==="
           MAESTRO_EXIT=0
