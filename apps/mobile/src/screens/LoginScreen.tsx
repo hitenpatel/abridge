@@ -127,14 +127,14 @@ export const LoginScreen = ({ onLoginSuccess }: { onLoginSuccess?: () => void })
 					{__DEV__ && (
 						<View className="flex-row gap-3 mt-2">
 							<Pressable
-								onPress={() => handleLogin("parent@test.com", "testpass123")}
+								onPress={() => handleLogin("sarah@example.com", "password123")}
 								disabled={loading}
 								className="flex-1 bg-neutral-surface dark:bg-surface-dark rounded-full h-12 items-center justify-center"
 							>
 								<Text className="text-text-muted font-sans-semibold text-sm">Test Parent</Text>
 							</Pressable>
 							<Pressable
-								onPress={() => handleLogin("staff@test.com", "testpass123")}
+								onPress={() => handleLogin("claire@oakwood.sch.uk", "password123")}
 								disabled={loading}
 								className="flex-1 bg-neutral-surface dark:bg-surface-dark rounded-full h-12 items-center justify-center"
 							>

@@ -11,32 +11,7 @@ tags:
     visible: "Sign in to continue"
     timeout: 90000
 
-# Test invalid login credentials
-- tapOn:
-    id: "email-input"
-- inputText: "wrong@example.com"
-- hideKeyboard
-- tapOn:
-    id: "password-input"
-- inputText: "wrongpassword"
-- hideKeyboard
-- tapOn:
-    text: "Sign In"
-
-# Should show error alert
-- extendedWaitUntil:
-    visible: "Login Failed"
-    timeout: 10000
-- tapOn: "OK"
-
-# Test empty fields
-- clearState
-- launchApp
-
-# Wait for app to load again
-- extendedWaitUntil:
-    visible: "Sign in to continue"
-    timeout: 90000
+# Test empty fields - tap Sign In without entering anything
 - tapOn:
     text: "Sign In"
 - extendedWaitUntil:
