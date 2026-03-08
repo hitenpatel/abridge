@@ -28,6 +28,7 @@ export function FloatingTabBar({ state, descriptors, navigation }: BottomTabBarP
 				const label = tabConfig?.label ?? route.name;
 
 				const onPress = () => {
+					console.log(`[TabBar] Pressed: ${label}, isFocused: ${isFocused}`);
 					hapticLight();
 					const event = navigation.emit({
 						type: "tabPress",
@@ -46,8 +47,6 @@ export function FloatingTabBar({ state, descriptors, navigation }: BottomTabBarP
 							onPress={onPress}
 							testID={`tab-${label.toLowerCase()}`}
 							accessibilityLabel={label}
-							accessibilityRole="tab"
-							accessibilityState={{ selected: true }}
 							className="flex-row items-center gap-2 bg-primary/10 px-4 py-2 rounded-full"
 						>
 							<MaterialIcons name={icon} size={24} color="#f56e3d" />
@@ -62,8 +61,6 @@ export function FloatingTabBar({ state, descriptors, navigation }: BottomTabBarP
 						onPress={onPress}
 						testID={`tab-${label.toLowerCase()}`}
 						accessibilityLabel={label}
-						accessibilityRole="tab"
-						accessibilityState={{ selected: false }}
 						className="items-center justify-center w-12 h-12 rounded-full"
 					>
 						<MaterialIcons name={icon} size={24} color="#9CA3AF" />

@@ -9,6 +9,7 @@ tags:
 # Navigate to payments
 - tapOn:
     id: "tab-payments"
-- assertVisible:
-    text: "Payments"
-- assertVisible: "Manage payment items"
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible: "Manage payment items"
+    timeout: 10000

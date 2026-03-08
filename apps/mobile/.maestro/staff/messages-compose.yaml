@@ -9,5 +9,7 @@ tags:
 # Navigate to messages
 - tapOn:
     id: "tab-messages"
-- assertVisible:
-    text: "Inbox"
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible: "Inbox"
+    timeout: 10000

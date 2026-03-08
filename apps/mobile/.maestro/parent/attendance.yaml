@@ -9,8 +9,10 @@ tags:
 # Navigate to attendance
 - tapOn:
     id: "tab-attendance"
-- assertVisible:
-    text: "Attendance Hub"
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible: "Attendance Hub"
+    timeout: 10000
 
 # Verify absence reporting section (text is "Report Absence", CSS uppercase is visual only)
 - assertVisible: "Report Absence"

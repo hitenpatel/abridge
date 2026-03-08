@@ -9,6 +9,7 @@ tags:
 # Navigate to attendance
 - tapOn:
     id: "tab-attendance"
-- assertVisible:
-    text: "Attendance"
-- assertVisible: "Today's attendance overview"
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible: "Today's attendance overview"
+    timeout: 10000

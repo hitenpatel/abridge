@@ -9,6 +9,7 @@ tags:
 # Navigate to payments
 - tapOn:
     id: "tab-payments"
+    retryTapIfNoChange: true
 - extendedWaitUntil:
     visible: "Wallet"
     timeout: 15000

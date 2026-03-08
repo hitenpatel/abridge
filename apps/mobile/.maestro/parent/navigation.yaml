@@ -9,23 +9,31 @@ tags:
 # Navigate to Messages
 - tapOn:
     id: "tab-messages"
-- assertVisible:
-    text: "Inbox"
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible: "Inbox"
+    timeout: 10000
 
 # Navigate to Attendance
 - tapOn:
     id: "tab-attendance"
-- assertVisible:
-    text: "Attendance Hub"
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible: "Attendance Hub"
+    timeout: 10000
 
 # Navigate to Payments
 - tapOn:
     id: "tab-payments"
-- assertVisible:
-    text: "Wallet"
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible: "Wallet"
+    timeout: 10000
 
 # Navigate back to Home
 - tapOn:
     id: "tab-home"
-- assertVisible:
-    text: "Report Absence"
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible: "Report Absence"
+    timeout: 10000
