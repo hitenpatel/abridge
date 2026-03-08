@@ -429,14 +429,10 @@ jobs:
           done
 
           echo "=== Verifying sign-in API ==="
-          SIGNIN_BODY=$(curl -s -X POST http://localhost:4000/api/auth/sign-in/email \
+          curl -s -o /tmp/signin-resp.json -w "HTTP %{http_code}\n" -X POST http://localhost:4000/api/auth/sign-in/email \
             -H "Content-Type: application/json" \
-            -w "\n%{http_code}" \
-            -d '{"email":"sarah@example.com","password":"password123"}')
-          SIGNIN_CODE=$(echo "$SIGNIN_BODY" | tail -1)
-          SIGNIN_RESP=$(echo "$SIGNIN_BODY" | head -n -1)
-          echo "HTTP $SIGNIN_CODE"
-          echo "Body: $(echo "$SIGNIN_RESP" | head -c 500)"
+            -d '{"email":"sarah@example.com","password":"password123"}'
+          echo "Body:" && head -c 500 /tmp/signin-resp.json && echo ""
 
           echo "=== Metro log (last 30 lines) ==="
           tail -30 /tmp/metro.log
