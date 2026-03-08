@@ -408,20 +408,46 @@ jobs:
           echo "Using device: $DEVICE"
           xcrun simctl boot "$DEVICE"
           xcrun simctl install "$DEVICE" apps/mobile/ios/build/Build/Products/Debug-iphonesimulator/Abridge.app
+
           echo "=== Starting Metro bundler ==="
           cd apps/mobile
-          npx expo start --port 8081 --no-dev &
+          npx expo start --port 8081 --no-dev > /tmp/metro.log 2>&1 &
           METRO_PID=$!
           cd ../..
-          sleep 15
-          echo "=== Launching app ==="
-          xcrun simctl launch "$DEVICE" com.abridge.app
           sleep 10
+
+          echo "=== Launching app to pre-warm Metro bundle ==="
+          xcrun simctl launch "$DEVICE" com.abridge.app
+
+          echo "=== Waiting for Metro initial bundle (up to 5 min) ==="
+          for i in $(seq 1 60); do
+            if grep -q "Bundled" /tmp/metro.log 2>/dev/null; then
+              echo "Metro bundle ready after ${i}x5s"
+              break
+            fi
+            if [ "$i" -eq 60 ]; then echo "WARNING: Metro bundle not detected after 5 min"; fi
+            sleep 5
+          done
+
+          echo "=== Verifying sign-in API ==="
+          curl -s -X POST http://localhost:4000/api/auth/sign-in/email \
+            -H "Content-Type: application/json" \
+            -d '{"email":"sarah@example.com","password":"password123"}' | head -c 500
+          echo ""
+
+          echo "=== Metro log (last 20 lines) ==="
+          tail -20 /tmp/metro.log
+
           echo "=== Running Maestro ==="
           MAESTRO_EXIT=0
           maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml || MAESTRO_EXIT=$?
+
+          echo "=== Metro log (post-test) ==="
+          grep -E "LOG|ERROR|Bundled|Auth|tRPC|Login|sign" /tmp/metro.log | tail -50 || true
+
           echo "=== Simulator logs ==="
-          xcrun simctl spawn "$DEVICE" log show --predicate 'processImagePath CONTAINS "Abridge"' --last 10m --style compact 2>/dev/null | grep -iE "error\|fatal\|crash\|exception\|nativewind\|worklet" | tail -30 || true
+          xcrun simctl spawn "$DEVICE" log show --predicate 'processImagePath CONTAINS "Abridge"' --last 30m --style compact 2>/dev/null | grep -iE "error\|fatal\|crash\|exception\|nscurl\|ats\|http\|auth" | tail -30 || true
+
           kill $METRO_PID 2>/dev/null || true
           exit $MAESTRO_EXIT
 
