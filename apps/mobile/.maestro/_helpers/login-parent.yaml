@@ -10,13 +10,13 @@ appId: com.abridge.app
 
 # Enter email
 - tapOn:
-    text: "Email"
+    id: "email-input"
 - inputText: "sarah@example.com"
 - hideKeyboard
 
 # Enter password
 - tapOn:
-    text: "Password"
+    id: "password-input"
 - inputText: "password123"
 - hideKeyboard
 

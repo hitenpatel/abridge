@@ -8,18 +8,16 @@ tags:
 
 # Wait for app to load (CI emulators are slow)
 - extendedWaitUntil:
-    visible: "Abridge"
-    timeout: 60000
-
-- assertVisible: "Sign in to continue"
+    visible: "Sign in to continue"
+    timeout: 90000
 
 # Test invalid login credentials
 - tapOn:
-    text: "Email"
+    id: "email-input"
 - inputText: "wrong@example.com"
 - hideKeyboard
 - tapOn:
-    text: "Password"
+    id: "password-input"
 - inputText: "wrongpassword"
 - hideKeyboard
 - tapOn:
@@ -37,10 +35,8 @@ tags:
 
 # Wait for app to load again
 - extendedWaitUntil:
-    visible: "Abridge"
-    timeout: 60000
-
-- assertVisible: "Sign in to continue"
+    visible: "Sign in to continue"
+    timeout: 90000
 - tapOn:
     text: "Sign In"
 - extendedWaitUntil:

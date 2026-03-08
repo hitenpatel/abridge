@@ -78,6 +78,7 @@ export const LoginScreen = ({ onLoginSuccess }: { onLoginSuccess?: () => void })
 					<View className="bg-neutral-surface dark:bg-surface-dark rounded-2xl px-4 h-14 flex-row items-center gap-3">
 						<MaterialIcons name="email" size={20} color="#96867f" />
 						<TextInput
+							testID="email-input"
 							placeholder="Email"
 							placeholderTextColor="#96867f"
 							value={email}
@@ -92,6 +93,7 @@ export const LoginScreen = ({ onLoginSuccess }: { onLoginSuccess?: () => void })
 					<View className="bg-neutral-surface dark:bg-surface-dark rounded-2xl px-4 h-14 flex-row items-center gap-3">
 						<MaterialIcons name="lock" size={20} color="#96867f" />
 						<TextInput
+							testID="password-input"
 							placeholder="Password"
 							placeholderTextColor="#96867f"
 							value={password}
