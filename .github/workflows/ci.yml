@@ -278,7 +278,6 @@ jobs:
   e2e-mobile-ios:
     runs-on: macos-latest
     env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
       BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
       BETTER_AUTH_URL: http://localhost:4000
       EXPO_PUBLIC_API_URL: http://localhost:4000
