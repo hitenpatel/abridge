@@ -7,21 +7,25 @@ tags:
 - runFlow: ../_helpers/login-parent.yaml
 
 # Navigate to Messages
-- tapOn: "Messages"
+- tapOn:
+    id: "tab-messages"
 - assertVisible:
     text: "Inbox"
 
 # Navigate to Attendance
-- tapOn: "Attendance"
+- tapOn:
+    id: "tab-attendance"
 - assertVisible:
     text: "Attendance Hub"
 
 # Navigate to Payments
-- tapOn: "Payments"
+- tapOn:
+    id: "tab-payments"
 - assertVisible:
     text: "Wallet"
 
 # Navigate back to Home
-- tapOn: "Home"
+- tapOn:
+    id: "tab-home"
 - assertVisible:
     text: "Report Absence"

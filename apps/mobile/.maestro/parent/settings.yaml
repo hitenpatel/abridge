@@ -8,9 +8,10 @@ tags:
 
 # Navigate to settings
 - tapOn:
-    label: "Settings"
-- assertVisible:
-    text: "Profile"
+    id: "settings-button"
+- extendedWaitUntil:
+    visible: "Profile"
+    timeout: 10000
 - assertVisible: "Notifications"
 
 # Verify profile section

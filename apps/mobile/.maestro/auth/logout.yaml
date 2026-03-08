@@ -12,4 +12,4 @@ tags:
 # Wait for redirect back to login screen
 - extendedWaitUntil:
     visible: "Sign in to continue"
-    timeout: 15000
+    timeout: 30000

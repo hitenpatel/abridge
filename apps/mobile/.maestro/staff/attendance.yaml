@@ -7,7 +7,8 @@ tags:
 - runFlow: ../_helpers/login-staff.yaml
 
 # Navigate to attendance
-- tapOn: "Attendance"
+- tapOn:
+    id: "tab-attendance"
 - assertVisible:
     text: "Attendance"
 - assertVisible: "Today's attendance overview"

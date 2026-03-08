@@ -7,6 +7,7 @@ tags:
 - runFlow: ../_helpers/login-staff.yaml
 
 # Navigate to messages
-- tapOn: "Messages"
+- tapOn:
+    id: "tab-messages"
 - assertVisible:
     text: "Inbox"

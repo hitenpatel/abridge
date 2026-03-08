@@ -44,6 +44,7 @@ export function FloatingTabBar({ state, descriptors, navigation }: BottomTabBarP
 						<Pressable
 							key={route.key}
 							onPress={onPress}
+							testID={`tab-${label.toLowerCase()}`}
 							accessibilityLabel={label}
 							accessibilityRole="tab"
 							accessibilityState={{ selected: true }}
@@ -59,6 +60,7 @@ export function FloatingTabBar({ state, descriptors, navigation }: BottomTabBarP
 					<Pressable
 						key={route.key}
 						onPress={onPress}
+						testID={`tab-${label.toLowerCase()}`}
 						accessibilityLabel={label}
 						accessibilityRole="tab"
 						accessibilityState={{ selected: false }}

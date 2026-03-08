@@ -11,7 +11,7 @@ tags:
 # Wait for app to load (iOS Metro re-bundle after clearState is slow)
 - extendedWaitUntil:
     visible: "Sign in to continue"
-    timeout: 90000
+    timeout: 120000
 - assertVisible: "Email"
 - assertVisible: "Password"
 - assertVisible: "Sign In"

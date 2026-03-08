@@ -146,6 +146,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 					<View className="flex-row items-center gap-2">
 						<Pressable
 							onPress={() => navigation.navigate("Settings")}
+							testID="settings-button"
 							accessibilityLabel="Settings"
 							className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center"
 						>

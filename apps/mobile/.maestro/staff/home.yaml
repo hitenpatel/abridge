@@ -9,7 +9,9 @@ tags:
 # Verify staff home elements
 - assertVisible:
     text: "Home"
-- assertVisible: "Post Update"
+- extendedWaitUntil:
+    visible: "Post Update"
+    timeout: 10000
 - assertVisible: "Recent Posts"
 
 # Admin should see Staff Management (may need scroll on small screens)

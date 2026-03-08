@@ -10,7 +10,7 @@ tags:
 # Wait for app to load (iOS Metro re-bundle after clearState is slow)
 - extendedWaitUntil:
     visible: "Sign in to continue"
-    timeout: 90000
+    timeout: 120000
 
 # Use dev test button (bypasses TextInput which has Maestro iOS issues)
 - tapOn:

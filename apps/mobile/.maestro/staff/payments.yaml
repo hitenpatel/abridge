@@ -7,7 +7,8 @@ tags:
 - runFlow: ../_helpers/login-staff.yaml
 
 # Navigate to payments
-- tapOn: "Payments"
+- tapOn:
+    id: "tab-payments"
 - assertVisible:
     text: "Payments"
 - assertVisible: "Manage payment items"
