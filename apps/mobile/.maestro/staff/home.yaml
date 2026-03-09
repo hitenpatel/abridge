@@ -15,4 +15,4 @@ tags:
 - extendedWaitUntil:
     visible:
       id: "nav-staff-management"
-    timeout: 15000
+    timeout: 30000

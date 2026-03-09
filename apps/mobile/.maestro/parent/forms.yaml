@@ -11,7 +11,7 @@ tags:
 # Verify home screen loads and Report Absence FAB is present
 - extendedWaitUntil:
     visible: "Home"
-    timeout: 15000
+    timeout: 30000
 - extendedWaitUntil:
     visible: "Report Absence"
-    timeout: 15000
+    timeout: 30000

@@ -11,7 +11,7 @@ tags:
     id: "settings-button"
 - extendedWaitUntil:
     visible: "Profile"
-    timeout: 10000
+    timeout: 30000
 - assertVisible: "Notifications"
 
 # Verify profile section
