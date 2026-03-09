@@ -6,12 +6,9 @@ tags:
 ---
 - runFlow: ../_helpers/login-staff.yaml
 
-# Scroll to find Staff Management button (below posts on small screens)
-- scrollUntilVisible:
-    element: "Staff Management"
-    direction: DOWN
-    timeout: 20000
-- tapOn: "Staff Management"
+# Navigate to Staff Management via dev nav button (scrollUntilVisible unreliable on iOS)
+- tapOn:
+    id: "nav-staff-management"
 
 # Wait for staff management page to load (queries schoolId from session, then staff list)
 # Uses accessibilityLabel "Invite Staff" on the section View

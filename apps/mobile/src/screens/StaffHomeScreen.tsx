@@ -110,7 +110,7 @@ export function StaffHomeScreen() {
 
 			{/* Dev-only tab navigation buttons (Maestro can't tap floating tab bar on iOS) */}
 			{__DEV__ && (
-				<View className="flex-row gap-2 px-6 pt-2">
+				<View className="flex-row flex-wrap gap-2 px-6 pt-2">
 					<Pressable testID="nav-messages" onPress={() => navigation.navigate("StaffMessages" as never)} className="bg-neutral-surface rounded-full px-3 py-1">
 						<Text className="text-text-muted text-xs">Messages</Text>
 					</Pressable>
@@ -120,6 +120,11 @@ export function StaffHomeScreen() {
 					<Pressable testID="nav-payments" onPress={() => navigation.navigate("StaffPayments" as never)} className="bg-neutral-surface rounded-full px-3 py-1">
 						<Text className="text-text-muted text-xs">Payments</Text>
 					</Pressable>
+					{session?.staffRole === "ADMIN" && (
+						<Pressable testID="nav-staff-management" onPress={() => navigation.navigate("StaffManagement")} className="bg-neutral-surface rounded-full px-3 py-1">
+							<Text className="text-text-muted text-xs">Staff Mgmt</Text>
+						</Pressable>
+					)}
 				</View>
 			)}
 
