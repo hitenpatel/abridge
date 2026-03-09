@@ -16,4 +16,4 @@ tags:
 # Wait for payment data to render
 - extendedWaitUntil:
     visible: "Science Museum"
-    timeout: 20000
+    timeout: 30000

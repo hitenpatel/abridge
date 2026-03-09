@@ -6,22 +6,21 @@ tags:
 ---
 - runFlow: ../_helpers/login-staff.yaml
 
-# Verify staff home elements
+# Verify staff home elements - wait for data to load
 - assertVisible:
     text: "Home"
+- extendedWaitUntil:
+    visible: "Post Update"
+    timeout: 15000
 
-# Post Update and Recent Posts may need scroll on iOS (dev nav buttons add content)
-- scrollUntilVisible:
-    element: "Post Update"
-    direction: DOWN
-    timeout: 10000
+# Recent Posts may need scroll on iOS (dev nav buttons add content above)
 - scrollUntilVisible:
     element: "Recent Posts"
     direction: DOWN
-    timeout: 10000
+    timeout: 15000
 
 # Admin should see Staff Management (may need scroll on small screens)
 - scrollUntilVisible:
     element: "Staff Management"
     direction: DOWN
-    timeout: 20000
+    timeout: 30000

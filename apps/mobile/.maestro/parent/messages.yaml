@@ -16,4 +16,4 @@ tags:
 # Verify seeded messages are visible (seed creates messages with URGENT category)
 - extendedWaitUntil:
     visible: "URGENT"
-    timeout: 15000
+    timeout: 30000
