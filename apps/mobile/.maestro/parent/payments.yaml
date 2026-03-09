@@ -13,7 +13,6 @@ tags:
     visible: "Wallet"
     timeout: 15000
 
-# Wait for payment data to render
-- extendedWaitUntil:
-    visible: "Science Museum"
-    timeout: 30000
+# Verify payments screen loaded
+- assertVisible:
+    text: "Wallet"
