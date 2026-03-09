@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abridge E2E Dashboard</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --orange: #f56e3d;
+    --green: #3fb950;
+    --red: #f85149;
+    --yellow: #d29922;
+    --blue: #58a6ff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--orange);
+  }
+  .header .subtitle {
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  .header .back {
+    display: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 14px;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+  }
+  .header .back:hover { color: var(--text); border-color: var(--text-muted); }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+  /* Summary cards */
+  .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .card .label { font-size: 12px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+  .card .value { font-size: 28px; font-weight: 700; }
+  .card .value.pass { color: var(--green); }
+  .card .value.fail { color: var(--red); }
+  .card .value.mixed { color: var(--yellow); }
+
+  /* Trend chart */
+  .chart-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+  }
+  .chart-container h2 { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; }
+  .chart-legend {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+  .chart-legend span { display: flex; align-items: center; gap: 4px; }
+  .chart-legend .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+  /* Run table */
+  .runs-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .runs-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .runs-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .runs-table tr { cursor: pointer; transition: background 0.15s; }
+  .runs-table tbody tr:hover { background: #1c2129; }
+  .runs-table tr:last-child td { border-bottom: none; }
+
+  .pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .pill.pass { background: rgba(63, 185, 80, 0.15); color: var(--green); }
+  .pill.fail { background: rgba(248, 81, 73, 0.15); color: var(--red); }
+  .pill.skip { background: rgba(139, 148, 158, 0.15); color: var(--text-muted); }
+
+  .sha { font-family: monospace; font-size: 12px; color: var(--text-muted); }
+  .message { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .timestamp { color: var(--text-muted); font-size: 13px; }
+
+  /* Detail view */
+  .detail { display: none; }
+  .detail.active { display: block; }
+  .overview.active { display: block; }
+
+  .detail-header {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .detail-header h2 { font-size: 16px; margin-bottom: 4px; }
+  .detail-header .meta { font-size: 13px; color: var(--text-muted); }
+
+  .suite-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .suite-header {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+  }
+  .suite-header:hover { background: #1c2129; }
+  .suite-header h3 { font-size: 15px; display: flex; align-items: center; gap: 8px; }
+  .suite-header .stats { font-size: 13px; color: var(--text-muted); }
+  .suite-body { border-top: 1px solid var(--border); }
+  .suite-body.collapsed { display: none; }
+
+  .test-row {
+    display: flex;
+    align-items: flex-start;
+    padding: 8px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    gap: 10px;
+  }
+  .test-row:last-child { border-bottom: none; }
+  .test-status { flex-shrink: 0; width: 18px; text-align: center; }
+  .test-name { flex: 1; }
+  .test-duration { color: var(--text-muted); flex-shrink: 0; }
+  .test-error {
+    margin-top: 4px;
+    padding: 6px 10px;
+    background: rgba(248, 81, 73, 0.08);
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--red);
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  .test-screenshot {
+    margin-top: 6px;
+  }
+  .test-screenshot img {
+    max-width: 300px;
+    max-height: 200px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .test-screenshot img:hover { border-color: var(--orange); }
+
+  .empty { text-align: center; padding: 48px; color: var(--text-muted); }
+
+  /* Modal for screenshots */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+  }
+  .modal.open { display: flex; }
+  .modal img { max-width: 90vw; max-height: 90vh; border-radius: 8px; }
+
+  @media (max-width: 640px) {
+    .summary { grid-template-columns: repeat(2, 1fr); }
+    .message { max-width: 150px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back" id="backBtn" onclick="showOverview()">&larr; Back</button>
+  <h1>Abridge E2E</h1>
+  <span class="subtitle" id="headerSubtitle">Test Results Dashboard</span>
+</div>
+
+<div class="container">
+  <div class="overview active" id="overview">
+    <div class="summary" id="summaryCards"></div>
+    <div class="chart-container">
+      <h2>Pass Rate Trend (last 20 runs)</h2>
+      <div class="chart-legend">
+        <span><span class="dot" style="background:var(--blue)"></span> Web</span>
+        <span><span class="dot" style="background:var(--green)"></span> Android</span>
+        <span><span class="dot" style="background:var(--orange)"></span> iOS</span>
+      </div>
+      <svg id="chart" width="100%" height="160"></svg>
+    </div>
+    <table class="runs-table">
+      <thead><tr>
+        <th>Run</th><th>Commit</th><th>Web</th><th>Android</th><th>iOS</th><th>Time</th>
+      </tr></thead>
+      <tbody id="runsBody"></tbody>
+    </table>
+  </div>
+
+  <div class="detail" id="detail"></div>
+</div>
+
+<div class="modal" id="modal" onclick="this.classList.remove('open')">
+  <img id="modalImg" src="" alt="Screenshot">
+</div>
+
+<script>
+let history = [];
+
+async function loadData() {
+  try {
+    const resp = await fetch('data/history.json');
+    history = await resp.json();
+  } catch (e) {
+    history = [];
+  }
+  render();
+  handleHash();
+}
+
+function render() {
+  renderSummary();
+  renderChart();
+  renderTable();
+}
+
+function renderSummary() {
+  const el = document.getElementById('summaryCards');
+  if (history.length === 0) {
+    el.innerHTML = '<div class="empty">No test data yet</div>';
+    return;
+  }
+  const latest = history[0];
+  const suites = ['web', 'android', 'ios'];
+  const totalPassed = suites.reduce((s, k) => s + (latest.suites[k]?.passed || 0), 0);
+  const totalFailed = suites.reduce((s, k) => s + (latest.suites[k]?.failed || 0), 0);
+  const total = totalPassed + totalFailed;
+  const rate = total > 0 ? Math.round((totalPassed / total) * 100) : 0;
+  const statusClass = totalFailed === 0 ? 'pass' : rate >= 90 ? 'mixed' : 'fail';
+
+  let html = `<div class="card"><div class="label">Latest Pass Rate</div><div class="value ${statusClass}">${rate}%</div></div>`;
+  html += `<div class="card"><div class="label">Tests Passed</div><div class="value pass">${totalPassed}</div></div>`;
+  html += `<div class="card"><div class="label">Tests Failed</div><div class="value ${totalFailed > 0 ? 'fail' : 'pass'}">${totalFailed}</div></div>`;
+  html += `<div class="card"><div class="label">Total Runs</div><div class="value">${history.length}</div></div>`;
+  el.innerHTML = html;
+}
+
+function renderChart() {
+  const svg = document.getElementById('chart');
+  const runs = history.slice(0, 20).reverse();
+  if (runs.length < 2) {
+    svg.innerHTML = '<text x="50%" y="50%" text-anchor="middle" fill="#8b949e" font-size="13">Need at least 2 runs for chart</text>';
+    return;
+  }
+
+  const W = 760, H = 140, PAD = 30;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const stepX = (W - PAD * 2) / (runs.length - 1);
+
+  function getRate(run, suite) {
+    const s = run.suites[suite];
+    if (!s || s.status === 'skip' || s.total === 0) return null;
+    return (s.passed / s.total) * 100;
+  }
+
+  function drawLine(suite, color) {
+    const points = [];
+    runs.forEach((run, i) => {
+      const rate = getRate(run, suite);
+      if (rate !== null) {
+        const x = PAD + i * stepX;
+        const y = H - PAD - ((rate / 100) * (H - PAD * 2));
+        points.push(`${x},${y}`);
+      }
+    });
+    if (points.length < 2) return '';
+    return `<polyline points="${points.join(' ')}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+  }
+
+  // Grid lines
+  let gridHtml = '';
+  for (let pct of [0, 25, 50, 75, 100]) {
+    const y = H - PAD - ((pct / 100) * (H - PAD * 2));
+    gridHtml += `<line x1="${PAD}" y1="${y}" x2="${W - PAD}" y2="${y}" stroke="#30363d" stroke-width="0.5"/>`;
+    gridHtml += `<text x="${PAD - 4}" y="${y + 4}" text-anchor="end" fill="#8b949e" font-size="10">${pct}%</text>`;
+  }
+
+  svg.innerHTML = gridHtml
+    + drawLine('web', '#58a6ff')
+    + drawLine('android', '#3fb950')
+    + drawLine('ios', '#f56e3d');
+}
+
+function renderTable() {
+  const tbody = document.getElementById('runsBody');
+  if (history.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">No runs yet</td></tr>';
+    return;
+  }
+  tbody.innerHTML = history.map(run => {
+    const suiteHtml = (suite) => {
+      const s = run.suites[suite];
+      if (!s || s.status === 'skip') return '<span class="pill skip">skip</span>';
+      if (s.status === 'pass') return `<span class="pill pass">${s.passed}/${s.total}</span>`;
+      return `<span class="pill fail">${s.passed}/${s.total}</span>`;
+    };
+    return `<tr onclick="showDetail('${run.id}')">
+      <td><span class="sha">#${run.id}</span></td>
+      <td><span class="sha">${run.sha}</span> <span class="message">${escHtml(run.message)}</span></td>
+      <td>${suiteHtml('web')}</td>
+      <td>${suiteHtml('android')}</td>
+      <td>${suiteHtml('ios')}</td>
+      <td><span class="timestamp">${formatTime(run.timestamp)}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function showDetail(id) {
+  location.hash = `#run/${id}`;
+}
+
+function handleHash() {
+  const hash = location.hash;
+  if (hash.startsWith('#run/')) {
+    const id = hash.slice(5);
+    const run = history.find(r => r.id === id);
+    if (run) {
+      renderDetail(run);
+      return;
+    }
+  }
+  showOverview();
+}
+
+function showOverview() {
+  location.hash = '';
+  document.getElementById('overview').style.display = 'block';
+  document.getElementById('detail').style.display = 'none';
+  document.getElementById('backBtn').style.display = 'none';
+  document.getElementById('headerSubtitle').textContent = 'Test Results Dashboard';
+}
+
+function renderDetail(run) {
+  document.getElementById('overview').style.display = 'none';
+  document.getElementById('backBtn').style.display = 'inline-block';
+  document.getElementById('headerSubtitle').textContent = `Run #${run.id}`;
+
+  const detail = document.getElementById('detail');
+  detail.style.display = 'block';
+
+  let html = `<div class="detail-header">
+    <h2>${escHtml(run.message || 'No commit message')}</h2>
+    <div class="meta">
+      <span class="sha">${run.sha}</span> on <strong>${run.branch}</strong> &middot; ${formatTime(run.timestamp)}
+    </div>
+  </div>`;
+
+  for (const [name, label] of [['web', 'Web (Playwright)'], ['android', 'Android (Maestro)'], ['ios', 'iOS (Maestro)']]) {
+    const suite = run.suites[name];
+    if (!suite) continue;
+
+    const isSkip = suite.status === 'skip';
+    const statusPill = `<span class="pill ${suite.status}">${isSkip ? 'skipped' : suite.status === 'pass' ? 'all passed' : `${suite.failed} failed`}</span>`;
+    const stats = isSkip ? '' : `${suite.passed}/${suite.total} passed &middot; ${suite.duration}s`;
+    const collapsed = suite.status === 'pass' ? 'collapsed' : '';
+
+    html += `<div class="suite-section">
+      <div class="suite-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">
+        <h3>${label} ${statusPill}</h3>
+        <span class="stats">${stats}</span>
+      </div>
+      <div class="suite-body ${collapsed}">`;
+
+    if (isSkip) {
+      html += '<div class="test-row"><span class="test-name" style="color:var(--text-muted)">Suite did not run</span></div>';
+    } else {
+      // Failed tests first
+      const sorted = [...suite.tests].sort((a, b) => (a.status === 'fail' ? 0 : 1) - (b.status === 'fail' ? 0 : 1));
+      for (const test of sorted) {
+        const icon = test.status === 'pass' ? '<span style="color:var(--green)">&#10003;</span>' : '<span style="color:var(--red)">&#10007;</span>';
+        html += `<div class="test-row">
+          <span class="test-status">${icon}</span>
+          <span class="test-name">
+            ${escHtml(test.name)}
+            ${test.error ? `<div class="test-error">${escHtml(test.error)}</div>` : ''}
+            ${test.screenshot ? `<div class="test-screenshot"><img src="${test.screenshot}" alt="Screenshot" onclick="event.stopPropagation();showModal(this.src)"></div>` : ''}
+          </span>
+          <span class="test-duration">${test.duration}s</span>
+        </div>`;
+      }
+    }
+    html += '</div></div>';
+  }
+
+  detail.innerHTML = html;
+}
+
+function showModal(src) {
+  document.getElementById('modalImg').src = src;
+  document.getElementById('modal').classList.add('open');
+}
+
+function escHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function formatTime(ts) {
+  try {
+    const d = new Date(ts);
+    const now = new Date();
+    const diff = now - d;
+    if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+    if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+    if (diff < 604800000) return `${Math.floor(diff / 86400000)}d ago`;
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  } catch (e) {
+    return ts;
+  }
+}
+
+window.addEventListener('hashchange', handleHash);
+loadData();
+</script>
+</body>
+</html>
