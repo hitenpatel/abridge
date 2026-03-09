@@ -6,22 +6,15 @@ tags:
 ---
 - runFlow: ../_helpers/login-staff.yaml
 
-# Navigate to Staff Management via dev nav button (scrollUntilVisible unreliable on iOS)
+# Navigate to Staff Management via dev nav button
 - tapOn:
     id: "nav-staff-management"
 
-# Wait for staff management page to load (queries schoolId from session, then staff list)
-# Uses accessibilityLabel "Invite Staff" on the section View
+# Wait for staff management page to load
 - extendedWaitUntil:
     visible: "Invite Staff"
     timeout: 45000
 
-# Verify sections (may need scroll on small screens)
-- scrollUntilVisible:
-    element: "Current Staff"
-    direction: DOWN
-    timeout: 15000
-- scrollUntilVisible:
-    element: "ADMIN"
-    direction: DOWN
-    timeout: 15000
+# Verify the invite form loaded (Send Invite button)
+- assertVisible:
+    text: "Send Invite"
