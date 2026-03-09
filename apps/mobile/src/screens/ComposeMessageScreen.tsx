@@ -142,7 +142,7 @@ export function ComposeMessageScreen() {
 				</View>
 
 				{/* Test Fill (dev only) */}
-				{__DEV__ && (
+				{(__DEV__ || process.env.EXPO_PUBLIC_E2E) && (
 					<View className="mx-6 mb-4">
 						<Pressable
 							onPress={() => {

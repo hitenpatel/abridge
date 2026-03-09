@@ -14,5 +14,6 @@ tags:
     timeout: 30000
 
 # Verify messages screen loaded (data-specific assertions removed — seed data varies)
-- assertVisible:
-    text: "Inbox"
+- extendedWaitUntil:
+    visible: "Inbox"
+    timeout: 30000

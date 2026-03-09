@@ -1,0 +1,29 @@
+appId: com.abridge.app
+name: Parent Message Detail
+tags:
+  - parent
+  - messages
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Navigate to messages
+- tapOn:
+    id: "nav-messages"
+- extendedWaitUntil:
+    visible: "Inbox"
+    timeout: 30000
+
+# Tap the first message (urgent one from seed)
+- tapOn:
+    text: "Urgent: School Closure Tomorrow"
+
+# Verify message detail screen
+- extendedWaitUntil:
+    visible: "Urgent: School Closure Tomorrow"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "severe weather conditions"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "Oakwood Primary School"
+    timeout: 30000

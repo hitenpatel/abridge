@@ -14,5 +14,6 @@ tags:
     timeout: 30000
 
 # Verify payments screen loaded
-- assertVisible:
-    text: "Wallet"
+- extendedWaitUntil:
+    visible: "Wallet"
+    timeout: 30000

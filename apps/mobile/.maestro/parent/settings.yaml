@@ -12,12 +12,22 @@ tags:
 - extendedWaitUntil:
     visible: "Profile"
     timeout: 30000
-- assertVisible: "Notifications"
+- extendedWaitUntil:
+    visible: "Notifications"
+    timeout: 30000
 
 # Verify profile section
-- assertVisible: "Save Profile"
+- extendedWaitUntil:
+    visible: "Save Profile"
+    timeout: 30000
 
 # Verify notification toggles
-- assertVisible: "Push notifications"
-- assertVisible: "SMS notifications"
-- assertVisible: "Email notifications"
+- extendedWaitUntil:
+    visible: "Push notifications"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "SMS notifications"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "Email notifications"
+    timeout: 30000

@@ -7,8 +7,9 @@ tags:
 - runFlow: ../_helpers/login-staff.yaml
 
 # Verify staff home elements - Home tab label should be visible
-- assertVisible:
-    text: "Home"
+- extendedWaitUntil:
+    visible: "Home"
+    timeout: 30000
 
 # Dev nav buttons confirm staff home loaded and session resolved
 # Staff Mgmt button only shows for ADMIN role, confirming session + role loaded

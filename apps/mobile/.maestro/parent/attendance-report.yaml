@@ -1,0 +1,43 @@
+appId: com.abridge.app
+name: Parent Report Absence
+tags:
+  - parent
+  - attendance
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Navigate to attendance
+- tapOn:
+    id: "nav-attendance"
+- extendedWaitUntil:
+    visible: "Attendance Hub"
+    timeout: 30000
+
+# Select absence reason
+- tapOn:
+    text: "Sick"
+
+# Enter date
+- tapOn:
+    label: "Date"
+- inputText: "2026-04-01"
+- hideKeyboard
+
+# Enter optional note
+- tapOn:
+    label: "Reason"
+- inputText: "Feeling unwell"
+- hideKeyboard
+
+# Submit absence
+- tapOn:
+    label: "Submit"
+
+# Verify success alert
+- extendedWaitUntil:
+    visible: "Absence reported successfully"
+    timeout: 30000
+
+# Dismiss alert
+- tapOn:
+    text: "OK"

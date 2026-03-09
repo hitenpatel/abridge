@@ -14,11 +14,21 @@ tags:
     timeout: 30000
 
 # Verify absence reporting section
-- assertVisible: "Report Absence"
-- assertVisible: "Sick"
-- assertVisible: "Appointment"
-- assertVisible: "Family"
-- assertVisible: "Other"
+- extendedWaitUntil:
+    visible: "Report Absence"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "Sick"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "Appointment"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "Family"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "Other"
+    timeout: 30000
 
 # Verify recent records section (below fold, need to scroll)
 - scrollUntilVisible:

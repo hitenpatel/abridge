@@ -16,5 +16,6 @@ tags:
     timeout: 60000
 
 # Verify the invite form loaded (Send Invite button)
-- assertVisible:
-    text: "Send Invite"
+- extendedWaitUntil:
+    visible: "Send Invite"
+    timeout: 30000

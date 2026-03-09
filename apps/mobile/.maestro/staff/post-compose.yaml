@@ -1,0 +1,34 @@
+appId: com.abridge.app
+name: Staff Post Compose
+tags:
+  - staff
+  - posts
+---
+- runFlow: ../_helpers/login-staff.yaml
+
+# Verify staff home loaded
+- extendedWaitUntil:
+    visible: "Post Update"
+    timeout: 30000
+
+# Tap the Post Update CTA
+- tapOn:
+    text: "Post Update"
+
+# Verify compose post screen loaded
+- extendedWaitUntil:
+    visible: "Post to Class"
+    timeout: 30000
+
+# Use Test Fill to populate class + body
+- tapOn:
+    text: "Test Fill"
+
+# Wait for body to populate
+- extendedWaitUntil:
+    visible: "Today we painted pictures in art class!"
+    timeout: 30000
+
+# Tap Post button
+- tapOn:
+    text: "Post"

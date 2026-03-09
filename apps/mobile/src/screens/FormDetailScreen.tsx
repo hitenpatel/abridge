@@ -146,7 +146,7 @@ export function FormDetailScreen({ route, navigation }: Props) {
 				)}
 
 				{/* Test Fill (dev only) */}
-				{__DEV__ && fields.length > 0 && (
+				{(__DEV__ || process.env.EXPO_PUBLIC_E2E) && fields.length > 0 && (
 					<Pressable
 						onPress={() => {
 							for (const field of fields) {

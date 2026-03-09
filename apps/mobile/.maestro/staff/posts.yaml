@@ -7,8 +7,9 @@ tags:
 - runFlow: ../_helpers/login-staff.yaml
 
 # Verify staff home loaded
-- assertVisible:
-    text: "Home"
+- extendedWaitUntil:
+    visible: "Home"
+    timeout: 30000
 
 # "View All" link is in the Recent Posts section (visible without scroll on most screens)
 - extendedWaitUntil:

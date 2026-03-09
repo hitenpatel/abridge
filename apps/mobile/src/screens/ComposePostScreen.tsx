@@ -149,7 +149,7 @@ export function ComposePostScreen() {
 			>
 				<ClassSelector value={selectedClass} onChange={setSelectedClass} />
 
-				{__DEV__ && (
+				{(__DEV__ || process.env.EXPO_PUBLIC_E2E) && (
 					<Pressable
 						onPress={() => {
 							setBody("Today we painted pictures in art class!");

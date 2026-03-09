@@ -74,7 +74,7 @@ export function SearchScreen() {
 		<View className="flex-1 bg-background">
 			{/* Search Input */}
 			<View className="mx-6 mt-4 mb-4">
-				{__DEV__ && (
+				{(__DEV__ || process.env.EXPO_PUBLIC_E2E) && (
 					<Pressable
 						onPress={() => setQuery("Test Message 1")}
 						className="bg-neutral-surface dark:bg-surface-dark rounded-full h-10 items-center justify-center mb-3"

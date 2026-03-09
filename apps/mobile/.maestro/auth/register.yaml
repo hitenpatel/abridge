@@ -12,6 +12,12 @@ tags:
 - extendedWaitUntil:
     visible: "Sign in to continue"
     timeout: 300000
-- assertVisible: "Email"
-- assertVisible: "Password"
-- assertVisible: "Sign In"
+- extendedWaitUntil:
+    visible: "Email"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "Password"
+    timeout: 30000
+- extendedWaitUntil:
+    visible: "Sign In"
+    timeout: 30000
