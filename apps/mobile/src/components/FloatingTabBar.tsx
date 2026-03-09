@@ -11,8 +11,9 @@ interface TabConfig {
 export function FloatingTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 	return (
 		<View
-			className="absolute bottom-6 left-6 right-6 h-16 bg-white dark:bg-neutral-surface-dark/90 rounded-full flex-row items-center justify-between px-2 z-30 border border-white/20 dark:border-white/5"
+			className="absolute bottom-6 left-6 right-6 h-16 bg-white dark:bg-neutral-surface-dark/90 rounded-full flex-row items-center justify-between px-2 border border-white/20 dark:border-white/5"
 			style={{
+				zIndex: 999,
 				shadowColor: "#000",
 				shadowOffset: { width: 0, height: 8 },
 				shadowOpacity: 0.12,
