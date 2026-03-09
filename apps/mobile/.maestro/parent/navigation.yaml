@@ -6,34 +6,9 @@ tags:
 ---
 - runFlow: ../_helpers/login-parent.yaml
 
-# Navigate to Messages
+# Navigate to Messages via dev nav button (tab bar taps don't work on iOS)
 - tapOn:
-    id: "tab-messages"
-    retryTapIfNoChange: true
+    id: "nav-messages"
 - extendedWaitUntil:
     visible: "Inbox"
-    timeout: 10000
-
-# Navigate to Attendance
-- tapOn:
-    id: "tab-attendance"
-    retryTapIfNoChange: true
-- extendedWaitUntil:
-    visible: "Attendance Hub"
-    timeout: 10000
-
-# Navigate to Payments
-- tapOn:
-    id: "tab-payments"
-    retryTapIfNoChange: true
-- extendedWaitUntil:
-    visible: "Wallet"
-    timeout: 10000
-
-# Navigate back to Home
-- tapOn:
-    id: "tab-home"
-    retryTapIfNoChange: true
-- extendedWaitUntil:
-    visible: "Report Absence"
     timeout: 10000

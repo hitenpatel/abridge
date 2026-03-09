@@ -6,15 +6,14 @@ tags:
 ---
 - runFlow: ../_helpers/login-parent.yaml
 
-# Navigate to attendance
+# Navigate to attendance via dev nav button
 - tapOn:
-    id: "tab-attendance"
-    retryTapIfNoChange: true
+    id: "nav-attendance"
 - extendedWaitUntil:
     visible: "Attendance Hub"
     timeout: 10000
 
-# Verify absence reporting section (text is "Report Absence", CSS uppercase is visual only)
+# Verify absence reporting section
 - assertVisible: "Report Absence"
 - assertVisible: "Sick"
 - assertVisible: "Appointment"

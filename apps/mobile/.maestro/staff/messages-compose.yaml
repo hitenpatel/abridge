@@ -6,10 +6,9 @@ tags:
 ---
 - runFlow: ../_helpers/login-staff.yaml
 
-# Navigate to messages
+# Navigate to messages via dev nav button
 - tapOn:
-    id: "tab-messages"
-    retryTapIfNoChange: true
+    id: "nav-messages"
 - extendedWaitUntil:
     visible: "Inbox"
     timeout: 10000

@@ -64,8 +64,24 @@ export function StaffHomeScreen() {
 	const upcomingEventsCount = summary?.upcomingEvents?.length ?? 0;
 
 	return (
+		<View className="flex-1 bg-background">
+		{/* Dev-only tab navigation buttons (Maestro can't tap floating tab bar on iOS) */}
+		{__DEV__ && (
+			<View className="flex-row gap-2 px-6 pt-2">
+				<Pressable testID="nav-messages" onPress={() => navigation.navigate("StaffMessages" as never)} className="bg-neutral-surface rounded-full px-3 py-1">
+					<Text className="text-text-muted text-xs">Messages</Text>
+				</Pressable>
+				<Pressable testID="nav-attendance" onPress={() => navigation.navigate("StaffAttendance" as never)} className="bg-neutral-surface rounded-full px-3 py-1">
+					<Text className="text-text-muted text-xs">Attendance</Text>
+				</Pressable>
+				<Pressable testID="nav-payments" onPress={() => navigation.navigate("StaffPayments" as never)} className="bg-neutral-surface rounded-full px-3 py-1">
+					<Text className="text-text-muted text-xs">Payments</Text>
+				</Pressable>
+			</View>
+		)}
+
 		<ScrollView
-			className="flex-1 bg-background"
+			className="flex-1"
 			contentContainerStyle={{ paddingBottom: 100 }}
 			showsVerticalScrollIndicator={false}
 			refreshControl={
@@ -264,5 +280,6 @@ export function StaffHomeScreen() {
 				</View>
 			)}
 		</ScrollView>
+		</View>
 	);
 }

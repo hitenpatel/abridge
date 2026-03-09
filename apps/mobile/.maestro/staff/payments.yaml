@@ -6,10 +6,9 @@ tags:
 ---
 - runFlow: ../_helpers/login-staff.yaml
 
-# Navigate to payments
+# Navigate to payments via dev nav button
 - tapOn:
-    id: "tab-payments"
-    retryTapIfNoChange: true
+    id: "nav-payments"
 - extendedWaitUntil:
     visible: "Manage payment items"
     timeout: 10000

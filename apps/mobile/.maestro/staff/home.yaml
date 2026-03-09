@@ -9,10 +9,16 @@ tags:
 # Verify staff home elements
 - assertVisible:
     text: "Home"
-- extendedWaitUntil:
-    visible: "Post Update"
+
+# Post Update and Recent Posts may need scroll on iOS (dev nav buttons add content)
+- scrollUntilVisible:
+    element: "Post Update"
+    direction: DOWN
     timeout: 10000
-- assertVisible: "Recent Posts"
+- scrollUntilVisible:
+    element: "Recent Posts"
+    direction: DOWN
+    timeout: 10000
 
 # Admin should see Staff Management (may need scroll on small screens)
 - scrollUntilVisible:

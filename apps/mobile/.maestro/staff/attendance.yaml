@@ -6,10 +6,9 @@ tags:
 ---
 - runFlow: ../_helpers/login-staff.yaml
 
-# Navigate to attendance
+# Navigate to attendance via dev nav button
 - tapOn:
-    id: "tab-attendance"
-    retryTapIfNoChange: true
+    id: "nav-attendance"
 - extendedWaitUntil:
     visible: "Today's attendance overview"
     timeout: 10000

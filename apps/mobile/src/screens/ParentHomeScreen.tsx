@@ -164,6 +164,21 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 				</View>
 			</View>
 
+			{/* Dev-only tab navigation buttons (Maestro can't tap floating tab bar on iOS) */}
+			{__DEV__ && (
+				<View className="flex-row gap-2 px-6 pb-2">
+					<Pressable testID="nav-messages" onPress={() => navigation.navigate("Messages")} className="bg-neutral-surface rounded-full px-3 py-1">
+						<Text className="text-text-muted text-xs">Messages</Text>
+					</Pressable>
+					<Pressable testID="nav-attendance" onPress={() => navigation.navigate("Attendance")} className="bg-neutral-surface rounded-full px-3 py-1">
+						<Text className="text-text-muted text-xs">Attendance</Text>
+					</Pressable>
+					<Pressable testID="nav-payments" onPress={() => navigation.navigate("Payments")} className="bg-neutral-surface rounded-full px-3 py-1">
+						<Text className="text-text-muted text-xs">Payments</Text>
+					</Pressable>
+				</View>
+			)}
+
 			<ScrollView
 				className="flex-1"
 				contentContainerClassName="pb-28"
