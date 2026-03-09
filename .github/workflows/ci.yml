@@ -243,9 +243,12 @@ jobs:
             echo "=== Initial Logcat ==="
             adb logcat -d -t 100 | grep -iE "ReactNativeJS" || true
             echo "=== Running Maestro ==="
-            $HOME/.maestro/bin/maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml --debug-output maestro-debug; echo $? > /tmp/maestro-exit
+            $HOME/.maestro/bin/maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml --debug-output $GITHUB_WORKSPACE/maestro-debug; echo $? > /tmp/maestro-exit
             echo "=== ALL ReactNativeJS logs ==="
             adb logcat -d | grep "ReactNativeJS" | grep -iE "tRPC|Payments|StaffMgmt|Login|auth|headers|error|UNAUTHORIZED" || true
+            echo "=== Maestro debug output ==="
+            ls -la $GITHUB_WORKSPACE/maestro-debug/ 2>/dev/null || echo "No maestro-debug directory"
+            find $GITHUB_WORKSPACE/maestro-debug -name "*.png" 2>/dev/null | head -20 || true
             echo "=== Maestro exit code: $(cat /tmp/maestro-exit) ==="
             exit $(cat /tmp/maestro-exit)
 
@@ -446,7 +449,11 @@ jobs:
           tail -30 /tmp/metro.log
 
           echo "=== Running Maestro ==="
-          maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml --debug-output maestro-debug; echo $? > /tmp/maestro-exit
+          maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml --debug-output $GITHUB_WORKSPACE/maestro-debug; echo $? > /tmp/maestro-exit
+
+          echo "=== Maestro debug output ==="
+          ls -la $GITHUB_WORKSPACE/maestro-debug/ 2>/dev/null || echo "No maestro-debug directory"
+          find $GITHUB_WORKSPACE/maestro-debug -name "*.png" 2>/dev/null | head -20 || true
 
           echo "=== Metro log (post-test) ==="
           grep -E "LOG|ERROR|Bundled|Auth|tRPC|Login|sign" /tmp/metro.log | tail -50 || true

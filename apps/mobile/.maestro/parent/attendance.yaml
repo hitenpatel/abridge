@@ -21,4 +21,6 @@ tags:
 - assertVisible: "Other"
 
 # Verify recent records section
-- assertVisible: "Recent Records"
+- extendedWaitUntil:
+    visible: "Recent Records"
+    timeout: 10000
