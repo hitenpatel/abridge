@@ -107,7 +107,7 @@ function parsePlaywrightJson(jsonPath) {
                 );
                 if (ss && ss.path && fs.existsSync(ss.path)) {
                   const buf = fs.readFileSync(ss.path);
-                  if (buf.length <= 50000) {
+                  if (buf.length <= 200000) {
                     screenshot = `data:image/png;base64,${buf.toString("base64")}`;
                   }
                 }
@@ -151,12 +151,11 @@ function loadMaestroScreenshots(screenshotDir, tests) {
       if (pngs.length === 0) continue;
       const lastPng = pngs[pngs.length - 1];
       const buf = fs.readFileSync(path.join(fullDir, lastPng));
-      if (buf.length > 50000) continue;
+      if (buf.length > 200000) continue;
       const b64 = `data:image/png;base64,${buf.toString("base64")}`;
       const flowName = dir.replace(/-/g, " ").toLowerCase();
       for (const test of tests) {
         if (
-          test.status === "fail" &&
           test.name.toLowerCase().includes(flowName)
         ) {
           test.screenshot = b64;
