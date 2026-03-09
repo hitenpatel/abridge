@@ -243,12 +243,11 @@ jobs:
             echo "=== Initial Logcat ==="
             adb logcat -d -t 100 | grep -iE "ReactNativeJS" || true
             echo "=== Running Maestro ==="
-            MAESTRO_EXIT=0
-            $HOME/.maestro/bin/maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml --debug-output maestro-debug || MAESTRO_EXIT=$?
+            $HOME/.maestro/bin/maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml --debug-output maestro-debug; echo $? > /tmp/maestro-exit
             echo "=== ALL ReactNativeJS logs ==="
             adb logcat -d | grep "ReactNativeJS" | grep -iE "tRPC|Payments|StaffMgmt|Login|auth|headers|error|UNAUTHORIZED" || true
-            echo "=== Maestro exit code: $MAESTRO_EXIT ==="
-            exit $MAESTRO_EXIT
+            echo "=== Maestro exit code: $(cat /tmp/maestro-exit) ==="
+            exit $(cat /tmp/maestro-exit)
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -447,8 +446,7 @@ jobs:
           tail -30 /tmp/metro.log
 
           echo "=== Running Maestro ==="
-          MAESTRO_EXIT=0
-          maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml --debug-output maestro-debug || MAESTRO_EXIT=$?
+          maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml --debug-output maestro-debug; echo $? > /tmp/maestro-exit
 
           echo "=== Metro log (post-test) ==="
           grep -E "LOG|ERROR|Bundled|Auth|tRPC|Login|sign" /tmp/metro.log | tail -50 || true
@@ -457,7 +455,8 @@ jobs:
           xcrun simctl spawn "$DEVICE" log show --predicate 'processImagePath CONTAINS "Abridge"' --last 30m --style compact 2>/dev/null | tail -50 || true
 
           kill $METRO_PID 2>/dev/null || true
-          exit $MAESTRO_EXIT
+          echo "=== Maestro exit code: $(cat /tmp/maestro-exit) ==="
+          exit $(cat /tmp/maestro-exit)
 
       - uses: actions/upload-artifact@v4
         if: always()
