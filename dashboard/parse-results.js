@@ -140,24 +140,39 @@ function parsePlaywrightJson(jsonPath) {
   };
 }
 
+function findPngsRecursively(dir) {
+  const results = [];
+  try {
+    const entries = fs.readdirSync(dir);
+    for (const entry of entries) {
+      const full = path.join(dir, entry);
+      const stat = fs.statSync(full);
+      if (stat.isDirectory()) {
+        results.push(...findPngsRecursively(full));
+      } else if (entry.endsWith(".png")) {
+        results.push(full);
+      }
+    }
+  } catch (e) {}
+  return results;
+}
+
 function loadMaestroScreenshots(screenshotDir, tests) {
   if (!screenshotDir || !fs.existsSync(screenshotDir)) return;
   try {
-    const dirs = fs.readdirSync(screenshotDir);
-    for (const dir of dirs) {
-      const fullDir = path.join(screenshotDir, dir);
-      if (!fs.statSync(fullDir).isDirectory()) continue;
-      const pngs = fs.readdirSync(fullDir).filter((f) => f.endsWith(".png"));
-      if (pngs.length === 0) continue;
-      const lastPng = pngs[pngs.length - 1];
-      const buf = fs.readFileSync(path.join(fullDir, lastPng));
+    // Maestro writes: <dir>/.maestro/tests/<timestamp>/screenshot-...(Flow Name).png
+    const pngs = findPngsRecursively(screenshotDir);
+    for (const pngPath of pngs) {
+      const filename = path.basename(pngPath).toLowerCase();
+      const buf = fs.readFileSync(pngPath);
       if (buf.length > 200000) continue;
       const b64 = `data:image/png;base64,${buf.toString("base64")}`;
-      const flowName = dir.replace(/-/g, " ").toLowerCase();
+      // Match by flow name in parentheses: screenshot-...(Flow Name).png
+      const nameMatch = filename.match(/\(([^)]+)\)/);
+      if (!nameMatch) continue;
+      const flowName = nameMatch[1].toLowerCase();
       for (const test of tests) {
-        if (
-          test.name.toLowerCase().includes(flowName)
-        ) {
+        if (test.name.toLowerCase() === flowName) {
           test.screenshot = b64;
         }
       }

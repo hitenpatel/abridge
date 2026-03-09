@@ -20,7 +20,8 @@ tags:
 - assertVisible: "Family"
 - assertVisible: "Other"
 
-# Verify recent records section
-- extendedWaitUntil:
-    visible: "Recent Records"
+# Verify recent records section (below fold, need to scroll)
+- scrollUntilVisible:
+    element: "Recent Records"
+    direction: DOWN
     timeout: 10000
