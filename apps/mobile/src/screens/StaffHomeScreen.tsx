@@ -109,7 +109,7 @@ export function StaffHomeScreen() {
 			</View>
 
 			{/* Dev-only tab navigation buttons (Maestro can't tap floating tab bar on iOS) */}
-			{__DEV__ && (
+			{(__DEV__ || process.env.EXPO_PUBLIC_E2E) && (
 				<View className="flex-row flex-wrap gap-2 px-6 pt-2">
 					<Pressable testID="nav-messages" onPress={() => navigation.navigate("StaffMessages" as never)} className="bg-neutral-surface rounded-full px-3 py-1">
 						<Text className="text-text-muted text-xs">Messages</Text>
