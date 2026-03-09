@@ -124,7 +124,7 @@ export const LoginScreen = ({ onLoginSuccess }: { onLoginSuccess?: () => void })
 						)}
 					</Pressable>
 
-					{__DEV__ && (
+					{(__DEV__ || process.env.EXPO_PUBLIC_E2E) && (
 						<View className="flex-row gap-3 mt-2">
 							<Pressable
 								onPress={() => handleLogin("sarah@example.com", "password123")}

@@ -202,6 +202,7 @@ jobs:
       - name: Build debug APK
         env:
           EXPO_PUBLIC_API_URL: http://10.0.2.2:4000
+          EXPO_PUBLIC_E2E: "1"
         run: |
           cd apps/mobile/android
           ./gradlew assembleDebug
@@ -288,6 +289,7 @@ jobs:
       BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
       BETTER_AUTH_URL: http://localhost:4000
       EXPO_PUBLIC_API_URL: http://localhost:4000
+      EXPO_PUBLIC_E2E: "1"
       NODE_ENV: test
     steps:
       - uses: actions/checkout@v4
