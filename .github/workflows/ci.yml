@@ -77,13 +77,15 @@ jobs:
             sleep 2
             if [ "$i" -eq 60 ]; then echo "ERROR: Web failed to start"; exit 1; fi
           done
-          npx playwright test --reporter=list
+          npx playwright test
 
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()
         with:
           name: playwright-report
-          path: playwright-report/
+          path: |
+            playwright-report.json
+            playwright-report/
           retention-days: 7
 
   e2e-mobile-android:
@@ -245,7 +247,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: maestro-report
+          name: maestro-report-android
           path: |
             maestro-report.xml
             maestro-debug/
@@ -439,7 +441,7 @@ jobs:
 
           echo "=== Running Maestro ==="
           MAESTRO_EXIT=0
-          maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml || MAESTRO_EXIT=$?
+          maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml --debug-output maestro-debug || MAESTRO_EXIT=$?
 
           echo "=== Metro log (post-test) ==="
           grep -E "LOG|ERROR|Bundled|Auth|tRPC|Login|sign" /tmp/metro.log | tail -50 || true
@@ -454,5 +456,7 @@ jobs:
         if: always()
         with:
           name: maestro-report-ios
-          path: maestro-report.xml
+          path: |
+            maestro-report.xml
+            maestro-debug/
           retention-days: 7

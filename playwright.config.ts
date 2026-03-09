@@ -10,7 +10,7 @@ export default defineConfig({
 	retries: process.env.CI ? 2 : 0,
 	workers: 1,
 	timeout: 60000,
-	reporter: "html",
+	reporter: [["list"], ["json", { outputFile: "playwright-report.json" }]],
 	use: {
 		trace: "on-first-retry",
 	},
