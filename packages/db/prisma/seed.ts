@@ -319,6 +319,70 @@ async function main() {
 		});
 	}
 
+	// ─── Calendar Events ──────────────────────────────────────────
+	const seedEvents = [
+		{
+			title: "Spring Term Ends",
+			category: "TERM_DATE" as const,
+			startDate: new Date("2026-04-10"),
+			allDay: true,
+		},
+		{
+			title: "Year 2 Trip to Science Museum",
+			body: "Year 2 and Year 5 joint trip. Please bring packed lunch.",
+			category: "EVENT" as const,
+			startDate: new Date("2026-03-20T09:00:00"),
+			endDate: new Date("2026-03-20T15:00:00"),
+			allDay: false,
+		},
+		{
+			title: "Sports Day",
+			body: "Annual sports day on the school field. Parents welcome from 1pm.",
+			category: "EVENT" as const,
+			startDate: new Date("2026-04-25"),
+			allDay: true,
+		},
+	];
+
+	for (const evt of seedEvents) {
+		const existing = await prisma.event.findFirst({
+			where: { schoolId: school.id, title: evt.title },
+		});
+		if (!existing) {
+			await prisma.event.create({
+				data: { schoolId: school.id, ...evt },
+			});
+		}
+	}
+	console.log("Seeded calendar events");
+
+	// ─── Form Templates ───────────────────────────────────────────
+	const consentForm = await prisma.formTemplate.upsert({
+		where: { id: "form-photo-consent" },
+		update: {},
+		create: {
+			id: "form-photo-consent",
+			schoolId: school.id,
+			title: "Photography Consent Form",
+			description: "Permission for your child to be photographed during school activities",
+			fields: [
+				{
+					id: "consent",
+					type: "checkbox",
+					label: "I give consent for my child to be photographed during school activities",
+					required: true,
+				},
+				{
+					id: "signature",
+					type: "text",
+					label: "Parent/Guardian full name (as signature)",
+					required: true,
+				},
+			],
+		},
+	});
+	console.log("Seeded form templates");
+
 	// 8. Payment Item
 	const tripTitle = "School Trip - Science Museum";
 	const existingTrip = await prisma.paymentItem.findFirst({
