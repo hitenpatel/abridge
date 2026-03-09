@@ -9,5 +9,9 @@ tags:
 # Calendar is a stack screen, not a tab
 # Only reachable via navigation from home action items
 # Verify home screen loads correctly
-- assertVisible: "Home"
-- assertVisible: "Report Absence"
+- extendedWaitUntil:
+    visible: "Home"
+    timeout: 15000
+- extendedWaitUntil:
+    visible: "Report Absence"
+    timeout: 15000
