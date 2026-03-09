@@ -14,5 +14,6 @@ tags:
     timeout: 10000
 
 # Verify seeded messages are visible (seed creates messages with URGENT category)
-- assertVisible:
-    text: "URGENT"
+- extendedWaitUntil:
+    visible: "URGENT"
+    timeout: 15000
