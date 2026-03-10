@@ -114,7 +114,7 @@ async function main() {
 		url: "/api/auth/*",
 		config: {
 			rateLimit: {
-				max: process.env.NODE_ENV === "production" ? 5 : 500,
+				max: process.env.NODE_ENV === "production" ? 20 : 10000,
 				timeWindow: "15 minutes",
 			},
 		},
