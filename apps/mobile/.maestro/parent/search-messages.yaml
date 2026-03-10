@@ -1,0 +1,25 @@
+appId: com.abridge.app
+name: Parent Search Messages
+tags:
+  - parent
+  - search
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Tap search icon in header
+- tapOn:
+    label: "Search"
+
+# Verify search screen loaded
+- extendedWaitUntil:
+    visible: "Test Search"
+    timeout: 30000
+
+# Use Test Search button to fill query
+- tapOn:
+    text: "Test Search"
+
+# Wait for debounce + results
+- extendedWaitUntil:
+    visible: "School Closure"
+    timeout: 30000

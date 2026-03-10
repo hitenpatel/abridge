@@ -76,7 +76,7 @@ export function SearchScreen() {
 			<View className="mx-6 mt-4 mb-4">
 				{(__DEV__ || process.env.EXPO_PUBLIC_E2E) && (
 					<Pressable
-						onPress={() => setQuery("Test Message 1")}
+						onPress={() => setQuery("School Closure")}
 						className="bg-neutral-surface dark:bg-surface-dark rounded-full h-10 items-center justify-center mb-3"
 					>
 						<Text className="text-text-muted font-sans-semibold text-sm">Test Search</Text>
