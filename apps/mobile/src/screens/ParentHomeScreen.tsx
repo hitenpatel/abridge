@@ -213,9 +213,11 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 					<Pressable testID="nav-forms" onPress={() => navigation.navigate("Forms")} className="bg-neutral-surface rounded-full px-3 py-1">
 						<Text className="text-text-muted text-xs">Forms</Text>
 					</Pressable>
-					<Pressable testID="nav-wellbeing" onPress={() => navigation.navigate("Wellbeing", { childId: selectedChildId ?? "" })} className="bg-neutral-surface rounded-full px-3 py-1">
-						<Text className="text-text-muted text-xs">Wellbeing</Text>
-					</Pressable>
+					{selectedChildId && (
+						<Pressable testID="nav-wellbeing" onPress={() => navigation.navigate("Wellbeing", { childId: selectedChildId })} className="bg-neutral-surface rounded-full px-3 py-1">
+							<Text className="text-text-muted text-xs">Wellbeing</Text>
+						</Pressable>
+					)}
 				</View>
 			)}
 
