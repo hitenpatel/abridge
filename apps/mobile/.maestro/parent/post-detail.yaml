@@ -1,0 +1,26 @@
+appId: com.abridge.app
+name: Parent Post Detail
+tags:
+  - parent
+  - posts
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Wait for feed to load (posts appear in activity feed)
+- extendedWaitUntil:
+    visible: "art lesson"
+    timeout: 30000
+
+# Tap the post to open detail
+- tapOn:
+    text: "art lesson"
+
+# Verify post detail screen loaded
+- extendedWaitUntil:
+    visible: "Class Post"
+    timeout: 30000
+
+# Verify post content
+- extendedWaitUntil:
+    visible: "Henri Matisse"
+    timeout: 30000
