@@ -1,0 +1,16 @@
+appId: com.abridge.app
+name: Parent Calendar Events
+tags:
+  - parent
+  - calendar
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Navigate to calendar via dev nav button
+- tapOn:
+    id: "nav-calendar"
+
+# Verify calendar screen loaded
+- extendedWaitUntil:
+    visible: "Calendar"
+    timeout: 30000
