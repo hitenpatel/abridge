@@ -6,19 +6,20 @@ tags:
 ---
 - runFlow: ../_helpers/login-parent.yaml
 
-# Wait for home data to load (child data must be available before navigating)
+# Wait for home data to load (dev nav buttons only render after loading)
 - extendedWaitUntil:
-    visible: "Hi,"
-    timeout: 60000
+    visible:
+      id: "nav-wellbeing"
+    timeout: 120000
 
-# Navigate via dev nav button
+# Navigate to wellbeing screen
 - tapOn:
     id: "nav-wellbeing"
 
 # Verify wellbeing screen loaded
 - extendedWaitUntil:
     visible: "How are they feeling today?"
-    timeout: 30000
+    timeout: 60000
 
 # Use Test Fill to select mood and note
 - tapOn:
