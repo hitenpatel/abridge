@@ -1,0 +1,37 @@
+appId: com.abridge.app
+name: Admin Staff Invite
+tags:
+  - admin
+  - staff
+---
+- runFlow: ../_helpers/login-staff.yaml
+
+# Navigate to staff management
+- tapOn:
+    id: "nav-staff-management"
+- extendedWaitUntil:
+    visible: "Invite Staff"
+    timeout: 60000
+
+# Fill invite email
+- tapOn:
+    label: "Invite Email"
+- inputText: "new-teacher@oakwood.sch.uk"
+- hideKeyboard
+
+# Select TEACHER role (should be default, but tap to confirm)
+- tapOn:
+    text: "TEACHER"
+
+# Tap Send Invite
+- tapOn:
+    label: "Send Invite"
+
+# Verify success
+- extendedWaitUntil:
+    visible: "Invitation Sent"
+    timeout: 30000
+
+# Dismiss alert
+- tapOn:
+    text: "OK"
