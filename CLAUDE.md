@@ -70,6 +70,17 @@ School-scoped procedures auto-require `schoolId` in input and add `ctx.schoolId`
 - Web styling: Tailwind only, icons from `lucide-react`
 - All dashboard pages are `"use client"` components
 
+## Testing Requirements
+
+Every new feature must include tests across all three platforms:
+
+- **Web E2E** (`e2e/`): Playwright tests covering the web dashboard flow. Run with `npx playwright test`.
+- **Mobile E2E — Android & iOS** (`apps/mobile/.maestro/`): Maestro YAML flows exercising the mobile screen. Add flows under `parent/`, `staff/`, or `admin/` as appropriate.
+- **API unit tests** (`apps/api/src/__tests__/`): Vitest tests for any new or modified tRPC procedures.
+- **Seed data** (`packages/db/prisma/seed.ts`): If the feature introduces new models or screens that need data to render, add seed entries so e2e tests have something to exercise.
+
+Do NOT consider a feature complete until all applicable test layers are addressed.
+
 ## Full Reference
 
 See `AGENTS.md` for complete documentation including all Prisma models, all tRPC procedures, environment variables, infrastructure, and deployment details.
