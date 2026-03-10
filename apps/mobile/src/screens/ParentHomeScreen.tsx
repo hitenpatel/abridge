@@ -14,6 +14,17 @@ import { ActivityFeed } from "../components/feed/ActivityFeed";
 import { Skeleton } from "../components/ui";
 import { trpc } from "../lib/trpc";
 
+function getMoodEmoji(mood: string): string {
+	switch (mood) {
+		case "GREAT": return "😄";
+		case "GOOD": return "🙂";
+		case "OK": return "😐";
+		case "LOW": return "😟";
+		case "STRUGGLING": return "😢";
+		default: return "💗";
+	}
+}
+
 type Emoji = "HEART" | "THUMBS_UP" | "CLAP" | "LAUGH" | "WOW";
 
 type NavigationProp = CompositeNavigationProp<
@@ -66,6 +77,19 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 		{ childId: selectedChildId ?? "" },
 		{ enabled: !!selectedChildId },
 	);
+
+	const { data: features } = trpc.settings.getFeatureTogglesForParent.useQuery();
+
+	const today = new Date();
+	today.setHours(0, 0, 0, 0);
+	const todayEnd = new Date(today);
+	todayEnd.setHours(23, 59, 59, 999);
+
+	const { data: todayCheckIns } = trpc.wellbeing.getCheckIns.useQuery(
+		{ childId: selectedChildId ?? "", startDate: today, endDate: todayEnd },
+		{ enabled: !!selectedChildId && !!features?.wellbeingEnabled },
+	);
+	const todayCheckIn = todayCheckIns?.[0];
 
 	// Reaction mutations
 	const reactMutation = trpc.classPost.react.useMutation({
@@ -189,6 +213,9 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 					<Pressable testID="nav-forms" onPress={() => navigation.navigate("Forms")} className="bg-neutral-surface rounded-full px-3 py-1">
 						<Text className="text-text-muted text-xs">Forms</Text>
 					</Pressable>
+					<Pressable testID="nav-wellbeing" onPress={() => navigation.navigate("Wellbeing", { childId: selectedChildId ?? "" })} className="bg-neutral-surface rounded-full px-3 py-1">
+						<Text className="text-text-muted text-xs">Wellbeing</Text>
+					</Pressable>
 				</View>
 			)}
 
@@ -241,6 +268,32 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 							onForm={() => navigation.navigate("Forms")}
 							onMessage={() => navigation.getParent()?.navigate("Messages")}
 						/>
+					</View>
+				)}
+
+				{/* Wellbeing Check-in Card */}
+				{features?.wellbeingEnabled && selectedChildId && (
+					<View className="px-6 mb-4">
+						<Pressable
+							onPress={() => navigation.navigate("Wellbeing", { childId: selectedChildId })}
+							testID="wellbeing-card"
+							className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 flex-row items-center gap-3"
+						>
+							<View className="w-12 h-12 rounded-full bg-pink-100 items-center justify-center">
+								<Text className="text-xl">{todayCheckIn ? getMoodEmoji(todayCheckIn.mood) : "💗"}</Text>
+							</View>
+							<View className="flex-1">
+								<Text className="text-base font-sans-bold text-foreground dark:text-white">
+									{todayCheckIn
+										? `${children.find((c) => c.id === selectedChildId)?.firstName ?? "Child"} is feeling ${todayCheckIn.mood.charAt(0) + todayCheckIn.mood.slice(1).toLowerCase()}`
+										: `How is ${children.find((c) => c.id === selectedChildId)?.firstName ?? "your child"} feeling?`}
+								</Text>
+								<Text className="text-xs font-sans text-text-muted">
+									{todayCheckIn ? "Tap to update or view history" : "Daily wellbeing check-in"}
+								</Text>
+							</View>
+							<MaterialIcons name="chevron-right" size={24} color="#96867f" />
+						</Pressable>
 					</View>
 				)}
 

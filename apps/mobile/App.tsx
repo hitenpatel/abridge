@@ -43,6 +43,7 @@ import { StaffHomeScreen } from "./src/screens/StaffHomeScreen";
 import { StaffManagementScreen } from "./src/screens/StaffManagementScreen";
 import { StaffPaymentsScreen } from "./src/screens/StaffPaymentsScreen";
 import { StudentProfileScreen } from "./src/screens/StudentProfileScreen";
+import { WellbeingScreen } from "./src/screens/WellbeingScreen";
 
 // Message item type matching the API response
 export interface MessageItem {
@@ -73,6 +74,7 @@ export type RootStackParamList = {
 	StaffManagement: undefined;
 	ComposePost: undefined;
 	PostDetail: { postId: string };
+	Wellbeing: { childId: string };
 };
 
 export type ParentTabParamList = {
@@ -305,6 +307,7 @@ function AuthenticatedApp() {
 					component={PostDetailScreen}
 					options={{ headerShown: false }}
 				/>
+				<Stack.Screen name="Wellbeing" component={WellbeingScreen} options={{ title: "Wellbeing" }} />
 			</Stack.Navigator>
 		</NavigationContainer>
 	);
