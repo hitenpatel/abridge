@@ -1,0 +1,43 @@
+appId: com.abridge.app
+name: Parent Wellbeing Check-in
+tags:
+  - parent
+  - wellbeing
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Verify home loaded
+- extendedWaitUntil:
+    visible: "feeling"
+    timeout: 30000
+
+# Navigate via dev nav button
+- tapOn:
+    id: "nav-wellbeing"
+
+# Verify wellbeing screen loaded
+- extendedWaitUntil:
+    visible: "How are they feeling today?"
+    timeout: 30000
+
+# Use Test Fill to select mood and note
+- tapOn:
+    text: "Test Fill"
+
+# Verify mood selected
+- extendedWaitUntil:
+    visible: "Feeling happy today"
+    timeout: 30000
+
+# Submit check-in
+- tapOn:
+    label: "Save Check-in"
+
+# Verify success
+- extendedWaitUntil:
+    visible: "Saved!"
+    timeout: 30000
+
+# Dismiss alert
+- tapOn:
+    text: "OK"
