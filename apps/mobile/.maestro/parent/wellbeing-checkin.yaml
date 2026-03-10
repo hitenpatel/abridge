@@ -34,10 +34,10 @@ tags:
 - tapOn:
     label: "Save Check-in"
 
-# Verify success
+# Verify success (mutation can be slow on CI emulators)
 - extendedWaitUntil:
     visible: "Saved!"
-    timeout: 30000
+    timeout: 60000
 
 # Dismiss alert
 - tapOn:
