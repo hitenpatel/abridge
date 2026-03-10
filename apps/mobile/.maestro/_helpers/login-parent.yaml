@@ -16,3 +16,9 @@ appId: com.abridge.app
 - extendedWaitUntil:
     visible: "Home"
     timeout: 120000
+
+# Wait for home screen data to fully load (nav buttons render after isLoading)
+- extendedWaitUntil:
+    visible:
+      id: "nav-messages"
+    timeout: 120000

@@ -6,6 +6,12 @@ tags:
 ---
 - runFlow: ../_helpers/login-parent.yaml
 
+# Wait for parent home data to load (feed needs selectedChildId set first)
+- extendedWaitUntil:
+    visible:
+      id: "nav-attendance"
+    timeout: 120000
+
 # Wait for feed to load then scroll to find the post
 - scrollUntilVisible:
     element: "art lesson"

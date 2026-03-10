@@ -6,6 +6,12 @@ tags:
 ---
 - runFlow: ../_helpers/login-staff.yaml
 
+# Wait for staff home data to load (session + summary queries must resolve)
+- extendedWaitUntil:
+    visible:
+      id: "nav-staff-management"
+    timeout: 120000
+
 # Navigate to staff management
 - tapOn:
     id: "nav-staff-management"

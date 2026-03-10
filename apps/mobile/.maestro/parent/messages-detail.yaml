@@ -6,6 +6,12 @@ tags:
 ---
 - runFlow: ../_helpers/login-parent.yaml
 
+# Wait for parent home data to load (nav buttons render after isLoading)
+- extendedWaitUntil:
+    visible:
+      id: "nav-messages"
+    timeout: 120000
+
 # Navigate to messages
 - tapOn:
     id: "nav-messages"
