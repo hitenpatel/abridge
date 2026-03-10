@@ -6,11 +6,12 @@ tags:
 ---
 - runFlow: ../_helpers/login-parent.yaml
 
-# Navigate via dev nav button (wait for it to appear after home loads)
+# Wait for home data to load (child data must be available before navigating)
 - extendedWaitUntil:
-    visible:
-      id: "nav-wellbeing"
+    visible: "Hi,"
     timeout: 30000
+
+# Navigate via dev nav button
 - tapOn:
     id: "nav-wellbeing"
 
