@@ -25,14 +25,14 @@ tags:
 - tapOn:
     text: "Test Fill"
 
-# Verify mood selected
+# Verify mood selected and note filled
 - extendedWaitUntil:
     visible: "Feeling happy today"
     timeout: 30000
 
-# Submit check-in
+# Submit check-in (use text match, more reliable than label on Android)
 - tapOn:
-    label: "Save Check-in"
+    text: "Save Check-in"
 
 # Verify success (mutation can be slow on CI emulators)
 - extendedWaitUntil:
