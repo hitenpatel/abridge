@@ -1,0 +1,49 @@
+appId: com.abridge.app
+name: Staff Send Message
+tags:
+  - staff
+  - messages
+---
+- runFlow: ../_helpers/login-staff.yaml
+
+# Verify staff home loaded
+- extendedWaitUntil:
+    visible: "Post Update"
+    timeout: 30000
+
+# Scroll down to find New Message card
+- scrollUntilVisible:
+    element: "New Message"
+    direction: DOWN
+    timeout: 30000
+
+# Tap New Message card
+- tapOn:
+    label: "New Message"
+
+# Verify compose screen loaded
+- extendedWaitUntil:
+    visible: "All Parents"
+    timeout: 30000
+
+# Use Test Fill
+- tapOn:
+    text: "Test Fill"
+
+# Wait for subject field to populate
+- extendedWaitUntil:
+    visible: "Test Message"
+    timeout: 30000
+
+# Tap Send
+- tapOn:
+    text: "Send"
+
+# Verify success
+- extendedWaitUntil:
+    visible: "Sent!"
+    timeout: 30000
+
+# Dismiss alert
+- tapOn:
+    text: "OK"
