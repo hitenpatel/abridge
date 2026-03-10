@@ -30,9 +30,9 @@ tags:
     visible: "Feeling happy today"
     timeout: 30000
 
-# Submit check-in (use text match, more reliable than label on Android)
+# Submit check-in
 - tapOn:
-    text: "Save Check-in"
+    id: "submit-checkin"
 
 # Verify success (mutation can be slow on CI emulators)
 - extendedWaitUntil:

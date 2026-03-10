@@ -167,6 +167,7 @@ export function WellbeingScreen({ route }: Props) {
 				<Pressable
 					onPress={handleSubmit}
 					disabled={!selectedMood || submitMutation.isPending}
+					testID="submit-checkin"
 					accessibilityLabel={todayCheckIn ? "Update Check-in" : "Save Check-in"}
 					className={`rounded-2xl py-4 items-center ${
 						selectedMood ? "bg-primary" : "bg-neutral-surface"
