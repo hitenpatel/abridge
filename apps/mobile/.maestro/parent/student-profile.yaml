@@ -1,0 +1,21 @@
+appId: com.abridge.app
+name: Parent Student Profile
+tags:
+  - parent
+  - profile
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Wait for home to load and ChildSwitcher to appear
+- extendedWaitUntil:
+    visible: "Emily"
+    timeout: 30000
+
+# Tap the already-selected child to view profile
+- tapOn:
+    text: "Emily"
+
+# Verify student profile screen loaded
+- extendedWaitUntil:
+    visible: "Emily Johnson"
+    timeout: 30000
