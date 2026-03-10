@@ -260,6 +260,28 @@ export function StaffHomeScreen() {
 				)}
 			</View>
 
+			{/* New Message CTA */}
+			<View className="px-6 mt-4">
+				<Pressable
+					onPress={() => navigation.navigate("ComposeMessage")}
+					accessibilityLabel="New Message"
+					className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 flex-row items-center gap-3"
+				>
+					<View className="w-12 h-12 rounded-full bg-blue-100 items-center justify-center">
+						<MaterialIcons name="email" size={24} color="#3B82F6" />
+					</View>
+					<View className="flex-1">
+						<Text className="text-base font-sans-bold text-foreground dark:text-white">
+							New Message
+						</Text>
+						<Text className="text-xs font-sans text-text-muted">
+							Send update to all parents
+						</Text>
+					</View>
+					<MaterialIcons name="chevron-right" size={24} color="#96867f" />
+				</Pressable>
+			</View>
+
 			{/* Staff Management (Admin only) */}
 			{session?.staffRole === "ADMIN" && (
 				<View className="px-6 mt-4">
