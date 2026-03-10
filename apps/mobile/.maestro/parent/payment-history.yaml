@@ -1,0 +1,23 @@
+appId: com.abridge.app
+name: Parent Payment History
+tags:
+  - parent
+  - payments
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Navigate to payments
+- tapOn:
+    id: "nav-payments"
+- extendedWaitUntil:
+    visible: "Wallet"
+    timeout: 30000
+
+# Tap history icon
+- tapOn:
+    label: "History"
+
+# Verify payment history screen loaded
+- extendedWaitUntil:
+    visible: "Payment History"
+    timeout: 30000
