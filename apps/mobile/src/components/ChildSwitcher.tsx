@@ -13,13 +13,14 @@ interface ChildSwitcherProps {
 	items: ChildOption[];
 	selectedChildId: string;
 	onSelect: (childId: string) => void;
+	onViewProfile?: (childId: string) => void;
 }
 
 function getInitials(firstName: string, lastName: string): string {
 	return `${firstName[0] ?? ""}${lastName[0] ?? ""}`.toUpperCase();
 }
 
-export function ChildSwitcher({ items, selectedChildId, onSelect }: ChildSwitcherProps) {
+export function ChildSwitcher({ items, selectedChildId, onSelect, onViewProfile }: ChildSwitcherProps) {
 	if (items.length === 0) return null;
 
 	return (
@@ -36,7 +37,13 @@ export function ChildSwitcher({ items, selectedChildId, onSelect }: ChildSwitche
 				return (
 					<Pressable
 						key={child.id}
-						onPress={() => onSelect(child.id)}
+						onPress={() => {
+						if (isActive && onViewProfile) {
+							onViewProfile(child.id);
+						} else {
+							onSelect(child.id);
+						}
+					}}
 						className={`flex-row items-center gap-2 rounded-full px-3 py-2 ${
 							isActive ? "bg-primary" : "bg-neutral-surface dark:bg-surface-dark"
 						}`}

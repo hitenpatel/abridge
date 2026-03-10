@@ -209,6 +209,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 							}))}
 							selectedChildId={selectedChildId ?? ""}
 							onSelect={setSelectedChildId}
+							onViewProfile={(childId) => navigation.navigate("StudentProfile", { childId })}
 						/>
 					</View>
 				)}
