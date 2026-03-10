@@ -27,7 +27,7 @@ const MOODS: { value: Mood; emoji: string; label: string; bg: string; activeBg: 
 ];
 
 function getMoodConfig(mood: string) {
-	return MOODS.find((m) => m.value === mood) ?? MOODS[2];
+	return MOODS.find((m) => m.value === mood) ?? MOODS[2]!;
 }
 
 export function WellbeingScreen({ route }: Props) {
@@ -36,10 +36,22 @@ export function WellbeingScreen({ route }: Props) {
 	const [selectedMood, setSelectedMood] = useState<Mood | null>(null);
 	const [note, setNote] = useState("");
 
-	const today = new Date();
-	today.setHours(0, 0, 0, 0);
-	const thirtyDaysAgo = new Date(today);
-	thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+	const [today] = useState(() => {
+		const d = new Date();
+		d.setHours(0, 0, 0, 0);
+		return d;
+	});
+	const [thirtyDaysAgo] = useState(() => {
+		const d = new Date();
+		d.setHours(0, 0, 0, 0);
+		d.setDate(d.getDate() - 30);
+		return d;
+	});
+	const [endDate] = useState(() => {
+		const d = new Date();
+		d.setHours(23, 59, 59, 999);
+		return d;
+	});
 
 	const {
 		data: checkIns,
@@ -49,7 +61,7 @@ export function WellbeingScreen({ route }: Props) {
 	} = trpc.wellbeing.getCheckIns.useQuery({
 		childId,
 		startDate: thirtyDaysAgo,
-		endDate: new Date(),
+		endDate,
 	});
 
 	const submitMutation = trpc.wellbeing.submitCheckIn.useMutation({
