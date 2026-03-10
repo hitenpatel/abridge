@@ -1,0 +1,43 @@
+appId: com.abridge.app
+name: Parent Form Submit
+tags:
+  - parent
+  - forms
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Navigate to forms
+- tapOn:
+    id: "nav-forms"
+
+# Verify forms screen loaded
+- extendedWaitUntil:
+    visible: "Forms & Consent"
+    timeout: 30000
+
+# Verify pending form shows
+- extendedWaitUntil:
+    visible: "Photography Consent Form"
+    timeout: 30000
+
+# Tap Complete to open form detail
+- tapOn:
+    text: "Complete"
+
+# Verify form detail loaded
+- extendedWaitUntil:
+    visible: "Photography Consent Form"
+    timeout: 30000
+
+# Use Test Fill to populate fields
+- tapOn:
+    text: "Test Fill"
+
+# Submit form
+- tapOn:
+    text: "Submit"
+
+# Verify success
+- extendedWaitUntil:
+    visible: "Form Submitted"
+    timeout: 30000

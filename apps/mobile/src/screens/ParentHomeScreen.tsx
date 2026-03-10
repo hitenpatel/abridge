@@ -186,6 +186,9 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 					<Pressable testID="nav-calendar" onPress={() => navigation.navigate("Calendar")} className="bg-neutral-surface rounded-full px-3 py-1">
 						<Text className="text-text-muted text-xs">Calendar</Text>
 					</Pressable>
+					<Pressable testID="nav-forms" onPress={() => navigation.navigate("Forms")} className="bg-neutral-surface rounded-full px-3 py-1">
+						<Text className="text-text-muted text-xs">Forms</Text>
+					</Pressable>
 				</View>
 			)}
 
