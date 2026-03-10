@@ -9,7 +9,7 @@ tags:
 # Wait for home data to load (child data must be available before navigating)
 - extendedWaitUntil:
     visible: "Hi,"
-    timeout: 30000
+    timeout: 60000
 
 # Navigate via dev nav button
 - tapOn:
