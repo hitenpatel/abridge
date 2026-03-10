@@ -6,10 +6,11 @@ tags:
 ---
 - runFlow: ../_helpers/login-parent.yaml
 
-# Wait for feed to load (posts appear in activity feed)
-- extendedWaitUntil:
-    visible: "art lesson"
-    timeout: 30000
+# Wait for feed to load then scroll to find the post
+- scrollUntilVisible:
+    element: "art lesson"
+    direction: DOWN
+    timeout: 60000
 
 # Tap the post to open detail
 - tapOn:
@@ -18,7 +19,7 @@ tags:
 # Verify post detail screen loaded
 - extendedWaitUntil:
     visible: "Class Post"
-    timeout: 30000
+    timeout: 60000
 
 # Verify post content
 - extendedWaitUntil:

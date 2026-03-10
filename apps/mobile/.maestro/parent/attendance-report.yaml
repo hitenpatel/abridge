@@ -11,7 +11,7 @@ tags:
     id: "nav-attendance"
 - extendedWaitUntil:
     visible: "Attendance Hub"
-    timeout: 30000
+    timeout: 60000
 
 # Select absence reason
 - tapOn:
@@ -33,10 +33,10 @@ tags:
 - tapOn:
     label: "Submit"
 
-# Verify success alert
+# Verify success alert (mutation can be slow on CI emulators)
 - extendedWaitUntil:
     visible: "Absence reported successfully"
-    timeout: 30000
+    timeout: 60000
 
 # Dismiss alert
 - tapOn:

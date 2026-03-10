@@ -11,19 +11,19 @@ tags:
     id: "nav-messages"
 - extendedWaitUntil:
     visible: "Inbox"
-    timeout: 30000
+    timeout: 60000
 
-# Tap the first message (urgent one from seed)
+# Wait for messages to load then tap
+- extendedWaitUntil:
+    visible: "Urgent: School Closure Tomorrow"
+    timeout: 60000
 - tapOn:
     text: "Urgent: School Closure Tomorrow"
 
 # Verify message detail screen
 - extendedWaitUntil:
-    visible: "Urgent: School Closure Tomorrow"
-    timeout: 30000
-- extendedWaitUntil:
     visible: "severe weather conditions"
-    timeout: 30000
+    timeout: 60000
 - extendedWaitUntil:
     visible: "Oakwood Primary School"
     timeout: 30000

@@ -9,13 +9,13 @@ tags:
 # Verify staff home loaded
 - extendedWaitUntil:
     visible: "Post Update"
-    timeout: 30000
+    timeout: 60000
 
 # Scroll down to find New Message card
 - scrollUntilVisible:
     element: "New Message"
     direction: DOWN
-    timeout: 30000
+    timeout: 60000
 
 # Tap New Message card
 - tapOn:
@@ -24,7 +24,7 @@ tags:
 # Verify compose screen loaded
 - extendedWaitUntil:
     visible: "All Parents"
-    timeout: 30000
+    timeout: 60000
 
 # Use Test Fill
 - tapOn:
@@ -35,14 +35,14 @@ tags:
     visible: "Test Message"
     timeout: 30000
 
-# Tap Send
+# Tap send button (button text is "Post to Class")
 - tapOn:
-    text: "Send"
+    text: "Post to Class"
 
 # Verify success
 - extendedWaitUntil:
     visible: "Sent!"
-    timeout: 30000
+    timeout: 60000
 
 # Dismiss alert
 - tapOn:

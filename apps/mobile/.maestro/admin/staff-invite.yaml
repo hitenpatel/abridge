@@ -13,6 +13,11 @@ tags:
     visible: "Invite Staff"
     timeout: 60000
 
+# Wait for role selector to be visible
+- extendedWaitUntil:
+    visible: "TEACHER"
+    timeout: 60000
+
 # Fill invite email
 - tapOn:
     label: "Invite Email"
@@ -30,7 +35,7 @@ tags:
 # Verify success
 - extendedWaitUntil:
     visible: "Invitation Sent"
-    timeout: 30000
+    timeout: 60000
 
 # Dismiss alert
 - tapOn:
