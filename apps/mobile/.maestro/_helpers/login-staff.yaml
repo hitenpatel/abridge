@@ -3,10 +3,15 @@ appId: com.abridge.app
 - clearState
 - launchApp
 
-# Wait for app to load (iOS Metro re-bundle after clearState is slow)
+# Wait for app to load (iOS Metro re-bundle after clearState is very slow)
 - extendedWaitUntil:
     visible: "Sign in to continue"
-    timeout: 300000
+    timeout: 600000
+
+# Wait for test button to render (JS bridge must be fully connected)
+- extendedWaitUntil:
+    visible: "Test Staff"
+    timeout: 60000
 
 # Use dev test button (bypasses TextInput which has Maestro iOS issues)
 - tapOn:
