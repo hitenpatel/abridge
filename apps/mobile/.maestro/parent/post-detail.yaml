@@ -12,18 +12,13 @@ tags:
       id: "nav-wellbeing"
     timeout: 120000
 
-# Wait for activity feed to render class posts (feed query starts after childId set)
-- extendedWaitUntil:
-    visible:
-      id: "feed-classPost"
-    timeout: 180000
-
-# Scroll down to find the art lesson post and tap it
+# Scroll down to find a class post in the activity feed
+# (feed items render below child switcher, action items, and wellbeing card)
 - scrollUntilVisible:
     element:
       id: "feed-classPost"
     direction: DOWN
-    timeout: 60000
+    timeout: 180000
 - tapOn:
     id: "feed-classPost"
 

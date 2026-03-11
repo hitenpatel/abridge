@@ -13,13 +13,14 @@ tags:
 
 # Scroll down to find New Message card
 - scrollUntilVisible:
-    element: "New Message"
+    element:
+      id: "new-message-card"
     direction: DOWN
     timeout: 60000
 
 # Tap New Message card
 - tapOn:
-    label: "New Message"
+    id: "new-message-card"
 
 # Verify compose screen loaded
 - extendedWaitUntil:

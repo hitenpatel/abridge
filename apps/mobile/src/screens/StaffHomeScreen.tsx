@@ -276,6 +276,7 @@ export function StaffHomeScreen() {
 					<View className="px-6 mt-4">
 						<Pressable
 							onPress={() => navigation.navigate("ComposeMessage")}
+							testID="new-message-card"
 							accessibilityLabel="New Message"
 							className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 flex-row items-center gap-3"
 						>

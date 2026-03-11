@@ -22,7 +22,14 @@ tags:
       id: "messages-count"
     timeout: 180000
 
-# Tap the urgent message using testID (FlatList text matching unreliable on Android)
+# Scroll to find the urgent message (FlatList may not render all items immediately)
+- scrollUntilVisible:
+    element:
+      id: "message-urgent"
+    direction: DOWN
+    timeout: 60000
+
+# Tap the urgent message
 - tapOn:
     id: "message-urgent"
 
