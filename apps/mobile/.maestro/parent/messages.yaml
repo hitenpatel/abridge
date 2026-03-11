@@ -11,9 +11,9 @@ tags:
     id: "nav-messages"
 - extendedWaitUntil:
     visible: "Inbox"
-    timeout: 30000
+    timeout: 60000
 
 # Verify messages screen loaded (data-specific assertions removed — seed data varies)
 - extendedWaitUntil:
     visible: "Inbox"
-    timeout: 30000
+    timeout: 60000

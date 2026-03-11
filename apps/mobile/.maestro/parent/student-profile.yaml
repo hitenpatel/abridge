@@ -9,7 +9,7 @@ tags:
 # Wait for home to load and ChildSwitcher to appear
 - extendedWaitUntil:
     visible: "Emily"
-    timeout: 30000
+    timeout: 60000
 
 # Tap the already-selected child to view profile
 - tapOn:
@@ -18,4 +18,4 @@ tags:
 # Verify student profile screen loaded
 - extendedWaitUntil:
     visible: "Emily Johnson"
-    timeout: 30000
+    timeout: 60000

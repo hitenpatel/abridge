@@ -9,7 +9,7 @@ tags:
 # Verify home screen elements
 - extendedWaitUntil:
     visible: "Home"
-    timeout: 30000
+    timeout: 60000
 - extendedWaitUntil:
     visible: "Report Absence"
-    timeout: 30000
+    timeout: 60000

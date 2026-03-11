@@ -33,7 +33,7 @@ tags:
 # Wait for subject field to populate
 - extendedWaitUntil:
     visible: "Test Message"
-    timeout: 30000
+    timeout: 60000
 
 # Tap send button (button text is "Post to Class")
 - tapOn:

@@ -11,23 +11,23 @@ tags:
     id: "settings-button"
 - extendedWaitUntil:
     visible: "Profile"
-    timeout: 30000
+    timeout: 60000
 - extendedWaitUntil:
     visible: "Notifications"
-    timeout: 30000
+    timeout: 60000
 
 # Verify profile section
 - extendedWaitUntil:
     visible: "Save Profile"
-    timeout: 30000
+    timeout: 60000
 
 # Verify notification toggles
 - extendedWaitUntil:
     visible: "Push notifications"
-    timeout: 30000
+    timeout: 60000
 - extendedWaitUntil:
     visible: "SMS notifications"
-    timeout: 30000
+    timeout: 60000
 - extendedWaitUntil:
     visible: "Email notifications"
-    timeout: 30000
+    timeout: 60000

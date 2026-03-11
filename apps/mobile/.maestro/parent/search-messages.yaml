@@ -13,7 +13,7 @@ tags:
 # Verify search screen loaded
 - extendedWaitUntil:
     visible: "Test Search"
-    timeout: 30000
+    timeout: 60000
 
 # Use Test Search button to fill query
 - tapOn:
@@ -22,4 +22,4 @@ tags:
 # Wait for debounce + results
 - extendedWaitUntil:
     visible: "School Closure"
-    timeout: 30000
+    timeout: 60000

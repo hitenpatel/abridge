@@ -11,4 +11,4 @@ tags:
     id: "nav-attendance"
 - extendedWaitUntil:
     visible: "Today's attendance overview"
-    timeout: 30000
+    timeout: 60000

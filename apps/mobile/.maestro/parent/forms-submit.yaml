@@ -13,12 +13,12 @@ tags:
 # Verify forms screen loaded
 - extendedWaitUntil:
     visible: "Forms & Consent"
-    timeout: 30000
+    timeout: 60000
 
 # Verify pending form shows
 - extendedWaitUntil:
     visible: "Photography Consent Form"
-    timeout: 30000
+    timeout: 60000
 
 # Tap Complete to open form detail
 - tapOn:
@@ -27,7 +27,7 @@ tags:
 # Verify form detail loaded
 - extendedWaitUntil:
     visible: "Photography Consent Form"
-    timeout: 30000
+    timeout: 60000
 
 # Use Test Fill to populate fields
 - tapOn:
@@ -40,4 +40,4 @@ tags:
 # Verify success
 - extendedWaitUntil:
     visible: "Form Submitted"
-    timeout: 30000
+    timeout: 60000

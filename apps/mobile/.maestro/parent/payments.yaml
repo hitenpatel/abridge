@@ -11,9 +11,9 @@ tags:
     id: "nav-payments"
 - extendedWaitUntil:
     visible: "Wallet"
-    timeout: 30000
+    timeout: 60000
 
 # Verify payments screen loaded
 - extendedWaitUntil:
     visible: "Wallet"
-    timeout: 30000
+    timeout: 60000

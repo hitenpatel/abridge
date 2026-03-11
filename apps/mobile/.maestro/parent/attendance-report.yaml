@@ -19,6 +19,11 @@ tags:
     visible: "Attendance Hub"
     timeout: 60000
 
+# Wait for form to be fully loaded (children query must resolve)
+- extendedWaitUntil:
+    visible: "Sick"
+    timeout: 60000
+
 # Select absence reason
 - tapOn:
     text: "Sick"
@@ -42,7 +47,7 @@ tags:
 # Verify success alert (mutation can be slow on CI emulators)
 - extendedWaitUntil:
     visible: "Absence reported successfully"
-    timeout: 60000
+    timeout: 120000
 
 # Dismiss alert
 - tapOn:

@@ -11,4 +11,4 @@ tags:
     id: "nav-payments"
 - extendedWaitUntil:
     visible: "Manage payment items"
-    timeout: 30000
+    timeout: 60000

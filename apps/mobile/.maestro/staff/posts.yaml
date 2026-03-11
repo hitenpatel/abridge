@@ -9,9 +9,9 @@ tags:
 # Verify staff home loaded
 - extendedWaitUntil:
     visible: "Home"
-    timeout: 30000
+    timeout: 60000
 
 # "View All" link is in the Recent Posts section (visible without scroll on most screens)
 - extendedWaitUntil:
     visible: "View All"
-    timeout: 30000
+    timeout: 60000

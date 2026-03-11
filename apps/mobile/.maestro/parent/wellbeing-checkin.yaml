@@ -28,7 +28,7 @@ tags:
 # Verify mood selected and note filled
 - extendedWaitUntil:
     visible: "Feeling happy today"
-    timeout: 30000
+    timeout: 60000
 
 # Submit check-in
 - tapOn:

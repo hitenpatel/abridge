@@ -9,7 +9,7 @@ tags:
 # Verify staff home loaded
 - extendedWaitUntil:
     visible: "Post Update"
-    timeout: 30000
+    timeout: 60000
 
 # Tap the Post Update CTA
 - tapOn:
@@ -18,7 +18,7 @@ tags:
 # Verify compose post screen loaded
 - extendedWaitUntil:
     visible: "Post to Class"
-    timeout: 30000
+    timeout: 60000
 
 # Use Test Fill to populate class + body
 - tapOn:
@@ -27,7 +27,7 @@ tags:
 # Wait for body to populate
 - extendedWaitUntil:
     visible: "Today we painted pictures in art class!"
-    timeout: 30000
+    timeout: 60000
 
 # Tap Post button
 - tapOn:

@@ -13,4 +13,4 @@ tags:
 # Verify calendar screen loaded
 - extendedWaitUntil:
     visible: "Calendar"
-    timeout: 30000
+    timeout: 60000

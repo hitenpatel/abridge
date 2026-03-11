@@ -11,7 +11,7 @@ tags:
     id: "nav-payments"
 - extendedWaitUntil:
     visible: "Wallet"
-    timeout: 30000
+    timeout: 60000
 
 # Tap history icon
 - tapOn:
@@ -20,4 +20,4 @@ tags:
 # Verify payment history screen loaded
 - extendedWaitUntil:
     visible: "Payment History"
-    timeout: 30000
+    timeout: 60000

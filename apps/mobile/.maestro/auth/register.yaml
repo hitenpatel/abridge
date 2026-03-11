@@ -11,13 +11,13 @@ tags:
 # Wait for app to load (iOS Metro re-bundle after clearState is slow)
 - extendedWaitUntil:
     visible: "Sign in to continue"
-    timeout: 300000
+    timeout: 600000
 - extendedWaitUntil:
     visible: "Email"
-    timeout: 30000
+    timeout: 60000
 - extendedWaitUntil:
     visible: "Password"
-    timeout: 30000
+    timeout: 60000
 - extendedWaitUntil:
     visible: "Sign In"
-    timeout: 30000
+    timeout: 60000

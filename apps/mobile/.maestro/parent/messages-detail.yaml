@@ -32,4 +32,4 @@ tags:
     timeout: 60000
 - extendedWaitUntil:
     visible: "Oakwood Primary School"
-    timeout: 30000
+    timeout: 60000

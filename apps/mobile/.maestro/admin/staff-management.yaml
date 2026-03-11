@@ -18,4 +18,4 @@ tags:
 # Verify the invite form loaded (Send Invite button)
 - extendedWaitUntil:
     visible: "Send Invite"
-    timeout: 30000
+    timeout: 60000

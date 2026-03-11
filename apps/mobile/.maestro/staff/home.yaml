@@ -9,11 +9,11 @@ tags:
 # Verify staff home elements - Home tab label should be visible
 - extendedWaitUntil:
     visible: "Home"
-    timeout: 30000
+    timeout: 60000
 
 # Dev nav buttons confirm staff home loaded and session resolved
 # Staff Mgmt button only shows for ADMIN role, confirming session + role loaded
 - extendedWaitUntil:
     visible:
       id: "nav-staff-management"
-    timeout: 30000
+    timeout: 60000

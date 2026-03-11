@@ -30,4 +30,4 @@ tags:
 # Verify post content
 - extendedWaitUntil:
     visible: "Henri Matisse"
-    timeout: 30000
+    timeout: 60000
