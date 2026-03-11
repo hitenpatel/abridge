@@ -16,16 +16,17 @@ tags:
 - tapOn:
     id: "nav-messages"
 
-# Wait for Inbox header
+# Wait for messages to load (count indicator only shows when messages array is populated)
 - extendedWaitUntil:
-    visible: "Inbox"
-    timeout: 60000
+    visible:
+      id: "messages-count"
+    timeout: 180000
 
-# Scroll to find message (FlatList loads async, scrollUntilVisible retries during loading)
+# Scroll to find message
 - scrollUntilVisible:
     element: "School Closure"
     direction: DOWN
-    timeout: 180000
+    timeout: 60000
 
 # Tap the message to open detail
 - tapOn:

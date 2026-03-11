@@ -196,9 +196,15 @@ export function MessagesScreen() {
 		<View className="flex-1 bg-background">
 			<View className="px-6 pb-4 bg-background" style={{ paddingTop: insets.top + 8 }}>
 				<Text className="text-2xl font-sans-bold text-foreground dark:text-white">Inbox</Text>
+				{messages.length > 0 && (
+					<Text testID="messages-count" className="text-xs text-text-muted font-sans">
+						{messages.length} message{messages.length !== 1 ? "s" : ""}
+					</Text>
+				)}
 			</View>
 
 			<FlatList
+				testID="messages-list"
 				data={messages}
 				keyExtractor={(item) => item.id}
 				renderItem={({ item }) => (
