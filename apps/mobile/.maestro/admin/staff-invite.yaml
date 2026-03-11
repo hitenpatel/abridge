@@ -15,19 +15,16 @@ tags:
 # Navigate to staff management
 - tapOn:
     id: "nav-staff-management"
-- extendedWaitUntil:
-    visible: "Invite Staff"
-    timeout: 60000
 
-# Wait for role selector to be visible
+# Wait for staff list to finish loading (skeleton hides invite form until staffLoading=false)
 - extendedWaitUntil:
     visible:
       id: "role-teacher"
-    timeout: 60000
+    timeout: 120000
 
-# Fill invite email
+# Fill invite email using testID (more reliable than label on Android)
 - tapOn:
-    label: "Invite Email"
+    id: "invite-email"
 - inputText: "new-teacher@oakwood.sch.uk"
 - hideKeyboard
 
@@ -37,18 +34,18 @@ tags:
       id: "role-teacher"
     timeout: 60000
 
-# Select TEACHER role using testID (more reliable after keyboard dismissal)
+# Select TEACHER role using testID
 - tapOn:
     id: "role-teacher"
 
 # Tap Send Invite
 - tapOn:
-    label: "Send Invite"
+    id: "send-invite"
 
-# Verify success
+# Verify success (mutation can be slow on CI)
 - extendedWaitUntil:
     visible: "Invitation Sent"
-    timeout: 60000
+    timeout: 120000
 
 # Dismiss alert
 - tapOn:

@@ -12,12 +12,13 @@ tags:
       id: "nav-attendance"
     timeout: 120000
 
-# Wait for feed content to appear (activity feed loads after selectedChildId is set)
-- extendedWaitUntil:
-    visible: "PE kits"
+# Scroll to find feed content (PE kits post may be below fold on home screen)
+- scrollUntilVisible:
+    element: "PE kits"
+    direction: DOWN
     timeout: 120000
 
-# Scroll to find the art lesson post
+# Scroll further to find the art lesson post
 - scrollUntilVisible:
     element: "art lesson"
     direction: DOWN

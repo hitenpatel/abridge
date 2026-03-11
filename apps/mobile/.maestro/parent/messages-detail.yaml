@@ -15,15 +15,17 @@ tags:
 # Navigate to messages
 - tapOn:
     id: "nav-messages"
-- extendedWaitUntil:
-    visible: "Inbox"
-    timeout: 60000
 
-# Scroll to find the message in the FlatList (more reliable than extendedWaitUntil)
+# Wait for messages to actually load (not just "Inbox" header which shows during loading)
+- extendedWaitUntil:
+    visible: "Welcome to SchoolConnect"
+    timeout: 120000
+
+# School Closure is the newest message so should be at top, but scroll to be safe
 - scrollUntilVisible:
     element: "School Closure"
-    direction: DOWN
-    timeout: 120000
+    direction: UP
+    timeout: 60000
 
 # Tap the message to open detail
 - tapOn:

@@ -32,13 +32,19 @@ tags:
 - tapOn:
     id: "date-input"
 - inputText: "2026-04-01"
-- hideKeyboard
+
+# Dismiss keyboard by tapping heading (hideKeyboard fails on some iOS simulators)
+- tapOn:
+    text: "Attendance Hub"
 
 # Enter optional note
 - tapOn:
     id: "note-input"
 - inputText: "Feeling unwell"
-- hideKeyboard
+
+# Dismiss keyboard by tapping heading
+- tapOn:
+    text: "Attendance Hub"
 
 # Submit absence using testID
 - tapOn:

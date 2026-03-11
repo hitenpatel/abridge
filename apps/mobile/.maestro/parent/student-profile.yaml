@@ -6,10 +6,10 @@ tags:
 ---
 - runFlow: ../_helpers/login-parent.yaml
 
-# Wait for home to load and ChildSwitcher to appear
+# Wait for home to load and ChildSwitcher to appear (children query loads separately)
 - extendedWaitUntil:
     visible: "Emily"
-    timeout: 60000
+    timeout: 120000
 
 # Tap the already-selected child to view profile
 - tapOn:

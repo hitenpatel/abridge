@@ -138,6 +138,7 @@ export function StaffManagementScreen() {
 							keyboardType="email-address"
 							autoCapitalize="none"
 							accessibilityLabel="Invite Email"
+							testID="invite-email"
 							className="bg-background rounded-2xl px-4 h-12 text-foreground dark:text-white font-sans text-base mb-3"
 						/>
 
@@ -172,6 +173,7 @@ export function StaffManagementScreen() {
 							onPress={handleSendInvite}
 							disabled={sendInvite.isPending}
 							accessibilityLabel="Send Invite"
+							testID="send-invite"
 							className="bg-primary rounded-full py-3 items-center flex-row justify-center gap-2"
 							style={{ opacity: sendInvite.isPending ? 0.7 : 1 }}
 						>

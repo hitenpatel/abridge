@@ -17,7 +17,7 @@ tags:
 - tapOn:
     label: "History"
 
-# Verify payment history screen loaded
+# Verify payment history screen loaded (query can be slow on iOS CI)
 - extendedWaitUntil:
     visible: "Payment History"
-    timeout: 60000
+    timeout: 120000

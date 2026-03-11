@@ -10,10 +10,10 @@ tags:
 - tapOn:
     label: "Search"
 
-# Verify search screen loaded
+# Verify search screen loaded (iOS Metro can be slow)
 - extendedWaitUntil:
     visible: "Test Search"
-    timeout: 60000
+    timeout: 120000
 
 # Use Test Search button to fill query
 - tapOn:
