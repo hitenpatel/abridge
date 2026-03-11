@@ -27,7 +27,8 @@ tags:
 - tapOn:
     id: "open-first-message"
 
-# Verify message detail screen loaded (school name appears on all message detail screens)
+# Verify message detail screen loaded (use testID — Maestro can't match text on this RN screen on Android)
 - extendedWaitUntil:
-    visible: "Oakwood"
+    visible:
+      id: "message-detail-content"
     timeout: 120000

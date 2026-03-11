@@ -95,7 +95,7 @@ export function PostDetailScreen() {
 	const reactionCounts = post.reactionCounts as Partial<Record<Emoji, number>>;
 
 	return (
-		<View className="flex-1 bg-background">
+		<View testID="post-detail-content" className="flex-1 bg-background">
 			{/* Header */}
 			<View
 				className="flex-row items-center gap-3 px-6 pb-4 border-b border-gray-100"

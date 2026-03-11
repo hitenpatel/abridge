@@ -59,7 +59,7 @@ export function MessageDetailScreen({ route }: MessageDetailScreenProps) {
 	}, [message.isRead, markAsRead]);
 
 	return (
-		<ScrollView className="flex-1 bg-background">
+		<ScrollView testID="message-detail-content" className="flex-1 bg-background">
 			<View className="p-6">
 				{/* Coral accent bar */}
 				<View className="h-1 w-16 bg-primary rounded-full mb-5" />

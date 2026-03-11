@@ -22,12 +22,8 @@ tags:
 - tapOn:
     id: "feed-classPost"
 
-# Verify post detail screen loaded
+# Verify post detail screen loaded (use testID — Maestro can't match text on RN screens on Android)
 - extendedWaitUntil:
-    visible: "Class Post"
-    timeout: 60000
-
-# Verify post content (any class post shows author name and class info)
-- extendedWaitUntil:
-    visible: "Claire Thompson"
+    visible:
+      id: "post-detail-content"
     timeout: 60000
