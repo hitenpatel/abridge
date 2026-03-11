@@ -99,7 +99,7 @@ export function ClassPostCard({
 	const videos = mediaUrls.filter(isVideoUrl);
 
 	return (
-		<View className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 gap-3">
+		<View className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 gap-3" accessibilityLabel={body ?? undefined}>
 			{/* Tappable content area */}
 			<TouchableOpacity activeOpacity={0.7} onPress={onPress} disabled={!onPress}>
 				{/* Author row */}

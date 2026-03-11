@@ -22,15 +22,9 @@ tags:
       id: "messages-count"
     timeout: 180000
 
-# Scroll to find message
-- scrollUntilVisible:
-    element: "School Closure"
-    direction: DOWN
-    timeout: 60000
-
-# Tap the message to open detail
+# Tap the urgent message using testID (FlatList text matching unreliable on Android)
 - tapOn:
-    text: "School Closure"
+    id: "message-urgent"
 
 # Verify message detail screen
 - extendedWaitUntil:

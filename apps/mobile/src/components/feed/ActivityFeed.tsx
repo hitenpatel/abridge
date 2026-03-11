@@ -123,9 +123,9 @@ export function ActivityFeed({
 	}
 
 	return (
-		<View>
+		<View testID="activity-feed">
 			{items.map((item) => (
-				<View key={`${item.type}-${item.id}`} className="px-6 mb-3">
+				<View key={`${item.type}-${item.id}`} testID={`feed-${item.type}`} className="px-6 mb-3">
 					{renderCard(item, onReact, onRemoveReaction, onPayment, onPostPress)}
 				</View>
 			))}

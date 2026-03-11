@@ -64,6 +64,8 @@ function MessageRow({ message, onPress }: { message: MessageItemData; onPress: (
 	return (
 		<Pressable
 			onPress={onPress}
+			testID={`message-${message.category.toLowerCase()}`}
+			accessibilityLabel={message.subject}
 			className="mx-6 mb-3 bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4"
 			style={{
 				shadowColor: "#f56e3d",
@@ -210,6 +212,7 @@ export function MessagesScreen() {
 				renderItem={({ item }) => (
 					<MessageRow message={item} onPress={() => handleMessagePress(item)} />
 				)}
+				removeClippedSubviews={false}
 				className="flex-1"
 				contentContainerStyle={{ paddingBottom: 100, flexGrow: 1 }}
 				refreshControl={

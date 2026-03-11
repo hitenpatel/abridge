@@ -12,21 +12,15 @@ tags:
       id: "nav-attendance"
     timeout: 120000
 
-# Scroll to find feed content (PE kits post may be below fold, also loads async)
-- scrollUntilVisible:
-    element: "PE kits"
-    direction: DOWN
+# Wait for activity feed to render (feed loads after selectedChildId is set)
+- extendedWaitUntil:
+    visible:
+      id: "feed-classPost"
     timeout: 180000
 
-# Scroll further to find the art lesson post
-- scrollUntilVisible:
-    element: "art lesson"
-    direction: DOWN
-    timeout: 60000
-
-# Tap the post to open detail
+# Tap the art lesson post using accessibilityLabel (text matching unreliable in ScrollView)
 - tapOn:
-    text: "art lesson"
+    label: "art lesson"
 
 # Verify post detail screen loaded
 - extendedWaitUntil:
