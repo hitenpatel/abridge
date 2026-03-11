@@ -19,12 +19,15 @@ tags:
     visible: "Inbox"
     timeout: 60000
 
-# Wait for messages to load then tap
-- extendedWaitUntil:
-    visible: "Urgent: School Closure Tomorrow"
-    timeout: 60000
+# Scroll to find the message in the FlatList (more reliable than extendedWaitUntil)
+- scrollUntilVisible:
+    element: "School Closure"
+    direction: DOWN
+    timeout: 120000
+
+# Tap the message to open detail
 - tapOn:
-    text: "Urgent: School Closure Tomorrow"
+    text: "School Closure"
 
 # Verify message detail screen
 - extendedWaitUntil:

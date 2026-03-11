@@ -149,6 +149,7 @@ export function StaffManagementScreen() {
 								return (
 									<Pressable
 										key={r}
+										testID={`role-${r.toLowerCase()}`}
 										onPress={() => setRole(r)}
 										className={`flex-1 rounded-xl py-2.5 items-center ${isSelected ? "border-2" : ""}`}
 										style={{

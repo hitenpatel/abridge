@@ -21,7 +21,8 @@ tags:
 
 # Wait for role selector to be visible
 - extendedWaitUntil:
-    visible: "TEACHER"
+    visible:
+      id: "role-teacher"
     timeout: 60000
 
 # Fill invite email
@@ -30,9 +31,15 @@ tags:
 - inputText: "new-teacher@oakwood.sch.uk"
 - hideKeyboard
 
-# Select TEACHER role (should be default, but tap to confirm)
+# Wait for role button to be tappable after keyboard dismissal
+- extendedWaitUntil:
+    visible:
+      id: "role-teacher"
+    timeout: 60000
+
+# Select TEACHER role using testID (more reliable after keyboard dismissal)
 - tapOn:
-    text: "TEACHER"
+    id: "role-teacher"
 
 # Tap Send Invite
 - tapOn:

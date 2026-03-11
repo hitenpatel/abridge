@@ -21,28 +21,28 @@ tags:
 
 # Wait for form to be fully loaded (children query must resolve)
 - extendedWaitUntil:
-    visible: "Sick"
+    visible: "Report Absence"
     timeout: 60000
 
-# Select absence reason
+# Select absence reason (Sick is default, tap to confirm)
 - tapOn:
     text: "Sick"
 
-# Enter date
+# Enter date using testID (more reliable than accessibilityLabel on Android)
 - tapOn:
-    label: "Date"
+    id: "date-input"
 - inputText: "2026-04-01"
 - hideKeyboard
 
 # Enter optional note
 - tapOn:
-    label: "Reason"
+    id: "note-input"
 - inputText: "Feeling unwell"
 - hideKeyboard
 
-# Submit absence
+# Submit absence using testID
 - tapOn:
-    label: "Submit"
+    id: "submit-absence"
 
 # Verify success alert (mutation can be slow on CI emulators)
 - extendedWaitUntil:

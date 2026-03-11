@@ -83,7 +83,7 @@ async function main() {
 
 	// Global rate limit per IP
 	await server.register(rateLimit, {
-		max: process.env.NODE_ENV === "production" ? 100 : 1000,
+		max: process.env.NODE_ENV === "production" ? 100 : 10000,
 		timeWindow: "1 minute",
 	});
 

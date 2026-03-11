@@ -226,6 +226,7 @@ export function AttendanceScreen() {
 						placeholder="Date (YYYY-MM-DD)"
 						placeholderTextColor="#96867f"
 						accessibilityLabel="Date"
+						testID="date-input"
 						value={startDate}
 						onChangeText={setStartDate}
 					/>
@@ -236,6 +237,7 @@ export function AttendanceScreen() {
 						placeholder="Optional note..."
 						placeholderTextColor="#96867f"
 						accessibilityLabel="Reason"
+						testID="note-input"
 						value={note}
 						onChangeText={setNote}
 						multiline
@@ -247,6 +249,7 @@ export function AttendanceScreen() {
 						onPress={handleSubmitAbsence}
 						disabled={reportAbsenceMutation.isPending}
 						accessibilityLabel="Submit"
+						testID="submit-absence"
 						className="h-16 rounded-[40px] flex-row items-center justify-center gap-3"
 						style={{ backgroundColor: "#ccfbf1" }}
 					>
