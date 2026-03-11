@@ -2,7 +2,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useCallback } from "react";
-import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { MessageItem, RootStackParamList } from "../../App";
 import { Skeleton } from "../components/ui";
@@ -65,7 +65,6 @@ function MessageRow({ message, onPress }: { message: MessageItemData; onPress: (
 		<Pressable
 			onPress={onPress}
 			testID={`message-${message.category.toLowerCase()}`}
-			accessible={true}
 			className="mx-6 mb-3 bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4"
 			style={{
 				shadowColor: "#f56e3d",
@@ -205,37 +204,41 @@ export function MessagesScreen() {
 				)}
 			</View>
 
-			<FlatList
+			<ScrollView
 				testID="messages-list"
-				data={messages}
-				keyExtractor={(item) => item.id}
-				renderItem={({ item }) => (
-					<MessageRow message={item} onPress={() => handleMessagePress(item)} />
-				)}
-				removeClippedSubviews={false}
 				className="flex-1"
 				contentContainerStyle={{ paddingBottom: 100, flexGrow: 1 }}
 				refreshControl={
 					<RefreshControl refreshing={isRefetching} onRefresh={handleRefresh} tintColor="#f56e3d" />
 				}
-				onEndReached={handleLoadMore}
-				onEndReachedThreshold={0.3}
-				ListFooterComponent={
-					isFetchingNextPage ? (
-						<View className="py-5 items-center">
-							<ActivityIndicator size="small" color="#f56e3d" />
-						</View>
-					) : null
-				}
-				ListEmptyComponent={
+				onScroll={({ nativeEvent }) => {
+					const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
+					if (layoutMeasurement.height + contentOffset.y >= contentSize.height - 200) {
+						handleLoadMore();
+					}
+				}}
+				scrollEventThrottle={400}
+				showsVerticalScrollIndicator={false}
+			>
+				{messages.length === 0 ? (
 					<View className="flex-1 items-center justify-center py-20">
 						<MaterialIcons name="chat-bubble-outline" size={48} color="#9CA3AF" />
 						<Text className="text-text-muted font-sans-medium text-base mt-4">No messages yet</Text>
 						<Text className="text-text-muted font-sans text-sm mt-1">Pull down to refresh</Text>
 					</View>
-				}
-				showsVerticalScrollIndicator={false}
-			/>
+				) : (
+					<>
+						{messages.map((item) => (
+							<MessageRow key={item.id} message={item} onPress={() => handleMessagePress(item)} />
+						))}
+						{isFetchingNextPage && (
+							<View className="py-5 items-center">
+								<ActivityIndicator size="small" color="#f56e3d" />
+							</View>
+						)}
+					</>
+				)}
+			</ScrollView>
 		</View>
 	);
 }
