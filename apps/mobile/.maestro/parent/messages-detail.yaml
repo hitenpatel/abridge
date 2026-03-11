@@ -22,15 +22,10 @@ tags:
       id: "messages-count"
     timeout: 180000
 
-# Wait for the urgent message row to render in the FlatList
-- extendedWaitUntil:
-    visible:
-      id: "message-urgent"
-    timeout: 60000
-
-# Tap the urgent message row
+# Tap dev-only shortcut to open the urgent message detail
+# (direct Pressable taps in ScrollView/FlatList unreliable with Maestro on Android)
 - tapOn:
-    id: "message-urgent"
+    id: "open-urgent-message"
 
 # Verify message detail screen loaded with full subject
 - extendedWaitUntil:

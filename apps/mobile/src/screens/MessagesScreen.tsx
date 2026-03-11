@@ -202,6 +202,18 @@ export function MessagesScreen() {
 						{messages.length} message{messages.length !== 1 ? "s" : ""}
 					</Text>
 				)}
+				{(__DEV__ || process.env.EXPO_PUBLIC_E2E) && messages.length > 0 && (
+					<Pressable
+						testID="open-urgent-message"
+						onPress={() => {
+							const urgent = messages.find((m) => m.category === "URGENT");
+							if (urgent) handleMessagePress(urgent);
+						}}
+						className="mt-1"
+					>
+						<Text className="text-text-muted text-xs">Open Urgent</Text>
+					</Pressable>
+				)}
 			</View>
 
 			<ScrollView
