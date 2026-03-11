@@ -18,7 +18,7 @@ import React from "react";
 import { ActivityIndicator, SafeAreaView, Text, View } from "react-native";
 import { FloatingTabBar } from "./src/components/FloatingTabBar";
 import { authClient } from "./src/lib/auth-client";
-import { TRPCProvider } from "./src/lib/provider";
+import { TRPCProvider, clearAuthTokenCache } from "./src/lib/provider";
 import { ThemeProvider } from "./src/lib/theme-provider";
 import { trpc } from "./src/lib/trpc";
 import { useTheme } from "./src/lib/use-theme";
@@ -307,7 +307,11 @@ function AuthenticatedApp() {
 					component={PostDetailScreen}
 					options={{ headerShown: false }}
 				/>
-				<Stack.Screen name="Wellbeing" component={WellbeingScreen} options={{ title: "Wellbeing" }} />
+				<Stack.Screen
+					name="Wellbeing"
+					component={WellbeingScreen}
+					options={{ title: "Wellbeing" }}
+				/>
 			</Stack.Navigator>
 		</NavigationContainer>
 	);
@@ -335,6 +339,7 @@ function AppContent() {
 	}, [session, isPending, authState]);
 
 	const handleLogout = React.useCallback(async () => {
+		clearAuthTokenCache();
 		try {
 			await authClient.signOut();
 		} catch (e) {

@@ -16,12 +16,18 @@ import { trpc } from "../lib/trpc";
 
 function getMoodEmoji(mood: string): string {
 	switch (mood) {
-		case "GREAT": return "😄";
-		case "GOOD": return "🙂";
-		case "OK": return "😐";
-		case "LOW": return "😟";
-		case "STRUGGLING": return "😢";
-		default: return "💗";
+		case "GREAT":
+			return "😄";
+		case "GOOD":
+			return "🙂";
+		case "OK":
+			return "😐";
+		case "LOW":
+			return "😟";
+		case "STRUGGLING":
+			return "😢";
+		default:
+			return "💗";
 	}
 }
 
@@ -131,26 +137,14 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 
 	const firstName = children[0]?.firstName ?? "there";
 
-	if (isLoading) {
-		return (
-			<View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
-				<View className="px-6 pt-4">
-					<Skeleton className="h-4 w-24 mb-2" />
-					<Skeleton className="h-8 w-48 mb-6" />
-					<Skeleton className="h-10 w-full rounded-full mb-4" />
-					<Skeleton className="h-24 w-full rounded-2xl mb-3" />
-					<Skeleton className="h-48 w-full rounded-2xl" />
-				</View>
-			</View>
-		);
-	}
-
 	const feedItems = feedData?.pages.flatMap((page) => page.items) ?? [];
 
 	// Debug: log feed loading state for CI diagnostics
 	useEffect(() => {
 		if (process.env.EXPO_PUBLIC_E2E) {
-			console.log(`[Feed] childId=${selectedChildId?.slice(0, 8)} loading=${isFeedLoading} items=${feedItems.length}`);
+			console.log(
+				`[Feed] childId=${selectedChildId?.slice(0, 8)} loading=${isFeedLoading} items=${feedItems.length}`,
+			);
 		}
 	}, [selectedChildId, isFeedLoading, feedItems.length]);
 
@@ -163,7 +157,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 
 	return (
 		<View className="flex-1 bg-background">
-			{/* Header */}
+			{/* Header — always visible so testIDs (logout-button, settings-button) are accessible during loading */}
 			<View className="px-6 pb-4 bg-background" style={{ paddingTop: insets.top + 8 }}>
 				<View className="flex-row items-center justify-between">
 					<View>
@@ -205,135 +199,171 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 			{/* Dev-only tab navigation buttons (Maestro can't tap floating tab bar on iOS) */}
 			{(__DEV__ || process.env.EXPO_PUBLIC_E2E) && (
 				<View className="flex-row flex-wrap gap-2 px-6 pb-2">
-					<Pressable testID="nav-messages" onPress={() => navigation.navigate("Messages")} className="bg-neutral-surface rounded-full px-3 py-1">
+					<Pressable
+						testID="nav-messages"
+						onPress={() => navigation.navigate("Messages")}
+						className="bg-neutral-surface rounded-full px-3 py-1"
+					>
 						<Text className="text-text-muted text-xs">Messages</Text>
 					</Pressable>
-					<Pressable testID="nav-attendance" onPress={() => navigation.navigate("Attendance")} className="bg-neutral-surface rounded-full px-3 py-1">
+					<Pressable
+						testID="nav-attendance"
+						onPress={() => navigation.navigate("Attendance")}
+						className="bg-neutral-surface rounded-full px-3 py-1"
+					>
 						<Text className="text-text-muted text-xs">Attendance</Text>
 					</Pressable>
-					<Pressable testID="nav-payments" onPress={() => navigation.navigate("Payments")} className="bg-neutral-surface rounded-full px-3 py-1">
+					<Pressable
+						testID="nav-payments"
+						onPress={() => navigation.navigate("Payments")}
+						className="bg-neutral-surface rounded-full px-3 py-1"
+					>
 						<Text className="text-text-muted text-xs">Payments</Text>
 					</Pressable>
-					<Pressable testID="nav-calendar" onPress={() => navigation.navigate("Calendar")} className="bg-neutral-surface rounded-full px-3 py-1">
+					<Pressable
+						testID="nav-calendar"
+						onPress={() => navigation.navigate("Calendar")}
+						className="bg-neutral-surface rounded-full px-3 py-1"
+					>
 						<Text className="text-text-muted text-xs">Calendar</Text>
 					</Pressable>
-					<Pressable testID="nav-forms" onPress={() => navigation.navigate("Forms")} className="bg-neutral-surface rounded-full px-3 py-1">
+					<Pressable
+						testID="nav-forms"
+						onPress={() => navigation.navigate("Forms")}
+						className="bg-neutral-surface rounded-full px-3 py-1"
+					>
 						<Text className="text-text-muted text-xs">Forms</Text>
 					</Pressable>
 					{selectedChildId && (
-						<Pressable testID="nav-wellbeing" onPress={() => navigation.navigate("Wellbeing", { childId: selectedChildId })} className="bg-neutral-surface rounded-full px-3 py-1">
+						<Pressable
+							testID="nav-wellbeing"
+							onPress={() => navigation.navigate("Wellbeing", { childId: selectedChildId })}
+							className="bg-neutral-surface rounded-full px-3 py-1"
+						>
 							<Text className="text-text-muted text-xs">Wellbeing</Text>
 						</Pressable>
 					)}
 				</View>
 			)}
 
-			<ScrollView
-				className="flex-1"
-				contentContainerClassName="pb-28"
-				refreshControl={
-					<RefreshControl refreshing={isRefetching} onRefresh={onRefresh} tintColor="#f56e3d" />
-				}
-				showsVerticalScrollIndicator={false}
-				onScroll={handleScroll}
-				scrollEventThrottle={400}
-			>
-				{/* Child Switcher */}
-				{children.length > 1 && (
-					<View className="mb-4" accessibilityLabel="Switch Child">
-						<ChildSwitcher
-							items={children.map((c) => ({
-								id: c.id,
-								firstName: c.firstName,
-								lastName: c.lastName,
-								yearGroup: (c as Record<string, unknown>).yearGroup as string | undefined,
-								className: (c as Record<string, unknown>).className as string | undefined,
-							}))}
-							selectedChildId={selectedChildId ?? ""}
-							onSelect={setSelectedChildId}
-							onViewProfile={(childId) => navigation.navigate("StudentProfile", { childId })}
-						/>
-					</View>
-				)}
+			{isLoading ? (
+				<View className="px-6 pt-4">
+					<Skeleton className="h-10 w-full rounded-full mb-4" />
+					<Skeleton className="h-24 w-full rounded-2xl mb-3" />
+					<Skeleton className="h-48 w-full rounded-2xl" />
+				</View>
+			) : (
+				<>
+					<ScrollView
+						className="flex-1"
+						contentContainerClassName="pb-28"
+						refreshControl={
+							<RefreshControl refreshing={isRefetching} onRefresh={onRefresh} tintColor="#f56e3d" />
+						}
+						showsVerticalScrollIndicator={false}
+						onScroll={handleScroll}
+						scrollEventThrottle={400}
+					>
+						{/* Child Switcher */}
+						{children.length > 1 && (
+							<View className="mb-4" accessibilityLabel="Switch Child">
+								<ChildSwitcher
+									items={children.map((c) => ({
+										id: c.id,
+										firstName: c.firstName,
+										lastName: c.lastName,
+										yearGroup: (c as Record<string, unknown>).yearGroup as string | undefined,
+										className: (c as Record<string, unknown>).className as string | undefined,
+									}))}
+									selectedChildId={selectedChildId ?? ""}
+									onSelect={setSelectedChildId}
+									onViewProfile={(childId) => navigation.navigate("StudentProfile", { childId })}
+								/>
+							</View>
+						)}
 
-				{/* Action Items */}
-				{actionItems && actionItems.length > 0 && (
-					<View className="mb-4" accessibilityLabel="Action Items">
-						<ActionItemsRow
-							items={actionItems.map((item) => ({
-								type: item.type,
-								title: (item as Record<string, unknown>).title as string | undefined,
-								subject: (item as Record<string, unknown>).subject as string | undefined,
-								amountDuePence: (item as Record<string, unknown>).amountDuePence as
-									| number
-									| undefined,
-								paymentItemId: (item as Record<string, unknown>).paymentItemId as
-									| string
-									| undefined,
-								templateId: (item as Record<string, unknown>).templateId as string | undefined,
-								messageId: (item as Record<string, unknown>).messageId as string | undefined,
-							}))}
+						{/* Action Items */}
+						{actionItems && actionItems.length > 0 && (
+							<View className="mb-4" accessibilityLabel="Action Items">
+								<ActionItemsRow
+									items={actionItems.map((item) => ({
+										type: item.type,
+										title: (item as Record<string, unknown>).title as string | undefined,
+										subject: (item as Record<string, unknown>).subject as string | undefined,
+										amountDuePence: (item as Record<string, unknown>).amountDuePence as
+											| number
+											| undefined,
+										paymentItemId: (item as Record<string, unknown>).paymentItemId as
+											| string
+											| undefined,
+										templateId: (item as Record<string, unknown>).templateId as string | undefined,
+										messageId: (item as Record<string, unknown>).messageId as string | undefined,
+									}))}
+									onPayment={() => navigation.getParent()?.navigate("Payments")}
+									onForm={() => navigation.navigate("Forms")}
+									onMessage={() => navigation.getParent()?.navigate("Messages")}
+								/>
+							</View>
+						)}
+
+						{/* Wellbeing Check-in Card */}
+						{features?.wellbeingEnabled && selectedChildId && (
+							<View className="px-6 mb-4">
+								<Pressable
+									onPress={() => navigation.navigate("Wellbeing", { childId: selectedChildId })}
+									testID="wellbeing-card"
+									className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 flex-row items-center gap-3"
+								>
+									<View className="w-12 h-12 rounded-full bg-pink-100 items-center justify-center">
+										<Text className="text-xl">
+											{todayCheckIn ? getMoodEmoji(todayCheckIn.mood) : "💗"}
+										</Text>
+									</View>
+									<View className="flex-1">
+										<Text className="text-base font-sans-bold text-foreground dark:text-white">
+											{todayCheckIn
+												? `${children.find((c) => c.id === selectedChildId)?.firstName ?? "Child"} is feeling ${todayCheckIn.mood.charAt(0) + todayCheckIn.mood.slice(1).toLowerCase()}`
+												: `How is ${children.find((c) => c.id === selectedChildId)?.firstName ?? "your child"} feeling?`}
+										</Text>
+										<Text className="text-xs font-sans text-text-muted">
+											{todayCheckIn ? "Tap to update or view history" : "Daily wellbeing check-in"}
+										</Text>
+									</View>
+									<MaterialIcons name="chevron-right" size={24} color="#96867f" />
+								</Pressable>
+							</View>
+						)}
+
+						{/* Activity Feed */}
+						<ActivityFeed
+							items={feedItems as Parameters<typeof ActivityFeed>[0]["items"]}
+							isLoading={isFeedLoading || isFetchingNextPage}
+							onReact={handleReact}
+							onRemoveReaction={handleRemoveReaction}
 							onPayment={() => navigation.getParent()?.navigate("Payments")}
-							onForm={() => navigation.navigate("Forms")}
-							onMessage={() => navigation.getParent()?.navigate("Messages")}
+							onPostPress={(postId) => navigation.navigate("PostDetail", { postId })}
 						/>
-					</View>
-				)}
+					</ScrollView>
 
-				{/* Wellbeing Check-in Card */}
-				{features?.wellbeingEnabled && selectedChildId && (
-					<View className="px-6 mb-4">
-						<Pressable
-							onPress={() => navigation.navigate("Wellbeing", { childId: selectedChildId })}
-							testID="wellbeing-card"
-							className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 flex-row items-center gap-3"
-						>
-							<View className="w-12 h-12 rounded-full bg-pink-100 items-center justify-center">
-								<Text className="text-xl">{todayCheckIn ? getMoodEmoji(todayCheckIn.mood) : "💗"}</Text>
-							</View>
-							<View className="flex-1">
-								<Text className="text-base font-sans-bold text-foreground dark:text-white">
-									{todayCheckIn
-										? `${children.find((c) => c.id === selectedChildId)?.firstName ?? "Child"} is feeling ${todayCheckIn.mood.charAt(0) + todayCheckIn.mood.slice(1).toLowerCase()}`
-										: `How is ${children.find((c) => c.id === selectedChildId)?.firstName ?? "your child"} feeling?`}
-								</Text>
-								<Text className="text-xs font-sans text-text-muted">
-									{todayCheckIn ? "Tap to update or view history" : "Daily wellbeing check-in"}
-								</Text>
-							</View>
-							<MaterialIcons name="chevron-right" size={24} color="#96867f" />
-						</Pressable>
-					</View>
-				)}
-
-				{/* Activity Feed */}
-				<ActivityFeed
-					items={feedItems as Parameters<typeof ActivityFeed>[0]["items"]}
-					isLoading={isFeedLoading || isFetchingNextPage}
-					onReact={handleReact}
-					onRemoveReaction={handleRemoveReaction}
-					onPayment={() => navigation.getParent()?.navigate("Payments")}
-					onPostPress={(postId) => navigation.navigate("PostDetail", { postId })}
-				/>
-			</ScrollView>
-
-			{/* Report Absence FAB */}
-			<Pressable
-				onPress={() => navigation.getParent()?.navigate("Attendance")}
-				accessibilityLabel="Report Absence"
-				className="absolute right-6 bg-primary rounded-full px-5 py-3 flex-row items-center gap-2"
-				style={{
-					shadowColor: "#f56e3d",
-					shadowOffset: { width: 0, height: 4 },
-					shadowOpacity: 0.3,
-					shadowRadius: 12,
-					elevation: 8,
-					bottom: insets.bottom + 80,
-				}}
-			>
-				<MaterialIcons name="warning" size={16} color="white" />
-				<Text className="text-white font-sans-bold text-sm">Report Absence</Text>
-			</Pressable>
+					{/* Report Absence FAB */}
+					<Pressable
+						onPress={() => navigation.getParent()?.navigate("Attendance")}
+						accessibilityLabel="Report Absence"
+						className="absolute right-6 bg-primary rounded-full px-5 py-3 flex-row items-center gap-2"
+						style={{
+							shadowColor: "#f56e3d",
+							shadowOffset: { width: 0, height: 4 },
+							shadowOpacity: 0.3,
+							shadowRadius: 12,
+							elevation: 8,
+							bottom: insets.bottom + 80,
+						}}
+					>
+						<MaterialIcons name="warning" size={16} color="white" />
+						<Text className="text-white font-sans-bold text-sm">Report Absence</Text>
+					</Pressable>
+				</>
+			)}
 		</View>
 	);
 }
