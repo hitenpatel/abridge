@@ -176,16 +176,6 @@ jobs:
   e2e-android:
     needs: build-android
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - shard: auth
-            tags: "auth,errors"
-          - shard: parent
-            tags: "parent"
-          - shard: staff
-            tags: "staff,admin"
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
       BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
@@ -265,7 +255,7 @@ jobs:
           name: android-apk
           path: apk/
 
-      - name: Run Maestro tests (${{ matrix.shard }})
+      - name: Run Maestro tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 31
@@ -283,15 +273,15 @@ jobs:
             adb logcat -c
             adb shell am start -n com.abridge.app/.MainActivity
             sleep 20
-            echo "=== Running Maestro (${{ matrix.shard }} shard: ${{ matrix.tags }}) ==="
-            $HOME/.maestro/bin/maestro test apps/mobile/.maestro/ --include-tags ${{ matrix.tags }} --format junit --output maestro-report.xml --debug-output $GITHUB_WORKSPACE/maestro-debug; echo $? > /tmp/maestro-exit
+            echo "=== Running all Maestro tests ==="
+            $HOME/.maestro/bin/maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml --debug-output $GITHUB_WORKSPACE/maestro-debug; echo $? > /tmp/maestro-exit
             echo "=== Maestro exit code: $(cat /tmp/maestro-exit) ==="
             exit $(cat /tmp/maestro-exit)
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: maestro-report-android-${{ matrix.shard }}
+          name: maestro-report-android
           path: |
             maestro-report.xml
             maestro-debug/
@@ -548,21 +538,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts/
-
-      - name: Merge Android shard reports
-        run: |
-          mkdir -p artifacts/maestro-report-android/maestro-debug
-          # Concatenate JUnit XMLs from all shards (parser uses regex, not XML parsing)
-          for dir in artifacts/maestro-report-android-*/; do
-            if [ -f "$dir/maestro-report.xml" ]; then
-              cat "$dir/maestro-report.xml" >> artifacts/maestro-report-android/maestro-report.xml
-            fi
-            if [ -d "$dir/maestro-debug" ]; then
-              cp -r "$dir/maestro-debug/"* artifacts/maestro-report-android/maestro-debug/ 2>/dev/null || true
-            fi
-          done
-          echo "Merged Android reports:"
-          wc -l artifacts/maestro-report-android/maestro-report.xml 2>/dev/null || echo "No reports found"
 
       - name: Fetch existing history
         run: |
