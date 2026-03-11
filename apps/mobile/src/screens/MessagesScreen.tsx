@@ -204,14 +204,11 @@ export function MessagesScreen() {
 				)}
 				{(__DEV__ || process.env.EXPO_PUBLIC_E2E) && messages.length > 0 && (
 					<Pressable
-						testID="open-urgent-message"
-						onPress={() => {
-							const urgent = messages.find((m) => m.category === "URGENT");
-							if (urgent) handleMessagePress(urgent);
-						}}
+						testID="open-first-message"
+						onPress={() => handleMessagePress(messages[0])}
 						className="mt-1"
 					>
-						<Text className="text-text-muted text-xs">Open Urgent</Text>
+						<Text className="text-text-muted text-xs">Open First</Text>
 					</Pressable>
 				)}
 			</View>

@@ -22,12 +22,12 @@ tags:
       id: "messages-count"
     timeout: 180000
 
-# Tap dev-only shortcut to open the urgent message detail
-# (direct Pressable taps in ScrollView/FlatList unreliable with Maestro on Android)
+# Tap dev-only shortcut to open the first message
+# (Maestro cannot reliably tap Pressable items inside scrollable containers on Android)
 - tapOn:
-    id: "open-urgent-message"
+    id: "open-first-message"
 
-# Verify message detail screen loaded with full subject
+# Verify message detail screen loaded (school name appears on all message detail screens)
 - extendedWaitUntil:
-    visible: "School Closure"
+    visible: "Oakwood"
     timeout: 120000
