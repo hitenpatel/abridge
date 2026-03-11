@@ -65,7 +65,6 @@ function MessageRow({ message, onPress }: { message: MessageItemData; onPress: (
 		<Pressable
 			onPress={onPress}
 			testID={`message-${message.category.toLowerCase()}`}
-			accessibilityLabel={message.subject}
 			className="mx-6 mb-3 bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4"
 			style={{
 				shadowColor: "#f56e3d",

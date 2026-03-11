@@ -147,6 +147,13 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 
 	const feedItems = feedData?.pages.flatMap((page) => page.items) ?? [];
 
+	// Debug: log feed loading state for CI diagnostics
+	useEffect(() => {
+		if (process.env.EXPO_PUBLIC_E2E) {
+			console.log(`[Feed] childId=${selectedChildId?.slice(0, 8)} loading=${isFeedLoading} items=${feedItems.length}`);
+		}
+	}, [selectedChildId, isFeedLoading, feedItems.length]);
+
 	const now = new Date();
 	const dateStr = now.toLocaleDateString("en-GB", {
 		weekday: "long",

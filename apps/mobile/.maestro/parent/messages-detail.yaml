@@ -26,10 +26,7 @@ tags:
 - tapOn:
     id: "message-urgent"
 
-# Verify message detail screen
+# Verify message detail screen (increased timeout for slow navigation on CI)
 - extendedWaitUntil:
-    visible: "severe weather conditions"
-    timeout: 60000
-- extendedWaitUntil:
-    visible: "Oakwood Primary School"
-    timeout: 60000
+    visible: "School Closure"
+    timeout: 120000

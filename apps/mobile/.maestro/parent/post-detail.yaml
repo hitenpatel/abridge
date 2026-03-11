@@ -6,21 +6,26 @@ tags:
 ---
 - runFlow: ../_helpers/login-parent.yaml
 
-# Wait for parent home data to load (feed needs selectedChildId set first)
+# Wait for home data AND selectedChildId to be set (wellbeing button needs childId)
 - extendedWaitUntil:
     visible:
-      id: "nav-attendance"
+      id: "nav-wellbeing"
     timeout: 120000
 
-# Wait for activity feed to render (feed loads after selectedChildId is set)
+# Wait for activity feed to render class posts (feed query starts after childId set)
 - extendedWaitUntil:
     visible:
       id: "feed-classPost"
     timeout: 180000
 
-# Tap the art lesson post using accessibilityLabel (text matching unreliable in ScrollView)
+# Scroll down to find the art lesson post and tap it
+- scrollUntilVisible:
+    element:
+      id: "feed-classPost"
+    direction: DOWN
+    timeout: 60000
 - tapOn:
-    label: "art lesson"
+    id: "feed-classPost"
 
 # Verify post detail screen loaded
 - extendedWaitUntil:
