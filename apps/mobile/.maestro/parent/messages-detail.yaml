@@ -22,18 +22,18 @@ tags:
       id: "messages-count"
     timeout: 180000
 
-# Scroll to find the urgent message (FlatList may not render all items immediately)
-- scrollUntilVisible:
-    element:
+# Wait for the urgent message row to render in the FlatList
+- extendedWaitUntil:
+    visible:
       id: "message-urgent"
-    direction: DOWN
     timeout: 60000
 
-# Tap the urgent message
+# Tap the urgent message (retry if first tap doesn't register on FlatList item)
 - tapOn:
     id: "message-urgent"
+    retryTapIfNoChange: true
 
-# Verify message detail screen (increased timeout for slow navigation on CI)
+# Verify message detail screen loaded with full subject
 - extendedWaitUntil:
     visible: "School Closure"
     timeout: 120000

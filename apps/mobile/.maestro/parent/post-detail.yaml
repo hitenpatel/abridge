@@ -27,7 +27,7 @@ tags:
     visible: "Class Post"
     timeout: 60000
 
-# Verify post content
+# Verify post content (any class post shows author name and class info)
 - extendedWaitUntil:
-    visible: "Henri Matisse"
+    visible: "Claire Thompson"
     timeout: 60000
