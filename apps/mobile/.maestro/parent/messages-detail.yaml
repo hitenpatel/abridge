@@ -28,10 +28,9 @@ tags:
       id: "message-urgent"
     timeout: 60000
 
-# Tap the urgent category badge text (more reliable than testID on FlatList items)
+# Tap the urgent message row
 - tapOn:
-    text: "URGENT"
-    retryTapIfNoChange: true
+    id: "message-urgent"
 
 # Verify message detail screen loaded with full subject
 - extendedWaitUntil:
