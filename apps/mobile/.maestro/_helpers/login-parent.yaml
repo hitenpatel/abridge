@@ -10,19 +10,16 @@ appId: com.abridge.app
 
 # Wait for test button to render (JS bridge must be fully connected)
 - extendedWaitUntil:
-    visible: "Test Parent"
+    visible:
+      id: "test-parent"
     timeout: 60000
 
-# Use dev test button (bypasses TextInput which has Maestro iOS issues)
+# Use dev test button (testID tap is more reliable than text tap)
 - tapOn:
-    text: "Test Parent"
-
-# Verify redirect to home (iOS simulator with Metro is slower)
-- extendedWaitUntil:
-    visible: "Home"
-    timeout: 120000
+    id: "test-parent"
 
 # Wait for home screen data to fully load (nav buttons render after isLoading)
+# Skip unreliable "Home" tab bar text check — nav-messages testID confirms home loaded
 - extendedWaitUntil:
     visible:
       id: "nav-messages"

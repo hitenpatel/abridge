@@ -12,11 +12,18 @@ tags:
     visible: "Sign in to continue"
     timeout: 600000
 
-# Use dev test button (bypasses TextInput which has Maestro iOS issues)
-- tapOn:
-    text: "Test Parent"
-
-# Verify redirect to home
+# Wait for test button to render (JS bridge must be fully connected)
 - extendedWaitUntil:
-    visible: "Home"
+    visible:
+      id: "test-parent"
+    timeout: 60000
+
+# Use dev test button (testID tap is more reliable than text tap)
+- tapOn:
+    id: "test-parent"
+
+# Verify redirect to home (nav-messages confirms home fully loaded)
+- extendedWaitUntil:
+    visible:
+      id: "nav-messages"
     timeout: 120000
