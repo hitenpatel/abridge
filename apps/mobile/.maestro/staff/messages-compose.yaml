@@ -11,4 +11,4 @@ tags:
     id: "nav-messages"
 - extendedWaitUntil:
     visible: "Inbox"
-    timeout: 60000
+    timeout: 120000

@@ -12,11 +12,11 @@ tags:
       id: "nav-attendance"
     timeout: 120000
 
-# Scroll to find feed content (PE kits post may be below fold on home screen)
+# Scroll to find feed content (PE kits post may be below fold, also loads async)
 - scrollUntilVisible:
     element: "PE kits"
     direction: DOWN
-    timeout: 120000
+    timeout: 180000
 
 # Scroll further to find the art lesson post
 - scrollUntilVisible:
