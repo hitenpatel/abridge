@@ -1,6 +1,5 @@
 appId: com.abridge.app
 ---
-- stopApp
 - clearState
 - launchApp
 
