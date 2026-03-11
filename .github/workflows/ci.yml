@@ -93,13 +93,10 @@ jobs:
             playwright-report/
           retention-days: 7
 
-  e2e-mobile-android:
+  # ── Android: build APK once, then run test shards in parallel ──
+
+  build-android:
     runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
-      BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
-      BETTER_AUTH_URL: http://localhost:4000
-      NODE_ENV: test
     steps:
       - name: Free disk space
         run: |
@@ -108,12 +105,6 @@ jobs:
           sudo rm -rf /opt/ghc
           sudo rm -rf /usr/local/share/boost
           df -h /
-
-      - name: Enable KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
 
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -128,56 +119,14 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Install and start PostgreSQL
-        run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql postgresql-client > /dev/null
-          PG_VER=$(pg_lsclusters -h | head -1 | awk '{print $1}')
-          sudo pg_ctlcluster "$PG_VER" main start
-          sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
-          sudo -u postgres createdb schoolconnect_test
-
       - run: pnpm install --frozen-lockfile
 
       - name: Deduplicate React for Metro bundling
         run: |
-          # pnpm hoisting creates nested react copies inside dependencies.
-          # Metro bundles each copy as a separate module, breaking React contexts.
-          # Remove nested copies so all imports resolve to apps/mobile/node_modules/react.
           find node_modules -path "*/node_modules/react/index.js" \
             -not -path "node_modules/react/index.js" \
             -not -path "apps/mobile/node_modules/react/index.js" \
             | while read f; do rm -rf "$(dirname "$f")"; done
-
-      - name: Push database schema and seed
-        run: |
-          pnpm --filter @schoolconnect/db db:push
-          pnpm --filter @schoolconnect/db db:seed
-
-      - name: Create API .env
-        run: |
-          printf '%s\n' \
-            'DATABASE_URL=postgresql://postgres:postgres@localhost:5432/schoolconnect_test' \
-            'BETTER_AUTH_SECRET=test-secret-for-ci-e2e-testing-only' \
-            'BETTER_AUTH_URL=http://localhost:4000' \
-            'NODE_ENV=test' \
-            'SETUP_KEY=admin123' \
-            > apps/api/.env
-
-      - name: Build packages
-        run: pnpm build
-
-      - name: Start API server
-        run: |
-          pnpm --filter @schoolconnect/api dev &
-          for i in $(seq 1 60); do
-            if curl -sf http://localhost:4000/trpc/health.check > /dev/null 2>&1; then
-              echo "API is ready"
-              break
-            fi
-            echo "Waiting for API... ($i/60)"
-            sleep 2
-            if [ "$i" -eq 60 ]; then echo "ERROR: API failed to start"; exit 1; fi
-          done
 
       - name: Expo prebuild Android
         run: |
@@ -217,12 +166,106 @@ jobs:
             apps/mobile/android/.gradle
           key: gradle-${{ hashFiles('apps/mobile/android/gradle/wrapper/gradle-wrapper.properties', 'apps/mobile/package.json') }}
 
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 1
+
+  e2e-android:
+    needs: build-android
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: auth
+            tags: "auth,errors"
+          - shard: parent
+            tags: "parent"
+          - shard: staff
+            tags: "staff,admin"
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
+      BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
+      BETTER_AUTH_URL: http://localhost:4000
+      NODE_ENV: test
+    steps:
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android/sdk/ndk
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/share/boost
+          df -h /
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install and start PostgreSQL
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql postgresql-client > /dev/null
+          PG_VER=$(pg_lsclusters -h | head -1 | awk '{print $1}')
+          sudo pg_ctlcluster "$PG_VER" main start
+          sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
+          sudo -u postgres createdb schoolconnect_test
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Push database schema and seed
+        run: |
+          pnpm --filter @schoolconnect/db db:push
+          pnpm --filter @schoolconnect/db db:seed
+
+      - name: Create API .env
+        run: |
+          printf '%s\n' \
+            'DATABASE_URL=postgresql://postgres:postgres@localhost:5432/schoolconnect_test' \
+            'BETTER_AUTH_SECRET=test-secret-for-ci-e2e-testing-only' \
+            'BETTER_AUTH_URL=http://localhost:4000' \
+            'NODE_ENV=test' \
+            'SETUP_KEY=admin123' \
+            > apps/api/.env
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Start API server
+        run: |
+          pnpm --filter @schoolconnect/api dev &
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:4000/trpc/health.check > /dev/null 2>&1; then
+              echo "API is ready"
+              break
+            fi
+            echo "Waiting for API... ($i/60)"
+            sleep 2
+            if [ "$i" -eq 60 ]; then echo "ERROR: API failed to start"; exit 1; fi
+          done
+
       - name: Install Maestro CLI
         run: |
           curl -fsSL "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      - name: Run Maestro tests on Android emulator
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: android-apk
+          path: apk/
+
+      - name: Run Maestro tests (${{ matrix.shard }})
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 31
@@ -234,42 +277,46 @@ jobs:
           script: |
             adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done;'
             sleep 10
-            adb install apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
+            adb install apk/app-debug.apk
             adb reverse tcp:4000 tcp:4000
             adb logcat -G 16M
             adb logcat -c
             adb shell am start -n com.abridge.app/.MainActivity
             sleep 20
-            echo "=== Initial Logcat ==="
-            adb logcat -d -t 100 | grep -iE "ReactNativeJS" || true
-            echo "=== Running Maestro ==="
-            $HOME/.maestro/bin/maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml --debug-output $GITHUB_WORKSPACE/maestro-debug; echo $? > /tmp/maestro-exit
-            echo "=== ALL ReactNativeJS logs ==="
-            adb logcat -d | grep "ReactNativeJS" | grep -iE "tRPC|Payments|StaffMgmt|Login|auth|headers|error|UNAUTHORIZED" || true
-            echo "=== Maestro debug output ==="
-            ls -la $GITHUB_WORKSPACE/maestro-debug/ 2>/dev/null || echo "No maestro-debug directory"
-            find $GITHUB_WORKSPACE/maestro-debug -name "*.png" 2>/dev/null | head -20 || true
+            echo "=== Running Maestro (${{ matrix.shard }} shard: ${{ matrix.tags }}) ==="
+            $HOME/.maestro/bin/maestro test apps/mobile/.maestro/ --include-tags ${{ matrix.tags }} --format junit --output maestro-report.xml --debug-output $GITHUB_WORKSPACE/maestro-debug; echo $? > /tmp/maestro-exit
             echo "=== Maestro exit code: $(cat /tmp/maestro-exit) ==="
             exit $(cat /tmp/maestro-exit)
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: maestro-report-android
+          name: maestro-report-android-${{ matrix.shard }}
           path: |
             maestro-report.xml
             maestro-debug/
           include-hidden-files: true
           retention-days: 7
 
+  # ── Firebase Robo test (manual trigger only) ──
+
+  firebase-robo:
+    needs: build-android
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: android-apk
+          path: apk/
+
       - name: Set up Google Cloud CLI
-        if: always()
         uses: google-github-actions/setup-gcloud@v2
         with:
           version: latest
 
       - name: Authenticate gcloud
-        if: always()
         run: |
           echo '${{ secrets.GCLOUD_SERVICE_KEY }}' > /tmp/gcloud-key.json
           gcloud auth activate-service-account --key-file=/tmp/gcloud-key.json
@@ -277,14 +324,15 @@ jobs:
           rm /tmp/gcloud-key.json
 
       - name: Run Firebase Robo test
-        if: always()
         run: |
           gcloud firebase test android run \
             --type robo \
-            --app apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk \
+            --app apk/app-debug.apk \
             --device model=MediumPhone.arm,version=34,locale=en,orientation=portrait \
             --timeout 300s \
             --client-details matrixLabel="Robo crawl"
+
+  # ── iOS ──
 
   e2e-mobile-ios:
     runs-on: macos-latest
@@ -476,9 +524,11 @@ jobs:
           include-hidden-files: true
           retention-days: 7
 
+  # ── Dashboard deployment ──
+
   deploy-dashboard:
     runs-on: ubuntu-latest
-    needs: [e2e-web, e2e-mobile-android, e2e-mobile-ios]
+    needs: [e2e-web, e2e-android, e2e-mobile-ios]
     if: always() && github.ref == 'refs/heads/main'
     permissions:
       pages: write
@@ -498,6 +548,21 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts/
+
+      - name: Merge Android shard reports
+        run: |
+          mkdir -p artifacts/maestro-report-android/maestro-debug
+          # Concatenate JUnit XMLs from all shards (parser uses regex, not XML parsing)
+          for dir in artifacts/maestro-report-android-*/; do
+            if [ -f "$dir/maestro-report.xml" ]; then
+              cat "$dir/maestro-report.xml" >> artifacts/maestro-report-android/maestro-report.xml
+            fi
+            if [ -d "$dir/maestro-debug" ]; then
+              cp -r "$dir/maestro-debug/"* artifacts/maestro-report-android/maestro-debug/ 2>/dev/null || true
+            fi
+          done
+          echo "Merged Android reports:"
+          wc -l artifacts/maestro-report-android/maestro-report.xml 2>/dev/null || echo "No reports found"
 
       - name: Fetch existing history
         run: |
