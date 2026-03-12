@@ -3,13 +3,17 @@ name: Error Cases
 tags:
   - errors
 ---
-- clearState
-- launchApp
-
-# Wait for app to load (CI emulators are slow)
-- extendedWaitUntil:
-    visible: "Sign in to continue"
-    timeout: 120000
+# Retry app launch to handle intermittent iOS simulator crashes
+- retry:
+    maxRetries: 3
+    commands:
+      - stopApp
+      - clearState
+      - launchApp:
+          stopApp: false
+      - extendedWaitUntil:
+          visible: "Sign in to continue"
+          timeout: 30000
 
 # Test empty fields - tap Sign In without entering anything
 - tapOn:

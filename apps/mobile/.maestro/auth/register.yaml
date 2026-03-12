@@ -5,13 +5,19 @@ tags:
 ---
 # Mobile app only has login - no register screen
 # This flow validates the login screen renders correctly
-- clearState
-- launchApp
 
-# Wait for app to load
-- extendedWaitUntil:
-    visible: "Sign in to continue"
-    timeout: 120000
+# Retry app launch to handle intermittent iOS simulator crashes
+- retry:
+    maxRetries: 3
+    commands:
+      - stopApp
+      - clearState
+      - launchApp:
+          stopApp: false
+      - extendedWaitUntil:
+          visible: "Sign in to continue"
+          timeout: 30000
+
 - extendedWaitUntil:
     visible: "Email"
     timeout: 60000

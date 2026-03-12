@@ -4,15 +4,19 @@ tags:
   - auth
   - smoke
 ---
-- clearState
-- launchApp
+# Retry app launch to handle intermittent iOS simulator crashes
+- retry:
+    maxRetries: 3
+    commands:
+      - stopApp
+      - clearState
+      - launchApp:
+          stopApp: false
+      - extendedWaitUntil:
+          visible: "Sign in to continue"
+          timeout: 30000
 
-# Wait for app to load
-- extendedWaitUntil:
-    visible: "Sign in to continue"
-    timeout: 120000
-
-# Wait for test button to render (JS bridge must be fully connected)
+# Wait for test button to render
 - extendedWaitUntil:
     visible:
       id: "test-parent"

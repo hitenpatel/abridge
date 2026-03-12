@@ -1,14 +1,18 @@
 appId: com.abridge.app
 ---
-- clearState
-- launchApp
+# Retry app launch up to 3 times to handle intermittent iOS simulator crashes
+- retry:
+    maxRetries: 3
+    commands:
+      - stopApp
+      - clearState
+      - launchApp:
+          stopApp: false
+      - extendedWaitUntil:
+          visible: "Sign in to continue"
+          timeout: 30000
 
-# Wait for app to load
-- extendedWaitUntil:
-    visible: "Sign in to continue"
-    timeout: 120000
-
-# Wait for test button to render (JS bridge must be fully connected)
+# Wait for test button to render
 - extendedWaitUntil:
     visible:
       id: "test-staff"
@@ -18,8 +22,7 @@ appId: com.abridge.app
 - tapOn:
     id: "test-staff"
 
-# Wait for home screen data to fully load (nav buttons render after isLoading)
-# Skip unreliable "Home" tab bar text check — nav-messages testID confirms home loaded
+# Wait for home screen data to fully load
 - extendedWaitUntil:
     visible:
       id: "nav-messages"
