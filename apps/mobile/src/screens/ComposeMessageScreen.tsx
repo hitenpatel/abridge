@@ -214,9 +214,10 @@ export function ComposeMessageScreen() {
 			{/* Sticky Bottom CTA */}
 			<View className="absolute bottom-0 left-0 right-0 p-6 bg-background border-t border-gray-100">
 				<Pressable
+					testID="send-message-button"
 					onPress={handleSend}
 					disabled={sendMessage.isPending}
-					accessibilityLabel="Sent"
+					accessibilityLabel="Send"
 					className="bg-primary rounded-full py-4 items-center flex-row justify-center gap-2"
 					style={{ opacity: sendMessage.isPending ? 0.7 : 1 }}
 				>

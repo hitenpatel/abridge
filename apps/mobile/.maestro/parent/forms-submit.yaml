@@ -32,7 +32,7 @@ tags:
 
 # Submit form
 - tapOn:
-    text: "Submit"
+    id: "submit-form-button"
 
 # Verify success
 - extendedWaitUntil:

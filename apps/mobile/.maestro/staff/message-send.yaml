@@ -44,9 +44,9 @@ tags:
     visible: "Test Message"
     timeout: 60000
 
-# Tap send button (button text is "Post to Class")
+# Tap send button
 - tapOn:
-    text: "Post to Class"
+    id: "send-message-button"
 
 # Verify success
 - extendedWaitUntil:

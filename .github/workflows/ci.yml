@@ -428,6 +428,22 @@ jobs:
           cd apps/mobile/ios
           xcodebuild -workspace Abridge.xcworkspace -scheme Abridge -sdk iphonesimulator -configuration Debug -derivedDataPath build build
 
+      - name: Embed JS bundle in iOS app (skip Metro)
+        env:
+          EXPO_PUBLIC_API_URL: http://localhost:4000
+          EXPO_PUBLIC_E2E: '1'
+        run: |
+          cd apps/mobile
+          APP_DIR=ios/build/Build/Products/Debug-iphonesimulator/Abridge.app
+          npx react-native bundle \
+            --platform ios \
+            --dev true \
+            --entry-file index.js \
+            --bundle-output "$APP_DIR/main.jsbundle" \
+            --assets-dest "$APP_DIR" \
+            --config metro.config.js
+          echo "Bundle size: $(wc -c < "$APP_DIR/main.jsbundle") bytes"
+
       - name: Save Xcode derived data cache
         if: always()
         uses: actions/cache/save@v4
@@ -458,49 +474,22 @@ jobs:
           xcrun simctl boot "$DEVICE"
           xcrun simctl install "$DEVICE" apps/mobile/ios/build/Build/Products/Debug-iphonesimulator/Abridge.app
 
-          echo "=== Starting Metro bundler ==="
-          cd apps/mobile
-          CI=false npx expo start --port 8081 > /tmp/metro.log 2>&1 &
-          METRO_PID=$!
-          cd ../..
-          sleep 10
-
-          echo "=== Launching app to pre-warm Metro bundle ==="
-          xcrun simctl launch "$DEVICE" com.abridge.app
-
-          echo "=== Waiting for Metro initial bundle (up to 5 min) ==="
-          for i in $(seq 1 60); do
-            if grep -qE "Bundled|modules\)" /tmp/metro.log 2>/dev/null; then
-              echo "Metro bundle ready after ${i}x5s"
-              break
-            fi
-            if [ "$i" -eq 60 ]; then echo "WARNING: Metro bundle not detected after 5 min"; fi
-            sleep 5
-          done
-
           echo "=== Verifying sign-in API ==="
           curl -s -o /tmp/signin-resp.json -w "HTTP %{http_code}\n" -X POST http://localhost:4000/api/auth/sign-in/email \
             -H "Content-Type: application/json" \
             -d '{"email":"sarah@example.com","password":"password123"}'
           echo "Body:" && head -c 500 /tmp/signin-resp.json && echo ""
 
-          echo "=== Metro log (last 30 lines) ==="
-          tail -30 /tmp/metro.log
-
-          echo "=== Running Maestro ==="
+          echo "=== Running Maestro (no Metro — JS bundle embedded) ==="
           maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml --debug-output $GITHUB_WORKSPACE/maestro-debug; echo $? > /tmp/maestro-exit
 
           echo "=== Maestro debug output ==="
           ls -la $GITHUB_WORKSPACE/maestro-debug/ 2>/dev/null || echo "No maestro-debug directory"
           find $GITHUB_WORKSPACE/maestro-debug -name "*.png" 2>/dev/null | head -20 || true
 
-          echo "=== Metro log (post-test) ==="
-          grep -E "LOG|ERROR|Bundled|Auth|tRPC|Login|sign" /tmp/metro.log | tail -50 || true
-
           echo "=== Simulator logs (all app output) ==="
           xcrun simctl spawn "$DEVICE" log show --predicate 'processImagePath CONTAINS "Abridge"' --last 30m --style compact 2>/dev/null | tail -50 || true
 
-          kill $METRO_PID 2>/dev/null || true
           echo "=== Maestro exit code: $(cat /tmp/maestro-exit) ==="
           exit $(cat /tmp/maestro-exit)
 

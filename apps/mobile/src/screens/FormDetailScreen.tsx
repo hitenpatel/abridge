@@ -173,6 +173,7 @@ export function FormDetailScreen({ route, navigation }: Props) {
 			{/* Submit Button */}
 			<View className="absolute bottom-0 left-0 right-0 p-6 bg-background border-t border-gray-100">
 				<Pressable
+					testID="submit-form-button"
 					onPress={handleSubmit}
 					disabled={submitForm.isPending}
 					accessibilityLabel="Submit"
