@@ -288,12 +288,11 @@ jobs:
           include-hidden-files: true
           retention-days: 7
 
-  # ── Firebase Robo test (manual trigger only) ──
+  # ── Firebase Robo test ──
 
   firebase-robo:
     needs: build-android
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
     steps:
       - name: Download APK
         uses: actions/download-artifact@v4
