@@ -13,6 +13,31 @@ permissions:
   id-token: write
 
 jobs:
+  # ── Type-check + unit tests (no DB needed) ──
+
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma types
+        run: pnpm --filter @schoolconnect/db build
+
+      - name: Type-check API
+        run: pnpm --filter @schoolconnect/api exec tsc --noEmit
+
+      - name: Run API unit tests
+        run: pnpm --filter @schoolconnect/api test -- --run
+
+      - name: Run mobile unit tests
+        run: pnpm --filter @schoolconnect/mobile test:ci
+
   e2e-web:
     runs-on: ubuntu-latest
     env:

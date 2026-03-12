@@ -37,7 +37,7 @@ export function ClassSelector({ value, onChange }: ClassSelectorProps) {
 		<Select
 			value={selectedKey}
 			onValueChange={(key) => {
-				const [yearGroup, className] = key.split("|");
+				const [yearGroup = "", className = ""] = key.split("|");
 				onChange({ yearGroup, className });
 			}}
 		>

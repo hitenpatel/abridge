@@ -19,6 +19,12 @@ jest.mock("../../lib/trpc", () => ({
 			react: { useMutation: () => ({ mutate: mockReactMutate }) },
 			removeReaction: { useMutation: () => ({ mutate: mockRemoveReactionMutate }) },
 		},
+		settings: {
+			getFeatureTogglesForParent: { useQuery: () => ({ data: undefined }) },
+		},
+		wellbeing: {
+			getCheckIns: { useQuery: () => ({ data: undefined }) },
+		},
 		useUtils: () => ({
 			dashboard: { getFeed: { invalidate: jest.fn() } },
 		}),
@@ -62,7 +68,8 @@ describe("ParentHomeScreen", () => {
 
 		render(<ParentHomeScreen navigation={mockNavigation} />);
 
-		expect(screen.queryByText(/Hi,/)).toBeNull();
+		// Data-dependent content should not render during loading
+		expect(screen.queryByText("Report Absence")).toBeNull();
 	});
 
 	it("shows date header and greeting when data loads", () => {

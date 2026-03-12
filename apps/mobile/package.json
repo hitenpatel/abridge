@@ -84,6 +84,8 @@
 			"@testing-library/react-native/build/matchers/extend-expect"
 		],
 		"moduleNameMapper": {
+			"^react$": "<rootDir>/node_modules/react",
+			"^react/(.*)$": "<rootDir>/node_modules/react/$1",
 			"^@/(.*)$": "<rootDir>/src/$1"
 		}
 	}

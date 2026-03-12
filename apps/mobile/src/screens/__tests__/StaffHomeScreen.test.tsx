@@ -50,8 +50,8 @@ describe("StaffHomeScreen", () => {
 
 		render(<StaffHomeScreen />);
 
-		// Should not show greeting when loading
-		expect(screen.queryByText(/Good/)).toBeNull();
+		// Data-dependent stat cards should not render during loading
+		expect(screen.queryByText("Unread")).toBeNull();
 	});
 
 	it("renders greeting with staff name", () => {
