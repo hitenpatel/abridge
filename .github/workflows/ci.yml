@@ -438,9 +438,10 @@ jobs:
           npx expo export:embed \
             --platform ios \
             --dev true \
-            --entry-file index.js \
+            --entry-file apps/mobile/index.js \
             --bundle-output "$APP_DIR/main.jsbundle" \
-            --assets-dest "$APP_DIR"
+            --assets-dest "$APP_DIR" \
+            --reset-cache
           echo "Bundle size: $(wc -c < "$APP_DIR/main.jsbundle") bytes"
 
       - name: Save Xcode derived data cache
