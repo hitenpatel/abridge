@@ -420,36 +420,23 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: apps/mobile/ios/build
-          key: xcode-${{ hashFiles('apps/mobile/ios/Podfile.lock', 'apps/mobile/package.json') }}
-          restore-keys: xcode-
+          key: xcode-release-${{ hashFiles('apps/mobile/ios/Podfile.lock', 'apps/mobile/package.json') }}
+          restore-keys: xcode-release-
 
-      - name: Build iOS app
-        run: |
-          cd apps/mobile/ios
-          xcodebuild -workspace Abridge.xcworkspace -scheme Abridge -sdk iphonesimulator -configuration Debug -derivedDataPath build build
-
-      - name: Embed JS bundle in iOS app (skip Metro)
+      - name: Build iOS app (Release — embeds JS bundle, no Metro needed)
         env:
           EXPO_PUBLIC_API_URL: http://localhost:4000
           EXPO_PUBLIC_E2E: '1'
         run: |
-          cd apps/mobile
-          APP_DIR=ios/build/Build/Products/Debug-iphonesimulator/Abridge.app
-          npx expo export:embed \
-            --platform ios \
-            --dev true \
-            --entry-file apps/mobile/index.js \
-            --bundle-output "$APP_DIR/main.jsbundle" \
-            --assets-dest "$APP_DIR" \
-            --reset-cache
-          echo "Bundle size: $(wc -c < "$APP_DIR/main.jsbundle") bytes"
+          cd apps/mobile/ios
+          xcodebuild -workspace Abridge.xcworkspace -scheme Abridge -sdk iphonesimulator -configuration Release -derivedDataPath build build
 
       - name: Save Xcode derived data cache
         if: always()
         uses: actions/cache/save@v4
         with:
           path: apps/mobile/ios/build
-          key: xcode-${{ hashFiles('apps/mobile/ios/Podfile.lock', 'apps/mobile/package.json') }}
+          key: xcode-release-${{ hashFiles('apps/mobile/ios/Podfile.lock', 'apps/mobile/package.json') }}
 
       - name: Install Maestro CLI
         run: |
@@ -472,7 +459,7 @@ jobs:
           " )
           echo "Using device: $DEVICE"
           xcrun simctl boot "$DEVICE"
-          xcrun simctl install "$DEVICE" apps/mobile/ios/build/Build/Products/Debug-iphonesimulator/Abridge.app
+          xcrun simctl install "$DEVICE" apps/mobile/ios/build/Build/Products/Release-iphonesimulator/Abridge.app
 
           echo "=== Verifying sign-in API ==="
           curl -s -o /tmp/signin-resp.json -w "HTTP %{http_code}\n" -X POST http://localhost:4000/api/auth/sign-in/email \

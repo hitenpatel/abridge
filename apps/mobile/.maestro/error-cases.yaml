@@ -9,7 +9,7 @@ tags:
 # Wait for app to load (CI emulators are slow)
 - extendedWaitUntil:
     visible: "Sign in to continue"
-    timeout: 600000
+    timeout: 120000
 
 # Test empty fields - tap Sign In without entering anything
 - tapOn:

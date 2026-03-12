@@ -8,10 +8,10 @@ tags:
 - clearState
 - launchApp
 
-# Wait for app to load (iOS Metro re-bundle after clearState is slow)
+# Wait for app to load
 - extendedWaitUntil:
     visible: "Sign in to continue"
-    timeout: 600000
+    timeout: 120000
 - extendedWaitUntil:
     visible: "Email"
     timeout: 60000

@@ -3,10 +3,10 @@ appId: com.abridge.app
 - clearState
 - launchApp
 
-# Wait for app to load (iOS Metro re-bundle after clearState is very slow)
+# Wait for app to load
 - extendedWaitUntil:
     visible: "Sign in to continue"
-    timeout: 600000
+    timeout: 120000
 
 # Wait for test button to render (JS bridge must be fully connected)
 - extendedWaitUntil:
