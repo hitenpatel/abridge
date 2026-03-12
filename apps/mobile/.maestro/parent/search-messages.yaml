@@ -8,7 +8,7 @@ tags:
 
 # Tap search icon in header
 - tapOn:
-    label: "Search"
+    id: "search-button"
 
 # Verify search screen loaded (iOS Metro can be slow)
 - extendedWaitUntil:

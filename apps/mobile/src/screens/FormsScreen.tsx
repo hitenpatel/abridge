@@ -110,9 +110,10 @@ export function FormsScreen() {
 							<Text className="text-xs font-sans-bold text-red-600">{pendingForms.length}</Text>
 						</View>
 					</View>
-					{pendingForms.map((form) => (
+					{pendingForms.map((form, index) => (
 						<Pressable
 							key={form.id}
+							testID={index === 0 ? "first-pending-form" : undefined}
 							onPress={() =>
 								navigation.navigate("FormDetail", {
 									formId: form.id,

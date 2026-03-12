@@ -13,11 +13,18 @@ tags:
     timeout: 120000
 
 # Scroll down to find New Message card
-- scrollUntilVisible:
-    element:
+- swipe:
+    direction: UP
+    duration: 500
+- swipe:
+    direction: UP
+    duration: 500
+
+# Wait for New Message card to be visible
+- extendedWaitUntil:
+    visible:
       id: "new-message-card"
-    direction: DOWN
-    timeout: 60000
+    timeout: 10000
 
 # Tap New Message card
 - tapOn:

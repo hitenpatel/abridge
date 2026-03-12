@@ -16,9 +16,9 @@ tags:
       id: "forms-screen"
     timeout: 120000
 
-# Tap Complete to open form detail
+# Tap first pending form to open form detail
 - tapOn:
-    text: "Complete"
+    id: "first-pending-form"
 
 # Verify form detail loaded
 - extendedWaitUntil:

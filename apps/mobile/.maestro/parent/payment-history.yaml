@@ -15,7 +15,7 @@ tags:
 
 # Tap history icon
 - tapOn:
-    label: "History"
+    id: "history-button"
 
 # Verify payment history screen loaded (query can be slow on iOS CI)
 - extendedWaitUntil:

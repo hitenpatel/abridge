@@ -372,7 +372,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
 	}
 
 	return (
-		<View className="flex-1 bg-background">
+		<View testID="settings-screen" className="flex-1 bg-background">
 			<ScrollView
 				className="flex-1"
 				contentContainerClassName="px-6 pb-28 pt-4"
