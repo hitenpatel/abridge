@@ -435,13 +435,12 @@ jobs:
         run: |
           cd apps/mobile
           APP_DIR=ios/build/Build/Products/Debug-iphonesimulator/Abridge.app
-          npx react-native bundle \
+          npx expo export:embed \
             --platform ios \
             --dev true \
             --entry-file index.js \
             --bundle-output "$APP_DIR/main.jsbundle" \
-            --assets-dest "$APP_DIR" \
-            --config metro.config.js
+            --assets-dest "$APP_DIR"
           echo "Bundle size: $(wc -c < "$APP_DIR/main.jsbundle") bytes"
 
       - name: Save Xcode derived data cache
