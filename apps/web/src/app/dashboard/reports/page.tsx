@@ -468,7 +468,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 													onChange={(e) => {
 														const updated = [...grades];
 														updated[index] = {
-															...updated[index],
+															...updated[index]!,
 															level: (e.target.value || undefined) as PrimaryLevel | undefined,
 														};
 														setGrades(updated);
@@ -495,7 +495,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 													onChange={(e) => {
 														const updated = [...grades];
 														updated[index] = {
-															...updated[index],
+															...updated[index]!,
 															effort: (e.target.value || undefined) as Effort | undefined,
 														};
 														setGrades(updated);
@@ -527,7 +527,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 													onChange={(e) => {
 														const updated = [...grades];
 														updated[index] = {
-															...updated[index],
+															...updated[index]!,
 															currentGrade: e.target.value || undefined,
 														};
 														setGrades(updated);
@@ -550,7 +550,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 													onChange={(e) => {
 														const updated = [...grades];
 														updated[index] = {
-															...updated[index],
+															...updated[index]!,
 															targetGrade: e.target.value || undefined,
 														};
 														setGrades(updated);
@@ -576,7 +576,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 											onChange={(e) => {
 												const updated = [...grades];
 												updated[index] = {
-													...updated[index],
+													...updated[index]!,
 													comment: e.target.value || undefined,
 												};
 												setGrades(updated);

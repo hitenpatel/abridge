@@ -32,6 +32,9 @@ jobs:
       - name: Type-check API
         run: pnpm --filter @schoolconnect/api exec tsc --noEmit
 
+      - name: Type-check Web
+        run: pnpm --filter @schoolconnect/web exec tsc --noEmit
+
       - name: Run API unit tests
         run: pnpm --filter @schoolconnect/api test -- --run
 

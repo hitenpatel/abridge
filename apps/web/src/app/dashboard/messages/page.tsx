@@ -513,7 +513,7 @@ export default function MessagesPage() {
 										<div className="h-px flex-1 bg-gray-200" />
 									</div>
 									{repliesData.items.map((reply) => {
-										const isOwnReply = reply.authorId === session?.userId;
+										const isOwnReply = reply.authorId === session?.id;
 										return (
 											<div
 												key={reply.id}
@@ -631,7 +631,7 @@ export default function MessagesPage() {
 						{/* Conversation Messages */}
 						<div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
 							{convoData.items.map((msg) => {
-								const isOwn = msg.authorId === session?.userId;
+								const isOwn = msg.authorId === session?.id;
 								return (
 									<div
 										key={msg.id}

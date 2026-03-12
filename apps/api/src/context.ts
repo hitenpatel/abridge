@@ -19,6 +19,7 @@ export async function createContext({ req, res }: CreateFastifyContextOptions) {
 		prisma,
 		req,
 		res,
+		requestId: req.id,
 		user: session?.user ?? null,
 		session: session?.session ?? null,
 	};

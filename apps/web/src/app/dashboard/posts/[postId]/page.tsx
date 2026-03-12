@@ -89,8 +89,9 @@ export default function PostDetailPage() {
 	}
 
 	const ts = typeof post.createdAt === "string" ? new Date(post.createdAt) : post.createdAt;
-	const images = post.mediaUrls.filter((u) => !isVideoUrl(u));
-	const videos = post.mediaUrls.filter(isVideoUrl);
+	const mediaUrlList = (Array.isArray(post.mediaUrls) ? post.mediaUrls : []) as string[];
+	const images = mediaUrlList.filter((u: string) => !isVideoUrl(u));
+	const videos = mediaUrlList.filter((u: string) => isVideoUrl(u));
 
 	return (
 		<>

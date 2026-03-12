@@ -43,8 +43,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 	const { data: session } = trpc.auth.getSession.useQuery();
 
 	return (
-		<FeatureToggleProvider schoolId={session?.schoolId}>
-			<DashboardLayoutInner session={session}>{children}</DashboardLayoutInner>
+		<FeatureToggleProvider schoolId={session?.schoolId ?? undefined}>
+			<DashboardLayoutInner session={session ?? undefined}>{children}</DashboardLayoutInner>
 		</FeatureToggleProvider>
 	);
 }
@@ -53,7 +53,7 @@ function DashboardLayoutInner({
 	session,
 	children,
 }: {
-	session: { name?: string; isParent?: boolean; staffRole?: string; schoolId?: string } | undefined;
+	session: { name?: string; isParent?: boolean; staffRole?: string | null; schoolId?: string | null } | undefined;
 	children: React.ReactNode;
 }) {
 	const pathname = usePathname();

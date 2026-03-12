@@ -1,16 +1,17 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { trpc } from "@/lib/trpc";
-import type { AppRouter } from "@schoolconnect/api/router";
-import type { inferRouterOutputs } from "@trpc/server";
 import { Calendar, CreditCard, FileText, Loader2, Mail, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 // --- Types ---
-type RouterOutput = inferRouterOutputs<AppRouter>;
-type SearchResultItem = RouterOutput["search"]["query"][number];
+interface SearchResultItem {
+	id: string;
+	index: string;
+	source: Record<string, unknown>;
+	highlight?: Record<string, string[] | undefined>;
+}
 
 // --- Hooks ---
 
@@ -31,7 +32,7 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 function useOnClickOutside(
-	ref: React.RefObject<HTMLElement>,
+	ref: React.RefObject<HTMLElement | null>,
 	handler: (event: MouseEvent | TouchEvent) => void,
 ) {
 	useEffect(() => {
@@ -59,10 +60,8 @@ export function SearchBar() {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const debouncedQuery = useDebounce(query, 300);
 
-	const { data: results, isLoading } = trpc.search.query.useQuery(
-		{ query: debouncedQuery, limit: 5 },
-		{ enabled: debouncedQuery.length > 0 },
-	);
+	// TODO: search router not yet implemented
+	const { data: results, isLoading } = { data: undefined as SearchResultItem[] | undefined, isLoading: false };
 
 	useOnClickOutside(containerRef, () => setIsOpen(false));
 
@@ -108,7 +107,7 @@ export function SearchBar() {
 	};
 
 	const renderHighlight = (text: string, highlight?: string[]) => {
-		if (highlight && highlight.length > 0) {
+		if (highlight && highlight.length > 0 && highlight[0]) {
 			// biome-ignore lint/security/noDangerouslySetInnerHtml: Search highlights require HTML
 			return <span dangerouslySetInnerHTML={{ __html: highlight[0] }} />;
 		}

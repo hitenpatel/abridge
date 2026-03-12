@@ -27,13 +27,25 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
+interface Invitation {
+	id: string;
+	email: string;
+	schoolId: string;
+	role: string;
+	token: string;
+	expiresAt: string;
+	createdAt: string;
+	acceptedAt: string | null;
+}
+
 export default function StaffManagementPage() {
 	const utils = trpc.useUtils();
 	const { data: session, isLoading: isLoadingSession } = trpc.auth.getSession.useQuery();
-	const { data: invitations, isLoading: isLoadingInvites } = trpc.invitation.list.useQuery(
+	const { data: rawInvitations, isLoading: isLoadingInvites } = trpc.invitation.list.useQuery(
 		{ schoolId: session?.schoolId || "" },
 		{ enabled: !!session?.staffRole && !!session?.schoolId },
 	);
+	const invitations = rawInvitations as Invitation[] | undefined;
 	const { data: staff, isLoading: isLoadingStaff } = trpc.staff.list.useQuery(
 		{ schoolId: session?.schoolId || "" },
 		{
@@ -245,7 +257,7 @@ export default function StaffManagementPage() {
 											<div className="flex items-center gap-3">
 												<Avatar>
 													<AvatarFallback className="bg-primary/10 text-primary font-bold">
-														{member.user.name?.[0] || member.user.email[0].toUpperCase()}
+														{member.user.name?.[0] || member.user.email[0]?.toUpperCase()}
 													</AvatarFallback>
 												</Avatar>
 												<div>

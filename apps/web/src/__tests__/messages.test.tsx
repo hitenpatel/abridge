@@ -343,7 +343,7 @@ describe("MessagesPage", () => {
 
 		// Click on the second message in the sidebar
 		const secondSubject = screen.getAllByText("Second Message");
-		fireEvent.click(secondSubject[0].closest("[class*=cursor-pointer]")!);
+		fireEvent.click(secondSubject[0]!.closest("[class*=cursor-pointer]")!);
 
 		// The message detail should show the second message's body
 		expect(screen.getByText("Second body")).toBeDefined();

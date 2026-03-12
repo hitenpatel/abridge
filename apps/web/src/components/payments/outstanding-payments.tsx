@@ -114,7 +114,7 @@ export function OutstandingPayments() {
 								</div>
 								<div className="mt-6 space-y-2">
 									<Button
-										variant={isInCart ? "outline" : "primary"}
+										variant={isInCart ? "outline" : "default"}
 										className="w-full"
 										onClick={() =>
 											isInCart ? removeFromCart(payment.id, payment.childId) : addToCart(payment)

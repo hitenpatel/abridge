@@ -39,7 +39,7 @@ export default function CalendarPage() {
 	const utils = trpc.useUtils();
 	const [showCreate, setShowCreate] = useState(false);
 	const [title, setTitle] = useState("");
-	const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0]);
+	const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0] ?? "");
 	const [category, setCategory] = useState("EVENT");
 	const [recurrencePattern, setRecurrencePattern] = useState("");
 	const [recurrenceEndDate, setRecurrenceEndDate] = useState("");

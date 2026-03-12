@@ -170,7 +170,7 @@ function ParentView() {
 	const optionsByDay = menu?.options?.reduce(
 		(acc, opt) => {
 			if (!acc[opt.day]) acc[opt.day] = [];
-			acc[opt.day].push(opt);
+			acc[opt.day]!.push(opt);
 			return acc;
 		},
 		{} as Record<string, typeof menu.options>,

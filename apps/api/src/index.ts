@@ -21,6 +21,7 @@ import { testSeedRoutes } from "./routes/test-seed";
 import { webhookRoutes } from "./routes/webhooks";
 
 const server = Fastify({
+	genReqId: (req) => (req.headers["x-request-id"] as string) || crypto.randomUUID(),
 	logger: {
 		level: process.env.LOG_LEVEL || (process.env.NODE_ENV === "production" ? "info" : "debug"),
 		...(process.env.NODE_ENV !== "production" && {
@@ -39,6 +40,11 @@ declare module "fastify" {
 	}
 }
 server.decorate("prisma", prisma);
+
+// Echo request correlation ID back in response headers
+server.addHook("onSend", async (request, reply) => {
+	reply.header("x-request-id", request.id);
+});
 
 function getCorsOptions() {
 	return {

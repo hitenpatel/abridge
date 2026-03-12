@@ -63,6 +63,7 @@ function createTestContext(overrides?: Partial<Context>): Context {
 		} as any,
 		req: {} as Context["req"],
 		res: {} as Context["res"],
+		requestId: "test-request-id",
 		user: null,
 		session: null,
 		...overrides,

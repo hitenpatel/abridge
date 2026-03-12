@@ -219,7 +219,7 @@ export default function ClubsPage() {
 												onClick={() => {
 													setEnrollClubId(club.id);
 													if (children?.length === 1) {
-														setSelectedChildId(children[0].id);
+														setSelectedChildId(children[0]!.id);
 													}
 												}}
 											>

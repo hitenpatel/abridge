@@ -55,7 +55,7 @@ function StaffDashboard({ schoolId, userId }: { schoolId: string; userId: string
 							key={post.id}
 							postId={post.id}
 							body={post.body}
-							mediaUrls={post.mediaUrls}
+							mediaUrls={(post.mediaUrls ?? []) as string[]}
 							authorId={post.authorId}
 							authorName="Staff"
 							timestamp={post.createdAt}
@@ -101,7 +101,7 @@ export default function DashboardPage() {
 	// Set first child as default when data arrives
 	useEffect(() => {
 		if (children.length > 0 && !selectedChildId) {
-			setSelectedChildId(children[0].id);
+			setSelectedChildId(children[0]!.id);
 		}
 	}, [children, selectedChildId]);
 
@@ -235,7 +235,7 @@ export default function DashboardPage() {
 
 			{/* Activity Feed */}
 			<ActivityFeed
-				items={feedItems as Parameters<typeof ActivityFeed>[0]["items"]}
+				items={feedItems as unknown as Parameters<typeof ActivityFeed>[0]["items"]}
 				isLoading={isFeedLoading}
 				hasMore={!!hasNextPage}
 				onLoadMore={handleLoadMore}
