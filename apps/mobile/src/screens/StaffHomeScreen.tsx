@@ -171,6 +171,7 @@ export function StaffHomeScreen() {
 					{/* Post Update CTA */}
 					<View className="px-6 mt-6">
 						<Pressable
+							testID="post-update-cta"
 							onPress={() => navigation.navigate("ComposePost")}
 							className="bg-primary rounded-3xl p-6 relative overflow-hidden"
 							style={{

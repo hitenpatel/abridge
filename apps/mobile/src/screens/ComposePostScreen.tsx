@@ -109,6 +109,7 @@ export function ComposePostScreen() {
 
 	return (
 		<KeyboardAvoidingView
+			testID="compose-post-screen"
 			className="flex-1 bg-background"
 			behavior={Platform.OS === "ios" ? "padding" : undefined}
 		>

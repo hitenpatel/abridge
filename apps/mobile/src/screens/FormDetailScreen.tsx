@@ -123,6 +123,7 @@ export function FormDetailScreen({ route, navigation }: Props) {
 
 	return (
 		<KeyboardAvoidingView
+			testID="form-detail-screen"
 			className="flex-1 bg-background"
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 		>

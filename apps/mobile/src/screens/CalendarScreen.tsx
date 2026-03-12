@@ -86,6 +86,7 @@ export function CalendarScreen() {
 
 	return (
 		<ScrollView
+			testID="calendar-screen"
 			className="flex-1 bg-background"
 			refreshControl={
 				<RefreshControl refreshing={isRefetching} onRefresh={onRefresh} tintColor="#f56e3d" />

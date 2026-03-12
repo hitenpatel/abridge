@@ -65,6 +65,7 @@ export function FormsScreen() {
 
 	return (
 		<ScrollView
+			testID="forms-screen"
 			className="flex-1 bg-background"
 			contentContainerStyle={{ paddingBottom: 40 }}
 			refreshControl={

@@ -14,7 +14,7 @@ export function PaymentHistoryScreen() {
 	}
 
 	return (
-		<View className="flex-1 bg-background">
+		<View testID="payment-history-screen" className="flex-1 bg-background">
 			<FlatList
 				data={payments ?? []}
 				keyExtractor={(item) => `${item.id}-${item.childId}`}

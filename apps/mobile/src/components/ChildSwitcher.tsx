@@ -37,6 +37,7 @@ export function ChildSwitcher({ items, selectedChildId, onSelect, onViewProfile 
 				return (
 					<Pressable
 						key={child.id}
+						testID={`child-${child.firstName.toLowerCase()}`}
 						onPress={() => {
 						if (isActive && onViewProfile) {
 							onViewProfile(child.id);

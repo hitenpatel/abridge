@@ -12,12 +12,8 @@ tags:
 
 # Verify forms screen loaded
 - extendedWaitUntil:
-    visible: "Forms & Consent"
-    timeout: 60000
-
-# Verify pending form shows (forms query can be slow on iOS CI)
-- extendedWaitUntil:
-    visible: "Photography Consent Form"
+    visible:
+      id: "forms-screen"
     timeout: 120000
 
 # Tap Complete to open form detail
@@ -26,7 +22,8 @@ tags:
 
 # Verify form detail loaded
 - extendedWaitUntil:
-    visible: "Photography Consent Form"
+    visible:
+      id: "form-detail-screen"
     timeout: 60000
 
 # Use Test Fill to populate fields

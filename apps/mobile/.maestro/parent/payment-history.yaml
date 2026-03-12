@@ -19,5 +19,6 @@ tags:
 
 # Verify payment history screen loaded (query can be slow on iOS CI)
 - extendedWaitUntil:
-    visible: "Payment History"
+    visible:
+      id: "payment-history-screen"
     timeout: 120000

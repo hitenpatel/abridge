@@ -8,7 +8,8 @@ tags:
 
 # Verify staff home loaded (summary query can be slow on iOS CI)
 - extendedWaitUntil:
-    visible: "Post Update"
+    visible:
+      id: "post-update-cta"
     timeout: 120000
 
 # Scroll down to find New Message card

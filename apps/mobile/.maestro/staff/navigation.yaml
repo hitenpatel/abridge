@@ -10,5 +10,6 @@ tags:
 - tapOn:
     id: "nav-messages"
 - extendedWaitUntil:
-    visible: "Inbox"
+    visible:
+      id: "messages-screen"
     timeout: 60000

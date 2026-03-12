@@ -8,16 +8,18 @@ tags:
 
 # Verify staff home loaded (summary query can be slow on iOS CI)
 - extendedWaitUntil:
-    visible: "Post Update"
+    visible:
+      id: "post-update-cta"
     timeout: 120000
 
 # Tap the Post Update CTA
 - tapOn:
-    text: "Post Update"
+    id: "post-update-cta"
 
 # Verify compose post screen loaded
 - extendedWaitUntil:
-    visible: "Post to Class"
+    visible:
+      id: "compose-post-screen"
     timeout: 60000
 
 # Use Test Fill to populate class + body

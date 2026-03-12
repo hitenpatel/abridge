@@ -62,6 +62,7 @@ export function ComposeMessageScreen() {
 
 	return (
 		<KeyboardAvoidingView
+			testID="compose-message-screen"
 			className="flex-1 bg-background"
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 		>

@@ -71,7 +71,7 @@ export function SearchScreen() {
 	};
 
 	return (
-		<View className="flex-1 bg-background">
+		<View testID="search-screen" className="flex-1 bg-background">
 			{/* Search Input */}
 			<View className="mx-6 mt-4 mb-4">
 				{(__DEV__ || process.env.EXPO_PUBLIC_E2E) && (

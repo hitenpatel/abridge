@@ -12,7 +12,8 @@ tags:
 
 # Verify search screen loaded (iOS Metro can be slow)
 - extendedWaitUntil:
-    visible: "Test Search"
+    visible:
+      id: "search-screen"
     timeout: 120000
 
 # Use Test Search button to fill query
