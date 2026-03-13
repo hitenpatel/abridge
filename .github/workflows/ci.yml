@@ -472,7 +472,7 @@ jobs:
 
       - name: Boot iOS simulator and run tests
         env:
-          MAESTRO_DRIVER_STARTUP_TIMEOUT: 120000
+          MAESTRO_DRIVER_STARTUP_TIMEOUT: 240000
         run: |
           DEVICE=$(xcrun simctl list devices available -j | python3 -c "
           import json, sys
@@ -487,6 +487,11 @@ jobs:
           echo "Using device: $DEVICE"
           xcrun simctl boot "$DEVICE"
           xcrun simctl install "$DEVICE" apps/mobile/ios/build/Build/Products/Release-iphonesimulator/Abridge.app
+
+          echo "=== Pre-warming simulator (launch app then wait) ==="
+          xcrun simctl launch "$DEVICE" com.abridge.app
+          sleep 15
+          xcrun simctl terminate "$DEVICE" com.abridge.app
 
           echo "=== Verifying sign-in API ==="
           curl -s -o /tmp/signin-resp.json -w "HTTP %{http_code}\n" -X POST http://localhost:4000/api/auth/sign-in/email \
