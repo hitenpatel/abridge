@@ -513,6 +513,7 @@ model FormResponse {
   parentId    String
   data        Json     // Key-value pairs matching field ids
   signature   String?  // Base64 signature image
+  pdfData     String?  // Base64-encoded PDF document
   submittedAt DateTime @default(now())
 
   template FormTemplate @relation(fields: [templateId], references: [id])

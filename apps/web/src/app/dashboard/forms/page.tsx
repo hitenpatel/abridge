@@ -16,10 +16,51 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
-import { FileText, Plus, Trash2 } from "lucide-react";
+import { Download, FileText, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
+
+function DownloadPdfButton({ responseId, formTitle }: { responseId: string; formTitle: string }) {
+	const [loading, setLoading] = useState(false);
+	const utils = trpc.useUtils();
+
+	const handleDownload = useCallback(async () => {
+		setLoading(true);
+		try {
+			const result = await utils.forms.getFormPdf.fetch({ responseId });
+			const byteChars = atob(result.pdfData);
+			const byteNumbers = new Array(byteChars.length);
+			for (let i = 0; i < byteChars.length; i++) {
+				byteNumbers[i] = byteChars.charCodeAt(i);
+			}
+			const blob = new Blob([new Uint8Array(byteNumbers)], { type: "application/pdf" });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = `${formTitle.replace(/\s+/g, "-")}.pdf`;
+			a.click();
+			URL.revokeObjectURL(url);
+		} catch {
+			toast.error("PDF not available for this form");
+		} finally {
+			setLoading(false);
+		}
+	}, [responseId, formTitle, utils.forms.getFormPdf]);
+
+	return (
+		<Button
+			variant="outline"
+			size="sm"
+			onClick={handleDownload}
+			disabled={loading}
+			data-testid="download-pdf-button"
+		>
+			<Download className="h-4 w-4 mr-1" />
+			{loading ? "Loading..." : "PDF"}
+		</Button>
+	);
+}
 
 function ChildFormsList({ childId, childName }: { childId: string; childName: string }) {
 	const { data: pendingForms, isLoading: isPendingLoading } = trpc.forms.getPendingForms.useQuery({
@@ -121,7 +162,13 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 											</p>
 										</div>
 									</div>
-									<Badge variant="success">Submitted</Badge>
+									<div className="flex items-center gap-2">
+										<DownloadPdfButton
+											responseId={response.id}
+											formTitle={response.template.title}
+										/>
+										<Badge variant="success">Submitted</Badge>
+									</div>
 								</CardContent>
 							</Card>
 						))}

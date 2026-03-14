@@ -1,6 +1,6 @@
 # SchoolConnect: PRD vs Implementation Checklist
 
-**Last Updated:** 2026-03-04
+**Last Updated:** 2026-03-14
 **E2E Test Status:** ~219 tests across 19 files (Playwright)
 
 ---
@@ -162,7 +162,7 @@
 | 5 | Create event (staff) | ✅ | createEvent mutation |
 | 6 | Delete event (staff) | ✅ | deleteEvent mutation |
 | 7 | Calendar page loads | ✅ | ✅ E2E: `calendar.test.ts` |
-| 8 | Recurring events | ⚠️ | Manual repetition only |
+| 8 | Recurring events | ✅ | RecurrencePattern enum, auto-expansion in listEvents |
 | 9 | Event RSVPs and headcount | 🔮 | Schema ready, not implemented |
 
 ### 3.7 Forms & Consent (PRD Section 7.7)
@@ -173,7 +173,7 @@
 | 3 | Form field types: text, textarea, checkbox, select | ✅ | FormRenderer component |
 | 4 | Progress auto-save | ✅ | Client-side state |
 | 5 | Bulk consent ("Apply to all children") | ✅ | Form submission UI |
-| 6 | PDF copy on completion | ⚠️ | Logged only; actual PDF gen deferred |
+| 6 | PDF copy on completion | ✅ | pdfkit generates PDF on submit, stored as base64, downloadable via getFormPdf |
 | 7 | Forms page loads | ✅ | ✅ E2E: `forms.test.ts` |
 | 8 | Empty state (no children/forms) | ✅ | ✅ E2E: `forms.test.ts` |
 
@@ -328,22 +328,22 @@
 | Full-text search | ✅ |
 | Beta with pilot schools | ⏳ Ready |
 
-### Phase 2: Enhancement ✅ MOSTLY COMPLETE
+### Phase 2: Enhancement ✅ COMPLETE
 | Feature | Status |
 |---------|--------|
-| Forms and consent collection | ✅ |
-| Calendar with export | ✅ |
-| Meal booking | ⚠️ Schema ready (PaymentItem category) |
-| Club booking | ⚠️ Schema ready (PaymentItem category) |
+| Forms and consent collection (incl. PDF generation) | ✅ |
+| Calendar with export + recurring events | ✅ |
+| Meal booking | ✅ |
+| Club booking | ✅ |
 | MIS integrations | 🔮 Not started |
 
-### Phase 3: Engagement ❌ NOT STARTED
+### Phase 3: Engagement ⚠️ MOSTLY COMPLETE
 | Feature | Status |
 |---------|--------|
 | Achievement/reward system | 🔮 |
 | Photo/video sharing | 🔮 |
-| Parents' evening booking | 🔮 |
-| School admin dashboard (analytics) | ⚠️ Basic CRUD only |
+| Parents' evening booking | ✅ |
+| School admin dashboard (analytics) | ✅ |
 
 ---
 
@@ -368,7 +368,7 @@
 12. ✅ Leftover plan comments cleanup (removed TODOs, fixed hardcoded schoolId)
 13. ❌ Additional frontend component tests
 14. ❌ API documentation (OpenAPI/Swagger)
-15. ❌ Admin analytics dashboard
+15. ✅ Admin analytics dashboard
 
 ---
 
@@ -402,4 +402,4 @@ Additionally, `packages/e2e/` contains a YAML-based journey spec infrastructure 
 
 ---
 
-**Last Updated:** 2026-03-04
+**Last Updated:** 2026-03-14
