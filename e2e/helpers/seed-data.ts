@@ -509,6 +509,10 @@ export async function enableSchoolFeature(params: {
 		mealBookingEnabled: boolean;
 		reportCardsEnabled: boolean;
 		communityHubEnabled: boolean;
+		homeworkEnabled: boolean;
+		readingDiaryEnabled: boolean;
+		visitorManagementEnabled: boolean;
+		misIntegrationEnabled: boolean;
 	}>;
 }): Promise<void> {
 	await prisma.school.update({
@@ -709,6 +713,182 @@ export async function seedReportCard(params: {
 		},
 	});
 	return { id: card.id };
+}
+
+/**
+ * Seed a homework assignment for a school
+ */
+export async function seedHomeworkAssignment(params: {
+	schoolId: string;
+	setBy: string;
+	subject?: string;
+	title?: string;
+	yearGroup?: string;
+	className?: string;
+	dueDate?: Date;
+	isReadingTask?: boolean;
+}): Promise<{ id: string; title: string }> {
+	const title = params.title || "Maths Worksheet Chapter 5";
+	const dueDate = params.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+	const assignment = await prisma.homeworkAssignment.create({
+		data: {
+			schoolId: params.schoolId,
+			setBy: params.setBy,
+			subject: params.subject || "Mathematics",
+			title,
+			description: `Complete the ${title} assignment`,
+			yearGroup: params.yearGroup || "4",
+			className: params.className || "4A",
+			dueDate,
+			isReadingTask: params.isReadingTask || false,
+		},
+	});
+
+	return { id: assignment.id, title: assignment.title };
+}
+
+/**
+ * Seed a homework completion record
+ */
+export async function seedHomeworkCompletion(params: {
+	assignmentId: string;
+	childId: string;
+	status?: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
+	grade?: string;
+	feedback?: string;
+	gradedBy?: string;
+}): Promise<{ id: string }> {
+	const completion = await prisma.homeworkCompletion.upsert({
+		where: {
+			assignmentId_childId: {
+				assignmentId: params.assignmentId,
+				childId: params.childId,
+			},
+		},
+		update: {
+			status: params.status || "NOT_STARTED",
+			grade: params.grade,
+			feedback: params.feedback,
+			gradedBy: params.gradedBy,
+		},
+		create: {
+			assignmentId: params.assignmentId,
+			childId: params.childId,
+			status: params.status || "NOT_STARTED",
+			grade: params.grade,
+			feedback: params.feedback,
+			gradedBy: params.gradedBy,
+		},
+	});
+
+	return { id: completion.id };
+}
+
+/**
+ * Seed a reading diary for a child
+ */
+export async function seedReadingDiary(params: {
+	childId: string;
+	schoolId: string;
+	currentBook?: string;
+	readingLevel?: string;
+}): Promise<{ id: string }> {
+	const diary = await prisma.readingDiary.upsert({
+		where: { childId: params.childId },
+		update: {
+			currentBook: params.currentBook,
+			readingLevel: params.readingLevel,
+		},
+		create: {
+			childId: params.childId,
+			schoolId: params.schoolId,
+			currentBook: params.currentBook || "Charlotte's Web",
+			readingLevel: params.readingLevel || "Turquoise",
+		},
+	});
+
+	return { id: diary.id };
+}
+
+/**
+ * Seed reading entries for the last N weekdays
+ */
+export async function seedReadingEntries(params: {
+	diaryId: string;
+	daysBack?: number;
+}): Promise<{ count: number }> {
+	const daysBack = params.daysBack || 5;
+	const entries = [];
+
+	for (let i = 0; i < daysBack; i++) {
+		const date = new Date();
+		date.setDate(date.getDate() - i);
+		date.setHours(0, 0, 0, 0);
+
+		const dayOfWeek = date.getDay();
+		if (dayOfWeek === 0 || dayOfWeek === 6) continue;
+
+		entries.push({
+			diaryId: params.diaryId,
+			date,
+			minutesRead: 15 + Math.floor(Math.random() * 16), // 15-30 mins
+			pagesRead: 5 + Math.floor(Math.random() * 11), // 5-15 pages
+			parentComment: "Read well today",
+		});
+	}
+
+	await prisma.readingEntry.createMany({
+		data: entries,
+		skipDuplicates: true,
+	});
+
+	return { count: entries.length };
+}
+
+/**
+ * Seed a visitor record for a school
+ */
+export async function seedVisitor(params: {
+	schoolId: string;
+	name?: string;
+	organisation?: string;
+	isRegular?: boolean;
+}): Promise<{ id: string; name: string }> {
+	const name = params.name || "John Smith";
+
+	const visitor = await prisma.visitor.create({
+		data: {
+			schoolId: params.schoolId,
+			name,
+			organisation: params.organisation || null,
+			isRegular: params.isRegular || false,
+		},
+	});
+
+	return { id: visitor.id, name: visitor.name };
+}
+
+/**
+ * Seed a visitor sign-in log entry
+ */
+export async function seedVisitorSignIn(params: {
+	schoolId: string;
+	visitorId: string;
+	signedInBy: string;
+	purpose?: "MEETING" | "MAINTENANCE" | "DELIVERY" | "VOLUNTEERING" | "INSPECTION" | "PARENT_VISIT" | "CONTRACTOR" | "OTHER";
+}): Promise<{ id: string }> {
+	const log = await prisma.visitorLog.create({
+		data: {
+			schoolId: params.schoolId,
+			visitorId: params.visitorId,
+			signedInBy: params.signedInBy,
+			purpose: params.purpose || "MEETING",
+			signedInAt: new Date(),
+		},
+	});
+
+	return { id: log.id };
 }
 
 export { prisma };
