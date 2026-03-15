@@ -60,7 +60,7 @@ test.describe("Staff Homework Management", () => {
 		await expect(page).toHaveURL(/\/dashboard\/homework/);
 
 		// === STEP 5: Fill in Set Homework form ===
-		await expect(page.getByText("Set Homework")).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: "Set Homework" })).toBeVisible({ timeout: 10000 });
 
 		await page.getByLabel("Subject").fill("Mathematics");
 		await page.getByLabel("Title").fill("Fractions Worksheet");

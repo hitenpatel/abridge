@@ -73,7 +73,7 @@ test.describe("Visitor Management", () => {
 		await page.getByPlaceholder("e.g. V001").fill("V042");
 
 		// === STEP 7: Click Sign In ===
-		await page.getByRole("button", { name: /^Sign In$/i }).click();
+		await page.locator("form").getByRole("button", { name: /Sign In/i }).click();
 
 		// === STEP 8: Verify success message ===
 		await expect(page.getByText("Visitor signed in successfully")).toBeVisible({ timeout: 10000 });

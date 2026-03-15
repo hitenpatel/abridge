@@ -740,6 +740,7 @@ export async function seedHomeworkAssignment(params: {
 			description: `Complete the ${title} assignment`,
 			yearGroup: params.yearGroup || "4",
 			className: params.className || "4A",
+			setDate: new Date(),
 			dueDate,
 			isReadingTask: params.isReadingTask || false,
 		},
@@ -832,8 +833,11 @@ export async function seedReadingEntries(params: {
 		entries.push({
 			diaryId: params.diaryId,
 			date,
+			bookTitle: "Charlotte's Web",
 			minutesRead: 15 + Math.floor(Math.random() * 16), // 15-30 mins
-			pagesRead: 5 + Math.floor(Math.random() * 11), // 5-15 pages
+			pagesOrChapter: `Chapter ${i + 1}`,
+			readWith: "PARENT" as const,
+			entryBy: "PARENT" as const,
 			parentComment: "Read well today",
 		});
 	}
@@ -884,7 +888,7 @@ export async function seedVisitorSignIn(params: {
 			visitorId: params.visitorId,
 			signedInBy: params.signedInBy,
 			purpose: params.purpose || "MEETING",
-			signedInAt: new Date(),
+			signInAt: new Date(),
 		},
 	});
 

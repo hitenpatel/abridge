@@ -68,7 +68,7 @@ test.describe("Parent Reading Diary", () => {
 		await expect(page).toHaveURL(/\/dashboard\/reading/);
 
 		// === STEP 5: Fill in reading log form ===
-		await expect(page.getByText(/Log Reading/i)).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: /Log Reading/i })).toBeVisible({ timeout: 10000 });
 
 		await page.getByLabel(/Book Title/i).fill("The BFG");
 		await page.getByLabel(/Minutes/i).fill("20");

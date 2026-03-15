@@ -43,7 +43,13 @@ test.describe("MIS Integration", () => {
 		await enableSchoolFeature({ schoolId: school.id, features: { misIntegrationEnabled: true } });
 
 		// === STEP 4: Navigate to MIS page ===
-		await page.reload();
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /MIS Integration/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
+		}).toPass({ timeout: 30000 });
+
 		await page
 			.getByRole("link", { name: /MIS Integration/i })
 			.first()
@@ -101,7 +107,13 @@ test.describe("MIS Integration", () => {
 		await enableSchoolFeature({ schoolId: school.id, features: { misIntegrationEnabled: true } });
 
 		// === STEP 4: Navigate to MIS page ===
-		await page.reload();
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /MIS Integration/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
+		}).toPass({ timeout: 30000 });
+
 		await page
 			.getByRole("link", { name: /MIS Integration/i })
 			.first()
@@ -160,7 +172,13 @@ test.describe("MIS Integration", () => {
 		await enableSchoolFeature({ schoolId: school.id, features: { misIntegrationEnabled: true } });
 
 		// === STEP 4: Navigate to MIS page ===
-		await page.reload();
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /MIS Integration/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
+		}).toPass({ timeout: 30000 });
+
 		await page
 			.getByRole("link", { name: /MIS Integration/i })
 			.first()
