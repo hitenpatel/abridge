@@ -20,7 +20,8 @@ type FeatureName =
 	| "readingDiary"
 	| "visitorManagement"
 	| "misIntegration"
-	| "achievements";
+	| "achievements"
+	| "gallery";
 
 interface SchoolFeatures {
 	messagingEnabled: boolean;
@@ -47,6 +48,7 @@ interface SchoolFeatures {
 	visitorManagementEnabled: boolean;
 	misIntegrationEnabled: boolean;
 	achievementsEnabled: boolean;
+	galleryEnabled: boolean;
 }
 
 const featureFieldMap: Record<FeatureName, keyof SchoolFeatures> = {
@@ -69,6 +71,7 @@ const featureFieldMap: Record<FeatureName, keyof SchoolFeatures> = {
 	visitorManagement: "visitorManagementEnabled",
 	misIntegration: "misIntegrationEnabled",
 	achievements: "achievementsEnabled",
+	gallery: "galleryEnabled",
 };
 
 const featureLabel: Record<FeatureName, string> = {
@@ -91,6 +94,7 @@ const featureLabel: Record<FeatureName, string> = {
 	visitorManagement: "Visitor Management",
 	misIntegration: "MIS Integration",
 	achievements: "Achievements",
+	gallery: "Gallery",
 };
 
 const categoryFieldMap: Record<PaymentCategory, keyof SchoolFeatures> = {

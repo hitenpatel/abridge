@@ -28,6 +28,7 @@ interface FeatureToggles {
 	visitorManagementEnabled: boolean;
 	misIntegrationEnabled: boolean;
 	achievementsEnabled: boolean;
+	galleryEnabled: boolean;
 }
 
 const defaultToggles: FeatureToggles = {
@@ -55,6 +56,7 @@ const defaultToggles: FeatureToggles = {
 	visitorManagementEnabled: false,
 	misIntegrationEnabled: false,
 	achievementsEnabled: false,
+	galleryEnabled: false,
 };
 
 const FeatureToggleContext = createContext<FeatureToggles>(defaultToggles);

@@ -141,6 +141,7 @@ export const schoolFeatureProcedure = schoolStaffProcedure.use(async ({ ctx, nex
 			visitorManagementEnabled: true,
 			misIntegrationEnabled: true,
 			achievementsEnabled: true,
+			galleryEnabled: true,
 		},
 	});
 

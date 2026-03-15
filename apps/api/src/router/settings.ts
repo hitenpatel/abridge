@@ -26,6 +26,7 @@ const featureToggleSelect = {
 	visitorManagementEnabled: true,
 	misIntegrationEnabled: true,
 	achievementsEnabled: true,
+	galleryEnabled: true,
 } as const;
 
 export const settingsRouter = router({
@@ -182,6 +183,7 @@ export const settingsRouter = router({
 				visitorManagementEnabled: z.boolean().optional(),
 				misIntegrationEnabled: z.boolean().optional(),
 				achievementsEnabled: z.boolean().optional(),
+				galleryEnabled: z.boolean().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

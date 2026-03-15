@@ -41,7 +41,8 @@ interface NavItem {
 		| "readingDiaryEnabled"
 		| "visitorManagementEnabled"
 		| "misIntegrationEnabled"
-		| "achievementsEnabled";
+		| "achievementsEnabled"
+		| "galleryEnabled";
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -158,6 +159,12 @@ function DashboardLayoutInner({
 			icon: "emoji_events",
 			featureKey: "achievementsEnabled",
 		},
+		{
+			name: "Gallery",
+			href: "/dashboard/gallery",
+			icon: "photo_library",
+			featureKey: "galleryEnabled",
+		},
 		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];
 
@@ -258,6 +265,12 @@ function DashboardLayoutInner({
 			href: "/dashboard/achievements",
 			icon: "emoji_events",
 			featureKey: "achievementsEnabled",
+		},
+		{
+			name: "Gallery",
+			href: "/dashboard/gallery",
+			icon: "photo_library",
+			featureKey: "galleryEnabled",
 		},
 		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];

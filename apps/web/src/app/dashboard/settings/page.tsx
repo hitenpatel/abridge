@@ -407,6 +407,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 	const [visitorManagement, setVisitorManagement] = useState(false);
 	const [misIntegration, setMisIntegration] = useState(false);
 	const [achievements, setAchievements] = useState(false);
+	const [gallery, setGallery] = useState(false);
 
 	useEffect(() => {
 		if (data) {
@@ -433,6 +434,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 			setVisitorManagement(data.visitorManagementEnabled);
 			setMisIntegration(data.misIntegrationEnabled);
 			setAchievements(data.achievementsEnabled);
+			setGallery(data.galleryEnabled);
 		}
 	}, [data]);
 
@@ -498,6 +500,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							visitorManagementEnabled: visitorManagement,
 							misIntegrationEnabled: misIntegration,
 							achievementsEnabled: achievements,
+							galleryEnabled: gallery,
 						});
 					}}
 					className="space-y-4"
@@ -645,6 +648,12 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							onChange={setAchievements}
 							label="Achievements"
 							data-testid="toggle-achievements"
+						/>
+						<Toggle
+							checked={gallery}
+							onChange={setGallery}
+							label="Gallery"
+							data-testid="toggle-gallery"
 						/>
 					</div>
 
