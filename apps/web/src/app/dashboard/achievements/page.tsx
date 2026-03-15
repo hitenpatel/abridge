@@ -91,9 +91,7 @@ function ParentView() {
 										className="flex flex-col items-center gap-1 p-3 rounded-lg bg-muted/50"
 									>
 										<span className="text-2xl">{award.category.icon || "🏆"}</span>
-										<span className="text-xs text-center font-medium">
-											{award.category.name}
-										</span>
+										<span className="text-xs text-center font-medium">{award.category.name}</span>
 									</div>
 								))}
 							{achievements?.awards?.filter((a) => a.category.type === "BADGE").length === 0 && (
@@ -139,9 +137,7 @@ function ParentView() {
 											})}
 										</p>
 									</div>
-									<Badge className="bg-yellow-100 text-yellow-800">
-										+{award.points}
-									</Badge>
+									<Badge className="bg-yellow-100 text-yellow-800">+{award.points}</Badge>
 								</div>
 							))}
 						</div>
@@ -154,8 +150,9 @@ function ParentView() {
 
 function StaffView({ schoolId }: { schoolId: string }) {
 	const utils = trpc.useUtils();
-	const { data: categories, isLoading: catsLoading } =
-		trpc.achievement.listCategories.useQuery({ schoolId });
+	const { data: categories, isLoading: catsLoading } = trpc.achievement.listCategories.useQuery({
+		schoolId,
+	});
 	const { data: leaderboard, isLoading: leaderLoading } =
 		trpc.achievement.getClassLeaderboard.useQuery({ schoolId });
 
@@ -311,9 +308,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 										{entry.rank}
 									</span>
 									<span className="flex-1 font-medium text-sm">{entry.childName}</span>
-									<Badge className="bg-yellow-100 text-yellow-800">
-										{entry.totalPoints} pts
-									</Badge>
+									<Badge className="bg-yellow-100 text-yellow-800">{entry.totalPoints} pts</Badge>
 								</div>
 							))}
 						</div>
@@ -334,11 +329,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 							size="sm"
 							onClick={() => setShowNewCategory(!showNewCategory)}
 						>
-							{showNewCategory ? (
-								<X className="h-4 w-4 mr-1" />
-							) : (
-								<Plus className="h-4 w-4 mr-1" />
-							)}
+							{showNewCategory ? <X className="h-4 w-4 mr-1" /> : <Plus className="h-4 w-4 mr-1" />}
 							{showNewCategory ? "Cancel" : "Add Category"}
 						</Button>
 					</div>
@@ -436,9 +427,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 									<Button
 										variant="ghost"
 										size="sm"
-										onClick={() =>
-											deactivateMutation.mutate({ schoolId, categoryId: cat.id })
-										}
+										onClick={() => deactivateMutation.mutate({ schoolId, categoryId: cat.id })}
 										disabled={deactivateMutation.isPending}
 										className="text-red-500 hover:text-red-700"
 									>
@@ -466,9 +455,7 @@ export default function AchievementsPage() {
 	return (
 		<div className="space-y-6 p-6">
 			<div>
-				<h1 className="text-2xl font-bold">
-					{isStaff ? "Awards" : "Achievements"}
-				</h1>
+				<h1 className="text-2xl font-bold">{isStaff ? "Awards" : "Achievements"}</h1>
 				<p className="text-muted-foreground">
 					{isStaff
 						? "Award achievements and manage categories"
@@ -476,11 +463,7 @@ export default function AchievementsPage() {
 				</p>
 			</div>
 
-			{isStaff && session.schoolId ? (
-				<StaffView schoolId={session.schoolId} />
-			) : (
-				<ParentView />
-			)}
+			{isStaff && session.schoolId ? <StaffView schoolId={session.schoolId} /> : <ParentView />}
 		</div>
 	);
 }

@@ -14,9 +14,7 @@ vi.mock("../lib/media", () => ({
 		uploadUrl: "https://r2.example.com/presigned",
 		key: "schools/school-1/media/abc.jpg",
 	}),
-	getMediaUrl: vi
-		.fn()
-		.mockImplementation((key: string) => `https://media.example.com/${key}`),
+	getMediaUrl: vi.fn().mockImplementation((key: string) => `https://media.example.com/${key}`),
 }));
 
 const allFeatures = {
@@ -113,9 +111,7 @@ function createParentContext(overrides?: Record<string, any>): any {
 				findFirst: vi.fn().mockResolvedValue({
 					child: { schoolId: "school-1", yearGroup: "Year 2" },
 				}),
-				findMany: vi.fn().mockResolvedValue([
-					{ child: { yearGroup: "Year 2" } },
-				]),
+				findMany: vi.fn().mockResolvedValue([{ child: { yearGroup: "Year 2" } }]),
 			},
 			galleryAlbum: {
 				findMany: vi.fn().mockResolvedValue([
@@ -139,7 +135,11 @@ function createParentContext(overrides?: Record<string, any>): any {
 					photos: [
 						{
 							id: "photo-1",
-							media: { key: "schools/school-1/media/photo1.jpg", filename: "photo1.jpg", mimeType: "image/jpeg" },
+							media: {
+								key: "schools/school-1/media/photo1.jpg",
+								filename: "photo1.jpg",
+								mimeType: "image/jpeg",
+							},
 							caption: "Great shot",
 							sortOrder: 0,
 						},
@@ -195,7 +195,7 @@ describe("gallery router", () => {
 		const ctx = createParentContext();
 		const result = await caller(ctx).gallery.getAlbum({ albumId: "album-1" });
 		expect(result.id).toBe("album-1");
-		expect(result.photos[0].url).toContain("schools/school-1/media/photo1.jpg");
+		expect(result.photos[0]?.url).toContain("schools/school-1/media/photo1.jpg");
 	});
 
 	it("should reject cross-school album access", async () => {
@@ -216,8 +216,8 @@ describe("gallery router", () => {
 				}),
 			},
 		});
-		await expect(
-			caller(ctx).gallery.getAlbum({ albumId: "album-1" }),
-		).rejects.toThrow("Not a member of this school");
+		await expect(caller(ctx).gallery.getAlbum({ albumId: "album-1" })).rejects.toThrow(
+			"Not a member of this school",
+		);
 	});
 });

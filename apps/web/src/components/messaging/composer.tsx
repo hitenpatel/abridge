@@ -208,11 +208,7 @@ export function MessageComposer({ schoolId }: MessageComposerProps) {
 										{att.filename}
 										<button
 											type="button"
-											onClick={() =>
-												setAttachments((prev) =>
-													prev.filter((a) => a.id !== att.id),
-												)
-											}
+											onClick={() => setAttachments((prev) => prev.filter((a) => a.id !== att.id))}
 											className="text-muted-foreground hover:text-foreground"
 											aria-label={`Remove ${att.filename}`}
 										>

@@ -45,7 +45,7 @@ describe("useFeatureToggles", () => {
 
 describe("FeatureToggleProvider", () => {
 	it("passes server values to consumers", async () => {
-		const { trpc } = await import("@/lib/trpc") as any;
+		const { trpc } = (await import("@/lib/trpc")) as any;
 		trpc.settings.getFeatureToggles.useQuery.mockReturnValue({
 			data: {
 				messagingEnabled: false,

@@ -117,7 +117,8 @@ function RsvpHeadcount({ eventId, schoolId }: { eventId: string; schoolId: strin
 	return (
 		<Badge variant="outline" className="gap-1" data-testid="rsvp-headcount">
 			<Users className="w-3 h-3" />
-			{yesCount}{capacityText} attending
+			{yesCount}
+			{capacityText} attending
 		</Badge>
 	);
 }

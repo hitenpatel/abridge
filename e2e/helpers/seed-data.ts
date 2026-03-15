@@ -1043,9 +1043,7 @@ export async function seedMediaUpload(params: {
 	mimeType?: string;
 	sizeBytes?: number;
 }): Promise<{ id: string; key: string }> {
-	const key =
-		params.key ||
-		`schools/${params.schoolId}/media/${Date.now()}-test.jpg`;
+	const key = params.key || `schools/${params.schoolId}/media/${Date.now()}-test.jpg`;
 
 	const media = await prisma.mediaUpload.create({
 		data: {

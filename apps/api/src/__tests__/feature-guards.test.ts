@@ -26,6 +26,8 @@ function allTogglesEnabled() {
 		readingDiaryEnabled: true,
 		visitorManagementEnabled: true,
 		misIntegrationEnabled: true,
+		achievementsEnabled: true,
+		galleryEnabled: true,
 	};
 }
 
@@ -54,6 +56,8 @@ function allTogglesDisabled() {
 		readingDiaryEnabled: false,
 		visitorManagementEnabled: false,
 		misIntegrationEnabled: false,
+		achievementsEnabled: false,
+		galleryEnabled: false,
 	};
 }
 

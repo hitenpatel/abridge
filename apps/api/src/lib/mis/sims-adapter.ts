@@ -57,7 +57,7 @@ export class SimsAdapter implements MisAdapter {
 			throw new Error(`SIMS API error: ${response.status} ${response.statusText}`);
 		}
 
-		const students = (await response.json()) as Array<Record<string, any>>;
+		const students = (await response.json()) as Array<Record<string, unknown>>;
 
 		for (let i = 0; i < students.length; i++) {
 			const s = students[i];
@@ -137,7 +137,7 @@ export class SimsAdapter implements MisAdapter {
 			throw new Error(`SIMS API error: ${response.status} ${response.statusText}`);
 		}
 
-		const entries = (await response.json()) as Array<Record<string, any>>;
+		const entries = (await response.json()) as Array<Record<string, unknown>>;
 
 		for (let i = 0; i < entries.length; i++) {
 			const e = entries[i];

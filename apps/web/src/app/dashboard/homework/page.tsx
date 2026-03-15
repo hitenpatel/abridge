@@ -206,7 +206,10 @@ function ParentView() {
 													<button
 														type="button"
 														onClick={() => {
-															markCompleteMutation.mutate({ assignmentId: item.id, childId: childId ?? "" });
+															markCompleteMutation.mutate({
+																assignmentId: item.id,
+																childId: childId ?? "",
+															});
 														}}
 														disabled={markCompleteMutation.isPending}
 														className="flex items-center gap-1.5 rounded-md bg-green-600 px-3 py-1.5 text-xs text-white hover:bg-green-700 disabled:opacity-50"
@@ -521,7 +524,8 @@ function StaffView({ schoolId }: { schoolId: string }) {
 												{/* Completion count summary */}
 												{assignment._count.completions > 0 && (
 													<p className="text-sm text-muted-foreground">
-														{assignment._count.completions} completion{assignment._count.completions !== 1 ? "s" : ""} submitted
+														{assignment._count.completions} completion
+														{assignment._count.completions !== 1 ? "s" : ""} submitted
 													</p>
 												)}
 

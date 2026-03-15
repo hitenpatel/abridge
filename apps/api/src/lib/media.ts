@@ -1,6 +1,10 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { createId } from "@paralleldrive/cuid2";
+import { randomBytes } from "node:crypto";
+
+function createMediaId(): string {
+	return randomBytes(16).toString("hex");
+}
 
 export const ALLOWED_TYPES = [
 	"image/jpeg",
@@ -41,7 +45,7 @@ export async function getPresignedUploadUrl(
 	}
 
 	const ext = filename.split(".").pop() || "bin";
-	const key = `schools/${schoolId}/media/${createId()}.${ext}`;
+	const key = `schools/${schoolId}/media/${createMediaId()}.${ext}`;
 
 	const command = new PutObjectCommand({
 		Bucket: bucket,

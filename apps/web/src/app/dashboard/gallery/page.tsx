@@ -374,9 +374,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 								/>
 								<button
 									type="button"
-									onClick={() =>
-										deletePhoto.mutate({ schoolId, photoId: photo.id })
-									}
+									onClick={() => deletePhoto.mutate({ schoolId, photoId: photo.id })}
 									className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
 									aria-label="Delete photo"
 								>
@@ -463,11 +461,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 								<Button type="submit" disabled={createAlbum.isPending}>
 									{createAlbum.isPending ? "Creating..." : "Create"}
 								</Button>
-								<Button
-									type="button"
-									variant="outline"
-									onClick={() => setShowCreate(false)}
-								>
+								<Button type="button" variant="outline" onClick={() => setShowCreate(false)}>
 									Cancel
 								</Button>
 							</div>
@@ -537,9 +531,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 								<Button
 									size="sm"
 									variant="destructive"
-									onClick={() =>
-										deleteAlbum.mutate({ schoolId, albumId: album.id })
-									}
+									onClick={() => deleteAlbum.mutate({ schoolId, albumId: album.id })}
 								>
 									<Trash2 className="h-3 w-3" />
 								</Button>
@@ -583,9 +575,7 @@ export default function GalleryPage() {
 					{isStaff ? "Manage Gallery" : "Photo Gallery"}
 				</h1>
 				<p className="text-gray-500 mt-1">
-					{isStaff
-						? "Create albums and share photos with parents"
-						: "View photos from your school"}
+					{isStaff ? "Create albums and share photos with parents" : "View photos from your school"}
 				</p>
 			</div>
 

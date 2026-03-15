@@ -33,13 +33,15 @@ describe("API documentation (Swagger)", () => {
 
 		await app.ready();
 
-		const spec = app.swagger();
+		const spec = app.swagger() as Record<string, unknown>;
 		expect(spec).toBeDefined();
 		expect(spec.openapi).toMatch(/^3\./);
-		expect(spec.info.title).toBe("SchoolConnect API");
-		expect(spec.info.version).toBe("1.0.0");
-		expect(spec.servers).toHaveLength(1);
-		expect(spec.servers?.[0]?.url).toBe("http://localhost:4000");
+		const info = spec.info as Record<string, string>;
+		expect(info.title).toBe("SchoolConnect API");
+		expect(info.version).toBe("1.0.0");
+		const servers = spec.servers as Array<{ url: string }>;
+		expect(servers).toHaveLength(1);
+		expect(servers[0]?.url).toBe("http://localhost:4000");
 
 		await app.close();
 	});

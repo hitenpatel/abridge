@@ -14,7 +14,9 @@ vi.mock("../lib/media", () => ({
 		uploadUrl: "https://r2.example.com/presigned-url",
 		key: "schools/school-1/media/test123.jpg",
 	}),
-	getMediaUrl: vi.fn().mockReturnValue("https://media.example.com/schools/school-1/media/test123.jpg"),
+	getMediaUrl: vi
+		.fn()
+		.mockReturnValue("https://media.example.com/schools/school-1/media/test123.jpg"),
 }));
 
 const allFeatures = {

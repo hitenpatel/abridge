@@ -1,11 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import {
-	ALLOWED_TYPES,
-	MAX_IMAGE_SIZE,
-	MAX_VIDEO_SIZE,
-	getPresignedUploadUrl,
-} from "../lib/media";
+import { ALLOWED_TYPES, MAX_IMAGE_SIZE, MAX_VIDEO_SIZE, getPresignedUploadUrl } from "../lib/media";
 import { router, schoolFeatureProcedure } from "../trpc";
 
 export const mediaRouter = router({

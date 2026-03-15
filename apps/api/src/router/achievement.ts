@@ -1,12 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { assertFeatureEnabled } from "../lib/feature-guards";
-import {
-	protectedProcedure,
-	router,
-	schoolAdminProcedure,
-	schoolFeatureProcedure,
-} from "../trpc";
+import { protectedProcedure, router, schoolAdminProcedure, schoolFeatureProcedure } from "../trpc";
 
 export const achievementRouter = router({
 	createCategory: schoolAdminProcedure
@@ -48,6 +43,7 @@ export const achievementRouter = router({
 					readingDiaryEnabled: true,
 					visitorManagementEnabled: true,
 					misIntegrationEnabled: true,
+					galleryEnabled: true,
 				},
 			});
 			if (!school) {
@@ -183,14 +179,17 @@ export const achievementRouter = router({
 
 			const childMap = new Map(children.map((c) => [c.id, c]));
 
-			return grouped.map((g: { childId: string; _sum: { points: number | null } }, idx: number) => ({
-				rank: idx + 1,
-				childId: g.childId,
-				childName: childMap.get(g.childId)
-					? `${childMap.get(g.childId)!.firstName} ${childMap.get(g.childId)!.lastName}`
-					: "Unknown",
-				totalPoints: g._sum.points ?? 0,
-			}));
+			return grouped.map(
+				(g: { childId: string; _sum: { points: number | null } }, idx: number) => ({
+					rank: idx + 1,
+					childId: g.childId,
+					childName: (() => {
+						const c = childMap.get(g.childId);
+						return c ? `${c.firstName} ${c.lastName}` : "Unknown";
+					})(),
+					totalPoints: g._sum.points ?? 0,
+				}),
+			);
 		}),
 
 	getRecentAwards: protectedProcedure.query(async ({ ctx }) => {
