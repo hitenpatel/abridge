@@ -1,4 +1,5 @@
 import { router } from "../trpc";
+import { achievementRouter } from "./achievement";
 import { analyticsRouter } from "./analytics";
 import { attendanceRouter } from "./attendance";
 import { authRouter } from "./auth";
@@ -32,6 +33,7 @@ import { wellbeingRouter } from "./wellbeing";
 export const appRouter = router({
 	health: healthRouter,
 	auth: authRouter,
+	achievement: achievementRouter,
 	analytics: analyticsRouter,
 	calendar: calendarRouter,
 	classPost: classPostRouter,
