@@ -160,6 +160,7 @@ model User {
   visitorSignOuts             VisitorLog[]       @relation("VisitorSignOut")
   volunteerDbsRecords         VolunteerDbs[]     @relation("VolunteerDbsUser")
   volunteerDbsVerified        VolunteerDbs[]     @relation("VolunteerDbsVerifier")
+  eventRsvps                  EventRsvp[]        @relation("EventRsvpUser")
 
   @@map("users")
 }
@@ -258,6 +259,7 @@ model Child {
   homeworkCompletions HomeworkCompletion[]
   readingDiary        ReadingDiary?
   timetableEntries    TimetableEntry[]
+  eventRsvps          EventRsvp[]
 
   @@map("children")
 }
@@ -487,12 +489,40 @@ model Event {
   category          EventCategory
   recurrencePattern RecurrencePattern?
   recurrenceEndDate DateTime?
+  maxCapacity       Int?
+  rsvpRequired      Boolean            @default(false)
   createdAt         DateTime           @default(now())
 
-  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  school School      @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  rsvps  EventRsvp[]
 
   @@index([schoolId, startDate])
   @@map("events")
+}
+
+enum RsvpResponse {
+  YES
+  NO
+  MAYBE
+}
+
+model EventRsvp {
+  id        String       @id @default(cuid())
+  eventId   String
+  event     Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  childId   String
+  child     Child        @relation(fields: [childId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User         @relation("EventRsvpUser", fields: [userId], references: [id])
+  response  RsvpResponse
+  note      String?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@unique([eventId, childId])
+  @@index([eventId])
+  @@index([childId])
+  @@map("event_rsvp")
 }
 
 enum EventCategory {
