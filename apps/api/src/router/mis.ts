@@ -1,10 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { assertFeatureEnabled } from "../lib/feature-guards";
-import { CsvAdapter } from "../lib/mis/csv-adapter";
+import { getAdapter } from "../lib/mis/adapter-factory";
 import { router, schoolAdminProcedure, schoolFeatureProcedure } from "../trpc";
-
-const csvAdapter = new CsvAdapter();
 
 export const misRouter = router({
 	setupConnection: schoolAdminProcedure
@@ -71,7 +69,8 @@ export const misRouter = router({
 				});
 			}
 
-			const success = await csvAdapter.testConnection();
+			const adapter = getAdapter(connection.provider, connection.apiUrl, connection.credentials);
+			const success = await adapter.testConnection();
 			return { success };
 		}),
 
@@ -102,7 +101,8 @@ export const misRouter = router({
 			});
 
 			try {
-				const result = await csvAdapter.syncStudents(input.csvData);
+				const adapter = getAdapter(connection.provider, connection.apiUrl, connection.credentials);
+				const result = await adapter.syncStudents(input.csvData);
 
 				let created = 0;
 				let updated = 0;
@@ -233,7 +233,8 @@ export const misRouter = router({
 			});
 
 			try {
-				const result = await csvAdapter.syncAttendance(input.csvData);
+				const adapter = getAdapter(connection.provider, connection.apiUrl, connection.credentials);
+				const result = await adapter.syncAttendance(input.csvData);
 
 				let created = 0;
 				const updated = 0;
