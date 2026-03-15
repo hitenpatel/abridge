@@ -140,13 +140,12 @@ test.describe("MIS Integration", () => {
 		await expect(page.getByText(/1 created/i)).toBeVisible({ timeout: 15000 });
 
 		// === STEP 6: Verify sync history table shows an entry ===
-		await expect(page.getByText("Sync History")).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: "Sync History" })).toBeVisible({ timeout: 10000 });
 
 		// The sync history table should have a row with status and record counts
 		await expect(async () => {
 			await page.reload();
-			const historySection = page.locator("text=Sync History").locator("..").locator("..");
-			await expect(historySection.getByText(/SUCCESS|PARTIAL/i).first()).toBeVisible({ timeout: 5000 });
+			await expect(page.getByText(/SUCCESS|PARTIAL/i).first()).toBeVisible({ timeout: 5000 });
 		}).toPass({ timeout: 15000 });
 	});
 

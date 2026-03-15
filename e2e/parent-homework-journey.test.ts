@@ -98,7 +98,7 @@ test.describe("Parent Homework Tracker", () => {
 			day: "numeric",
 			month: "short",
 		});
-		await expect(page.getByText(dueDateFormatted)).toBeVisible({ timeout: 10000 });
+		await expect(page.getByText(dueDateFormatted).first()).toBeVisible({ timeout: 10000 });
 	});
 
 	test("parent should mark homework as complete", async ({ page }) => {

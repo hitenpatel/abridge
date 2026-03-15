@@ -213,8 +213,9 @@ test.describe("Staff Homework Management", () => {
 		await expect(cancelButton).toBeVisible({ timeout: 5000 });
 		await cancelButton.click();
 
-		// === STEP 7: Verify assignment status changes (cancelled) ===
+		// === STEP 7: Verify assignment disappears from list (ACTIVE filter removes it) ===
 		await page.waitForTimeout(2000);
-		await expect(page.getByText(/CANCELLED/i).first()).toBeVisible({ timeout: 10000 });
+		await page.reload();
+		await expect(page.getByText("Watercolour Painting")).toHaveCount(0, { timeout: 10000 });
 	});
 });
