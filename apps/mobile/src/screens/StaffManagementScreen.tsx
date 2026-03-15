@@ -42,13 +42,16 @@ export function StaffManagementScreen() {
 	} = trpc.staff.list.useQuery({ schoolId: schoolId as string }, { enabled: !!schoolId });
 
 	React.useEffect(() => {
-		console.log("[StaffMgmt] state:", JSON.stringify({
-			schoolId: schoolId?.slice(0, 8),
-			staffLoading,
-			staffError,
-			staffErrMsg: staffErr?.message,
-			staffCount: staff?.length,
-		}));
+		console.log(
+			"[StaffMgmt] state:",
+			JSON.stringify({
+				schoolId: schoolId?.slice(0, 8),
+				staffLoading,
+				staffError,
+				staffErrMsg: staffErr?.message,
+				staffCount: staff?.length,
+			}),
+		);
 	}, [schoolId, staffLoading, staffError, staffErr, staff]);
 
 	const { data: invitations, refetch: refetchInvitations } = trpc.invitation.list.useQuery(

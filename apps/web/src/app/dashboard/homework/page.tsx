@@ -241,9 +241,10 @@ function StaffView({ schoolId }: { schoolId: string }) {
 
 	const utils = trpc.useUtils();
 
-	const { data: assignments, isLoading: assignmentsLoading } = trpc.homework.listForTeacher.useQuery({
-		schoolId,
-	});
+	const { data: assignments, isLoading: assignmentsLoading } =
+		trpc.homework.listForTeacher.useQuery({
+			schoolId,
+		});
 
 	const setHomeworkMutation = trpc.homework.setHomework.useMutation({
 		onSuccess: () => {
@@ -293,7 +294,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 			const childHomeworkId = key.split(":")[1];
 			if (value.grade.trim() || value.feedback.trim()) {
 				gradeHomeworkMutation.mutate({
-					homeworkId: childHomeworkId!,
+					homeworkId: childHomeworkId ?? "",
 					grade: value.grade.trim() || undefined,
 					feedback: value.feedback.trim() || undefined,
 				});
@@ -307,7 +308,12 @@ function StaffView({ schoolId }: { schoolId: string }) {
 		}
 	};
 
-	const updateGrade = (assignmentId: string, childHomeworkId: string, field: "grade" | "feedback", value: string) => {
+	const updateGrade = (
+		assignmentId: string,
+		childHomeworkId: string,
+		field: "grade" | "feedback",
+		value: string,
+	) => {
 		const key = `${assignmentId}:${childHomeworkId}`;
 		setGrades((prev) => ({
 			...prev,
@@ -463,21 +469,15 @@ function StaffView({ schoolId }: { schoolId: string }) {
 									<div key={assignment.id} className="rounded-md border">
 										<button
 											type="button"
-											onClick={() =>
-												setExpandedAssignmentId(isExpanded ? null : assignment.id)
-											}
+											onClick={() => setExpandedAssignmentId(isExpanded ? null : assignment.id)}
 											className="flex w-full items-center gap-3 p-3 text-left hover:bg-muted/50 transition-colors"
 										>
 											<div className="flex-1">
 												<div className="flex items-center gap-2 mb-1">
-													<Badge className="bg-blue-100 text-blue-800">
-														{assignment.subject}
-													</Badge>
+													<Badge className="bg-blue-100 text-blue-800">{assignment.subject}</Badge>
 													<span className="font-medium text-sm">{assignment.title}</span>
 													{assignment.isReadingTask && (
-														<Badge className="bg-purple-100 text-purple-800">
-															Reading
-														</Badge>
+														<Badge className="bg-purple-100 text-purple-800">Reading</Badge>
 													)}
 												</div>
 												<div className="flex items-center gap-2">
@@ -521,18 +521,10 @@ function StaffView({ schoolId }: { schoolId: string }) {
 														<table className="w-full text-sm">
 															<thead>
 																<tr className="border-b">
-																	<th className="text-left py-2 pr-4 font-medium">
-																		Child
-																	</th>
-																	<th className="text-left py-2 pr-4 font-medium">
-																		Status
-																	</th>
-																	<th className="text-left py-2 pr-4 font-medium">
-																		Grade
-																	</th>
-																	<th className="text-left py-2 font-medium">
-																		Feedback
-																	</th>
+																	<th className="text-left py-2 pr-4 font-medium">Child</th>
+																	<th className="text-left py-2 pr-4 font-medium">Status</th>
+																	<th className="text-left py-2 pr-4 font-medium">Grade</th>
+																	<th className="text-left py-2 font-medium">Feedback</th>
 																</tr>
 															</thead>
 															<tbody>
@@ -540,9 +532,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 																	const gradeKey = `${assignment.id}:${child.id}`;
 																	return (
 																		<tr key={child.id} className="border-b last:border-0">
-																			<td className="py-2 pr-4">
-																				{child.childName}
-																			</td>
+																			<td className="py-2 pr-4">{child.childName}</td>
 																			<td className="py-2 pr-4">
 																				<Badge
 																					className={
@@ -551,19 +541,13 @@ function StaffView({ schoolId }: { schoolId: string }) {
 																							: "bg-gray-100 text-gray-600"
 																					}
 																				>
-																					{child.completedAt
-																						? "Completed"
-																						: "Pending"}
+																					{child.completedAt ? "Completed" : "Pending"}
 																				</Badge>
 																			</td>
 																			<td className="py-2 pr-4">
 																				<input
 																					type="text"
-																					value={
-																						grades[gradeKey]?.grade ??
-																						child.grade ??
-																						""
-																					}
+																					value={grades[gradeKey]?.grade ?? child.grade ?? ""}
 																					onChange={(e) =>
 																						updateGrade(
 																							assignment.id,
@@ -579,11 +563,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 																			<td className="py-2">
 																				<input
 																					type="text"
-																					value={
-																						grades[gradeKey]?.feedback ??
-																						child.feedback ??
-																						""
-																					}
+																					value={grades[gradeKey]?.feedback ?? child.feedback ?? ""}
 																					onChange={(e) =>
 																						updateGrade(
 																							assignment.id,
@@ -612,9 +592,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 														className="flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
 													>
 														<Save className="h-3.5 w-3.5" />
-														{gradeHomeworkMutation.isPending
-															? "Saving..."
-															: "Save All"}
+														{gradeHomeworkMutation.isPending ? "Saving..." : "Save All"}
 													</button>
 													<button
 														type="button"
@@ -623,9 +601,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 														className="flex items-center gap-1.5 rounded-md border border-red-200 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50"
 													>
 														<Trash2 className="h-3.5 w-3.5" />
-														{cancelHomeworkMutation.isPending
-															? "Cancelling..."
-															: "Cancel"}
+														{cancelHomeworkMutation.isPending ? "Cancelling..." : "Cancel"}
 													</button>
 												</div>
 											</div>

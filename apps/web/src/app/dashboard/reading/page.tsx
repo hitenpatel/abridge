@@ -6,15 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
-import {
-	BookOpen,
-	ChevronLeft,
-	Flame,
-	MessageSquare,
-	PenLine,
-	Plus,
-	Users,
-} from "lucide-react";
+import { BookOpen, ChevronLeft, Flame, MessageSquare, PenLine, Plus, Users } from "lucide-react";
 import { useMemo, useState } from "react";
 
 const READ_WITH_OPTIONS = ["ALONE", "PARENT", "TEACHER", "SIBLING", "OTHER"] as const;
@@ -53,7 +45,7 @@ function formatDate(date: Date): string {
 
 function todayString(): string {
 	const d = new Date();
-	return d.toISOString().split("T")[0]!;
+	return d.toISOString().split("T")[0] ?? "";
 }
 
 function ParentView() {
@@ -94,7 +86,11 @@ function ParentView() {
 	const logReadingMutation = trpc.readingDiary.logReading.useMutation({
 		onSuccess: () => {
 			if (childId) {
-				utils.readingDiary.getEntries.invalidate({ childId, startDate: weekStart, endDate: weekEnd });
+				utils.readingDiary.getEntries.invalidate({
+					childId,
+					startDate: weekStart,
+					endDate: weekEnd,
+				});
 				utils.readingDiary.getStats.invalidate({ childId });
 				utils.readingDiary.getDiary.invalidate({ childId });
 			}
@@ -178,9 +174,7 @@ function ParentView() {
 					) : diary ? (
 						<div className="flex items-center gap-4">
 							<div className="flex-1">
-								<p className="text-sm font-medium">
-									{diary.currentBook || "No book set"}
-								</p>
+								<p className="text-sm font-medium">{diary.currentBook || "No book set"}</p>
 								{diary.targetMinsPerDay && (
 									<p className="text-xs text-muted-foreground">
 										Target: {diary.targetMinsPerDay} mins/day
@@ -188,9 +182,7 @@ function ParentView() {
 								)}
 							</div>
 							{diary.readingLevel && (
-								<Badge className="bg-purple-100 text-purple-800">
-									Level: {diary.readingLevel}
-								</Badge>
+								<Badge className="bg-purple-100 text-purple-800">Level: {diary.readingLevel}</Badge>
 							)}
 						</div>
 					) : (
@@ -216,7 +208,9 @@ function ParentView() {
 						<div className="space-y-4">
 							{(stats?.currentStreak ?? 0) > 0 && (
 								<div className="text-center">
-									<span className="text-2xl font-bold">{stats?.currentStreak} days in a row! 🔥</span>
+									<span className="text-2xl font-bold">
+										{stats?.currentStreak} days in a row! 🔥
+									</span>
 								</div>
 							)}
 							<div className="flex justify-between gap-1">
@@ -235,12 +229,8 @@ function ParentView() {
 											}`}
 										>
 											<span className="text-xs font-medium">{day.label}</span>
-											<span className="text-xs text-muted-foreground">
-												{day.date.getDate()}
-											</span>
-											{hasEntry && (
-												<span className="text-green-600 text-xs mt-1">✓</span>
-											)}
+											<span className="text-xs text-muted-foreground">{day.date.getDate()}</span>
+											{hasEntry && <span className="text-green-600 text-xs mt-1">✓</span>}
 										</div>
 									);
 								})}
@@ -429,35 +419,25 @@ function ParentView() {
 							{entries.map((entry) => (
 								<div key={entry.id} className="rounded-md border p-3 space-y-1">
 									<div className="flex items-center gap-2">
-										<span className="text-sm font-medium">
-											{formatDate(entry.date)}
-										</span>
+										<span className="text-sm font-medium">{formatDate(entry.date)}</span>
 										<Badge className="bg-blue-100 text-blue-800">
 											{READ_WITH_LABELS[entry.readWith] ?? entry.readWith}
 										</Badge>
 										{entry.minutesRead && (
-											<span className="text-xs text-muted-foreground">
-												{entry.minutesRead} min
-											</span>
+											<span className="text-xs text-muted-foreground">{entry.minutesRead} min</span>
 										)}
 									</div>
 									<p className="text-sm">{entry.bookTitle}</p>
 									{entry.pagesOrChapter && (
-										<p className="text-xs text-muted-foreground">
-											{entry.pagesOrChapter}
-										</p>
+										<p className="text-xs text-muted-foreground">{entry.pagesOrChapter}</p>
 									)}
 									{entry.parentComment && (
-										<p className="text-sm text-muted-foreground italic">
-											"{entry.parentComment}"
-										</p>
+										<p className="text-sm text-muted-foreground italic">"{entry.parentComment}"</p>
 									)}
 									{entry.teacherComment && (
 										<div className="flex items-start gap-1.5 mt-1 bg-amber-50 rounded p-2">
 											<MessageSquare className="h-3.5 w-3.5 text-amber-600 mt-0.5 shrink-0" />
-											<p className="text-sm text-amber-800">
-												{entry.teacherComment}
-											</p>
+											<p className="text-sm text-amber-800">{entry.teacherComment}</p>
 										</div>
 									)}
 								</div>
@@ -698,9 +678,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 								{childEntries.map((entry) => (
 									<div key={entry.id} className="rounded-md border p-3 space-y-2">
 										<div className="flex items-center gap-2">
-											<span className="text-sm font-medium">
-												{formatDate(entry.date)}
-											</span>
+											<span className="text-sm font-medium">{formatDate(entry.date)}</span>
 											<Badge className="bg-blue-100 text-blue-800">
 												{READ_WITH_LABELS[entry.readWith] ?? entry.readWith}
 											</Badge>
@@ -715,9 +693,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 										</div>
 										<p className="text-sm">{entry.bookTitle}</p>
 										{entry.pagesOrChapter && (
-											<p className="text-xs text-muted-foreground">
-												{entry.pagesOrChapter}
-											</p>
+											<p className="text-xs text-muted-foreground">{entry.pagesOrChapter}</p>
 										)}
 										{entry.parentComment && (
 											<p className="text-sm text-muted-foreground italic">
@@ -727,9 +703,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 										{entry.teacherComment && (
 											<div className="flex items-start gap-1.5 bg-amber-50 rounded p-2">
 												<MessageSquare className="h-3.5 w-3.5 text-amber-600 mt-0.5 shrink-0" />
-												<p className="text-sm text-amber-800">
-													{entry.teacherComment}
-												</p>
+												<p className="text-sm text-amber-800">{entry.teacherComment}</p>
 											</div>
 										)}
 
@@ -838,6 +812,9 @@ function StaffView({ schoolId }: { schoolId: string }) {
 												key={child.childId}
 												className="border-b cursor-pointer hover:bg-muted/50"
 												onClick={() => handleSelectChild(child.childId)}
+												onKeyDown={(e) => {
+													if (e.key === "Enter" || e.key === " ") handleSelectChild(child.childId);
+												}}
 											>
 												<td className="py-2 pr-4 font-medium">{child.childName}</td>
 												<td className="py-2 pr-4">
@@ -850,9 +827,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 													)}
 												</td>
 												<td className="py-2 pr-4">
-													{child.lastEntryDate
-														? formatDate(child.lastEntryDate)
-														: "Never"}
+													{child.lastEntryDate ? formatDate(child.lastEntryDate) : "Never"}
 												</td>
 												<td className="py-2 pr-4">
 													<Badge className={getStatusColor(child.entriesThisWeek)}>
@@ -957,9 +932,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 									id="teacher-readwith"
 									value={teacherEntryReadWith}
 									onChange={(e) =>
-										setTeacherEntryReadWith(
-											e.target.value as (typeof READ_WITH_OPTIONS)[number],
-										)
+										setTeacherEntryReadWith(e.target.value as (typeof READ_WITH_OPTIONS)[number])
 									}
 									className="mt-1 block w-full rounded-md border p-2 text-sm"
 								>
@@ -1043,7 +1016,9 @@ export default function ReadingPage() {
 			<div>
 				<h1 className="text-2xl font-bold">Reading Diary</h1>
 				<p className="text-muted-foreground">
-					{isStaff ? "Monitor and support reading across the class" : "Track daily reading and build a streak"}
+					{isStaff
+						? "Monitor and support reading across the class"
+						: "Track daily reading and build a streak"}
 				</p>
 			</div>
 

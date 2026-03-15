@@ -250,9 +250,7 @@ export const readingDiaryRouter = router({
 			return children.map((child) => {
 				const diary = child.readingDiary;
 				const entries = diary?.entries ?? [];
-				const entriesThisWeek = entries.filter(
-					(e) => e.date >= weekStart,
-				);
+				const entriesThisWeek = entries.filter((e) => e.date >= weekStart);
 				const lastEntry = entries[0] ?? null;
 
 				return {
@@ -302,8 +300,7 @@ export const readingDiaryRouter = router({
 			const avgMinutes =
 				withMinutes.length > 0
 					? Math.round(
-							withMinutes.reduce((sum, e) => sum + (e.minutesRead ?? 0), 0) /
-								withMinutes.length,
+							withMinutes.reduce((sum, e) => sum + (e.minutesRead ?? 0), 0) / withMinutes.length,
 						)
 					: 0;
 
@@ -312,17 +309,13 @@ export const readingDiaryRouter = router({
 			weekStart.setDate(now.getDate() - now.getDay() + 1);
 			weekStart.setHours(0, 0, 0, 0);
 			const weekEntries = entries.filter((e) => e.date >= weekStart);
-			const uniqueWeekDays = new Set(
-				weekEntries.map((e) => e.date.toISOString().slice(0, 10)),
-			);
+			const uniqueWeekDays = new Set(weekEntries.map((e) => e.date.toISOString().slice(0, 10)));
 
 			// Current streak (consecutive days with entry, going backwards from today)
 			let streak = 0;
 			const checkDate = new Date(now);
 			checkDate.setHours(0, 0, 0, 0);
-			const entryDates = new Set(
-				entries.map((e) => e.date.toISOString().slice(0, 10)),
-			);
+			const entryDates = new Set(entries.map((e) => e.date.toISOString().slice(0, 10)));
 			while (entryDates.has(checkDate.toISOString().slice(0, 10))) {
 				streak++;
 				checkDate.setDate(checkDate.getDate() - 1);

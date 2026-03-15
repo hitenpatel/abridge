@@ -127,10 +127,7 @@ function createTestContext(overrides?: Record<string, any>): any {
 					schoolId: "school-1",
 					role: "ADMIN",
 				}),
-				findMany: vi.fn().mockResolvedValue([
-					{ userId: "staff-1" },
-					{ userId: "staff-2" },
-				]),
+				findMany: vi.fn().mockResolvedValue([{ userId: "staff-1" }, { userId: "staff-2" }]),
 			},
 			parentChild: {
 				findFirst: vi.fn().mockResolvedValue({
@@ -140,9 +137,7 @@ function createTestContext(overrides?: Record<string, any>): any {
 				}),
 			},
 			user: {
-				findMany: vi.fn().mockResolvedValue([
-					{ id: "staff-1", name: "Mrs Smith" },
-				]),
+				findMany: vi.fn().mockResolvedValue([{ id: "staff-1", name: "Mrs Smith" }]),
 			},
 		},
 		user: { id: "user-1", name: "Test User" },
@@ -385,9 +380,7 @@ describe("parents evening router", () => {
 			const ctx = createTestContext({ user: null, session: null });
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.parentsEvening.list({ schoolId: "school-1" }),
-			).rejects.toThrow();
+			await expect(caller.parentsEvening.list({ schoolId: "school-1" })).rejects.toThrow();
 		});
 	});
 
@@ -413,9 +406,7 @@ describe("parents evening router", () => {
 			const ctx = createTestContext({ user: null, session: null });
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.parentsEvening.listAll({ schoolId: "school-1" }),
-			).rejects.toThrow();
+			await expect(caller.parentsEvening.listAll({ schoolId: "school-1" })).rejects.toThrow();
 		});
 	});
 
@@ -613,9 +604,9 @@ describe("parents evening router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.parentsEvening.cancelBooking({ slotId: "slot-1" }),
-			).rejects.toThrow("Booking not found");
+			await expect(caller.parentsEvening.cancelBooking({ slotId: "slot-1" })).rejects.toThrow(
+				"Booking not found",
+			);
 		});
 
 		it("throws NOT_FOUND when slot does not exist", async () => {
@@ -623,9 +614,9 @@ describe("parents evening router", () => {
 			ctx.prisma.parentsEveningSlot.findUnique.mockResolvedValue(null);
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.parentsEvening.cancelBooking({ slotId: "slot-999" }),
-			).rejects.toThrow("Booking not found");
+			await expect(caller.parentsEvening.cancelBooking({ slotId: "slot-999" })).rejects.toThrow(
+				"Booking not found",
+			);
 		});
 
 		it("throws BAD_REQUEST when booking deadline has passed", async () => {
@@ -640,9 +631,9 @@ describe("parents evening router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.parentsEvening.cancelBooking({ slotId: "slot-1" }),
-			).rejects.toThrow("Booking deadline has passed");
+			await expect(caller.parentsEvening.cancelBooking({ slotId: "slot-1" })).rejects.toThrow(
+				"Booking deadline has passed",
+			);
 		});
 	});
 
@@ -783,9 +774,7 @@ describe("parents evening router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.parentsEvening.listAll({ schoolId: "school-1" }),
-			).rejects.toThrow();
+			await expect(caller.parentsEvening.listAll({ schoolId: "school-1" })).rejects.toThrow();
 		});
 
 		it("rejects non-staff user from staff procedures", async () => {

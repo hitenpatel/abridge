@@ -236,7 +236,7 @@ export const misRouter = router({
 				const result = await csvAdapter.syncAttendance(input.csvData);
 
 				let created = 0;
-				let updated = 0;
+				const updated = 0;
 				let skipped = 0;
 
 				for (const record of result.records) {

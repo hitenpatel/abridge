@@ -154,7 +154,7 @@ describe("homework router", () => {
 			});
 
 			expect(result.assignments).toHaveLength(1);
-			expect(result.assignments[0].subject).toBe("Maths");
+			expect(result.assignments[0]?.subject).toBe("Maths");
 			expect(ctx.prisma.child.findUnique).toHaveBeenCalledWith({
 				where: { id: "child-1" },
 			});

@@ -22,6 +22,10 @@ function allTogglesEnabled() {
 		clubBookingEnabled: true,
 		reportCardsEnabled: true,
 		communityHubEnabled: true,
+		homeworkEnabled: true,
+		readingDiaryEnabled: true,
+		visitorManagementEnabled: true,
+		misIntegrationEnabled: true,
 	};
 }
 
@@ -46,6 +50,10 @@ function allTogglesDisabled() {
 		clubBookingEnabled: false,
 		reportCardsEnabled: false,
 		communityHubEnabled: false,
+		homeworkEnabled: false,
+		readingDiaryEnabled: false,
+		visitorManagementEnabled: false,
+		misIntegrationEnabled: false,
 	};
 }
 

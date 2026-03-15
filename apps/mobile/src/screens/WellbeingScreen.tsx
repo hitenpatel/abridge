@@ -1,15 +1,7 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useCallback, useState } from "react";
-import {
-	Alert,
-	Pressable,
-	RefreshControl,
-	ScrollView,
-	Text,
-	TextInput,
-	View,
-} from "react-native";
+import { Alert, Pressable, RefreshControl, ScrollView, Text, TextInput, View } from "react-native";
 import type { RootStackParamList } from "../../App";
 import { Skeleton } from "../components/ui";
 import { trpc } from "../lib/trpc";
@@ -18,12 +10,54 @@ type Props = NativeStackScreenProps<RootStackParamList, "Wellbeing">;
 
 type Mood = "GREAT" | "GOOD" | "OK" | "LOW" | "STRUGGLING";
 
-const MOODS: { value: Mood; emoji: string; label: string; bg: string; activeBg: string; text: string }[] = [
-	{ value: "GREAT", emoji: "😄", label: "Great", bg: "bg-green-50", activeBg: "bg-green-100", text: "text-green-800" },
-	{ value: "GOOD", emoji: "🙂", label: "Good", bg: "bg-emerald-50", activeBg: "bg-emerald-100", text: "text-emerald-800" },
-	{ value: "OK", emoji: "😐", label: "OK", bg: "bg-yellow-50", activeBg: "bg-yellow-100", text: "text-yellow-800" },
-	{ value: "LOW", emoji: "😟", label: "Low", bg: "bg-orange-50", activeBg: "bg-orange-100", text: "text-orange-800" },
-	{ value: "STRUGGLING", emoji: "😢", label: "Struggling", bg: "bg-red-50", activeBg: "bg-red-100", text: "text-red-800" },
+const MOODS: {
+	value: Mood;
+	emoji: string;
+	label: string;
+	bg: string;
+	activeBg: string;
+	text: string;
+}[] = [
+	{
+		value: "GREAT",
+		emoji: "😄",
+		label: "Great",
+		bg: "bg-green-50",
+		activeBg: "bg-green-100",
+		text: "text-green-800",
+	},
+	{
+		value: "GOOD",
+		emoji: "🙂",
+		label: "Good",
+		bg: "bg-emerald-50",
+		activeBg: "bg-emerald-100",
+		text: "text-emerald-800",
+	},
+	{
+		value: "OK",
+		emoji: "😐",
+		label: "OK",
+		bg: "bg-yellow-50",
+		activeBg: "bg-yellow-100",
+		text: "text-yellow-800",
+	},
+	{
+		value: "LOW",
+		emoji: "😟",
+		label: "Low",
+		bg: "bg-orange-50",
+		activeBg: "bg-orange-100",
+		text: "text-orange-800",
+	},
+	{
+		value: "STRUGGLING",
+		emoji: "😢",
+		label: "Struggling",
+		bg: "bg-red-50",
+		activeBg: "bg-red-100",
+		text: "text-red-800",
+	},
 ];
 
 function getMoodConfig(mood: string) {
@@ -127,9 +161,7 @@ export function WellbeingScreen({ route }: Props) {
 								onPress={() => setSelectedMood(mood.value)}
 								accessibilityLabel={mood.label}
 								className={`flex-1 items-center py-3 rounded-2xl border-2 ${
-									isSelected
-										? `${mood.activeBg} border-current`
-										: `${mood.bg} border-transparent`
+									isSelected ? `${mood.activeBg} border-current` : `${mood.bg} border-transparent`
 								}`}
 								style={isSelected ? { borderColor: "#f56e3d" } : undefined}
 							>
@@ -157,9 +189,7 @@ export function WellbeingScreen({ route }: Props) {
 					className="bg-neutral-surface dark:bg-surface-dark rounded-2xl px-4 py-3 text-foreground dark:text-white font-sans text-base min-h-[80px]"
 					style={{ textAlignVertical: "top" }}
 				/>
-				<Text className="text-xs text-text-muted font-sans mt-1 text-right">
-					{note.length}/200
-				</Text>
+				<Text className="text-xs text-text-muted font-sans mt-1 text-right">{note.length}/200</Text>
 			</View>
 
 			{/* Submit Button */}
@@ -243,9 +273,7 @@ export function WellbeingScreen({ route }: Props) {
 				) : (
 					<View className="items-center py-12">
 						<MaterialIcons name="favorite-border" size={40} color="#D1D5DB" />
-						<Text className="text-text-muted font-sans-medium text-sm mt-3">
-							No check-ins yet
-						</Text>
+						<Text className="text-text-muted font-sans-medium text-sm mt-3">No check-ins yet</Text>
 					</View>
 				)}
 			</View>

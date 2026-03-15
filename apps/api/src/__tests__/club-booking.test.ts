@@ -146,9 +146,9 @@ describe("club booking router", () => {
 			const ctx = createTestContext({ user: null, session: null });
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.clubBooking.listClubs({ schoolId: "school-1" }),
-			).rejects.toThrow("UNAUTHORIZED");
+			await expect(caller.clubBooking.listClubs({ schoolId: "school-1" })).rejects.toThrow(
+				"UNAUTHORIZED",
+			);
 		});
 	});
 
@@ -176,18 +176,18 @@ describe("club booking router", () => {
 			ctx.prisma.club.findUnique.mockResolvedValueOnce(null);
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.clubBooking.getClub({ clubId: "nonexistent" }),
-			).rejects.toThrow("Club not found");
+			await expect(caller.clubBooking.getClub({ clubId: "nonexistent" })).rejects.toThrow(
+				"Club not found",
+			);
 		});
 
 		it("rejects unauthenticated users", async () => {
 			const ctx = createTestContext({ user: null, session: null });
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.clubBooking.getClub({ clubId: "club-1" }),
-			).rejects.toThrow("UNAUTHORIZED");
+			await expect(caller.clubBooking.getClub({ clubId: "club-1" })).rejects.toThrow(
+				"UNAUTHORIZED",
+			);
 		});
 	});
 
@@ -231,9 +231,7 @@ describe("club booking router", () => {
 			const ctx = createTestContext({ user: null, session: null });
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.clubBooking.createClub(validInput),
-			).rejects.toThrow("UNAUTHORIZED");
+			await expect(caller.clubBooking.createClub(validInput)).rejects.toThrow("UNAUTHORIZED");
 		});
 
 		it("rejects non-staff users", async () => {
@@ -241,9 +239,7 @@ describe("club booking router", () => {
 			ctx.prisma.staffMember.findUnique.mockResolvedValueOnce(null);
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.clubBooking.createClub(validInput),
-			).rejects.toThrow("Not a staff member");
+			await expect(caller.clubBooking.createClub(validInput)).rejects.toThrow("Not a staff member");
 		});
 
 		it("rejects when clubBooking feature is disabled", async () => {
@@ -254,9 +250,9 @@ describe("club booking router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.clubBooking.createClub(validInput),
-			).rejects.toThrow("Club Booking is disabled for this school");
+			await expect(caller.clubBooking.createClub(validInput)).rejects.toThrow(
+				"Club Booking is disabled for this school",
+			);
 		});
 
 		it("rejects invalid time format", async () => {

@@ -165,7 +165,11 @@ export function MessagesScreen() {
 
 	if (isLoading) {
 		return (
-			<View testID="messages-screen" className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
+			<View
+				testID="messages-screen"
+				className="flex-1 bg-background"
+				style={{ paddingTop: insets.top }}
+			>
 				<View className="px-6 pt-6 pb-4">
 					<Text className="text-2xl font-sans-bold text-foreground dark:text-white">Inbox</Text>
 				</View>

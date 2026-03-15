@@ -44,9 +44,7 @@ describe("dbInit router", () => {
 			const ctx = createTestContext();
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(caller.dbInit.initTables()).rejects.toThrow(
-				"Not available in production",
-			);
+			await expect(caller.dbInit.initTables()).rejects.toThrow("Not available in production");
 
 			process.env.NODE_ENV = originalEnv;
 		});
@@ -62,9 +60,7 @@ describe("dbInit router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(caller.dbInit.initTables()).rejects.toThrow(
-				"DB connection failed",
-			);
+			await expect(caller.dbInit.initTables()).rejects.toThrow("DB connection failed");
 
 			process.env.NODE_ENV = originalEnv;
 		});

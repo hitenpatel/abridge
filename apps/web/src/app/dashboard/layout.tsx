@@ -57,7 +57,9 @@ function DashboardLayoutInner({
 	session,
 	children,
 }: {
-	session: { name?: string; isParent?: boolean; staffRole?: string | null; schoolId?: string | null } | undefined;
+	session:
+		| { name?: string; isParent?: boolean; staffRole?: string | null; schoolId?: string | null }
+		| undefined;
 	children: React.ReactNode;
 }) {
 	const pathname = usePathname();

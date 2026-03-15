@@ -49,7 +49,11 @@ export function StudentProfileScreen({ route }: Props) {
 	const initials = `${firstName[0]}${lastName[0]}`;
 
 	return (
-		<ScrollView testID="student-profile-screen" className="flex-1 bg-background" contentContainerStyle={{ paddingBottom: 40 }}>
+		<ScrollView
+			testID="student-profile-screen"
+			className="flex-1 bg-background"
+			contentContainerStyle={{ paddingBottom: 40 }}
+		>
 			{/* Hero Avatar Section */}
 			<View className="items-center pt-8 pb-6">
 				<View className="relative w-32 h-32 mb-4">

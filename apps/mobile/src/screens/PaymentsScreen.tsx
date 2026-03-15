@@ -41,13 +41,16 @@ export function PaymentsScreen() {
 	} = trpc.payments.listOutstandingPayments.useQuery();
 
 	React.useEffect(() => {
-		console.log("[Payments] state:", JSON.stringify({
-			isLoading,
-			isError,
-			errorMsg: error?.message,
-			count: payments?.length,
-			titles: payments?.map((p) => p.title),
-		}));
+		console.log(
+			"[Payments] state:",
+			JSON.stringify({
+				isLoading,
+				isError,
+				errorMsg: error?.message,
+				count: payments?.length,
+				titles: payments?.map((p) => p.title),
+			}),
+		);
 	}, [isLoading, isError, error, payments]);
 
 	const createSession = trpc.payments.createCheckoutSession.useMutation({

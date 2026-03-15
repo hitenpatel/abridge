@@ -121,7 +121,12 @@ function SignInTab({ schoolId }: { schoolId: string }) {
 		},
 	});
 
-	const selectVisitor = (visitor: { name: string; organisation?: string | null; phone?: string | null; email?: string | null }) => {
+	const selectVisitor = (visitor: {
+		name: string;
+		organisation?: string | null;
+		phone?: string | null;
+		email?: string | null;
+	}) => {
 		setName(visitor.name);
 		setOrganisation(visitor.organisation ?? "");
 		setPhone(visitor.phone ?? "");
@@ -149,8 +154,8 @@ function SignInTab({ schoolId }: { schoolId: string }) {
 					<div className="mb-4 rounded-md bg-amber-50 border border-amber-200 p-3 text-sm text-amber-800 flex items-start gap-2">
 						<AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
 						<span>
-							This visitor does not have a valid DBS check on file. DBS verification is required
-							for volunteering activities. Please check the DBS Register.
+							This visitor does not have a valid DBS check on file. DBS verification is required for
+							volunteering activities. Please check the DBS Register.
 						</span>
 					</div>
 				)}
@@ -171,9 +176,11 @@ function SignInTab({ schoolId }: { schoolId: string }) {
 									setName(e.target.value);
 									setShowSuggestions(true);
 									if (e.target.value.length >= 2) {
-										setIsNewVisitor(!suggestions?.some(
-											(s) => s.name.toLowerCase() === e.target.value.toLowerCase(),
-										));
+										setIsNewVisitor(
+											!suggestions?.some(
+												(s) => s.name.toLowerCase() === e.target.value.toLowerCase(),
+											),
+										);
 									} else {
 										setIsNewVisitor(false);
 									}
@@ -195,9 +202,7 @@ function SignInTab({ schoolId }: { schoolId: string }) {
 									>
 										<span>{visitor.name}</span>
 										{visitor.organisation && (
-											<span className="text-xs text-muted-foreground">
-												{visitor.organisation}
-											</span>
+											<span className="text-xs text-muted-foreground">{visitor.organisation}</span>
 										)}
 									</button>
 								))}
@@ -287,8 +292,8 @@ function SignInTab({ schoolId }: { schoolId: string }) {
 						<div className="rounded-md bg-amber-50 border border-amber-200 p-3 text-sm text-amber-800 flex items-start gap-2">
 							<AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
 							<span>
-								Volunteering requires a valid DBS check. Please ensure the visitor's DBS
-								record is up to date in the DBS Register tab before signing in.
+								Volunteering requires a valid DBS check. Please ensure the visitor's DBS record is
+								up to date in the DBS Register tab before signing in.
 							</span>
 						</div>
 					)}
@@ -386,22 +391,17 @@ function OnSiteTab({ schoolId }: { schoolId: string }) {
 											{PURPOSE_LABELS[log.purpose] ?? log.purpose}
 										</Badge>
 										{log.badgeNumber && (
-											<Badge className="bg-blue-100 text-blue-800">
-												Badge: {log.badgeNumber}
-											</Badge>
+											<Badge className="bg-blue-100 text-blue-800">Badge: {log.badgeNumber}</Badge>
 										)}
 									</div>
 									<p className="text-xs text-muted-foreground">
-										Signed in at {formatTime(log.signInAt)} ({formatDuration(log.signInAt)}{" "}
-										ago)
+										Signed in at {formatTime(log.signInAt)} ({formatDuration(log.signInAt)} ago)
 										{log.visitingStaff && <> &middot; Visiting: {log.visitingStaff}</>}
 									</p>
 								</div>
 								<button
 									type="button"
-									onClick={() =>
-										signOutMutation.mutate({ schoolId, logId: log.id })
-									}
+									onClick={() => signOutMutation.mutate({ schoolId, logId: log.id })}
 									disabled={signOutMutation.isPending}
 									className="flex items-center gap-1.5 rounded-md border border-red-200 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50"
 								>
@@ -551,7 +551,9 @@ function DbsRegisterTab({ schoolId }: { schoolId: string }) {
 										expiryDate: expiryDate ? new Date(`${expiryDate}T00:00:00`) : undefined,
 									});
 								}}
-								disabled={!dbsName.trim() || !dbsNumber.trim() || !issueDate || addDbsMutation.isPending}
+								disabled={
+									!dbsName.trim() || !dbsNumber.trim() || !issueDate || addDbsMutation.isPending
+								}
 								className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
 							>
 								{addDbsMutation.isPending ? "Saving..." : "Save DBS Record"}
@@ -605,7 +607,9 @@ function DbsRegisterTab({ schoolId }: { schoolId: string }) {
 									<tr key={record.id} className="border-b">
 										<td className="py-2 pr-4">{record.name}</td>
 										<td className="py-2 pr-4 font-mono text-xs">{record.dbsNumber}</td>
-										<td className="py-2 pr-4">{DBS_TYPE_LABELS[record.dbsType] ?? record.dbsType}</td>
+										<td className="py-2 pr-4">
+											{DBS_TYPE_LABELS[record.dbsType] ?? record.dbsType}
+										</td>
 										<td className="py-2 pr-4">
 											{new Date(record.issueDate).toLocaleDateString("en-GB")}
 										</td>
@@ -784,12 +788,12 @@ function HistoryTab({ schoolId }: { schoolId: string }) {
 												{new Date(log.signInAt).toLocaleDateString("en-GB")}
 											</td>
 											<td className="py-2 pr-4">{log.visitor.name}</td>
-											<td className="py-2 pr-4">
-												{PURPOSE_LABELS[log.purpose] ?? log.purpose}
-											</td>
+											<td className="py-2 pr-4">{PURPOSE_LABELS[log.purpose] ?? log.purpose}</td>
 											<td className="py-2 pr-4">{formatTime(log.signInAt)}</td>
 											<td className="py-2 pr-4">
-												{log.signOutAt ? formatTime(log.signOutAt) : (
+												{log.signOutAt ? (
+													formatTime(log.signOutAt)
+												) : (
 													<Badge className="bg-green-100 text-green-800">On site</Badge>
 												)}
 											</td>
@@ -875,9 +879,7 @@ export default function VisitorsPage() {
 						type="button"
 						onClick={() => setActiveTab(tab.key)}
 						className={`rounded-t-md px-4 py-2 text-sm transition-colors ${
-							activeTab === tab.key
-								? "bg-primary text-primary-foreground"
-								: "hover:bg-muted"
+							activeTab === tab.key ? "bg-primary text-primary-foreground" : "hover:bg-muted"
 						}`}
 					>
 						{tab.label}

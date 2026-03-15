@@ -188,18 +188,16 @@ describe("settings router", () => {
 			const ctx = createTestContext();
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.settings.updateProfile({ name: "", phone: null }),
-			).rejects.toThrow();
+			await expect(caller.settings.updateProfile({ name: "", phone: null })).rejects.toThrow();
 		});
 
 		it("throws UNAUTHORIZED when no user session", async () => {
 			const ctx = createTestContext({ user: null, session: null });
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.settings.updateProfile({ name: "Test", phone: null }),
-			).rejects.toThrow("UNAUTHORIZED");
+			await expect(caller.settings.updateProfile({ name: "Test", phone: null })).rejects.toThrow(
+				"UNAUTHORIZED",
+			);
 		});
 	});
 
@@ -319,9 +317,9 @@ describe("settings router", () => {
 			const ctx = createTestContext({ user: null, session: null });
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.settings.getSchoolSettings({ schoolId: "school-1" }),
-			).rejects.toThrow("UNAUTHORIZED");
+			await expect(caller.settings.getSchoolSettings({ schoolId: "school-1" })).rejects.toThrow(
+				"UNAUTHORIZED",
+			);
 		});
 
 		it("throws FORBIDDEN for non-staff users", async () => {
@@ -329,9 +327,9 @@ describe("settings router", () => {
 			ctx.prisma.staffMember.findUnique.mockResolvedValue(null);
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.settings.getSchoolSettings({ schoolId: "school-1" }),
-			).rejects.toThrow("Admin access required for this school");
+			await expect(caller.settings.getSchoolSettings({ schoolId: "school-1" })).rejects.toThrow(
+				"Admin access required for this school",
+			);
 		});
 
 		it("throws FORBIDDEN for non-admin staff", async () => {
@@ -343,9 +341,9 @@ describe("settings router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.settings.getSchoolSettings({ schoolId: "school-1" }),
-			).rejects.toThrow("Admin access required for this school");
+			await expect(caller.settings.getSchoolSettings({ schoolId: "school-1" })).rejects.toThrow(
+				"Admin access required for this school",
+			);
 		});
 	});
 
@@ -453,9 +451,9 @@ describe("settings router", () => {
 			ctx.prisma.staffMember.findUnique.mockResolvedValue(null);
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.settings.getFeatureToggles({ schoolId: "school-1" }),
-			).rejects.toThrow("Not a staff member of this school");
+			await expect(caller.settings.getFeatureToggles({ schoolId: "school-1" })).rejects.toThrow(
+				"Not a staff member of this school",
+			);
 		});
 	});
 
@@ -488,9 +486,7 @@ describe("settings router", () => {
 			const ctx = createTestContext({ user: null, session: null });
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.settings.getFeatureTogglesForParent(),
-			).rejects.toThrow("UNAUTHORIZED");
+			await expect(caller.settings.getFeatureTogglesForParent()).rejects.toThrow("UNAUTHORIZED");
 		});
 	});
 
@@ -557,18 +553,18 @@ describe("settings router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.settings.getBranding({ schoolId: "school-1" }),
-			).rejects.toThrow("Admin access required for this school");
+			await expect(caller.settings.getBranding({ schoolId: "school-1" })).rejects.toThrow(
+				"Admin access required for this school",
+			);
 		});
 
 		it("throws UNAUTHORIZED when no user session", async () => {
 			const ctx = createTestContext({ user: null, session: null });
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(
-				caller.settings.getBranding({ schoolId: "school-1" }),
-			).rejects.toThrow("UNAUTHORIZED");
+			await expect(caller.settings.getBranding({ schoolId: "school-1" })).rejects.toThrow(
+				"UNAUTHORIZED",
+			);
 		});
 	});
 

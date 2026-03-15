@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { router } from "../trpc";
 import { misRouter } from "../router/mis";
+import { router } from "../trpc";
 
 vi.mock("../lib/redis", () => ({
 	getCachedStaffMembership: vi.fn().mockResolvedValue(null),
@@ -184,7 +184,7 @@ describe("mis router", () => {
 			expect(result.created).toBe(0);
 			expect(result.skipped).toBe(1);
 			expect(result.errors).toHaveLength(1);
-			expect(result.errors[0].field).toBe("last_name");
+			expect(result.errors[0]?.field).toBe("last_name");
 		});
 	});
 
@@ -231,7 +231,7 @@ describe("mis router", () => {
 
 			expect(result.created).toBe(0);
 			expect(result.skipped).toBe(1);
-			expect(result.errors[0].field).toBe("mark");
+			expect(result.errors[0]?.field).toBe("mark");
 		});
 	});
 
@@ -246,8 +246,8 @@ describe("mis router", () => {
 
 			expect(Array.isArray(result)).toBe(true);
 			expect(result).toHaveLength(1);
-			expect(result[0].syncType).toBe("STUDENTS");
-			expect(result[0].status).toBe("SUCCESS");
+			expect(result[0]?.syncType).toBe("STUDENTS");
+			expect(result[0]?.status).toBe("SUCCESS");
 			expect(ctx.prisma.misSyncLog.findMany).toHaveBeenCalled();
 		});
 	});

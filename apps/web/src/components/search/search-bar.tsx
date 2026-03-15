@@ -61,7 +61,10 @@ export function SearchBar() {
 	const debouncedQuery = useDebounce(query, 300);
 
 	// TODO: search router not yet implemented
-	const { data: results, isLoading } = { data: undefined as SearchResultItem[] | undefined, isLoading: false };
+	const { data: results, isLoading } = {
+		data: undefined as SearchResultItem[] | undefined,
+		isLoading: false,
+	};
 
 	useOnClickOutside(containerRef, () => setIsOpen(false));
 

@@ -466,7 +466,10 @@ function SlotBookingView({
 	if (isLoading) return <Skeleton className="h-24 w-full" />;
 
 	// Group slots by teacher
-	const grouped = new Map<string, { staffName: string; slots: NonNullable<typeof data>["slots"] }>();
+	const grouped = new Map<
+		string,
+		{ staffName: string; slots: NonNullable<typeof data>["slots"] }
+	>();
 	for (const slot of data?.slots ?? []) {
 		if (!grouped.has(slot.staffId)) {
 			grouped.set(slot.staffId, { staffName: slot.staffName, slots: [] });
@@ -599,7 +602,10 @@ function StaffSlotView({
 	if (isLoading) return <Skeleton className="h-24 w-full" />;
 
 	// Group slots by teacher
-	const grouped = new Map<string, { staffName: string; slots: NonNullable<typeof data>["slots"] }>();
+	const grouped = new Map<
+		string,
+		{ staffName: string; slots: NonNullable<typeof data>["slots"] }
+	>();
 	for (const slot of data?.slots ?? []) {
 		if (!grouped.has(slot.staffId)) {
 			grouped.set(slot.staffId, { staffName: slot.staffName, slots: [] });

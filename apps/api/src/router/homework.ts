@@ -71,7 +71,7 @@ export const homeworkRouter = router({
 			const assignments = await ctx.prisma.homeworkAssignment.findMany({
 				where: {
 					schoolId: child.schoolId,
-					yearGroup: child.yearGroup,
+					yearGroup: child.yearGroup ?? undefined,
 					status: "ACTIVE",
 				},
 				orderBy: { dueDate: "desc" },

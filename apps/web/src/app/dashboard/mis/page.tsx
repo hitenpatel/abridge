@@ -416,7 +416,9 @@ function ConnectionStatus({ schoolId }: { schoolId: string }) {
 				) : (
 					<div className="space-y-3">
 						<div className="flex items-center gap-3">
-							<Badge className={CONNECTION_STATUS_COLORS[status.status] ?? "bg-gray-100 text-gray-800"}>
+							<Badge
+								className={CONNECTION_STATUS_COLORS[status.status] ?? "bg-gray-100 text-gray-800"}
+							>
 								{status.status === "CONNECTED" && <CheckCircle2 className="h-3 w-3 mr-1" />}
 								{status.status === "DISCONNECTED" && <CloudOff className="h-3 w-3 mr-1" />}
 								{status.status === "ERROR" && <AlertTriangle className="h-3 w-3 mr-1" />}
@@ -424,7 +426,8 @@ function ConnectionStatus({ schoolId }: { schoolId: string }) {
 							</Badge>
 							{status.provider && (
 								<span className="text-sm text-muted-foreground">
-									Provider: {PROVIDERS.find((p) => p.value === status.provider)?.label ?? status.provider}
+									Provider:{" "}
+									{PROVIDERS.find((p) => p.value === status.provider)?.label ?? status.provider}
 								</span>
 							)}
 						</div>
@@ -503,7 +506,9 @@ function SyncHistory({ schoolId }: { schoolId: string }) {
 										<tr key={item.id} className="border-b last:border-b-0">
 											<td className="px-3 py-2">{item.type}</td>
 											<td className="px-3 py-2">
-												<Badge className={STATUS_COLORS[item.status] ?? "bg-gray-100 text-gray-800"}>
+												<Badge
+													className={STATUS_COLORS[item.status] ?? "bg-gray-100 text-gray-800"}
+												>
 													{item.status}
 												</Badge>
 											</td>

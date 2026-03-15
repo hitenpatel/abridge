@@ -1,9 +1,4 @@
-import type {
-	MisAdapter,
-	MisAttendanceRecord,
-	MisStudentRecord,
-	MisSyncResult,
-} from "./types";
+import type { MisAdapter, MisAttendanceRecord, MisStudentRecord, MisSyncResult } from "./types";
 
 const VALID_SESSIONS = ["AM", "PM"] as const;
 const VALID_MARKS = [
@@ -25,7 +20,9 @@ function parseCsv(data: string | Buffer): { headers: string[]; rows: string[][] 
 		return { headers: [], rows: [] };
 	}
 
-	const headers = lines[0].split(",").map((h) => h.trim().toLowerCase());
+	const headerLine = lines[0];
+	if (!headerLine) return { headers: [], rows: [] };
+	const headers = headerLine.split(",").map((h) => h.trim().toLowerCase());
 	const rows = lines.slice(1).map((line) => line.split(",").map((cell) => cell.trim()));
 
 	return { headers, rows };
@@ -52,6 +49,7 @@ export class CsvAdapter implements MisAdapter {
 
 		for (let i = 0; i < rows.length; i++) {
 			const row = rows[i];
+			if (!row) continue;
 			const rowNum = i + 2; // 1-indexed, skip header
 
 			const firstName = firstNameIdx >= 0 ? row[firstNameIdx] : undefined;
@@ -121,6 +119,7 @@ export class CsvAdapter implements MisAdapter {
 
 		for (let i = 0; i < rows.length; i++) {
 			const row = rows[i];
+			if (!row) continue;
 			const rowNum = i + 2;
 
 			const firstName = firstNameIdx >= 0 ? row[firstNameIdx] : undefined;
@@ -159,7 +158,7 @@ export class CsvAdapter implements MisAdapter {
 				errors.push({
 					row: rowNum,
 					field: "session",
-					message: `Invalid session: must be AM or PM`,
+					message: "Invalid session: must be AM or PM",
 				});
 				hasError = true;
 			}
