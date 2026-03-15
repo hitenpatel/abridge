@@ -49,6 +49,7 @@ async function main() {
 			readingDiaryEnabled: true,
 			visitorManagementEnabled: true,
 			misIntegrationEnabled: false,
+			achievementsEnabled: true,
 			communityTags: ["General", "Events", "Help Needed", "PTA", "Lost & Found"],
 			brandColor: "#1E3A5F",
 			brandFont: "DEFAULT",
@@ -730,6 +731,36 @@ async function main() {
 			isRegular: false,
 		},
 	});
+
+	// ─── Achievement Categories & Awards ─────────────────────────
+	const achievementCategories = [
+		{ name: "Star of the Week", icon: "⭐", pointValue: 10, type: "POINTS" as const },
+		{ name: "Reading Champion", icon: "📚", pointValue: 5, type: "BADGE" as const },
+		{ name: "Kindness Award", icon: "💛", pointValue: 5, type: "POINTS" as const },
+	];
+
+	for (const cat of achievementCategories) {
+		const existing = await prisma.achievementCategory.findFirst({
+			where: { schoolId: school.id, name: cat.name },
+		});
+		if (!existing) {
+			const category = await prisma.achievementCategory.create({
+				data: { schoolId: school.id, ...cat },
+			});
+			// Award a sample achievement to child1
+			await prisma.achievement.create({
+				data: {
+					schoolId: school.id,
+					childId: child1.id,
+					categoryId: category.id,
+					awardedBy: admin.id,
+					points: cat.pointValue,
+					reason: `${cat.name} award for great effort`,
+				},
+			});
+		}
+	}
+	console.log("Seeded achievement categories and awards");
 
 	console.log("Seed data created successfully");
 	console.log(

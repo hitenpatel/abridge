@@ -513,6 +513,7 @@ export async function enableSchoolFeature(params: {
 		readingDiaryEnabled: boolean;
 		visitorManagementEnabled: boolean;
 		misIntegrationEnabled: boolean;
+		achievementsEnabled: boolean;
 	}>;
 }): Promise<void> {
 	await prisma.school.update({
@@ -951,6 +952,56 @@ export async function seedEventWithRsvp(params: {
 	});
 
 	return { id: event.id, title: event.title };
+}
+
+/**
+ * Seed an achievement category for a school
+ */
+export async function seedAchievementCategory(params: {
+	schoolId: string;
+	name?: string;
+	icon?: string;
+	pointValue?: number;
+	type?: "POINTS" | "BADGE";
+}): Promise<{ id: string; name: string }> {
+	const name = params.name || "Star of the Week";
+
+	const category = await prisma.achievementCategory.create({
+		data: {
+			schoolId: params.schoolId,
+			name,
+			icon: params.icon || "⭐",
+			pointValue: params.pointValue || 5,
+			type: params.type || "POINTS",
+		},
+	});
+
+	return { id: category.id, name: category.name };
+}
+
+/**
+ * Seed an achievement award for a child
+ */
+export async function seedAchievement(params: {
+	schoolId: string;
+	childId: string;
+	categoryId: string;
+	awardedBy: string;
+	reason?: string;
+	points?: number;
+}): Promise<{ id: string; points: number }> {
+	const achievement = await prisma.achievement.create({
+		data: {
+			schoolId: params.schoolId,
+			childId: params.childId,
+			categoryId: params.categoryId,
+			awardedBy: params.awardedBy,
+			points: params.points || 5,
+			reason: params.reason || "Great effort",
+		},
+	});
+
+	return { id: achievement.id, points: achievement.points };
 }
 
 export { prisma };
