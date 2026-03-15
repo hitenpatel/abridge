@@ -406,6 +406,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 	const [readingDiary, setReadingDiary] = useState(false);
 	const [visitorManagement, setVisitorManagement] = useState(false);
 	const [misIntegration, setMisIntegration] = useState(false);
+	const [achievements, setAchievements] = useState(false);
 
 	useEffect(() => {
 		if (data) {
@@ -431,6 +432,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 			setReadingDiary(data.readingDiaryEnabled);
 			setVisitorManagement(data.visitorManagementEnabled);
 			setMisIntegration(data.misIntegrationEnabled);
+			setAchievements(data.achievementsEnabled);
 		}
 	}, [data]);
 
@@ -495,6 +497,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							readingDiaryEnabled: readingDiary,
 							visitorManagementEnabled: visitorManagement,
 							misIntegrationEnabled: misIntegration,
+							achievementsEnabled: achievements,
 						});
 					}}
 					className="space-y-4"
@@ -636,6 +639,12 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							onChange={setMisIntegration}
 							label="MIS Integration"
 							data-testid="toggle-mis-integration"
+						/>
+						<Toggle
+							checked={achievements}
+							onChange={setAchievements}
+							label="Achievements"
+							data-testid="toggle-achievements"
 						/>
 					</div>
 

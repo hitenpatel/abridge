@@ -27,6 +27,7 @@ interface FeatureToggles {
 	readingDiaryEnabled: boolean;
 	visitorManagementEnabled: boolean;
 	misIntegrationEnabled: boolean;
+	achievementsEnabled: boolean;
 }
 
 const defaultToggles: FeatureToggles = {
@@ -53,6 +54,7 @@ const defaultToggles: FeatureToggles = {
 	readingDiaryEnabled: false,
 	visitorManagementEnabled: false,
 	misIntegrationEnabled: false,
+	achievementsEnabled: false,
 };
 
 const FeatureToggleContext = createContext<FeatureToggles>(defaultToggles);

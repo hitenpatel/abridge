@@ -25,6 +25,7 @@ const featureToggleSelect = {
 	readingDiaryEnabled: true,
 	visitorManagementEnabled: true,
 	misIntegrationEnabled: true,
+	achievementsEnabled: true,
 } as const;
 
 export const settingsRouter = router({
@@ -180,6 +181,7 @@ export const settingsRouter = router({
 				readingDiaryEnabled: z.boolean().optional(),
 				visitorManagementEnabled: z.boolean().optional(),
 				misIntegrationEnabled: z.boolean().optional(),
+				achievementsEnabled: z.boolean().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

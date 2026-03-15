@@ -140,6 +140,7 @@ export const schoolFeatureProcedure = schoolStaffProcedure.use(async ({ ctx, nex
 			readingDiaryEnabled: true,
 			visitorManagementEnabled: true,
 			misIntegrationEnabled: true,
+			achievementsEnabled: true,
 		},
 	});
 
