@@ -11,11 +11,14 @@ import { dbInitRouter } from "./db-init";
 import { emergencyRouter } from "./emergency";
 import { formsRouter } from "./forms";
 import { healthRouter } from "./health";
+import { homeworkRouter } from "./homework";
 import { invitationRouter } from "./invitation";
+import { misRouter } from "./mis";
 import { mealBookingRouter } from "./meal-booking";
 import { messagingRouter } from "./messaging";
 import { parentsEveningRouter } from "./parents-evening";
 import { paymentsRouter } from "./payments";
+import { readingDiaryRouter } from "./reading-diary";
 import { reportCardRouter } from "./report-card";
 import { settingsRouter } from "./settings";
 import { setupRouter } from "./setup";
@@ -23,6 +26,7 @@ import { staffRouter } from "./staff";
 import { stripeRouter } from "./stripe";
 import { translationRouter } from "./translation";
 import { userRouter } from "./user";
+import { visitorRouter } from "./visitor";
 import { wellbeingRouter } from "./wellbeing";
 
 export const appRouter = router({
@@ -50,6 +54,10 @@ export const appRouter = router({
 	mealBooking: mealBookingRouter,
 	clubBooking: clubBookingRouter,
 	community: communityRouter,
+	homework: homeworkRouter,
+	readingDiary: readingDiaryRouter,
+	visitor: visitorRouter,
+	mis: misRouter,
 	reportCard: reportCardRouter,
 });
 
