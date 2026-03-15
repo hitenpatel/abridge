@@ -31,8 +31,8 @@ test.describe("Visitor Management", () => {
 		await page.getByRole("button", { name: /Create School/i }).click();
 		await expect(page.getByText("School Created!")).toBeVisible({ timeout: 10000 });
 
-		// === STEP 2: Register as admin ===
-		await page.goto("http://localhost:3000/register");
+		// === STEP 2: Register as admin (via setup link to become staff) ===
+		await page.getByRole("link", { name: /Go to Registration/i }).click();
 		await page.getByLabel("Full Name").fill("Visitor Admin");
 		await page.getByLabel("Email Address").fill(adminEmail);
 		await page.getByLabel("Password").fill("AdminPassword123!");
@@ -46,7 +46,13 @@ test.describe("Visitor Management", () => {
 		await enableSchoolFeature({ schoolId: school.id, features: { visitorManagementEnabled: true } });
 
 		// === STEP 4: Navigate to visitors page ===
-		await page.reload();
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /Visitors/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
+		}).toPass({ timeout: 30000 });
+
 		await page
 			.getByRole("link", { name: /Visitors/i })
 			.first()
@@ -72,8 +78,8 @@ test.describe("Visitor Management", () => {
 		// Fill badge number
 		await page.getByPlaceholder("e.g. V001").fill("V042");
 
-		// === STEP 7: Click Sign In ===
-		await page.locator("form").getByRole("button", { name: /Sign In/i }).click();
+		// === STEP 7: Click Sign In (last button with this name, inside the form area) ===
+		await page.locator("button", { hasText: /^Sign In$/ }).last().click();
 
 		// === STEP 8: Verify success message ===
 		await expect(page.getByText("Visitor signed in successfully")).toBeVisible({ timeout: 10000 });

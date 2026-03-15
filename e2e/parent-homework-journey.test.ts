@@ -88,7 +88,7 @@ test.describe("Parent Homework Tracker", () => {
 		await expect(page).toHaveURL(/\/dashboard\/homework/);
 
 		// === STEP 5: Verify homework page ===
-		await expect(page.getByRole("heading", { name: /Homework/i })).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: /Homework/i }).first()).toBeVisible({ timeout: 10000 });
 		await expect(page.getByText("Mathematics")).toBeVisible({ timeout: 10000 });
 		await expect(page.getByText("Times Tables Practice")).toBeVisible({ timeout: 10000 });
 

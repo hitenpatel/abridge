@@ -28,8 +28,8 @@ test.describe("MIS Integration", () => {
 		await page.getByRole("button", { name: /Create School/i }).click();
 		await expect(page.getByText("School Created!")).toBeVisible({ timeout: 10000 });
 
-		// === STEP 2: Register as admin ===
-		await page.goto("http://localhost:3000/register");
+		// === STEP 2: Register as admin (via setup link to become staff) ===
+		await page.getByRole("link", { name: /Go to Registration/i }).click();
 		await page.getByLabel("Full Name").fill("MIS Admin");
 		await page.getByLabel("Email Address").fill(adminEmail);
 		await page.getByLabel("Password").fill("AdminPassword123!");
@@ -92,8 +92,8 @@ test.describe("MIS Integration", () => {
 		await page.getByRole("button", { name: /Create School/i }).click();
 		await expect(page.getByText("School Created!")).toBeVisible({ timeout: 10000 });
 
-		// === STEP 2: Register as admin ===
-		await page.goto("http://localhost:3000/register");
+		// === STEP 2: Register as admin (via setup link to become staff) ===
+		await page.getByRole("link", { name: /Go to Registration/i }).click();
 		await page.getByLabel("Full Name").fill("History Admin");
 		await page.getByLabel("Email Address").fill(adminEmail);
 		await page.getByLabel("Password").fill("AdminPassword123!");
@@ -157,8 +157,8 @@ test.describe("MIS Integration", () => {
 		await page.getByRole("button", { name: /Create School/i }).click();
 		await expect(page.getByText("School Created!")).toBeVisible({ timeout: 10000 });
 
-		// === STEP 2: Register as admin ===
-		await page.goto("http://localhost:3000/register");
+		// === STEP 2: Register as admin (via setup link to become staff) ===
+		await page.getByRole("link", { name: /Go to Registration/i }).click();
 		await page.getByLabel("Full Name").fill("Error Admin");
 		await page.getByLabel("Email Address").fill(adminEmail);
 		await page.getByLabel("Password").fill("AdminPassword123!");

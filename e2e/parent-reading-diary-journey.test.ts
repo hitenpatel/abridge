@@ -60,7 +60,13 @@ test.describe("Parent Reading Diary", () => {
 		});
 
 		// === STEP 4: Navigate to reading diary ===
-		await page.reload();
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /Reading/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
+		}).toPass({ timeout: 30000 });
+
 		await page
 			.getByRole("link", { name: /Reading/i })
 			.first()
@@ -70,12 +76,15 @@ test.describe("Parent Reading Diary", () => {
 		// === STEP 5: Fill in reading log form ===
 		await expect(page.getByRole("heading", { name: /Log Reading/i })).toBeVisible({ timeout: 10000 });
 
+		// Click the "Log Reading Session" button to reveal the form
+		await page.getByRole("button", { name: /Log Reading Session/i }).click();
+
 		await page.getByLabel(/Book Title/i).fill("The BFG");
 		await page.getByLabel(/Minutes/i).fill("20");
 		await page.getByLabel(/Read With/i).selectOption("PARENT");
 
 		// === STEP 6: Submit ===
-		await page.getByRole("button", { name: /Submit/i }).click();
+		await page.getByRole("button", { name: /Save Entry/i }).click();
 
 		// === STEP 7: Verify entry appears ===
 		await page.waitForTimeout(1000);

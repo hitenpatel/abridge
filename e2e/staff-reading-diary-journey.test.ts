@@ -93,7 +93,7 @@ test.describe("Staff Reading Diary Dashboard", () => {
 		await expect(page).toHaveURL(/\/dashboard\/reading/);
 
 		// === STEP 4: Verify class overview table with child names ===
-		await expect(page.getByText(/Class Reading Overview/i)).toBeVisible({ timeout: 10000 });
+		await expect(page.getByText(/Class Overview/i)).toBeVisible({ timeout: 10000 });
 		await expect(page.getByText("Alice Turner")).toBeVisible();
 		await expect(page.getByText("Ben Wright")).toBeVisible();
 	});
@@ -155,11 +155,11 @@ test.describe("Staff Reading Diary Dashboard", () => {
 		await page.getByText("Clara Evans").click();
 
 		// === STEP 5: Update reading level ===
-		await expect(page.getByText("Orange")).toBeVisible({ timeout: 10000 });
-		await page.getByRole("button", { name: /Edit/i }).first().click();
+		await expect(page.getByText("Update Reading Diary")).toBeVisible({ timeout: 10000 });
+		await page.getByLabel(/Reading Level/i).click();
 		await page.getByLabel(/Reading Level/i).clear();
 		await page.getByLabel(/Reading Level/i).fill("Turquoise");
-		await page.getByRole("button", { name: /Save/i }).click();
+		await page.getByRole("button", { name: /Update Diary/i }).click();
 
 		// === STEP 6: Verify updated ===
 		await page.waitForTimeout(1000);
@@ -226,12 +226,12 @@ test.describe("Staff Reading Diary Dashboard", () => {
 		await expect(page.getByText("Dylan Parker")).toBeVisible({ timeout: 10000 });
 		await page.getByText("Dylan Parker").click();
 
-		// === STEP 5: Click on an entry and add teacher comment ===
-		await expect(page.getByText(/Read well today/i).first()).toBeVisible({ timeout: 10000 });
-		await page.getByText(/Read well today/i).first().click();
+		// === STEP 5: Click "Add comment" on an entry and type teacher comment ===
+		await expect(page.getByText(/Add comment/i).first()).toBeVisible({ timeout: 10000 });
+		await page.getByText(/Add comment/i).first().click();
 
-		await page.getByLabel(/Teacher Comment/i).fill("Great fluency and expression!");
-		await page.getByRole("button", { name: /Save/i }).click();
+		await page.getByPlaceholder("Add a comment...").fill("Great fluency and expression!");
+		await page.getByRole("button", { name: /^Save$/i }).click();
 
 		// === STEP 6: Verify comment saved ===
 		await page.waitForTimeout(1000);

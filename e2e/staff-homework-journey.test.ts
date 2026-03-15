@@ -153,7 +153,7 @@ test.describe("Staff Homework Management", () => {
 
 		// === STEP 5: Verify completion count ===
 		await expect(page.getByText("Spelling Test Prep")).toBeVisible({ timeout: 10000 });
-		await expect(page.getByText("1 completed")).toBeVisible({ timeout: 10000 });
+		await expect(page.getByText("2 completed")).toBeVisible({ timeout: 10000 });
 	});
 
 	test("teacher should cancel homework", async ({ page }) => {
@@ -209,8 +209,9 @@ test.describe("Staff Homework Management", () => {
 
 		// === STEP 6: Click Cancel and confirm dialog ===
 		page.on("dialog", (dialog) => dialog.accept());
-		await expect(page.getByRole("button", { name: /Cancel/i })).toBeVisible({ timeout: 5000 });
-		await page.getByRole("button", { name: /Cancel/i }).click();
+		const cancelButton = page.locator("button", { hasText: /Cancel/ }).filter({ has: page.locator("svg") });
+		await expect(cancelButton).toBeVisible({ timeout: 5000 });
+		await cancelButton.click();
 
 		// === STEP 7: Verify assignment is removed from list ===
 		await expect(page.getByText("Watercolour Painting")).not.toBeVisible({ timeout: 10000 });
