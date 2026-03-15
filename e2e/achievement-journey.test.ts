@@ -1,9 +1,23 @@
 import { expect, test } from "@playwright/test";
+import {
+	enableSchoolFeature,
+	getSchoolByURN,
+	getUserByEmail,
+	seedAchievementCategory,
+	seedChildForParent,
+} from "./helpers/seed-data";
 
 /**
  * Achievement journey tests.
  */
 test.describe("Achievements", () => {
+	let uniqueURN: string;
+	let adminEmail: string;
+
+	test.beforeEach(() => {
+		uniqueURN = Math.floor(100000 + Math.random() * 900000).toString();
+		adminEmail = `admin-ach-${uniqueURN}@e2e-test.com`;
+	});
 	test("staff should see awards page with category management", async ({ page }) => {
 		// Login as staff (use seed admin)
 		await page.goto("http://localhost:3000/login");
@@ -27,6 +41,99 @@ test.describe("Achievements", () => {
 
 		// Staff should see Categories section
 		await expect(page.getByRole("heading", { name: /Categories/i })).toBeVisible();
+	});
+
+	test("staff should award an achievement to a student", async ({ page }) => {
+		// === STEP 1: Setup school ===
+		await page.goto("http://localhost:3000/setup");
+		await page.getByLabel("School Name").fill(`Award School ${uniqueURN}`);
+		await page.getByLabel("Ofsted URN").fill(uniqueURN);
+		await page.getByLabel("Admin Email").fill(adminEmail);
+		await page.getByLabel("Setup Key").fill("admin123");
+		await page.getByRole("button", { name: /Create School/i }).click();
+		await expect(page.getByText("School Created!")).toBeVisible({ timeout: 10000 });
+
+		// === STEP 2: Register as admin via "Go to Registration" link ===
+		await page.getByRole("link", { name: /Go to Registration/i }).click();
+		await expect(page).toHaveURL(/\/register/);
+		await page.getByLabel("Full Name").fill("Award Admin");
+		await page.getByLabel("Email Address").fill(adminEmail);
+		await page.getByLabel("Password").fill("AdminPassword123!");
+		await page.getByRole("button", { name: /Register/i }).click();
+		await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
+
+		// === STEP 3: Seed data ===
+		const school = await getSchoolByURN(uniqueURN);
+		const user = await getUserByEmail(adminEmail);
+		if (!school || !user) throw new Error("Failed to get school or user");
+
+		await enableSchoolFeature({ schoolId: school.id, features: { achievementsEnabled: true } });
+
+		const child = await seedChildForParent({
+			userId: user.id,
+			schoolId: school.id,
+			firstName: "Emma",
+			lastName: "Taylor",
+		});
+
+		const category = await seedAchievementCategory({
+			schoolId: school.id,
+			name: "Brilliant Work",
+			icon: "🌟",
+			pointValue: 10,
+		});
+
+		// === STEP 4: Navigate to achievements ===
+		await page.reload();
+		await page.getByRole("link", { name: /Awards/i }).first().click();
+		await expect(page).toHaveURL(/\/dashboard\/achievements/);
+
+		// === STEP 5: Fill the quick-award form ===
+		await expect(page.getByRole("heading", { name: /Award Achievement/i })).toBeVisible({
+			timeout: 10000,
+		});
+
+		await page.getByTestId("award-child-input").fill(child.id);
+		await page.getByTestId("award-category-select").selectOption(category.id);
+		await page.getByTestId("award-reason-input").fill("Outstanding effort in maths");
+
+		// === STEP 6: Submit the award ===
+		await page.getByTestId("award-submit").click();
+
+		// === STEP 7: Verify success ===
+		await expect(page.getByText("Achievement awarded!")).toBeVisible({ timeout: 10000 });
+
+		// Leaderboard should now show the child
+		await expect(page.getByTestId("leaderboard-entry")).toBeVisible({ timeout: 10000 });
+		await expect(page.getByText("Emma Taylor")).toBeVisible();
+	});
+
+	test("achievements page should show disabled state when feature is off", async ({ page }) => {
+		// === STEP 1: Setup school without enabling achievements ===
+		await page.goto("http://localhost:3000/setup");
+		await page.getByLabel("School Name").fill(`No Ach ${uniqueURN}`);
+		await page.getByLabel("Ofsted URN").fill(uniqueURN);
+		await page.getByLabel("Admin Email").fill(adminEmail);
+		await page.getByLabel("Setup Key").fill("admin123");
+		await page.getByRole("button", { name: /Create School/i }).click();
+		await expect(page.getByText("School Created!")).toBeVisible({ timeout: 10000 });
+
+		// === STEP 2: Register ===
+		await page.getByRole("link", { name: /Go to Registration/i }).click();
+		await expect(page).toHaveURL(/\/register/);
+		await page.getByLabel("Full Name").fill("No Ach Parent");
+		await page.getByLabel("Email Address").fill(adminEmail);
+		await page.getByLabel("Password").fill("ParentPassword123!");
+		await page.getByRole("button", { name: /Register/i }).click();
+		await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
+
+		// === STEP 3: Navigate directly to achievements (feature NOT enabled) ===
+		await page.goto("http://localhost:3000/dashboard/achievements");
+
+		// === STEP 4: Should show disabled message ===
+		await expect(
+			page.getByRole("heading", { name: /Achievements is not enabled/i }),
+		).toBeVisible({ timeout: 10000 });
 	});
 
 	test("parent should see achievements page with total points", async ({ page }) => {
