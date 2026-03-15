@@ -23,6 +23,10 @@ interface FeatureToggles {
 	clubBookingEnabled: boolean;
 	reportCardsEnabled: boolean;
 	communityHubEnabled: boolean;
+	homeworkEnabled: boolean;
+	readingDiaryEnabled: boolean;
+	visitorManagementEnabled: boolean;
+	misIntegrationEnabled: boolean;
 }
 
 const defaultToggles: FeatureToggles = {
@@ -45,6 +49,10 @@ const defaultToggles: FeatureToggles = {
 	clubBookingEnabled: false,
 	reportCardsEnabled: false,
 	communityHubEnabled: false,
+	homeworkEnabled: false,
+	readingDiaryEnabled: false,
+	visitorManagementEnabled: false,
+	misIntegrationEnabled: false,
 };
 
 const FeatureToggleContext = createContext<FeatureToggles>(defaultToggles);

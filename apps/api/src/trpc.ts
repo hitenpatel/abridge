@@ -136,6 +136,10 @@ export const schoolFeatureProcedure = schoolStaffProcedure.use(async ({ ctx, nex
 			clubBookingEnabled: true,
 			reportCardsEnabled: true,
 			communityHubEnabled: true,
+			homeworkEnabled: true,
+			readingDiaryEnabled: true,
+			visitorManagementEnabled: true,
+			misIntegrationEnabled: true,
 		},
 	});
 

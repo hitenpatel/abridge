@@ -15,7 +15,11 @@ type FeatureName =
 	| "mealBooking"
 	| "clubBooking"
 	| "reportCards"
-	| "communityHub";
+	| "communityHub"
+	| "homework"
+	| "readingDiary"
+	| "visitorManagement"
+	| "misIntegration";
 
 interface SchoolFeatures {
 	messagingEnabled: boolean;
@@ -37,6 +41,10 @@ interface SchoolFeatures {
 	clubBookingEnabled: boolean;
 	reportCardsEnabled: boolean;
 	communityHubEnabled: boolean;
+	homeworkEnabled: boolean;
+	readingDiaryEnabled: boolean;
+	visitorManagementEnabled: boolean;
+	misIntegrationEnabled: boolean;
 }
 
 const featureFieldMap: Record<FeatureName, keyof SchoolFeatures> = {
@@ -54,6 +62,10 @@ const featureFieldMap: Record<FeatureName, keyof SchoolFeatures> = {
 	clubBooking: "clubBookingEnabled",
 	reportCards: "reportCardsEnabled",
 	communityHub: "communityHubEnabled",
+	homework: "homeworkEnabled",
+	readingDiary: "readingDiaryEnabled",
+	visitorManagement: "visitorManagementEnabled",
+	misIntegration: "misIntegrationEnabled",
 };
 
 const featureLabel: Record<FeatureName, string> = {
@@ -71,6 +83,10 @@ const featureLabel: Record<FeatureName, string> = {
 	clubBooking: "Club Booking",
 	reportCards: "Report Cards",
 	communityHub: "Community Hub",
+	homework: "Homework Tracker",
+	readingDiary: "Reading Diary",
+	visitorManagement: "Visitor Management",
+	misIntegration: "MIS Integration",
 };
 
 const categoryFieldMap: Record<PaymentCategory, keyof SchoolFeatures> = {
