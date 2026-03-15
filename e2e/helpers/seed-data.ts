@@ -515,6 +515,7 @@ export async function enableSchoolFeature(params: {
 		misIntegrationEnabled: boolean;
 		achievementsEnabled: boolean;
 		galleryEnabled: boolean;
+		calendarEnabled: boolean;
 	}>;
 }): Promise<void> {
 	await prisma.school.update({
