@@ -60,7 +60,9 @@ test.describe("Staff Homework Management", () => {
 		await expect(page).toHaveURL(/\/dashboard\/homework/);
 
 		// === STEP 5: Fill in Set Homework form ===
-		await expect(page.getByRole("heading", { name: "Set Homework" })).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: "Set Homework" })).toBeVisible({
+			timeout: 10000,
+		});
 
 		await page.getByLabel("Subject").fill("Mathematics");
 		await page.getByLabel("Title").fill("Fractions Worksheet");
@@ -209,7 +211,9 @@ test.describe("Staff Homework Management", () => {
 
 		// === STEP 6: Click Cancel and confirm dialog ===
 		page.on("dialog", (dialog) => dialog.accept());
-		const cancelButton = page.locator("button", { hasText: /Cancel/ }).filter({ has: page.locator("svg") });
+		const cancelButton = page
+			.locator("button", { hasText: /Cancel/ })
+			.filter({ has: page.locator("svg") });
 		await expect(cancelButton).toBeVisible({ timeout: 5000 });
 		await cancelButton.click();
 

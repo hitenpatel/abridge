@@ -1,9 +1,5 @@
 import { expect, test } from "@playwright/test";
-import {
-	enableSchoolFeature,
-	getSchoolByURN,
-	seedMisConnection,
-} from "./helpers/seed-data";
+import { enableSchoolFeature, getSchoolByURN, seedMisConnection } from "./helpers/seed-data";
 
 /**
  * MIS Integration E2E Journey
@@ -78,7 +74,10 @@ test.describe("MIS Integration", () => {
 		});
 
 		// === STEP 7: Click Upload button (first one, for students) ===
-		await page.getByRole("button", { name: /^Upload$/i }).first().click();
+		await page
+			.getByRole("button", { name: /^Upload$/i })
+			.first()
+			.click();
 
 		// === STEP 8: Verify sync result shows created count ===
 		await expect(page.getByText(/3 created/i)).toBeVisible({ timeout: 15000 });
@@ -136,11 +135,16 @@ test.describe("MIS Integration", () => {
 			buffer: Buffer.from(csvContent),
 		});
 
-		await page.getByRole("button", { name: /^Upload$/i }).first().click();
+		await page
+			.getByRole("button", { name: /^Upload$/i })
+			.first()
+			.click();
 		await expect(page.getByText(/1 created/i)).toBeVisible({ timeout: 15000 });
 
 		// === STEP 6: Verify sync history table shows an entry ===
-		await expect(page.getByRole("heading", { name: "Sync History" })).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: "Sync History" })).toBeVisible({
+			timeout: 10000,
+		});
 
 		// The sync history table should have a row with status and record counts
 		await expect(async () => {
@@ -203,7 +207,10 @@ test.describe("MIS Integration", () => {
 			buffer: Buffer.from(badCsvContent),
 		});
 
-		await page.getByRole("button", { name: /^Upload$/i }).first().click();
+		await page
+			.getByRole("button", { name: /^Upload$/i })
+			.first()
+			.click();
 
 		// === STEP 6: Verify error table shows row-level issues ===
 		await expect(page.getByText(/errors/i)).toBeVisible({ timeout: 15000 });

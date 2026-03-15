@@ -74,7 +74,9 @@ test.describe("Parent Reading Diary", () => {
 		await expect(page).toHaveURL(/\/dashboard\/reading/);
 
 		// === STEP 5: Fill in reading log form ===
-		await expect(page.getByRole("heading", { name: /Log Reading/i })).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: /Log Reading/i })).toBeVisible({
+			timeout: 10000,
+		});
 
 		// Click the "Log Reading Session" button to reveal the form
 		await page.getByRole("button", { name: /Log Reading Session/i }).click();
@@ -230,8 +232,8 @@ test.describe("Parent Reading Diary", () => {
 		await page.goto("http://localhost:3000/dashboard/reading");
 
 		// === STEP 3: Should show disabled message ===
-		await expect(
-			page.getByRole("heading", { name: /Reading Diary is not enabled/i }),
-		).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: /Reading Diary is not enabled/i })).toBeVisible({
+			timeout: 10000,
+		});
 	});
 });

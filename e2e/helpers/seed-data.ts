@@ -514,6 +514,7 @@ export async function enableSchoolFeature(params: {
 		visitorManagementEnabled: boolean;
 		misIntegrationEnabled: boolean;
 		achievementsEnabled: boolean;
+		galleryEnabled: boolean;
 	}>;
 }): Promise<void> {
 	await prisma.school.update({
@@ -1002,6 +1003,83 @@ export async function seedAchievement(params: {
 	});
 
 	return { id: achievement.id, points: achievement.points };
+}
+
+/**
+ * Seed a gallery album for a school
+ */
+export async function seedGalleryAlbum(params: {
+	schoolId: string;
+	createdBy: string;
+	title?: string;
+	description?: string;
+	yearGroup?: string;
+	isPublished?: boolean;
+}): Promise<{ id: string; title: string }> {
+	const title = params.title || "School Event Photos";
+
+	const album = await prisma.galleryAlbum.create({
+		data: {
+			schoolId: params.schoolId,
+			createdBy: params.createdBy,
+			title,
+			description: params.description || "Photos from a school event",
+			yearGroup: params.yearGroup,
+			isPublished: params.isPublished ?? false,
+		},
+	});
+
+	return { id: album.id, title: album.title };
+}
+
+/**
+ * Seed a media upload record
+ */
+export async function seedMediaUpload(params: {
+	schoolId: string;
+	uploadedBy: string;
+	key?: string;
+	filename?: string;
+	mimeType?: string;
+	sizeBytes?: number;
+}): Promise<{ id: string; key: string }> {
+	const key =
+		params.key ||
+		`schools/${params.schoolId}/media/${Date.now()}-test.jpg`;
+
+	const media = await prisma.mediaUpload.create({
+		data: {
+			schoolId: params.schoolId,
+			uploadedBy: params.uploadedBy,
+			key,
+			filename: params.filename || "test-photo.jpg",
+			mimeType: params.mimeType || "image/jpeg",
+			sizeBytes: params.sizeBytes || 102400,
+		},
+	});
+
+	return { id: media.id, key: media.key };
+}
+
+/**
+ * Seed a gallery photo (add media to album)
+ */
+export async function seedGalleryPhoto(params: {
+	albumId: string;
+	mediaId: string;
+	caption?: string;
+	sortOrder?: number;
+}): Promise<{ id: string }> {
+	const photo = await prisma.galleryPhoto.create({
+		data: {
+			albumId: params.albumId,
+			mediaId: params.mediaId,
+			caption: params.caption,
+			sortOrder: params.sortOrder ?? 0,
+		},
+	});
+
+	return { id: photo.id };
 }
 
 export { prisma };

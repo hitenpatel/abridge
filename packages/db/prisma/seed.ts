@@ -50,6 +50,7 @@ async function main() {
 			visitorManagementEnabled: true,
 			misIntegrationEnabled: false,
 			achievementsEnabled: true,
+			galleryEnabled: true,
 			communityTags: ["General", "Events", "Help Needed", "PTA", "Lost & Found"],
 			brandColor: "#1E3A5F",
 			brandFont: "DEFAULT",
@@ -761,6 +762,67 @@ async function main() {
 		}
 	}
 	console.log("Seeded achievement categories and awards");
+
+	// ─── Gallery Albums & Photos ──────────────────────────────
+	const existingAlbum = await prisma.galleryAlbum.findFirst({
+		where: { schoolId: school.id },
+	});
+	if (!existingAlbum) {
+		// Create sample media uploads
+		const mediaUpload1 = await prisma.mediaUpload.create({
+			data: {
+				schoolId: school.id,
+				uploadedBy: admin.id,
+				key: `schools/${school.id}/media/sports-day-1.jpg`,
+				filename: "sports-day-1.jpg",
+				mimeType: "image/jpeg",
+				sizeBytes: 204800,
+			},
+		});
+
+		const mediaUpload2 = await prisma.mediaUpload.create({
+			data: {
+				schoolId: school.id,
+				uploadedBy: admin.id,
+				key: `schools/${school.id}/media/sports-day-2.jpg`,
+				filename: "sports-day-2.jpg",
+				mimeType: "image/jpeg",
+				sizeBytes: 307200,
+			},
+		});
+
+		// Published album for Year 2
+		const album = await prisma.galleryAlbum.create({
+			data: {
+				schoolId: school.id,
+				createdBy: admin.id,
+				title: "Sports Day 2026",
+				description: "Photos from our annual sports day event",
+				yearGroup: "Year 2",
+				isPublished: true,
+				photos: {
+					create: [
+						{ mediaId: mediaUpload1.id, caption: "Egg and spoon race", sortOrder: 0 },
+						{ mediaId: mediaUpload2.id, caption: "Relay race final", sortOrder: 1 },
+					],
+				},
+			},
+		});
+
+		// Draft album (not visible to parents)
+		await prisma.galleryAlbum.create({
+			data: {
+				schoolId: school.id,
+				createdBy: admin.id,
+				title: "Art Exhibition (Draft)",
+				description: "Year 5 art exhibition photos - not yet published",
+				yearGroup: "Year 5",
+				isPublished: false,
+			},
+		});
+
+		console.log("Seeded gallery albums and photos");
+	}
 
 	console.log("Seed data created successfully");
 	console.log(

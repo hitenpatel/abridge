@@ -43,7 +43,10 @@ test.describe("Visitor Management", () => {
 		const school = await getSchoolByURN(uniqueURN);
 		if (!school) throw new Error("Failed to get school");
 
-		await enableSchoolFeature({ schoolId: school.id, features: { visitorManagementEnabled: true } });
+		await enableSchoolFeature({
+			schoolId: school.id,
+			features: { visitorManagementEnabled: true },
+		});
 
 		// === STEP 4: Navigate to visitors page ===
 		await expect(async () => {
@@ -79,7 +82,10 @@ test.describe("Visitor Management", () => {
 		await page.getByPlaceholder("e.g. V001").fill("V042");
 
 		// === STEP 7: Click Sign In (last button with this name, inside the form area) ===
-		await page.locator("button", { hasText: /^Sign In$/ }).last().click();
+		await page
+			.locator("button", { hasText: /^Sign In$/ })
+			.last()
+			.click();
 
 		// === STEP 8: Verify success message ===
 		await expect(page.getByText("Visitor signed in successfully")).toBeVisible({ timeout: 10000 });
@@ -112,7 +118,10 @@ test.describe("Visitor Management", () => {
 		const user = await getUserByEmail(adminEmail);
 		if (!school || !user) throw new Error("Failed to get school or user");
 
-		await enableSchoolFeature({ schoolId: school.id, features: { visitorManagementEnabled: true } });
+		await enableSchoolFeature({
+			schoolId: school.id,
+			features: { visitorManagementEnabled: true },
+		});
 
 		const visitor = await seedVisitor({
 			schoolId: school.id,
@@ -169,7 +178,10 @@ test.describe("Visitor Management", () => {
 		const school = await getSchoolByURN(uniqueURN);
 		if (!school) throw new Error("Failed to get school");
 
-		await enableSchoolFeature({ schoolId: school.id, features: { visitorManagementEnabled: true } });
+		await enableSchoolFeature({
+			schoolId: school.id,
+			features: { visitorManagementEnabled: true },
+		});
 
 		await seedVisitor({
 			schoolId: school.id,
@@ -215,7 +227,10 @@ test.describe("Visitor Management", () => {
 		const school = await getSchoolByURN(uniqueURN);
 		if (!school) throw new Error("Failed to get school");
 
-		await enableSchoolFeature({ schoolId: school.id, features: { visitorManagementEnabled: true } });
+		await enableSchoolFeature({
+			schoolId: school.id,
+			features: { visitorManagementEnabled: true },
+		});
 
 		// === STEP 4: Navigate to visitors and DBS Register tab ===
 		await page.reload();

@@ -228,7 +228,10 @@ test.describe("Staff Reading Diary Dashboard", () => {
 
 		// === STEP 5: Click "Add comment" on an entry and type teacher comment ===
 		await expect(page.getByText(/Add comment/i).first()).toBeVisible({ timeout: 10000 });
-		await page.getByText(/Add comment/i).first().click();
+		await page
+			.getByText(/Add comment/i)
+			.first()
+			.click();
 
 		await page.getByPlaceholder("Add a comment...").fill("Great fluency and expression!");
 		await page.getByRole("button", { name: /^Save$/i }).click();

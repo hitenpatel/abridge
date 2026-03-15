@@ -88,8 +88,12 @@ test.describe("Parent Homework Tracker", () => {
 		await expect(page).toHaveURL(/\/dashboard\/homework/);
 
 		// === STEP 5: Verify homework page ===
-		await expect(page.getByRole("heading", { name: /Homework/i }).first()).toBeVisible({ timeout: 10000 });
-		await expect(page.locator(".inline-flex").getByText("Mathematics")).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: /Homework/i }).first()).toBeVisible({
+			timeout: 10000,
+		});
+		await expect(page.locator(".inline-flex").getByText("Mathematics")).toBeVisible({
+			timeout: 10000,
+		});
 		await expect(page.getByText("Times Tables Practice")).toBeVisible({ timeout: 10000 });
 
 		// Verify due date is shown
@@ -160,7 +164,9 @@ test.describe("Parent Homework Tracker", () => {
 		await page.getByText("Plant Growth Worksheet").click();
 
 		// === STEP 6: Click Mark as Done ===
-		await expect(page.getByRole("button", { name: /Mark as Done/i })).toBeVisible({ timeout: 5000 });
+		await expect(page.getByRole("button", { name: /Mark as Done/i })).toBeVisible({
+			timeout: 5000,
+		});
 		await page.getByRole("button", { name: /Mark as Done/i }).click();
 
 		// === STEP 7: Verify completed status ===
