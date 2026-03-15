@@ -570,7 +570,7 @@ export default function GalleryPage() {
 	}
 
 	if (!features.galleryEnabled) {
-		return <FeatureDisabled feature="Gallery" />;
+		return <FeatureDisabled featureName="Gallery" />;
 	}
 
 	const isStaff = !!session?.staffRole;
