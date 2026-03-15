@@ -36,7 +36,11 @@ interface NavItem {
 		| "mealBookingEnabled"
 		| "clubBookingEnabled"
 		| "reportCardsEnabled"
-		| "communityHubEnabled";
+		| "communityHubEnabled"
+		| "homeworkEnabled"
+		| "readingDiaryEnabled"
+		| "visitorManagementEnabled"
+		| "misIntegrationEnabled";
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -133,6 +137,18 @@ function DashboardLayoutInner({
 			icon: "groups",
 			featureKey: "communityHubEnabled",
 		},
+		{
+			name: "Homework",
+			href: "/dashboard/homework",
+			icon: "menu_book",
+			featureKey: "homeworkEnabled",
+		},
+		{
+			name: "Reading",
+			href: "/dashboard/reading",
+			icon: "auto_stories",
+			featureKey: "readingDiaryEnabled",
+		},
 		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];
 
@@ -210,11 +226,35 @@ function DashboardLayoutInner({
 			icon: "groups",
 			featureKey: "communityHubEnabled",
 		},
+		{
+			name: "Homework",
+			href: "/dashboard/homework",
+			icon: "menu_book",
+			featureKey: "homeworkEnabled",
+		},
+		{
+			name: "Reading",
+			href: "/dashboard/reading",
+			icon: "auto_stories",
+			featureKey: "readingDiaryEnabled",
+		},
+		{
+			name: "Visitors",
+			href: "/dashboard/visitors",
+			icon: "badge",
+			featureKey: "visitorManagementEnabled",
+		},
 		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];
 
 	const adminNav: NavItem[] = [
 		{ name: "Staff Management", href: "/dashboard/staff", icon: "shield_person" },
+		{
+			name: "MIS Integration",
+			href: "/dashboard/mis",
+			icon: "database",
+			featureKey: "misIntegrationEnabled",
+		},
 	];
 
 	let navItems: NavItem[] = [];

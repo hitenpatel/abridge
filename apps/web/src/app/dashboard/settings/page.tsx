@@ -402,6 +402,10 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 	const [mealBooking, setMealBooking] = useState(false);
 	const [reportCards, setReportCards] = useState(false);
 	const [communityHub, setCommunityHub] = useState(false);
+	const [homework, setHomework] = useState(false);
+	const [readingDiary, setReadingDiary] = useState(false);
+	const [visitorManagement, setVisitorManagement] = useState(false);
+	const [misIntegration, setMisIntegration] = useState(false);
 
 	useEffect(() => {
 		if (data) {
@@ -423,6 +427,10 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 			setMealBooking(data.mealBookingEnabled);
 			setReportCards(data.reportCardsEnabled);
 			setCommunityHub(data.communityHubEnabled);
+			setHomework(data.homeworkEnabled);
+			setReadingDiary(data.readingDiaryEnabled);
+			setVisitorManagement(data.visitorManagementEnabled);
+			setMisIntegration(data.misIntegrationEnabled);
 		}
 	}, [data]);
 
@@ -483,6 +491,10 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							mealBookingEnabled: mealBooking,
 							reportCardsEnabled: reportCards,
 							communityHubEnabled: communityHub,
+							homeworkEnabled: homework,
+							readingDiaryEnabled: readingDiary,
+							visitorManagementEnabled: visitorManagement,
+							misIntegrationEnabled: misIntegration,
 						});
 					}}
 					className="space-y-4"
@@ -600,6 +612,30 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							onChange={setCommunityHub}
 							label="Community Hub"
 							data-testid="toggle-community-hub"
+						/>
+						<Toggle
+							checked={homework}
+							onChange={setHomework}
+							label="Homework Tracker"
+							data-testid="toggle-homework"
+						/>
+						<Toggle
+							checked={readingDiary}
+							onChange={setReadingDiary}
+							label="Reading Diary"
+							data-testid="toggle-reading-diary"
+						/>
+						<Toggle
+							checked={visitorManagement}
+							onChange={setVisitorManagement}
+							label="Visitor Management"
+							data-testid="toggle-visitor-management"
+						/>
+						<Toggle
+							checked={misIntegration}
+							onChange={setMisIntegration}
+							label="MIS Integration"
+							data-testid="toggle-mis-integration"
 						/>
 					</div>
 

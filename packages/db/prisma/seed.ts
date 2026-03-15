@@ -45,6 +45,10 @@ async function main() {
 			mealBookingEnabled: true,
 			reportCardsEnabled: true,
 			communityHubEnabled: true,
+			homeworkEnabled: true,
+			readingDiaryEnabled: true,
+			visitorManagementEnabled: true,
+			misIntegrationEnabled: false,
 			communityTags: ["General", "Events", "Help Needed", "PTA", "Lost & Found"],
 			brandColor: "#1E3A5F",
 			brandFont: "DEFAULT",
@@ -627,6 +631,103 @@ async function main() {
 			},
 		});
 	}
+
+	// ─── Phase 3C: Homework ───────────────────────────────────
+	const hwAssignment = await prisma.homeworkAssignment.upsert({
+		where: { id: "hw-seed-1" },
+		update: {},
+		create: {
+			id: "hw-seed-1",
+			schoolId: school.id,
+			setBy: teacher.id,
+			subject: "Mathematics",
+			title: "Chapter 5 Practice Questions",
+			description: "Complete questions 1-10 on page 45.",
+			yearGroup: "4",
+			setDate: new Date(),
+			dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+		},
+	});
+
+	await prisma.homeworkAssignment.upsert({
+		where: { id: "hw-seed-2" },
+		update: {},
+		create: {
+			id: "hw-seed-2",
+			schoolId: school.id,
+			setBy: teacher.id,
+			subject: "English",
+			title: "Creative Writing - My Favourite Day",
+			description: "Write a short story about your favourite day out.",
+			yearGroup: "4",
+			setDate: new Date(),
+			dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+		},
+	});
+
+	// ─── Phase 3C: Reading Diary ──────────────────────────────
+	const diary = await prisma.readingDiary.upsert({
+		where: { childId: child1.id },
+		update: {},
+		create: {
+			childId: child1.id,
+			schoolId: school.id,
+			currentBook: "Charlotte's Web",
+			readingLevel: "Orange Band",
+			targetMinsPerDay: 15,
+		},
+	});
+
+	// Add a few reading entries
+	const readingDates = [0, 1, 2, 3, 4].map((i) => {
+		const d = new Date();
+		d.setDate(d.getDate() - i);
+		d.setHours(0, 0, 0, 0);
+		return d;
+	});
+	for (const date of readingDates) {
+		if (date.getDay() === 0 || date.getDay() === 6) continue;
+		await prisma.readingEntry.upsert({
+			where: { id: `reading-${date.toISOString().split("T")[0]}-${child1.id}` },
+			update: {},
+			create: {
+				id: `reading-${date.toISOString().split("T")[0]}-${child1.id}`,
+				diaryId: diary.id,
+				date,
+				bookTitle: "Charlotte's Web",
+				minutesRead: 15 + Math.floor(Math.random() * 10),
+				readWith: "PARENT",
+				entryBy: "PARENT",
+				parentComment: date.getDate() === new Date().getDate() ? "Read really well tonight!" : null,
+			},
+		});
+	}
+
+	// ─── Phase 3C: Visitor ────────────────────────────────────
+	await prisma.visitor.upsert({
+		where: { id: "visitor-seed-1" },
+		update: {},
+		create: {
+			id: "visitor-seed-1",
+			schoolId: school.id,
+			name: "John Smith",
+			organisation: "ABC Plumbing",
+			phone: "07700 900100",
+			isRegular: true,
+		},
+	});
+
+	await prisma.visitor.upsert({
+		where: { id: "visitor-seed-2" },
+		update: {},
+		create: {
+			id: "visitor-seed-2",
+			schoolId: school.id,
+			name: "Emma Brown",
+			organisation: "Ofsted",
+			isRegular: false,
+		},
+	});
 
 	console.log("Seed data created successfully");
 	console.log(
