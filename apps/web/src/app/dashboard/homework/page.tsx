@@ -71,14 +71,14 @@ function ParentView() {
 	});
 
 	const subjects = useMemo(() => {
-		if (!homework?.length) return [];
-		const unique = [...new Set(homework.map((h) => h.subject))];
+		if (!homework?.assignments?.length) return [];
+		const unique = [...new Set(homework.assignments.map((h: { subject: string }) => h.subject))];
 		return unique.sort();
 	}, [homework]);
 
 	const filteredHomework = useMemo(() => {
-		if (!homework) return [];
-		let items = [...homework];
+		if (!homework?.assignments) return [];
+		let items = [...homework.assignments];
 		if (subjectFilter !== "all") {
 			items = items.filter((h) => h.subject === subjectFilter);
 		}
@@ -145,7 +145,8 @@ function ParentView() {
 						<div className="space-y-2">
 							{filteredHomework.map((item) => {
 								const isExpanded = expandedId === item.id;
-								const isCompleted = !!item.completedAt;
+								const completion = item.completions?.[0];
+								const isCompleted = completion?.status === "COMPLETED";
 								return (
 									<div key={item.id} className="rounded-md border">
 										<button
@@ -188,14 +189,14 @@ function ParentView() {
 													<p className="text-sm text-muted-foreground">{item.description}</p>
 												)}
 
-												{item.grade && (
+												{completion?.grade && (
 													<div className="flex items-center gap-2">
 														<Badge className="bg-indigo-100 text-indigo-800">
-															Grade: {item.grade}
+															Grade: {completion.grade}
 														</Badge>
-														{item.feedback && (
+														{completion.feedback && (
 															<p className="text-sm text-muted-foreground italic">
-																"{item.feedback}"
+																"{completion.feedback}"
 															</p>
 														)}
 													</div>
@@ -205,7 +206,7 @@ function ParentView() {
 													<button
 														type="button"
 														onClick={() => {
-															markCompleteMutation.mutate({ homeworkId: item.id });
+															markCompleteMutation.mutate({ assignmentId: item.id, childId: childId ?? "" });
 														}}
 														disabled={markCompleteMutation.isPending}
 														className="flex items-center gap-1.5 rounded-md bg-green-600 px-3 py-1.5 text-xs text-white hover:bg-green-700 disabled:opacity-50"
@@ -281,6 +282,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 			description: description.trim() || undefined,
 			yearGroup: yearGroup.trim(),
 			className: className.trim() || undefined,
+			setDate: new Date(),
 			dueDate: new Date(`${dueDate}T00:00:00`),
 			isReadingTask,
 		});
@@ -291,11 +293,12 @@ function StaffView({ schoolId }: { schoolId: string }) {
 			([key]) => key.startsWith(`${assignmentId}:`) && grades[key],
 		);
 		for (const [key, value] of assignmentGrades) {
-			const childHomeworkId = key.split(":")[1];
+			const completionId = key.split(":")[1] ?? "";
 			if (value.grade.trim() || value.feedback.trim()) {
 				gradeHomeworkMutation.mutate({
-					homeworkId: childHomeworkId ?? "",
-					grade: value.grade.trim() || undefined,
+					schoolId,
+					completionId,
+					grade: value.grade.trim() || "N/A",
 					feedback: value.feedback.trim() || undefined,
 				});
 			}
@@ -304,7 +307,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 
 	const handleCancel = (assignmentId: string) => {
 		if (window.confirm("Are you sure you want to cancel this homework assignment?")) {
-			cancelHomeworkMutation.mutate({ homeworkId: assignmentId });
+			cancelHomeworkMutation.mutate({ schoolId, assignmentId });
 		}
 	};
 
@@ -493,9 +496,9 @@ function StaffView({ schoolId }: { schoolId: string }) {
 															month: "short",
 														})}
 													</span>
-													{assignment.completionCount !== undefined && (
+													{assignment._count.completions > 0 && (
 														<Badge className="bg-green-100 text-green-800">
-															{assignment.completionCount} completed
+															{assignment._count.completions} completed
 														</Badge>
 													)}
 												</div>
@@ -515,73 +518,11 @@ function StaffView({ schoolId }: { schoolId: string }) {
 													</p>
 												)}
 
-												{/* Completion Overview Table */}
-												{assignment.children && assignment.children.length > 0 && (
-													<div className="overflow-x-auto">
-														<table className="w-full text-sm">
-															<thead>
-																<tr className="border-b">
-																	<th className="text-left py-2 pr-4 font-medium">Child</th>
-																	<th className="text-left py-2 pr-4 font-medium">Status</th>
-																	<th className="text-left py-2 pr-4 font-medium">Grade</th>
-																	<th className="text-left py-2 font-medium">Feedback</th>
-																</tr>
-															</thead>
-															<tbody>
-																{assignment.children.map((child) => {
-																	const gradeKey = `${assignment.id}:${child.id}`;
-																	return (
-																		<tr key={child.id} className="border-b last:border-0">
-																			<td className="py-2 pr-4">{child.childName}</td>
-																			<td className="py-2 pr-4">
-																				<Badge
-																					className={
-																						child.completedAt
-																							? "bg-green-100 text-green-800"
-																							: "bg-gray-100 text-gray-600"
-																					}
-																				>
-																					{child.completedAt ? "Completed" : "Pending"}
-																				</Badge>
-																			</td>
-																			<td className="py-2 pr-4">
-																				<input
-																					type="text"
-																					value={grades[gradeKey]?.grade ?? child.grade ?? ""}
-																					onChange={(e) =>
-																						updateGrade(
-																							assignment.id,
-																							child.id,
-																							"grade",
-																							e.target.value,
-																						)
-																					}
-																					placeholder="Grade"
-																					className="w-20 rounded-md border px-2 py-1 text-xs"
-																				/>
-																			</td>
-																			<td className="py-2">
-																				<input
-																					type="text"
-																					value={grades[gradeKey]?.feedback ?? child.feedback ?? ""}
-																					onChange={(e) =>
-																						updateGrade(
-																							assignment.id,
-																							child.id,
-																							"feedback",
-																							e.target.value,
-																						)
-																					}
-																					placeholder="Feedback"
-																					className="w-full rounded-md border px-2 py-1 text-xs"
-																				/>
-																			</td>
-																		</tr>
-																	);
-																})}
-															</tbody>
-														</table>
-													</div>
+												{/* Completion count summary */}
+												{assignment._count.completions > 0 && (
+													<p className="text-sm text-muted-foreground">
+														{assignment._count.completions} completion{assignment._count.completions !== 1 ? "s" : ""} submitted
+													</p>
 												)}
 
 												<div className="flex items-center gap-2">

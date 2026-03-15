@@ -72,12 +72,22 @@ function ConnectionSetup({ schoolId }: { schoolId: string }) {
 		},
 	});
 
-	const testConnectionMutation = trpc.mis.testConnection.useMutation({
-		onSuccess: () => setTestResult("success"),
-		onError: () => setTestResult("error"),
-	});
+	const [testPending, setTestPending] = useState(false);
 
 	const isApiProvider = provider !== "CSV_MANUAL";
+
+	const handleTestConnection = async () => {
+		setTestResult(null);
+		setTestPending(true);
+		try {
+			const result = await utils.mis.testConnection.fetch({ schoolId });
+			setTestResult(result.success ? "success" : "error");
+		} catch {
+			setTestResult("error");
+		} finally {
+			setTestPending(false);
+		}
+	};
 
 	return (
 		<Card>
@@ -155,20 +165,11 @@ function ConnectionSetup({ schoolId }: { schoolId: string }) {
 							<div className="flex items-center gap-3">
 								<button
 									type="button"
-									onClick={() => {
-										setTestResult(null);
-										testConnectionMutation.mutate({
-											schoolId,
-											provider,
-											apiUrl,
-											apiKey,
-											apiSecret,
-										});
-									}}
-									disabled={testConnectionMutation.isPending || !apiUrl || !apiKey}
+									onClick={handleTestConnection}
+									disabled={testPending || !apiUrl || !apiKey}
 									className="rounded-md border px-4 py-2 text-sm hover:bg-muted disabled:opacity-50"
 								>
-									{testConnectionMutation.isPending ? "Testing..." : "Test Connection"}
+									{testPending ? "Testing..." : "Test Connection"}
 								</button>
 								{testResult === "success" && (
 									<span className="flex items-center gap-1 text-sm text-green-600">
@@ -211,8 +212,7 @@ function ConnectionSetup({ schoolId }: { schoolId: string }) {
 								schoolId,
 								provider,
 								apiUrl: isApiProvider ? apiUrl : undefined,
-								apiKey: isApiProvider ? apiKey : undefined,
-								apiSecret: isApiProvider ? apiSecret : undefined,
+								credentials: isApiProvider ? `${apiKey}:${apiSecret}` : "manual",
 								syncFrequency,
 							});
 						}}
@@ -265,7 +265,7 @@ function CsvUpload({ schoolId }: { schoolId: string }) {
 		if (!file) return;
 		setStudentResult(null);
 		const csvContent = await readFileAsText(file);
-		uploadStudentsMutation.mutate({ schoolId, csvContent });
+		uploadStudentsMutation.mutate({ schoolId, csvData: csvContent });
 	};
 
 	const handleAttendanceUpload = async () => {
@@ -273,7 +273,7 @@ function CsvUpload({ schoolId }: { schoolId: string }) {
 		if (!file) return;
 		setAttendanceResult(null);
 		const csvContent = await readFileAsText(file);
-		uploadAttendanceMutation.mutate({ schoolId, csvContent });
+		uploadAttendanceMutation.mutate({ schoolId, csvData: csvContent });
 	};
 
 	const renderResult = (result: UploadResult) => (
@@ -394,7 +394,7 @@ function ConnectionStatus({ schoolId }: { schoolId: string }) {
 	const { data: status, isLoading } = trpc.mis.getConnectionStatus.useQuery({ schoolId });
 	const utils = trpc.useUtils();
 
-	const disconnectMutation = trpc.mis.disconnectConnection.useMutation({
+	const disconnectMutation = trpc.mis.disconnect.useMutation({
 		onSuccess: () => {
 			utils.mis.getConnectionStatus.invalidate({ schoolId });
 		},
@@ -463,13 +463,9 @@ function ConnectionStatus({ schoolId }: { schoolId: string }) {
 }
 
 function SyncHistory({ schoolId }: { schoolId: string }) {
-	const [page, setPage] = useState(0);
-	const pageSize = 10;
-
 	const { data, isLoading } = trpc.mis.getSyncHistory.useQuery({
 		schoolId,
-		page,
-		pageSize,
+		limit: 20,
 	});
 
 	return (
@@ -483,7 +479,7 @@ function SyncHistory({ schoolId }: { schoolId: string }) {
 			<CardContent>
 				{isLoading ? (
 					<Skeleton className="h-48 w-full" />
-				) : !data?.items?.length ? (
+				) : !data?.length ? (
 					<p className="text-sm text-muted-foreground">No sync history yet.</p>
 				) : (
 					<div className="space-y-3">
@@ -502,9 +498,9 @@ function SyncHistory({ schoolId }: { schoolId: string }) {
 									</tr>
 								</thead>
 								<tbody>
-									{data.items.map((item) => (
+									{data.map((item) => (
 										<tr key={item.id} className="border-b last:border-b-0">
-											<td className="px-3 py-2">{item.type}</td>
+											<td className="px-3 py-2">{item.syncType}</td>
 											<td className="px-3 py-2">
 												<Badge
 													className={STATUS_COLORS[item.status] ?? "bg-gray-100 text-gray-800"}
@@ -520,7 +516,7 @@ function SyncHistory({ schoolId }: { schoolId: string }) {
 												{item.durationMs != null ? `${(item.durationMs / 1000).toFixed(1)}s` : "-"}
 											</td>
 											<td className="px-3 py-2 text-muted-foreground">
-												{new Date(item.createdAt).toLocaleString("en-GB", {
+												{new Date(item.startedAt).toLocaleString("en-GB", {
 													day: "numeric",
 													month: "short",
 													hour: "2-digit",
@@ -532,30 +528,6 @@ function SyncHistory({ schoolId }: { schoolId: string }) {
 								</tbody>
 							</table>
 						</div>
-
-						{data.totalPages > 1 && (
-							<div className="flex items-center justify-between pt-2">
-								<button
-									type="button"
-									onClick={() => setPage((p) => Math.max(0, p - 1))}
-									disabled={page === 0}
-									className="rounded-md border px-3 py-1.5 text-sm hover:bg-muted disabled:opacity-50"
-								>
-									Previous
-								</button>
-								<span className="text-sm text-muted-foreground">
-									Page {page + 1} of {data.totalPages}
-								</span>
-								<button
-									type="button"
-									onClick={() => setPage((p) => p + 1)}
-									disabled={page >= data.totalPages - 1}
-									className="rounded-md border px-3 py-1.5 text-sm hover:bg-muted disabled:opacity-50"
-								>
-									Next
-								</button>
-							</div>
-						)}
 					</div>
 				)}
 			</CardContent>
