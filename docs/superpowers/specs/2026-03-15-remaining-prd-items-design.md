@@ -48,6 +48,7 @@ model EventRsvp {
 
   @@unique([eventId, childId])
   @@index([eventId])
+  @@index([childId])
   @@map("event_rsvp")
 }
 ```
@@ -67,7 +68,7 @@ Extend `calendar` router with:
 
 - `rsvpToEvent` — `protectedProcedure`. Input: eventId, childId, response (YES/NO/MAYBE), optional note. Verify parentChild relationship. Upsert EventRsvp.
 - `getRsvps` — `protectedProcedure`. Input: eventId. Returns RSVPs for parent's children on that event.
-- `getRsvpSummary` — `schoolStaffProcedure`. Input: schoolId, eventId. Returns headcount grouped by response (yes/no/maybe counts), list of attendees, capacity remaining.
+- `getRsvpSummary` — `schoolFeatureProcedure` with `assertFeatureEnabled(ctx, "calendar")`. Input: schoolId, eventId. Returns headcount grouped by response (yes/no/maybe counts), list of attendees, capacity remaining. Enforce maxCapacity in `rsvpToEvent` — reject YES responses when at capacity.
 
 ### Web
 
@@ -76,7 +77,7 @@ Extend `calendar` router with:
 
 ### Tests
 
-- 3 API tests: rsvpToEvent creates/updates RSVP, getRsvps returns child RSVPs, getRsvpSummary returns counts
+- 4 API tests: rsvpToEvent creates/updates RSVP, getRsvps returns child RSVPs, getRsvpSummary returns counts, rsvpToEvent rejects when at capacity
 - 2 E2E tests: parent RSVPs to event, staff sees headcount
 
 ---
@@ -142,6 +143,9 @@ Add relations to School, Child, User.
 - `getChildAchievements` — `protectedProcedure`. Parent views child's awards + total points.
 - `getClassLeaderboard` — `schoolStaffProcedure`. Top children by points for a year group.
 - `getRecentAwards` — `protectedProcedure`. Dashboard widget showing latest awards for parent's children.
+- `deactivateCategory` — `schoolAdminProcedure`. Sets `isActive = false` on a category.
+
+Note: `Achievement.points` is copied from `category.pointValue` at award time (snapshot). `awardAchievement` does not accept a points override. `getChildAchievements` and `getClassLeaderboard` use cursor-based pagination (matching homework pattern). `createCategory` uses `schoolAdminProcedure` (admin-level, not regular staff).
 
 ### Web
 
@@ -243,26 +247,46 @@ model GalleryPhoto {
   sortOrder Int          @default(0)
   createdAt DateTime     @default(now())
 
+  @@index([albumId, sortOrder])
   @@map("gallery_photo")
 }
 ```
 
 Feature toggle: `galleryEnabled Boolean @default(false)` on School.
 
-Add `attachmentIds String[]` to Message model for message attachments.
+Add a join model for message attachments (maintains referential integrity and cascade behavior, consistent with MessageChild pattern):
+
+```prisma
+model MessageAttachment {
+  id        String      @id @default(cuid())
+  messageId String
+  message   Message     @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  mediaId   String
+  media     MediaUpload @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+
+  @@unique([messageId, mediaId])
+  @@map("message_attachment")
+}
+```
+
+Add `attachments MessageAttachment[]` relation to Message and `messageAttachments MessageAttachment[]` to MediaUpload.
 
 ### Router (`media`)
 
-- `getUploadUrl` — `protectedProcedure`. Input: filename, mimeType, sizeBytes. Validates type/size. Returns presigned R2 upload URL + key.
-- `confirmUpload` — `protectedProcedure`. Input: key, filename, mimeType, sizeBytes, width?, height?. Creates MediaUpload record after successful R2 upload.
+- `getUploadUrl` — `schoolFeatureProcedure` (requires schoolId). Input: schoolId, filename, mimeType, sizeBytes. Validates type/size against allowed list. Returns presigned R2 upload URL + key. Presigned URL expires after 5 minutes. Enforces Content-Type and Content-Length conditions on the presigned URL (prevents uploading executables with fake MIME type). Max 10MB images, 50MB video.
+- `confirmUpload` — `schoolFeatureProcedure` (requires schoolId). Input: schoolId, key, filename, mimeType, sizeBytes, width?, height?. Verifies the key matches `schools/{schoolId}/media/` prefix. Creates MediaUpload record.
+
+R2 bucket should have a lifecycle rule to expire objects older than 24 hours that have no corresponding MediaUpload record (handles abandoned uploads).
 
 ### Router (`gallery`)
 
 - `createAlbum` — `schoolStaffProcedure`. Create album with title, description, year group, class.
 - `addPhotos` — `schoolStaffProcedure`. Add mediaIds to album with optional captions.
-- `listAlbums` — `protectedProcedure`. Parent: filtered by child's year group. Staff: all albums.
-- `getAlbum` — `protectedProcedure`. Returns album with photos + media URLs.
+- `listAlbums` — `protectedProcedure`. Resolves schoolId from parent's child link or staff membership. Checks `galleryEnabled` feature toggle. Parent: only published albums filtered by child's year group (null yearGroup = visible to all). Staff: all albums for the school.
+- `getAlbum` — `protectedProcedure`. Verifies user belongs to the album's school (via child or staff link). Parents can only see published albums. Returns album with photos + media URLs.
 - `publishAlbum` — `schoolStaffProcedure`. Sets isPublished = true.
+- `deleteAlbum` — `schoolStaffProcedure`. Deletes album and all photos.
 - `deletePhoto` — `schoolStaffProcedure`. Removes photo from album.
 
 ### Message Attachments
@@ -277,7 +301,7 @@ Extend `messaging.send` to accept optional `attachmentIds: string[]`. Store on M
 
 ### Tests
 
-- 5 API tests: getUploadUrl validates types, confirmUpload creates record, createAlbum + addPhotos, listAlbums filtered, message with attachments
+- 7 API tests: getUploadUrl validates types + rejects disallowed MIME, getUploadUrl rejects oversized files, confirmUpload creates record, createAlbum + addPhotos, listAlbums filters published-only for parents, getAlbum rejects cross-school access, message with attachments
 - 3 E2E tests: staff creates album with photos, parent views gallery, message with attachment
 
 ---
@@ -288,7 +312,19 @@ Extend `messaging.send` to accept optional `attachmentIds: string[]`. Store on M
 
 ### Files
 
-**`apps/api/src/lib/mis/sims-adapter.ts`** — Implements existing `MisAdapter` interface:
+**Refactor `MisAdapter` interface** (`apps/api/src/lib/mis/types.ts`) to support both push (CSV) and pull (API) modes:
+```typescript
+interface MisAdapter {
+  // Push mode: parse provided data (CSV adapter)
+  syncStudents(data: string | Buffer): Promise<MisSyncResult<MisStudentRecord>>;
+  syncAttendance(data: string | Buffer): Promise<MisSyncResult<MisAttendanceRecord>>;
+  // Pull mode: fetch from remote API (SIMS adapter) — data param ignored
+  testConnection(): Promise<boolean>;
+}
+```
+The SIMS adapter ignores the `data` parameter and fetches from the API instead. The CSV adapter ignores the API URL. This avoids breaking the interface while supporting both modes.
+
+**`apps/api/src/lib/mis/sims-adapter.ts`** — Implements `MisAdapter` interface:
 
 - `syncStudents(data)` — calls SIMS REST API `GET /api/school/students`. Maps SIMS fields: `forename` → `firstName`, `surname` → `lastName`, `dob` → `dateOfBirth`, `reg_group` → `className`, `year` → `yearGroup`.
 - `syncAttendance(data)` — calls SIMS `GET /api/school/attendance`. Maps SIMS attendance codes to our AttendanceMark enum.
@@ -314,9 +350,27 @@ Update `mis.ts` router to use `getAdapter()` instead of hardcoded `CsvAdapter`.
 - Every 15 minutes: query MisConnections where next sync is due (based on syncFrequency + lastSyncAt)
 - For each due connection: instantiate adapter, run syncStudents + syncAttendance, log results to MisSyncLog, update lastSyncAt
 
+Note: `setInterval` cron is acceptable for single-instance deployment. For horizontal scaling, add a Postgres advisory lock or `lastSyncAt` check to prevent duplicate syncs. The existing upsert pattern in attendance sync provides idempotency.
+
 ### Tests
 
 - 3 API tests: adapter factory returns correct adapter, SIMS adapter maps fields correctly (with mocked HTTP via `vi.mock`), cron identifies due connections
+
+---
+
+## Cross-Cutting: Feature Toggle Registration
+
+For achievements and gallery, update these files (same as Phase 3C pattern):
+- `apps/api/src/lib/feature-guards.ts` — add `"achievements"` and `"gallery"` to FeatureName, SchoolFeatures, featureFieldMap, featureLabel
+- `apps/api/src/trpc.ts` — add `achievementsEnabled: true` and `galleryEnabled: true` to schoolFeatureProcedure select
+- `apps/api/src/router/settings.ts` — add to toggle select and Zod schema
+- `apps/web/src/lib/feature-toggles.tsx` — add to interface + defaults
+- `apps/web/src/app/dashboard/layout.tsx` — add nav items with featureKey
+- `apps/web/src/app/dashboard/settings/page.tsx` — add toggle switches
+
+## Mobile
+
+Mobile screens (Expo React Native) for these features are **out of scope** for this batch. The web pages come first; mobile screens can be added in a follow-up pass.
 
 ---
 
@@ -421,14 +475,14 @@ Done last, after everything ships.
 
 | # | Feature | Models | Router Procs | Pages | API Tests | E2E Tests | Component Tests |
 |---|---------|--------|-------------|-------|-----------|-----------|-----------------|
-| 1 | Event RSVPs | 1 + 1 enum | 3 (extend calendar) | Update calendar | 3 | 2 | — |
-| 2 | Achievements | 2 + 1 enum | 6 (new router) | 2 new pages | 4 | 2 | — |
-| 3 | Photo/Video | 3 + media service | 8 (media + gallery) | Gallery page + msg attachments | 5 | 3 | — |
+| 1 | Event RSVPs | 1 + 1 enum | 3 (extend calendar) | Update calendar | 4 | 2 | — |
+| 2 | Achievements | 2 + 1 enum | 7 (new router) | 2 new pages | 4 | 2 | — |
+| 3 | Photo/Video | 4 + media service | 9 (media + gallery) | Gallery page + msg attachments | 7 | 3 | — |
 | 4 | MIS SIMS | 0 | 0 (refactor) | 0 | 3 | 0 | — |
 | 5 | API Docs | 0 | 0 | Swagger UI | 1 | 0 | — |
 | 6 | Component Tests | 0 | 0 | 0 | 0 | 0 | 12 |
 | 7 | PRD Update | 0 | 0 | 0 | 0 | 0 | — |
-| **Total** | | **6 models, 3 enums** | **17 procs** | **3 pages + updates** | **16** | **7** | **12** |
+| **Total** | | **7 models, 3 enums** | **19 procs** | **3 pages + updates** | **19** | **7** | **12** |
 
 **New env vars:** `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_URL`
 
