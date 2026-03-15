@@ -45,6 +45,12 @@ model School {
   communityHubEnabled       Boolean  @default(false)
   communityTags             String[] @default([])
 
+  // Phase 3C feature toggles
+  homeworkEnabled            Boolean  @default(false)
+  readingDiaryEnabled        Boolean  @default(false)
+  visitorManagementEnabled   Boolean  @default(false)
+  misIntegrationEnabled      Boolean  @default(false)
+
   // School branding
   brandColor                String?  @default("#1E3A5F")
   secondaryColor            String?
@@ -75,6 +81,13 @@ model School {
   reportCycles       ReportCycle[]
   reportCards        ReportCard[]
   clubs              Club[]
+  homeworkAssignments HomeworkAssignment[]
+  readingDiaries      ReadingDiary[]
+  visitors            Visitor[]
+  visitorLogs         VisitorLog[]
+  volunteerDbs        VolunteerDbs[]
+  misConnection       MisConnection?
+  timetableEntries    TimetableEntry[]
 
   @@map("schools")
 }
@@ -140,6 +153,13 @@ model User {
   reportCyclesCreated         ReportCycle[]     @relation("ReportCycleCreator")
   clubsCreated                Club[]            @relation("ClubCreator")
   clubEnrollmentsMade         ClubEnrollment[]  @relation("ClubEnroller")
+  homeworkSet                 HomeworkAssignment[] @relation("HomeworkSetBy")
+  homeworkGraded              HomeworkCompletion[] @relation("HomeworkGradedBy")
+  visitorDbsVerified          Visitor[]          @relation("VisitorDbsVerifier")
+  visitorSignIns              VisitorLog[]       @relation("VisitorSignIn")
+  visitorSignOuts             VisitorLog[]       @relation("VisitorSignOut")
+  volunteerDbsRecords         VolunteerDbs[]     @relation("VolunteerDbsUser")
+  volunteerDbsVerified        VolunteerDbs[]     @relation("VolunteerDbsVerifier")
 
   @@map("users")
 }
@@ -234,7 +254,10 @@ model Child {
   mealBookings      MealBooking[]
   dietaryProfile    DietaryProfile?
   reportCards       ReportCard[]
-  clubEnrollments   ClubEnrollment[]
+  clubEnrollments    ClubEnrollment[]
+  homeworkCompletions HomeworkCompletion[]
+  readingDiary        ReadingDiary?
+  timetableEntries    TimetableEntry[]
 
   @@map("children")
 }
@@ -1141,4 +1164,320 @@ model SubjectGrade {
 
   @@index([reportCardId])
   @@map("subject_grade")
+}
+
+// ─── Homework Tracker ──────────────────────────────────────
+
+enum HomeworkStatus {
+  ACTIVE
+  CANCELLED
+}
+
+enum HomeworkCompletionStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum HomeworkMarkedBy {
+  PARENT
+  STUDENT
+  TEACHER
+}
+
+model HomeworkAssignment {
+  id             String           @id @default(cuid())
+  schoolId       String
+  school         School           @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  setBy          String
+  teacher        User             @relation("HomeworkSetBy", fields: [setBy], references: [id])
+  subject        String
+  title          String
+  description    String?
+  yearGroup      String
+  className      String?
+  setDate        DateTime         @db.Date
+  dueDate        DateTime         @db.Date
+  attachmentUrls String[]
+  isReadingTask  Boolean          @default(false)
+  status         HomeworkStatus   @default(ACTIVE)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  completions    HomeworkCompletion[]
+
+  @@index([schoolId, yearGroup, dueDate])
+  @@index([schoolId, status])
+  @@map("homework_assignment")
+}
+
+model HomeworkCompletion {
+  id           String                     @id @default(cuid())
+  assignmentId String
+  assignment   HomeworkAssignment         @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  childId      String
+  child        Child                      @relation(fields: [childId], references: [id], onDelete: Cascade)
+  status       HomeworkCompletionStatus   @default(NOT_STARTED)
+  completedAt  DateTime?
+  markedBy     HomeworkMarkedBy?
+  grade        String?
+  feedback     String?
+  gradedBy     String?
+  grader       User?                      @relation("HomeworkGradedBy", fields: [gradedBy], references: [id])
+  gradedAt     DateTime?
+  createdAt    DateTime                   @default(now())
+  updatedAt    DateTime                   @updatedAt
+
+  @@unique([assignmentId, childId])
+  @@index([childId, assignmentId])
+  @@map("homework_completion")
+}
+
+// ─── Reading Diary ─────────────────────────────────────────
+
+enum ReadWith {
+  ALONE
+  PARENT
+  TEACHER
+  SIBLING
+  OTHER
+}
+
+enum ReadingEntryBy {
+  PARENT
+  TEACHER
+}
+
+model ReadingDiary {
+  id              String         @id @default(cuid())
+  childId         String         @unique
+  child           Child          @relation(fields: [childId], references: [id], onDelete: Cascade)
+  schoolId        String
+  school          School         @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  currentBook     String?
+  readingLevel    String?
+  targetMinsPerDay Int?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  entries         ReadingEntry[]
+
+  @@index([schoolId])
+  @@map("reading_diary")
+}
+
+model ReadingEntry {
+  id             String         @id @default(cuid())
+  diaryId        String
+  diary          ReadingDiary   @relation(fields: [diaryId], references: [id], onDelete: Cascade)
+  date           DateTime       @db.Date
+  bookTitle      String
+  pagesOrChapter String?
+  minutesRead    Int?
+  parentComment  String?
+  teacherComment String?
+  readWith       ReadWith
+  entryBy        ReadingEntryBy
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@index([diaryId, date])
+  @@map("reading_entry")
+}
+
+// ─── Visitor Management ────────────────────────────────────
+
+enum VisitPurpose {
+  MEETING
+  MAINTENANCE
+  DELIVERY
+  VOLUNTEERING
+  INSPECTION
+  PARENT_VISIT
+  CONTRACTOR
+  OTHER
+}
+
+enum DbsType {
+  BASIC
+  STANDARD
+  ENHANCED
+  ENHANCED_BARRED
+}
+
+enum DbsStatus {
+  VALID
+  EXPIRING_SOON
+  EXPIRED
+  REVOKED
+}
+
+model Visitor {
+  id            String    @id @default(cuid())
+  schoolId      String
+  school        School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  name          String
+  organisation  String?
+  phone         String?
+  email         String?
+  isRegular     Boolean   @default(false)
+  dbsNumber     String?
+  dbsExpiryDate DateTime? @db.Date
+  dbsVerifiedBy String?
+  verifier      User?     @relation("VisitorDbsVerifier", fields: [dbsVerifiedBy], references: [id])
+  photoUrl      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  logs          VisitorLog[]
+  volunteerDbs  VolunteerDbs[]
+
+  @@index([schoolId, name])
+  @@map("visitor")
+}
+
+model VisitorLog {
+  id           String       @id @default(cuid())
+  schoolId     String
+  school       School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  visitorId    String
+  visitor      Visitor      @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+  purpose      VisitPurpose
+  visitingStaff String?
+  badgeNumber  String?
+  signInAt     DateTime
+  signOutAt    DateTime?
+  signedInBy   String
+  signInUser   User         @relation("VisitorSignIn", fields: [signedInBy], references: [id])
+  signedOutBy  String?
+  signOutUser  User?        @relation("VisitorSignOut", fields: [signedOutBy], references: [id])
+  notes        String?
+  createdAt    DateTime     @default(now())
+
+  @@index([schoolId, signInAt(sort: Desc)])
+  @@index([schoolId, signOutAt])
+  @@map("visitor_log")
+}
+
+model VolunteerDbs {
+  id          String    @id @default(cuid())
+  schoolId    String
+  school      School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  userId      String?
+  user        User?     @relation("VolunteerDbsUser", fields: [userId], references: [id])
+  visitorId   String?
+  visitor     Visitor?  @relation(fields: [visitorId], references: [id])
+  name        String
+  dbsNumber   String
+  dbsType     DbsType
+  issueDate   DateTime  @db.Date
+  expiryDate  DateTime? @db.Date
+  verifiedBy  String
+  verifier    User      @relation("VolunteerDbsVerifier", fields: [verifiedBy], references: [id])
+  verifiedAt  DateTime
+  status      DbsStatus @default(VALID)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([schoolId, status])
+  @@map("volunteer_dbs")
+}
+
+// ─── MIS Integration ───────────────────────────────────────
+
+enum MisProvider {
+  SIMS
+  ARBOR
+  BROMCOM
+  SCHOLARPACK
+  CSV_MANUAL
+}
+
+enum MisConnectionStatus {
+  CONNECTED
+  DISCONNECTED
+  ERROR
+}
+
+enum MisSyncFrequency {
+  HOURLY
+  TWICE_DAILY
+  DAILY
+  MANUAL
+}
+
+enum MisSyncStatus {
+  STARTED
+  SUCCESS
+  PARTIAL
+  FAILED
+}
+
+enum MisSyncType {
+  STUDENTS
+  ATTENDANCE
+  TIMETABLE
+  YEAR_GROUPS
+  FULL
+}
+
+model MisConnection {
+  id             String              @id @default(cuid())
+  schoolId       String              @unique
+  school         School              @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  provider       MisProvider
+  apiUrl         String?
+  credentials    String
+  status         MisConnectionStatus @default(DISCONNECTED)
+  lastSyncAt     DateTime?
+  lastSyncStatus MisSyncStatus?
+  lastSyncError  String?
+  syncFrequency  MisSyncFrequency    @default(DAILY)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  syncLogs       MisSyncLog[]
+
+  @@map("mis_connection")
+}
+
+model MisSyncLog {
+  id               String        @id @default(cuid())
+  connectionId     String
+  connection       MisConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  syncType         MisSyncType
+  status           MisSyncStatus @default(STARTED)
+  recordsProcessed Int           @default(0)
+  recordsCreated   Int           @default(0)
+  recordsUpdated   Int           @default(0)
+  recordsSkipped   Int           @default(0)
+  errors           Json?
+  startedAt        DateTime      @default(now())
+  completedAt      DateTime?
+  durationMs       Int?
+
+  @@index([connectionId, startedAt(sort: Desc)])
+  @@map("mis_sync_log")
+}
+
+model TimetableEntry {
+  id           String    @id @default(cuid())
+  schoolId     String
+  school       School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  childId      String
+  child        Child     @relation(fields: [childId], references: [id], onDelete: Cascade)
+  dayOfWeek    DayOfWeek
+  periodNumber Int
+  periodName   String?
+  subject      String
+  teacher      String?
+  room         String?
+  startTime    String
+  endTime      String
+  termStart    DateTime  @db.Date
+  termEnd      DateTime  @db.Date
+
+  @@unique([childId, dayOfWeek, periodNumber, termStart])
+  @@index([schoolId, childId])
+  @@map("timetable_entry")
 }
