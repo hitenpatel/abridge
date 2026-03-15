@@ -51,6 +51,7 @@ model School {
   visitorManagementEnabled   Boolean  @default(false)
   misIntegrationEnabled      Boolean  @default(false)
   achievementsEnabled        Boolean  @default(false)
+  galleryEnabled             Boolean  @default(false)
 
   // School branding
   brandColor                String?  @default("#1E3A5F")
@@ -91,6 +92,8 @@ model School {
   timetableEntries    TimetableEntry[]
   achievementCategories AchievementCategory[]
   achievements        Achievement[]
+  mediaUploads        MediaUpload[]
+  galleryAlbums       GalleryAlbum[]
 
   @@map("schools")
 }
@@ -165,6 +168,8 @@ model User {
   volunteerDbsVerified        VolunteerDbs[]     @relation("VolunteerDbsVerifier")
   eventRsvps                  EventRsvp[]        @relation("EventRsvpUser")
   achievementsAwarded         Achievement[]      @relation("AchievementAwarder")
+  mediaUploads                MediaUpload[]      @relation("MediaUploader")
+  galleryAlbums               GalleryAlbum[]     @relation("AlbumCreator")
 
   @@map("users")
 }
@@ -309,6 +314,7 @@ model Message {
   thread       Message?             @relation("MessageThread", fields: [threadId], references: [id])
   replies      Message[]            @relation("MessageThread")
   conversation Conversation?        @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  attachments  MessageAttachment[]
 
   @@index([schoolId, createdAt])
   @@map("messages")
@@ -1558,4 +1564,74 @@ model Achievement {
   @@index([childId, createdAt])
   @@index([schoolId, createdAt])
   @@map("achievement")
+}
+
+// ─── Media & Gallery ────────────────────────────────────────
+
+model MediaUpload {
+  id           String   @id @default(cuid())
+  schoolId     String
+  school       School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  uploadedBy   String
+  uploader     User     @relation("MediaUploader", fields: [uploadedBy], references: [id])
+  key          String   @unique
+  filename     String
+  mimeType     String
+  sizeBytes    Int
+  width        Int?
+  height       Int?
+  thumbnailKey String?
+  createdAt    DateTime @default(now())
+
+  galleryPhotos      GalleryPhoto[]
+  messageAttachments MessageAttachment[]
+
+  @@index([schoolId, createdAt])
+  @@map("media_upload")
+}
+
+model GalleryAlbum {
+  id          String   @id @default(cuid())
+  schoolId    String
+  school      School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  createdBy   String
+  creator     User     @relation("AlbumCreator", fields: [createdBy], references: [id])
+  title       String
+  description String?
+  yearGroup   String?
+  className   String?
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  photos      GalleryPhoto[]
+
+  @@index([schoolId, createdAt])
+  @@map("gallery_album")
+}
+
+model GalleryPhoto {
+  id        String       @id @default(cuid())
+  albumId   String
+  album     GalleryAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  mediaId   String
+  media     MediaUpload  @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  caption   String?
+  sortOrder Int          @default(0)
+  createdAt DateTime     @default(now())
+
+  @@index([albumId, sortOrder])
+  @@map("gallery_photo")
+}
+
+model MessageAttachment {
+  id        String      @id @default(cuid())
+  messageId String
+  message   Message     @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  mediaId   String
+  media     MediaUpload @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+
+  @@unique([messageId, mediaId])
+  @@map("message_attachment")
 }
