@@ -5,6 +5,8 @@ import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
+import swagger from "@fastify/swagger";
+import swaggerUi from "@fastify/swagger-ui";
 import { prisma } from "@schoolconnect/db";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 // toNodeHandler doesn't work properly with Fastify, removed
@@ -15,6 +17,7 @@ import { processWellbeingAlerts } from "./crons/wellbeing-alerts";
 import { checkUndeliveredNotifications } from "./jobs/notification-fallback";
 import { auth } from "./lib/auth";
 import { logger } from "./lib/logger";
+import { startMisSyncCron } from "./lib/mis-sync-cron";
 import { appRouter } from "./router";
 import { pdfRoutes } from "./routes/pdf";
 import { testSeedRoutes } from "./routes/test-seed";
@@ -109,6 +112,20 @@ async function main() {
 		await server.register(testSeedRoutes);
 	}
 
+	// API documentation
+	await server.register(swagger, {
+		openapi: {
+			info: {
+				title: "SchoolConnect API",
+				description: "School-parent communication platform API",
+				version: "1.0.0",
+			},
+			servers: [{ url: "http://localhost:4000" }],
+		},
+	});
+
+	await server.register(swaggerUi, { routePrefix: "/api/docs" });
+
 	await server.register(fastifyTRPCPlugin, {
 		prefix: "/trpc",
 		trpcOptions: { router: appRouter, createContext },
@@ -200,6 +217,9 @@ async function main() {
 		},
 		15 * 60 * 1000,
 	);
+
+	// Run MIS auto-sync every 15 minutes
+	startMisSyncCron(prisma);
 }
 
 main().catch((err) => {
