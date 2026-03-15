@@ -1,7 +1,7 @@
 # SchoolConnect: PRD vs Implementation Checklist
 
-**Last Updated:** 2026-03-14
-**E2E Test Status:** ~219 tests across 19 files (Playwright)
+**Last Updated:** 2026-03-15
+**E2E Test Status:** ~250+ tests across 35 files (Playwright)
 
 ---
 
@@ -150,7 +150,7 @@
 | 5 | Historical data (date range queries) | ✅ | getAttendanceForChild with dates |
 | 6 | Attendance page loads | ✅ | ✅ E2E: `attendance.test.ts` |
 | 7 | Empty state (no children) | ✅ | ✅ E2E: `attendance.test.ts` |
-| 8 | MIS integration (live sync) | 🔮 | Deferred; manual entry for MVP |
+| 8 | MIS integration (live sync) | ✅ | SIMS adapter + CSV manual + auto-sync cron |
 
 ### 3.6 Calendar & Events (PRD Section 7.6)
 | # | Requirement | Status | Notes |
@@ -163,7 +163,7 @@
 | 6 | Delete event (staff) | ✅ | deleteEvent mutation |
 | 7 | Calendar page loads | ✅ | ✅ E2E: `calendar.test.ts` |
 | 8 | Recurring events | ✅ | RecurrencePattern enum, auto-expansion in listEvents |
-| 9 | Event RSVPs and headcount | 🔮 | Schema ready, not implemented |
+| 9 | Event RSVPs and headcount | ✅ | RSVP with capacity enforcement |
 
 ### 3.7 Forms & Consent (PRD Section 7.7)
 | # | Requirement | Status | Notes |
@@ -217,8 +217,15 @@
 | 13 | `invitation` | send, accept, verify, list | ✅ |
 | 14 | `setup` | createInitialSchool | ✅ |
 | 15 | `dbInit` | initTables | ✅ |
+| 16 | `homework` | CRUD + submissions | ✅ |
+| 17 | `readingDiary` | entries + parent comments | ✅ |
+| 18 | `visitor` | sign-in/out + DBS checks | ✅ |
+| 19 | `mis` | SIMS sync + CSV import | ✅ |
+| 20 | `achievement` | awards + categories | ✅ |
+| 21 | `gallery` | albums + photos | ✅ |
+| 22 | `media` | upload + processing | ✅ |
 
-### 5.2 Database Models (27)
+### 5.2 Database Models (34)
 | # | Model | Status | Notes |
 |---|-------|--------|-------|
 | 1 | School | ✅ | Multi-tenant with Ofsted URN |
@@ -248,6 +255,13 @@
 | 25 | ParentsEveningSlot | ✅ | Booking slots |
 | 26 | ClassPost | ✅ | Teacher class updates |
 | 27 | ClassPostReaction | ✅ | Emoji reactions |
+| 28 | EventRsvp | ✅ | RSVP with capacity tracking |
+| 29 | AchievementCategory | ✅ | Award categories |
+| 30 | Achievement | ✅ | Student achievements/rewards |
+| 31 | MediaUpload | ✅ | File upload tracking |
+| 32 | GalleryAlbum | ✅ | Photo albums |
+| 33 | GalleryPhoto | ✅ | Album photos |
+| 34 | MessageAttachment | ✅ | Message file attachments |
 
 ### 5.3 Authorization Middleware
 | # | Procedure Type | Status |
@@ -335,13 +349,13 @@
 | Calendar with export + recurring events | ✅ |
 | Meal booking | ✅ |
 | Club booking | ✅ |
-| MIS integrations | 🔮 Not started |
+| MIS integrations | ✅ |
 
-### Phase 3: Engagement ⚠️ MOSTLY COMPLETE
+### Phase 3: Engagement ✅ COMPLETE
 | Feature | Status |
 |---------|--------|
-| Achievement/reward system | 🔮 |
-| Photo/video sharing | 🔮 |
+| Achievement/reward system | ✅ |
+| Photo/video sharing | ✅ |
 | Parents' evening booking | ✅ |
 | School admin dashboard (analytics) | ✅ |
 
