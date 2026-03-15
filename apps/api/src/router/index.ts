@@ -11,10 +11,12 @@ import { dashboardRouter } from "./dashboard";
 import { dbInitRouter } from "./db-init";
 import { emergencyRouter } from "./emergency";
 import { formsRouter } from "./forms";
+import { galleryRouter } from "./gallery";
 import { healthRouter } from "./health";
 import { homeworkRouter } from "./homework";
 import { invitationRouter } from "./invitation";
 import { mealBookingRouter } from "./meal-booking";
+import { mediaRouter } from "./media";
 import { messagingRouter } from "./messaging";
 import { misRouter } from "./mis";
 import { parentsEveningRouter } from "./parents-evening";
@@ -46,6 +48,7 @@ export const appRouter = router({
 	user: userRouter,
 	attendance: attendanceRouter,
 	forms: formsRouter,
+	gallery: galleryRouter,
 	invitation: invitationRouter,
 	setup: setupRouter,
 	staff: staffRouter,
@@ -57,6 +60,7 @@ export const appRouter = router({
 	clubBooking: clubBookingRouter,
 	community: communityRouter,
 	homework: homeworkRouter,
+	media: mediaRouter,
 	readingDiary: readingDiaryRouter,
 	visitor: visitorRouter,
 	mis: misRouter,

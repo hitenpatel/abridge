@@ -15,6 +15,7 @@ export const messagingRouter = router({
 				category: z.enum(["STANDARD", "URGENT", "FYI"]),
 				allChildren: z.boolean().default(false),
 				childIds: z.array(z.string()).optional(),
+				attachmentIds: z.array(z.string()).default([]),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -70,6 +71,16 @@ export const messagingRouter = router({
 					},
 				},
 			});
+
+			// 2b. Create message attachments if provided
+			if (input.attachmentIds.length > 0) {
+				await ctx.prisma.messageAttachment.createMany({
+					data: input.attachmentIds.map((mediaId) => ({
+						messageId: message.id,
+						mediaId,
+					})),
+				});
+			}
 
 			// 3. Find parents to notify (async)
 			// Don't await this if we want fast response, but for MVP safer to await
