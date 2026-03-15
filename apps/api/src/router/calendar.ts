@@ -144,6 +144,8 @@ export const calendarRouter = router({
 				category: z.enum(["TERM_DATE", "INSET_DAY", "EVENT", "DEADLINE", "CLUB"]),
 				recurrencePattern: z.enum(RECURRENCE_PATTERNS).optional(),
 				recurrenceEndDate: z.date().optional(),
+				rsvpRequired: z.boolean().default(false),
+				maxCapacity: z.number().int().positive().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -167,6 +169,8 @@ export const calendarRouter = router({
 					category: input.category,
 					recurrencePattern: input.recurrencePattern,
 					recurrenceEndDate: input.recurrenceEndDate,
+					rsvpRequired: input.rsvpRequired,
+					maxCapacity: input.maxCapacity,
 				},
 			});
 
@@ -199,5 +203,134 @@ export const calendarRouter = router({
 
 			await ctx.prisma.event.delete({ where: { id: realEventId } });
 			return { success: true };
+		}),
+
+	rsvpToEvent: protectedProcedure
+		.input(
+			z.object({
+				eventId: z.string(),
+				childId: z.string(),
+				response: z.enum(["YES", "NO", "MAYBE"]),
+				note: z.string().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// Verify parent-child link
+			const parentChild = await ctx.prisma.parentChild.findFirst({
+				where: { userId: ctx.user.id, childId: input.childId },
+			});
+			if (!parentChild) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "Not a parent of this child",
+				});
+			}
+
+			// Get event details
+			const event = await ctx.prisma.event.findUnique({
+				where: { id: input.eventId },
+			});
+			if (!event) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
+			}
+
+			// Check capacity if response is YES and maxCapacity is set
+			if (input.response === "YES" && event.maxCapacity) {
+				const yesCount = await ctx.prisma.eventRsvp.count({
+					where: {
+						eventId: input.eventId,
+						response: "YES",
+						childId: { not: input.childId },
+					},
+				});
+				if (yesCount >= event.maxCapacity) {
+					throw new TRPCError({
+						code: "BAD_REQUEST",
+						message: "Event is at capacity",
+					});
+				}
+			}
+
+			const rsvp = await ctx.prisma.eventRsvp.upsert({
+				where: {
+					eventId_childId: {
+						eventId: input.eventId,
+						childId: input.childId,
+					},
+				},
+				update: {
+					response: input.response,
+					note: input.note,
+				},
+				create: {
+					eventId: input.eventId,
+					childId: input.childId,
+					userId: ctx.user.id,
+					response: input.response,
+					note: input.note,
+				},
+			});
+
+			return rsvp;
+		}),
+
+	getRsvps: protectedProcedure
+		.input(z.object({ eventId: z.string() }))
+		.query(async ({ ctx, input }) => {
+			// Get parent's children IDs
+			const parentLinks = await ctx.prisma.parentChild.findMany({
+				where: { userId: ctx.user.id },
+				select: { childId: true },
+			});
+			const childIds = parentLinks.map((p: { childId: string }) => p.childId);
+
+			const rsvps = await ctx.prisma.eventRsvp.findMany({
+				where: {
+					eventId: input.eventId,
+					childId: { in: childIds },
+				},
+				include: {
+					child: { select: { firstName: true, lastName: true } },
+				},
+			});
+
+			return rsvps;
+		}),
+
+	getRsvpSummary: schoolFeatureProcedure
+		.input(
+			z.object({
+				schoolId: z.string(),
+				eventId: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "calendar");
+
+			const event = await ctx.prisma.event.findUnique({
+				where: { id: input.eventId },
+			});
+
+			const counts = await ctx.prisma.eventRsvp.groupBy({
+				by: ["response"],
+				where: { eventId: input.eventId },
+				_count: { id: true },
+			});
+
+			const attendees = await ctx.prisma.eventRsvp.findMany({
+				where: { eventId: input.eventId },
+				include: {
+					child: { select: { firstName: true, lastName: true } },
+				},
+			});
+
+			return {
+				counts: counts.map((c: { response: string; _count: { id: number } }) => ({
+					response: c.response,
+					count: c._count.id,
+				})),
+				attendees,
+				maxCapacity: event?.maxCapacity ?? null,
+			};
 		}),
 });
