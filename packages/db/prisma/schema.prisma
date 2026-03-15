@@ -50,6 +50,7 @@ model School {
   readingDiaryEnabled        Boolean  @default(false)
   visitorManagementEnabled   Boolean  @default(false)
   misIntegrationEnabled      Boolean  @default(false)
+  achievementsEnabled        Boolean  @default(false)
 
   // School branding
   brandColor                String?  @default("#1E3A5F")
@@ -88,6 +89,8 @@ model School {
   volunteerDbs        VolunteerDbs[]
   misConnection       MisConnection?
   timetableEntries    TimetableEntry[]
+  achievementCategories AchievementCategory[]
+  achievements        Achievement[]
 
   @@map("schools")
 }
@@ -161,6 +164,7 @@ model User {
   volunteerDbsRecords         VolunteerDbs[]     @relation("VolunteerDbsUser")
   volunteerDbsVerified        VolunteerDbs[]     @relation("VolunteerDbsVerifier")
   eventRsvps                  EventRsvp[]        @relation("EventRsvpUser")
+  achievementsAwarded         Achievement[]      @relation("AchievementAwarder")
 
   @@map("users")
 }
@@ -260,6 +264,7 @@ model Child {
   readingDiary        ReadingDiary?
   timetableEntries    TimetableEntry[]
   eventRsvps          EventRsvp[]
+  achievements        Achievement[]
 
   @@map("children")
 }
@@ -1510,4 +1515,47 @@ model TimetableEntry {
   @@unique([childId, dayOfWeek, periodNumber, termStart])
   @@index([schoolId, childId])
   @@map("timetable_entry")
+}
+
+// ─── Achievements ──────────────────────────────────────────
+
+enum AchievementType {
+  POINTS
+  BADGE
+}
+
+model AchievementCategory {
+  id         String          @id @default(cuid())
+  schoolId   String
+  school     School          @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  name       String
+  icon       String?
+  pointValue Int             @default(1)
+  type       AchievementType @default(POINTS)
+  isActive   Boolean         @default(true)
+  createdAt  DateTime        @default(now())
+
+  awards     Achievement[]
+
+  @@unique([schoolId, name])
+  @@map("achievement_category")
+}
+
+model Achievement {
+  id         String              @id @default(cuid())
+  schoolId   String
+  school     School              @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  childId    String
+  child      Child               @relation(fields: [childId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   AchievementCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  awardedBy  String
+  awarder    User                @relation("AchievementAwarder", fields: [awardedBy], references: [id])
+  points     Int                 @default(1)
+  reason     String?
+  createdAt  DateTime            @default(now())
+
+  @@index([childId, createdAt])
+  @@index([schoolId, createdAt])
+  @@map("achievement")
 }
