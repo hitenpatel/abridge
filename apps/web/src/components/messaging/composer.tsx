@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Paperclip, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -31,6 +32,12 @@ export function MessageComposer({ schoolId }: MessageComposerProps) {
 	const router = useRouter();
 	const utils = trpc.useUtils();
 	const [error, setError] = useState<string | null>(null);
+	const [attachments, setAttachments] = useState<{ id: string; filename: string }[]>([]);
+	const [uploadingAttachment, setUploadingAttachment] = useState(false);
+	const attachmentInputRef = useRef<HTMLInputElement>(null);
+
+	const getUploadUrl = trpc.media.getUploadUrl.useMutation();
+	const confirmUpload = trpc.media.confirmUpload.useMutation();
 
 	const {
 		register,
@@ -61,9 +68,44 @@ export function MessageComposer({ schoolId }: MessageComposerProps) {
 		},
 	});
 
+	const handleAttachFile = async (files: FileList | null) => {
+		if (!files) return;
+		setUploadingAttachment(true);
+		try {
+			for (const file of Array.from(files)) {
+				const { uploadUrl, key } = await getUploadUrl.mutateAsync({
+					schoolId,
+					filename: file.name,
+					mimeType: file.type,
+					sizeBytes: file.size,
+				});
+				await fetch(uploadUrl, {
+					method: "PUT",
+					body: file,
+					headers: { "Content-Type": file.type },
+				});
+				const media = await confirmUpload.mutateAsync({
+					schoolId,
+					key,
+					filename: file.name,
+					mimeType: file.type,
+					sizeBytes: file.size,
+				});
+				setAttachments((prev) => [...prev, { id: media.id, filename: file.name }]);
+			}
+		} catch {
+			toast.error("Failed to upload attachment");
+		} finally {
+			setUploadingAttachment(false);
+		}
+	};
+
 	const onSubmit = (data: MessageFormData) => {
 		setError(null);
-		sendMutation.mutate(data);
+		sendMutation.mutate({
+			...data,
+			attachmentIds: attachments.map((a) => a.id),
+		});
 	};
 
 	return (
@@ -132,6 +174,55 @@ export function MessageComposer({ schoolId }: MessageComposerProps) {
 						</Label>
 					</div>
 					{/* MVP limitation: Don't implement specific child selection yet. */}
+
+					{/* Attachments */}
+					<div>
+						<div className="flex items-center gap-2 mb-2">
+							<Button
+								type="button"
+								variant="outline"
+								size="sm"
+								onClick={() => attachmentInputRef.current?.click()}
+								disabled={uploadingAttachment}
+								data-testid="message-attach-button"
+							>
+								<Paperclip className="h-4 w-4 mr-1" />
+								{uploadingAttachment ? "Uploading..." : "Attach File"}
+							</Button>
+							<input
+								ref={attachmentInputRef}
+								type="file"
+								accept="image/jpeg,image/png,image/webp,video/mp4"
+								multiple
+								className="hidden"
+								onChange={(e) => handleAttachFile(e.target.files)}
+							/>
+						</div>
+						{attachments.length > 0 && (
+							<div className="flex flex-wrap gap-2">
+								{attachments.map((att) => (
+									<span
+										key={att.id}
+										className="inline-flex items-center gap-1 bg-muted text-sm px-2 py-1 rounded"
+									>
+										{att.filename}
+										<button
+											type="button"
+											onClick={() =>
+												setAttachments((prev) =>
+													prev.filter((a) => a.id !== att.id),
+												)
+											}
+											className="text-muted-foreground hover:text-foreground"
+											aria-label={`Remove ${att.filename}`}
+										>
+											<X className="h-3 w-3" />
+										</button>
+									</span>
+								))}
+							</div>
+						)}
+					</div>
 
 					<div className="pt-2">
 						<Button
