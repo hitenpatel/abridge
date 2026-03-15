@@ -880,7 +880,15 @@ export async function seedVisitorSignIn(params: {
 	schoolId: string;
 	visitorId: string;
 	signedInBy: string;
-	purpose?: "MEETING" | "MAINTENANCE" | "DELIVERY" | "VOLUNTEERING" | "INSPECTION" | "PARENT_VISIT" | "CONTRACTOR" | "OTHER";
+	purpose?:
+		| "MEETING"
+		| "MAINTENANCE"
+		| "DELIVERY"
+		| "VOLUNTEERING"
+		| "INSPECTION"
+		| "PARENT_VISIT"
+		| "CONTRACTOR"
+		| "OTHER";
 }): Promise<{ id: string }> {
 	const log = await prisma.visitorLog.create({
 		data: {
@@ -913,6 +921,36 @@ export async function seedMisConnection(params: {
 		},
 	});
 	return { id: connection.id };
+}
+
+/**
+ * Seed a calendar event with RSVP enabled
+ */
+export async function seedEventWithRsvp(params: {
+	schoolId: string;
+	title?: string;
+	body?: string;
+	startDate?: Date;
+	rsvpRequired?: boolean;
+	maxCapacity?: number;
+}): Promise<{ id: string; title: string }> {
+	const title = params.title || "RSVP Event";
+	const startDate = params.startDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+	const event = await prisma.event.create({
+		data: {
+			schoolId: params.schoolId,
+			title,
+			body: params.body || "An event requiring RSVP",
+			startDate,
+			allDay: true,
+			category: "EVENT",
+			rsvpRequired: params.rsvpRequired ?? true,
+			maxCapacity: params.maxCapacity ?? null,
+		},
+	});
+
+	return { id: event.id, title: event.title };
 }
 
 export { prisma };

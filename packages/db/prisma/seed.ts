@@ -345,6 +345,8 @@ async function main() {
 			category: "EVENT" as const,
 			startDate: new Date("2026-04-25"),
 			allDay: true,
+			rsvpRequired: true,
+			maxCapacity: 30,
 		},
 	];
 
