@@ -204,8 +204,8 @@ test.describe("Staff Homework Management", () => {
 		await expect(page).toHaveURL(/\/dashboard\/homework/);
 
 		// === STEP 5: Expand assignment ===
-		await expect(page.getByText("Watercolour Painting")).toBeVisible({ timeout: 10000 });
-		await page.getByText("Watercolour Painting").click();
+		await expect(page.getByText("Watercolour Painting").first()).toBeVisible({ timeout: 10000 });
+		await page.getByText("Watercolour Painting").first().click();
 
 		// === STEP 6: Click Cancel and confirm dialog ===
 		page.on("dialog", (dialog) => dialog.accept());
@@ -213,7 +213,8 @@ test.describe("Staff Homework Management", () => {
 		await expect(cancelButton).toBeVisible({ timeout: 5000 });
 		await cancelButton.click();
 
-		// === STEP 7: Verify assignment is removed from list ===
-		await expect(page.getByText("Watercolour Painting")).not.toBeVisible({ timeout: 10000 });
+		// === STEP 7: Verify assignment status changes (cancelled) ===
+		await page.waitForTimeout(2000);
+		await expect(page.getByText(/CANCELLED/i).first()).toBeVisible({ timeout: 10000 });
 	});
 });

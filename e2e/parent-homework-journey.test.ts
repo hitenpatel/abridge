@@ -89,7 +89,7 @@ test.describe("Parent Homework Tracker", () => {
 
 		// === STEP 5: Verify homework page ===
 		await expect(page.getByRole("heading", { name: /Homework/i }).first()).toBeVisible({ timeout: 10000 });
-		await expect(page.getByText("Mathematics")).toBeVisible({ timeout: 10000 });
+		await expect(page.locator(".inline-flex").getByText("Mathematics")).toBeVisible({ timeout: 10000 });
 		await expect(page.getByText("Times Tables Practice")).toBeVisible({ timeout: 10000 });
 
 		// Verify due date is shown

@@ -895,4 +895,24 @@ export async function seedVisitorSignIn(params: {
 	return { id: log.id };
 }
 
+/**
+ * Seed a MIS connection for CSV manual upload
+ */
+export async function seedMisConnection(params: {
+	schoolId: string;
+}): Promise<{ id: string }> {
+	const connection = await prisma.misConnection.upsert({
+		where: { schoolId: params.schoolId },
+		update: {},
+		create: {
+			schoolId: params.schoolId,
+			provider: "CSV_MANUAL",
+			credentials: "manual",
+			status: "CONNECTED",
+			syncFrequency: "MANUAL",
+		},
+	});
+	return { id: connection.id };
+}
+
 export { prisma };

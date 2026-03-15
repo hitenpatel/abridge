@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import {
 	enableSchoolFeature,
 	getSchoolByURN,
+	seedMisConnection,
 } from "./helpers/seed-data";
 
 /**
@@ -41,6 +42,7 @@ test.describe("MIS Integration", () => {
 		if (!school) throw new Error("Failed to get school");
 
 		await enableSchoolFeature({ schoolId: school.id, features: { misIntegrationEnabled: true } });
+		await seedMisConnection({ schoolId: school.id });
 
 		// === STEP 4: Navigate to MIS page ===
 		await expect(async () => {
@@ -105,6 +107,7 @@ test.describe("MIS Integration", () => {
 		if (!school) throw new Error("Failed to get school");
 
 		await enableSchoolFeature({ schoolId: school.id, features: { misIntegrationEnabled: true } });
+		await seedMisConnection({ schoolId: school.id });
 
 		// === STEP 4: Navigate to MIS page ===
 		await expect(async () => {
@@ -170,6 +173,7 @@ test.describe("MIS Integration", () => {
 		if (!school) throw new Error("Failed to get school");
 
 		await enableSchoolFeature({ schoolId: school.id, features: { misIntegrationEnabled: true } });
+		await seedMisConnection({ schoolId: school.id });
 
 		// === STEP 4: Navigate to MIS page ===
 		await expect(async () => {
