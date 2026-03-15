@@ -43,6 +43,8 @@ export default function CalendarPage() {
 	const [category, setCategory] = useState("EVENT");
 	const [recurrencePattern, setRecurrencePattern] = useState("");
 	const [recurrenceEndDate, setRecurrenceEndDate] = useState("");
+	const [rsvpRequired, setRsvpRequired] = useState(false);
+	const [maxCapacity, setMaxCapacity] = useState("");
 
 	const createMutation = trpc.calendar.createEvent.useMutation({
 		onSuccess: () => {
@@ -53,6 +55,8 @@ export default function CalendarPage() {
 			setCategory("EVENT");
 			setRecurrencePattern("");
 			setRecurrenceEndDate("");
+			setRsvpRequired(false);
+			setMaxCapacity("");
 		},
 		onError: (err) => toast.error(err.message),
 	});
@@ -71,6 +75,8 @@ export default function CalendarPage() {
 			// biome-ignore lint/suspicious/noExplicitAny: recurrence string matches enum
 			...(recurrencePattern ? { recurrencePattern: recurrencePattern as any } : {}),
 			...(recurrenceEndDate ? { recurrenceEndDate: new Date(recurrenceEndDate) } : {}),
+			rsvpRequired,
+			...(maxCapacity ? { maxCapacity: Number.parseInt(maxCapacity, 10) } : {}),
 		});
 	};
 
@@ -162,6 +168,31 @@ export default function CalendarPage() {
 									value={recurrenceEndDate}
 									onChange={(e) => setRecurrenceEndDate(e.target.value)}
 									min={startDate}
+								/>
+							</div>
+						)}
+						<div className="flex items-center gap-2">
+							<input
+								id="event-rsvp-required"
+								type="checkbox"
+								data-testid="event-rsvp-required"
+								checked={rsvpRequired}
+								onChange={(e) => setRsvpRequired(e.target.checked)}
+								className="rounded border-gray-300"
+							/>
+							<Label htmlFor="event-rsvp-required">Require RSVP</Label>
+						</div>
+						{rsvpRequired && (
+							<div className="space-y-2">
+								<Label htmlFor="event-max-capacity">Max Capacity (optional)</Label>
+								<Input
+									id="event-max-capacity"
+									type="number"
+									data-testid="event-max-capacity"
+									value={maxCapacity}
+									onChange={(e) => setMaxCapacity(e.target.value)}
+									placeholder="Leave empty for unlimited"
+									min="1"
 								/>
 							</div>
 						)}

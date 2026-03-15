@@ -20,6 +20,7 @@ import {
 	Clock,
 	Repeat,
 	Trash2,
+	Users,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -49,6 +50,77 @@ const RECURRENCE_LABELS: Record<string, string> = {
 	BIWEEKLY: "Fortnightly",
 	MONTHLY: "Monthly",
 };
+
+function RsvpButtons({ eventId }: { eventId: string }) {
+	const utils = trpc.useUtils();
+	const { data: children } = trpc.user.listChildren.useQuery();
+	const { data: rsvps } = trpc.calendar.getRsvps.useQuery({ eventId });
+
+	const rsvpMutation = trpc.calendar.rsvpToEvent.useMutation({
+		onSuccess: () => {
+			toast.success("RSVP saved");
+			utils.calendar.getRsvps.invalidate({ eventId });
+		},
+		onError: (err) => toast.error(err.message),
+	});
+
+	if (!children?.length) return null;
+
+	return (
+		<div className="mt-3 space-y-2 border-t pt-3">
+			{children.map((pc) => {
+				const childRsvp = rsvps?.find((r) => r.childId === pc.child.id);
+				return (
+					<div key={pc.child.id} className="flex items-center gap-2 flex-wrap">
+						<span className="text-sm font-medium min-w-[80px]">{pc.child.firstName}:</span>
+						{(["YES", "NO", "MAYBE"] as const).map((response) => (
+							<button
+								key={response}
+								type="button"
+								data-testid={`rsvp-${response.toLowerCase()}-${pc.child.id}`}
+								onClick={() =>
+									rsvpMutation.mutate({
+										eventId,
+										childId: pc.child.id,
+										response,
+									})
+								}
+								disabled={rsvpMutation.isPending}
+								className={`px-3 py-1 text-xs rounded-full border transition-colors ${
+									childRsvp?.response === response
+										? response === "YES"
+											? "bg-green-100 border-green-400 text-green-800"
+											: response === "NO"
+												? "bg-red-100 border-red-400 text-red-800"
+												: "bg-yellow-100 border-yellow-400 text-yellow-800"
+										: "bg-muted hover:bg-accent"
+								}`}
+							>
+								{response === "YES" ? "Yes" : response === "NO" ? "No" : "Maybe"}
+							</button>
+						))}
+					</div>
+				);
+			})}
+		</div>
+	);
+}
+
+function RsvpHeadcount({ eventId, schoolId }: { eventId: string; schoolId: string }) {
+	const { data: summary } = trpc.calendar.getRsvpSummary.useQuery({ schoolId, eventId });
+
+	if (!summary) return null;
+
+	const yesCount = summary.counts.find((c) => c.response === "YES")?.count ?? 0;
+	const capacityText = summary.maxCapacity ? `/${summary.maxCapacity}` : "";
+
+	return (
+		<Badge variant="outline" className="gap-1" data-testid="rsvp-headcount">
+			<Users className="w-3 h-3" />
+			{yesCount}{capacityText} attending
+		</Badge>
+	);
+}
 
 export function EventList() {
 	const [currentDate, setCurrentDate] = useState(new Date());
@@ -84,6 +156,9 @@ export function EventList() {
 	const handleNextMonth = () => {
 		setCurrentDate((prev) => addMonths(prev, 1));
 	};
+
+	const isParent = session?.isParent && !session?.staffRole;
+	const isStaff = !!session?.staffRole;
 
 	if (isLoading) {
 		return (
@@ -149,66 +224,81 @@ export function EventList() {
 
 				<div className="space-y-4">
 					{events && events.length > 0 ? (
-						events.map((event) => (
-							<Card
-								key={event.id}
-								className="hover:shadow-md transition-shadow"
-								data-testid="calendar-event"
-							>
-								<CardContent className="p-4">
-									<div className="flex items-start justify-between">
-										<div className="flex-1">
-											<div className="flex items-center gap-2 mb-1">
-												<Badge variant={CATEGORY_BADGE_VARIANT[event.category] || "secondary"}>
-													{CATEGORY_LABELS[event.category] || event.category}
-												</Badge>
-												{"recurrencePattern" in event && event.recurrencePattern && (
-													<Badge variant="outline" className="gap-1">
-														<Repeat className="w-3 h-3" />
-														{RECURRENCE_LABELS[event.recurrencePattern as string] || "Recurring"}
+						events.map((event) => {
+							// biome-ignore lint/suspicious/noExplicitAny: event shape varies
+							const evt = event as any;
+							return (
+								<Card
+									key={event.id}
+									className="hover:shadow-md transition-shadow"
+									data-testid="calendar-event"
+								>
+									<CardContent className="p-4">
+										<div className="flex items-start justify-between">
+											<div className="flex-1">
+												<div className="flex items-center gap-2 mb-1 flex-wrap">
+													<Badge variant={CATEGORY_BADGE_VARIANT[event.category] || "secondary"}>
+														{CATEGORY_LABELS[event.category] || event.category}
 													</Badge>
+													{"recurrencePattern" in event && event.recurrencePattern && (
+														<Badge variant="outline" className="gap-1">
+															<Repeat className="w-3 h-3" />
+															{RECURRENCE_LABELS[event.recurrencePattern as string] || "Recurring"}
+														</Badge>
+													)}
+													{evt.rsvpRequired && isStaff && session?.schoolId && (
+														<RsvpHeadcount
+															eventId={event.id.includes("_") ? event.id.split("_")[0] : event.id}
+															schoolId={session.schoolId}
+														/>
+													)}
+													<span className="text-sm text-muted-foreground flex items-center gap-1">
+														<CalendarIcon className="w-3 h-3" />
+														{format(event.startDate, "d MMM yyyy")}
+													</span>
+												</div>
+												<h3 className="text-lg font-medium text-foreground">{event.title}</h3>
+												{event.body && (
+													<p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+														{event.body}
+													</p>
 												)}
-												<span className="text-sm text-muted-foreground flex items-center gap-1">
-													<CalendarIcon className="w-3 h-3" />
-													{format(event.startDate, "d MMM yyyy")}
-												</span>
-											</div>
-											<h3 className="text-lg font-medium text-foreground">{event.title}</h3>
-											{event.body && (
-												<p className="mt-1 text-sm text-muted-foreground line-clamp-2">
-													{event.body}
-												</p>
-											)}
-											<div className="mt-2 flex items-center gap-4 text-sm text-muted-foreground">
-												{!event.allDay && (
-													<div className="flex items-center gap-1">
-														<Clock className="w-4 h-4" />
-														<span>
-															{format(event.startDate, "h:mm a")}
-															{event.endDate && !isSameDay(event.startDate, event.endDate)
-																? ` - ${format(event.endDate, "h:mm a")}`
-																: event.endDate
+												<div className="mt-2 flex items-center gap-4 text-sm text-muted-foreground">
+													{!event.allDay && (
+														<div className="flex items-center gap-1">
+															<Clock className="w-4 h-4" />
+															<span>
+																{format(event.startDate, "h:mm a")}
+																{event.endDate && !isSameDay(event.startDate, event.endDate)
 																	? ` - ${format(event.endDate, "h:mm a")}`
-																	: ""}
-														</span>
-													</div>
+																	: event.endDate
+																		? ` - ${format(event.endDate, "h:mm a")}`
+																		: ""}
+															</span>
+														</div>
+													)}
+												</div>
+												{evt.rsvpRequired && isParent && (
+													<RsvpButtons
+														eventId={event.id.includes("_") ? event.id.split("_")[0] : event.id}
+													/>
 												)}
 											</div>
+											{session?.staffRole && (
+												<button
+													type="button"
+													data-testid="event-delete-button"
+													onClick={() => setEventToDelete(event.id)}
+													className="p-1 rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+												>
+													<Trash2 className="w-4 h-4" />
+												</button>
+											)}
 										</div>
-										{session?.staffRole && (
-											<button
-												type="button"
-												data-testid="event-delete-button"
-												onClick={() => setEventToDelete(event.id)}
-												className="p-1 rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
-											>
-												<Trash2 className="w-4 h-4" />
-											</button>
-										)}
-									</div>
-								</CardContent>
-							</Card>
-						))
+									</CardContent>
+								</Card>
+							);
+						})
 					) : (
 						<div className="text-center py-12 bg-muted rounded-lg border-2 border-dashed border-border">
 							<CalendarIcon className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
