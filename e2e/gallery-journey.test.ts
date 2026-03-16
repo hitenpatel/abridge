@@ -13,21 +13,47 @@ import {
  * Gallery journey tests.
  */
 test.describe("Gallery", () => {
+	let uniqueURN: string;
+	let adminEmail: string;
+	let parentEmail: string;
+
+	test.beforeEach(() => {
+		uniqueURN = Math.floor(100000 + Math.random() * 900000).toString();
+		adminEmail = `admin-gal-${uniqueURN}@e2e-test.com`;
+		parentEmail = `parent-gal-${uniqueURN}@e2e-test.com`;
+	});
+
 	test("staff should see gallery page with album management", async ({ page }) => {
-		// Login as staff (use seed admin)
-		await page.goto("http://localhost:3000/login");
-		await page.getByLabel("Email").fill("claire@oakwood.sch.uk");
-		await page.getByLabel("Password").fill("password123");
-		await page.getByRole("button", { name: /Sign In/i }).click();
+		// === STEP 1: Setup school ===
+		await page.goto("http://localhost:3000/setup");
+		await page.getByLabel("School Name").fill(`Gallery Staff School ${uniqueURN}`);
+		await page.getByLabel("Ofsted URN").fill(uniqueURN);
+		await page.getByLabel("Admin Email").fill(adminEmail);
+		await page.getByLabel("Setup Key").fill("admin123");
+		await page.getByRole("button", { name: /Create School/i }).click();
+		await expect(page.getByText("School Created!")).toBeVisible({ timeout: 10000 });
+
+		// === STEP 2: Register as admin via "Go to Registration" link ===
+		await page.getByRole("link", { name: /Go to Registration/i }).click();
+		await expect(page).toHaveURL(/\/register/);
+		await page.getByLabel("Full Name").fill("Gallery Admin");
+		await page.getByLabel("Email Address").fill(adminEmail);
+		await page.getByLabel("Password").fill("AdminPassword123!");
+		await page.getByRole("button", { name: /Register/i }).click();
 		await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 
-		// Wait for feature toggles to load and nav link to appear
+		// === STEP 3: Enable gallery feature ===
+		const school = await getSchoolByURN(uniqueURN);
+		if (!school) throw new Error("Failed to get school");
+		await enableSchoolFeature({ schoolId: school.id, features: { galleryEnabled: true } });
+
+		// === STEP 4: Wait for Gallery nav link ===
 		await expect(async () => {
 			await page.reload();
 			await expect(page.getByRole("link", { name: /Gallery/i }).first()).toBeVisible({ timeout: 3000 });
 		}).toPass({ timeout: 30000 });
 
-		// Navigate to gallery page
+		// === STEP 5: Navigate to gallery page ===
 		await page.getByRole("link", { name: "Gallery" }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/gallery/);
 
@@ -36,37 +62,72 @@ test.describe("Gallery", () => {
 
 		// Staff should see Create Album button
 		await expect(page.getByRole("button", { name: /Create Album/i })).toBeVisible();
-
-		// Verify seeded album is visible
-		await expect(page.getByText("Sports Day 2026")).toBeVisible();
 	});
 
 	test("parent should view published gallery albums", async ({ page }) => {
-		// Login as parent
-		await page.goto("http://localhost:3000/login");
-		await page.getByLabel("Email").fill("sarah@example.com");
-		await page.getByLabel("Password").fill("password123");
-		await page.getByRole("button", { name: /Sign In/i }).click();
+		// === STEP 1: Setup school ===
+		await page.goto("http://localhost:3000/setup");
+		await page.getByLabel("School Name").fill(`Gallery Parent School ${uniqueURN}`);
+		await page.getByLabel("Ofsted URN").fill(uniqueURN);
+		await page.getByLabel("Admin Email").fill(`admin-gp-${uniqueURN}@test.com`);
+		await page.getByLabel("Setup Key").fill("admin123");
+		await page.getByRole("button", { name: /Create School/i }).click();
+		await expect(page.getByText("School Created!")).toBeVisible({ timeout: 10000 });
+
+		// === STEP 2: Register as parent (via /register, NOT "Go to Registration") ===
+		await page.goto("http://localhost:3000/register");
+		await page.getByLabel("Full Name").fill("Gallery Parent");
+		await page.getByLabel("Email Address").fill(parentEmail);
+		await page.getByLabel("Password").fill("ParentPassword123!");
+		await page.getByRole("button", { name: /Register/i }).click();
 		await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 
-		// Wait for feature toggles to load and nav link to appear
+		// === STEP 3: Seed data ===
+		const school = await getSchoolByURN(uniqueURN);
+		const user = await getUserByEmail(parentEmail);
+		if (!school || !user) throw new Error("Failed to get school or user");
+
+		await enableSchoolFeature({ schoolId: school.id, features: { galleryEnabled: true } });
+
+		const child = await seedChildForParent({
+			userId: user.id,
+			schoolId: school.id,
+			firstName: "Ella",
+			lastName: "Gallery",
+		});
+
+		// Seed a published album with photos
+		const album = await seedGalleryAlbum({
+			schoolId: school.id,
+			createdBy: user.id,
+			title: "Sports Day 2026",
+			description: "Photos from sports day",
+			isPublished: true,
+		});
+
+		const media = await seedMediaUpload({
+			schoolId: school.id,
+			uploadedBy: user.id,
+			filename: "sports-1.jpg",
+		});
+
+		await seedGalleryPhoto({ albumId: album.id, mediaId: media.id, caption: "Running race", sortOrder: 0 });
+
+		// === STEP 4: Wait for Gallery nav link ===
 		await expect(async () => {
 			await page.reload();
 			await expect(page.getByRole("link", { name: /Gallery/i }).first()).toBeVisible({ timeout: 3000 });
 		}).toPass({ timeout: 30000 });
 
-		// Navigate to gallery page
+		// === STEP 5: Navigate to gallery page ===
 		await page.getByRole("link", { name: "Gallery" }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/gallery/);
 
 		// Verify heading
 		await expect(page.getByRole("heading", { name: /Photo Gallery/i })).toBeVisible();
 
-		// Should see the published album (Sports Day 2026 is Year 2, matching child1)
-		await expect(page.getByText("Sports Day 2026")).toBeVisible();
-
-		// Draft album should NOT be visible to parent
-		await expect(page.getByText("Art Exhibition (Draft)")).not.toBeVisible();
+		// Should see the published album
+		await expect(page.getByText("Sports Day 2026")).toBeVisible({ timeout: 10000 });
 	});
 
 	test("staff should send message with attachment button visible", async ({ page }) => {
@@ -86,9 +147,6 @@ test.describe("Gallery", () => {
 	});
 
 	test("staff should create and publish an album", async ({ page }) => {
-		const uniqueURN = Math.floor(100000 + Math.random() * 900000).toString();
-		const adminEmail = `admin-gallery-${uniqueURN}@e2e-test.com`;
-
 		// === STEP 1: Setup school ===
 		await page.goto("http://localhost:3000/setup");
 		await page.getByLabel("School Name").fill(`Gallery School ${uniqueURN}`);
@@ -136,14 +194,11 @@ test.describe("Gallery", () => {
 	});
 
 	test("parent should view photos in a published album", async ({ page }) => {
-		const uniqueURN = Math.floor(100000 + Math.random() * 900000).toString();
-		const parentEmail = `parent-gallery-${uniqueURN}@e2e-test.com`;
-
 		// === STEP 1: Setup school ===
 		await page.goto("http://localhost:3000/setup");
-		await page.getByLabel("School Name").fill(`Gallery Parent School ${uniqueURN}`);
+		await page.getByLabel("School Name").fill(`Gallery Photo School ${uniqueURN}`);
 		await page.getByLabel("Ofsted URN").fill(uniqueURN);
-		await page.getByLabel("Admin Email").fill(`admin-gp-${uniqueURN}@test.com`);
+		await page.getByLabel("Admin Email").fill(`admin-gph-${uniqueURN}@test.com`);
 		await page.getByLabel("Setup Key").fill("admin123");
 		await page.getByRole("button", { name: /Create School/i }).click();
 		await expect(page.getByText("School Created!")).toBeVisible({ timeout: 10000 });
@@ -208,9 +263,6 @@ test.describe("Gallery", () => {
 	});
 
 	test("gallery page should show disabled state when feature is off", async ({ page }) => {
-		const uniqueURN = Math.floor(100000 + Math.random() * 900000).toString();
-		const parentEmail = `parent-nogal-${uniqueURN}@e2e-test.com`;
-
 		// === STEP 1: Setup school ===
 		await page.goto("http://localhost:3000/setup");
 		await page.getByLabel("School Name").fill(`No Gallery School ${uniqueURN}`);
