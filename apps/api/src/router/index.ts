@@ -29,6 +29,7 @@ import { settingsRouter } from "./settings";
 import { setupRouter } from "./setup";
 import { staffRouter } from "./staff";
 import { stripeRouter } from "./stripe";
+import { timetableRouter } from "./timetable";
 import { translationRouter } from "./translation";
 import { userRouter } from "./user";
 import { visitorRouter } from "./visitor";
@@ -65,6 +66,7 @@ export const appRouter = router({
 	homework: homeworkRouter,
 	media: mediaRouter,
 	readingDiary: readingDiaryRouter,
+	timetable: timetableRouter,
 	visitor: visitorRouter,
 	mis: misRouter,
 	reportCard: reportCardRouter,

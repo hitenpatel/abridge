@@ -1,0 +1,22 @@
+appId: com.abridge.app
+name: Parent Chat
+tags:
+  - parent
+  - chat
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Wait for home data to load (dev nav buttons only render after loading)
+- extendedWaitUntil:
+    visible:
+      id: "nav-chat"
+    timeout: 120000
+
+# Navigate to chat screen
+- tapOn:
+    id: "nav-chat"
+
+# Verify chat screen loaded
+- extendedWaitUntil:
+    visible: "Chat"
+    timeout: 60000

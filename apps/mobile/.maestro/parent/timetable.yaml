@@ -1,0 +1,26 @@
+appId: com.abridge.app
+name: Parent Timetable
+tags:
+  - parent
+  - timetable
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Navigate to timetable via dev nav button
+- tapOn:
+    id: "nav-timetable"
+- extendedWaitUntil:
+    visible: "Timetable"
+    timeout: 60000
+
+# Verify header elements
+- extendedWaitUntil:
+    visible: "Weekly class schedule"
+    timeout: 60000
+
+# Either timetable grid or empty state should be visible
+- scrollUntilVisible:
+    element: "No timetable found"
+    direction: DOWN
+    timeout: 30000
+    optional: true
