@@ -136,8 +136,8 @@ export const calendarRouter = router({
 		.input(
 			z.object({
 				schoolId: z.string(),
-				title: z.string().min(1),
-				body: z.string().optional(),
+				title: z.string().min(1).max(200),
+				body: z.string().max(5000).optional(),
 				startDate: z.date(),
 				endDate: z.date().optional(),
 				allDay: z.boolean().default(false),
@@ -211,13 +211,14 @@ export const calendarRouter = router({
 				eventId: z.string(),
 				childId: z.string(),
 				response: z.enum(["YES", "NO", "MAYBE"]),
-				note: z.string().optional(),
+				note: z.string().max(500).optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
 			// Verify parent-child link
 			const parentChild = await ctx.prisma.parentChild.findFirst({
 				where: { userId: ctx.user.id, childId: input.childId },
+				include: { child: { select: { schoolId: true } } },
 			});
 			if (!parentChild) {
 				throw new TRPCError({
@@ -232,6 +233,14 @@ export const calendarRouter = router({
 			});
 			if (!event) {
 				throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
+			}
+
+			// Verify event belongs to child's school
+			if (event.schoolId !== parentChild.child.schoolId) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "This event does not belong to your child's school",
+				});
 			}
 
 			// Check capacity if response is YES and maxCapacity is set
@@ -310,6 +319,13 @@ export const calendarRouter = router({
 			const event = await ctx.prisma.event.findUnique({
 				where: { id: input.eventId },
 			});
+
+			if (!event || event.schoolId !== input.schoolId) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Event not found in this school",
+				});
+			}
 
 			const counts = await ctx.prisma.eventRsvp.groupBy({
 				by: ["response"],
