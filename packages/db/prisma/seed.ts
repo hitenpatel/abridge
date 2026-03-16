@@ -52,6 +52,7 @@ async function main() {
 			achievementsEnabled: true,
 			galleryEnabled: true,
 			progressSummariesEnabled: true,
+			liveChatEnabled: true,
 			communityTags: ["General", "Events", "Help Needed", "PTA", "Lost & Found"],
 			brandColor: "#1E3A5F",
 			brandFont: "DEFAULT",
@@ -861,6 +862,47 @@ async function main() {
 			},
 		});
 		console.log("Seeded progress summary");
+	}
+
+	// ─── Live Chat ──────────────────────────────────────────
+	const existingChatConv = await prisma.chatConversation.findFirst({
+		where: { schoolId: school.id, parentId: parent.id, staffId: teacher.id },
+	});
+	if (!existingChatConv) {
+		const chatConv = await prisma.chatConversation.create({
+			data: {
+				schoolId: school.id,
+				parentId: parent.id,
+				staffId: teacher.id,
+				subject: "Emily's homework question",
+				lastMessageAt: new Date(),
+			},
+		});
+
+		const chatMessages = [
+			{
+				conversationId: chatConv.id,
+				senderId: parent.id,
+				body: "Hi Mr Williams, could you clarify what's needed for the maths homework?",
+				createdAt: new Date(Date.now() - 3600000),
+			},
+			{
+				conversationId: chatConv.id,
+				senderId: teacher.id,
+				body: "Of course! Please complete questions 1-10 on page 45. Let me know if Emily needs any help.",
+				createdAt: new Date(Date.now() - 1800000),
+				readAt: new Date(Date.now() - 1700000),
+			},
+			{
+				conversationId: chatConv.id,
+				senderId: parent.id,
+				body: "Thank you, that's very helpful!",
+				createdAt: new Date(Date.now() - 900000),
+			},
+		];
+
+		await prisma.chatMessage.createMany({ data: chatMessages });
+		console.log("Seeded chat conversation and messages");
 	}
 
 	console.log("Seed data created successfully");

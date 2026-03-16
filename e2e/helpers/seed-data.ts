@@ -517,6 +517,7 @@ export async function enableSchoolFeature(params: {
 		galleryEnabled: boolean;
 		calendarEnabled: boolean;
 		progressSummariesEnabled: boolean;
+		liveChatEnabled: boolean;
 	}>;
 }): Promise<void> {
 	await prisma.school.update({
@@ -1138,6 +1139,49 @@ export async function seedProgressSummary(params: {
 	});
 
 	return { id: record.id };
+}
+
+/**
+ * Seed a chat conversation between a parent and staff member
+ */
+export async function seedChatConversation(params: {
+	schoolId: string;
+	parentId: string;
+	staffId: string;
+	subject?: string;
+}): Promise<{ id: string }> {
+	const conv = await prisma.chatConversation.create({
+		data: {
+			schoolId: params.schoolId,
+			parentId: params.parentId,
+			staffId: params.staffId,
+			subject: params.subject || null,
+			lastMessageAt: new Date(),
+		},
+	});
+
+	return { id: conv.id };
+}
+
+/**
+ * Seed a chat message in a conversation
+ */
+export async function seedChatMessage(params: {
+	conversationId: string;
+	senderId: string;
+	body: string;
+	readAt?: Date;
+}): Promise<{ id: string }> {
+	const msg = await prisma.chatMessage.create({
+		data: {
+			conversationId: params.conversationId,
+			senderId: params.senderId,
+			body: params.body,
+			readAt: params.readAt ?? null,
+		},
+	});
+
+	return { id: msg.id };
 }
 
 export { prisma };
