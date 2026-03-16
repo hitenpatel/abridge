@@ -4,7 +4,7 @@
 
 **Goal:** Complete all remaining PRD items — Event RSVPs, Achievement System, Photo/Video Sharing, MIS SIMS Adapter, API Documentation, Frontend Component Tests, and PRD Checklist Update.
 
-**Architecture:** Seven independent feature modules added to the existing SchoolConnect monorepo. Each follows established patterns: Prisma schema → feature toggle → tRPC router → Next.js page → tests. Photo/Video adds a shared media upload service backed by Cloudflare R2.
+**Architecture:** Seven independent feature modules added to the existing Abridge monorepo. Each follows established patterns: Prisma schema → feature toggle → tRPC router → Next.js page → tests. Photo/Video adds a shared media upload service backed by Cloudflare R2.
 
 **Tech Stack:** Prisma (schema), tRPC (routers), Zod (validation), Next.js App Router (pages), Tailwind + shadcn/ui (UI), Vitest (API + component tests), Playwright (E2E), @aws-sdk/client-s3 (R2), @fastify/swagger + @fastify/swagger-ui (API docs).
 
@@ -792,7 +792,7 @@ import swaggerUi from "@fastify/swagger-ui";
 app.register(swagger, {
   openapi: {
     info: {
-      title: "SchoolConnect API",
+      title: "Abridge API",
       description: "School-parent communication platform API",
       version: "1.0.0",
     },

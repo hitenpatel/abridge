@@ -602,7 +602,7 @@ git commit -m "test: add Maestro flow for parent student profile"
 
 SearchScreen has a "Test Search" button (when `EXPO_PUBLIC_E2E`) that sets query to "Test Message 1". The search debounces 300ms then queries. Results show matching messages.
 
-But wait — "Test Message 1" may not match any seed messages. The seed messages are "Welcome to SchoolConnect!", "Urgent: School Closure Tomorrow", "FYI: New Library Books Available". The test search query won't match.
+But wait — "Test Message 1" may not match any seed messages. The seed messages are "Welcome to Abridge!", "Urgent: School Closure Tomorrow", "FYI: New Library Books Available". The test search query won't match.
 
 **Alternative:** The search also has a text input. We can tap the search icon (from Task 3), then type a query that matches seed data.
 

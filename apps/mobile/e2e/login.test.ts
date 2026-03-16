@@ -7,7 +7,7 @@ describe("Login Flow", () => {
 	});
 
 	it("should show the app title", async () => {
-		await expect(element(by.text("SchoolConnect"))).toBeVisible();
+		await expect(element(by.text("Abridge"))).toBeVisible();
 	});
 
 	it("should log in with valid credentials", async () => {

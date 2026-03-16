@@ -1,4 +1,4 @@
-# SchoolConnect Improvement Log
+# Abridge Improvement Log
 
 ## Security Audits
 - [x] auth (clean, no issues)

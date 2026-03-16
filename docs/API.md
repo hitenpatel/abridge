@@ -1,4 +1,4 @@
-# SchoolConnect API Reference
+# Abridge API Reference
 
 Base URL: `http://localhost:4000` (dev) | `https://api.your-domain.com` (production)
 

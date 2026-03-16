@@ -1,6 +1,6 @@
 # Development Guide
 
-This guide provides instructions on how to set up, build, and test the SchoolConnect project locally.
+This guide provides instructions on how to set up, build, and test the Abridge project locally.
 
 ## Prerequisites
 

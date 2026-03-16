@@ -11,7 +11,7 @@ function getResend() {
 }
 
 // Email sender configuration
-const FROM_EMAIL = process.env.FROM_EMAIL || "SchoolConnect <onboarding@resend.dev>";
+const FROM_EMAIL = process.env.FROM_EMAIL || "Abridge <onboarding@resend.dev>";
 const WEB_URL = process.env.WEB_URL || "http://localhost:3000";
 
 export interface StaffInvitationEmailData {
@@ -51,7 +51,7 @@ export async function sendStaffInvitationEmail(data: StaffInvitationEmailData) {
 		const { data: emailData, error: emailError } = await getResend().emails.send({
 			from: FROM_EMAIL,
 			to: [data.recipientEmail],
-			subject: `Invitation to join ${data.schoolName} on SchoolConnect`,
+			subject: `Invitation to join ${data.schoolName} on Abridge`,
 			html: `
 <!DOCTYPE html>
 <html>
@@ -68,7 +68,7 @@ export async function sendStaffInvitationEmail(data: StaffInvitationEmailData) {
                     <!-- Header -->
                     <tr>
                         <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center; border-radius: 8px 8px 0 0;">
-                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">SchoolConnect</h1>
+                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">Abridge</h1>
                         </td>
                     </tr>
 
@@ -82,11 +82,11 @@ export async function sendStaffInvitationEmail(data: StaffInvitationEmailData) {
                             </p>
 
                             <p style="margin: 0 0 20px 0; color: #666666; font-size: 16px; line-height: 1.6;">
-                                You've been invited to join <strong>${data.schoolName}</strong> as a <strong>${data.role}</strong> on SchoolConnect.
+                                You've been invited to join <strong>${data.schoolName}</strong> as a <strong>${data.role}</strong> on Abridge.
                             </p>
 
                             <p style="margin: 0 0 30px 0; color: #666666; font-size: 16px; line-height: 1.6;">
-                                SchoolConnect is a modern platform for school-parent communication, making it easy to manage messaging, payments, attendance, and more.
+                                Abridge is a modern platform for school-parent communication, making it easy to manage messaging, payments, attendance, and more.
                             </p>
 
                             <!-- CTA Button -->
@@ -115,7 +115,7 @@ export async function sendStaffInvitationEmail(data: StaffInvitationEmailData) {
                     <tr>
                         <td style="background-color: #f9f9f9; padding: 30px; text-align: center; border-radius: 0 0 8px 8px; border-top: 1px solid #eeeeee;">
                             <p style="margin: 0; color: #999999; font-size: 12px;">
-                                © ${new Date().getFullYear()} SchoolConnect. All rights reserved.
+                                © ${new Date().getFullYear()} Abridge. All rights reserved.
                             </p>
                             <p style="margin: 10px 0 0 0; color: #999999; font-size: 12px;">
                                 If you didn't expect this invitation, you can safely ignore this email.
@@ -193,7 +193,7 @@ export async function sendNotificationEmail(data: NotificationEmailData) {
                     <tr>
                         <td style="background-color: #f9f9f9; padding: 20px; text-align: center; border-radius: 0 0 8px 8px;">
                             <p style="margin: 0; color: #999999; font-size: 12px;">
-                                Sent via SchoolConnect
+                                Sent via Abridge
                             </p>
                         </td>
                     </tr>
@@ -286,7 +286,7 @@ export async function sendReceiptEmail(data: ReceiptEmailData) {
                     <tr>
                         <td style="background-color: #f9f9f9; padding: 20px; text-align: center; border-radius: 0 0 8px 8px;">
                             <p style="margin: 0; color: #999999; font-size: 12px;">
-                                © ${new Date().getFullYear()} ${data.schoolName} via SchoolConnect
+                                © ${new Date().getFullYear()} ${data.schoolName} via Abridge
                             </p>
                         </td>
                     </tr>

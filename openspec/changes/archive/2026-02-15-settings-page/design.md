@@ -1,6 +1,6 @@
 ## Context
 
-SchoolConnect has notification preference fields on the `User` model (`quietStart`, `quietEnd`, `phone`) and a `/dashboard/settings` route in the admin nav, but no settings page exists. Users cannot manage their profile or notification preferences through the UI. Admins have no way to configure school-level defaults.
+Abridge has notification preference fields on the `User` model (`quietStart`, `quietEnd`, `phone`) and a `/dashboard/settings` route in the admin nav, but no settings page exists. Users cannot manage their profile or notification preferences through the UI. Admins have no way to configure school-level defaults.
 
 The `User` model is missing explicit notification channel toggles (`notifyByPush`, `notifyBySms`, `notifyByEmail`) — these need to be added. The `School` model has no concept of default notification preferences for new members.
 

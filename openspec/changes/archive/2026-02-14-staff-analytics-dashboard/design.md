@@ -26,7 +26,7 @@ The app uses tRPC with `schoolStaffProcedure` middleware for staff-only endpoint
 
 **Decision**: Query-on-demand from existing tables.
 
-**Rationale**: SchoolConnect operates at single-school scale (hundreds of students, not millions). Prisma `groupBy`, `count`, and `aggregate` queries against indexed columns will return in milliseconds. Materialized tables add schema complexity, staleness risk, and sync bugs for no benefit at this scale. If performance becomes an issue, Redis caching can be layered on without changing the API contract.
+**Rationale**: Abridge operates at single-school scale (hundreds of students, not millions). Prisma `groupBy`, `count`, and `aggregate` queries against indexed columns will return in milliseconds. Materialized tables add schema complexity, staleness risk, and sync bugs for no benefit at this scale. If performance becomes an issue, Redis caching can be layered on without changing the API contract.
 
 **Alternatives considered**:
 - Materialized stats tables — rejected, unnecessary complexity

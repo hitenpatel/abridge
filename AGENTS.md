@@ -1,8 +1,8 @@
-# SchoolConnect - AI Agent Guide
+# Abridge - AI Agent Guide
 
 ## What is this?
 
-SchoolConnect is a school-parent communication platform. Staff send messages, track attendance, collect payments, and manage forms. Parents view everything via web or mobile app.
+Abridge is a school-parent communication platform. Staff send messages, track attendance, collect payments, and manage forms. Parents view everything via web or mobile app.
 
 ## Monorepo Structure
 

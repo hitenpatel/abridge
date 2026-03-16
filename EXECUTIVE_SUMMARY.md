@@ -1,4 +1,4 @@
-# SchoolConnect - Executive Summary
+# Abridge - Executive Summary
 
 **Date:** 2026-02-04
 **Status:** ✅ MVP COMPLETE - READY FOR SECURITY AUDIT
@@ -8,7 +8,7 @@
 
 ## TL;DR
 
-SchoolConnect is a **production-ready** school-parent communication platform that addresses all pain points identified in competitor analysis. All Phase 1 MVP features are complete with full web/mobile parity. **All critical security bugs have been fixed.** Ready for security audit and pilot deployment.
+Abridge is a **production-ready** school-parent communication platform that addresses all pain points identified in competitor analysis. All Phase 1 MVP features are complete with full web/mobile parity. **All critical security bugs have been fixed.** Ready for security audit and pilot deployment.
 
 **Key Stats:**
 - ✅ 100% of MVP features implemented
@@ -421,7 +421,7 @@ SchoolConnect is a **production-ready** school-parent communication platform tha
 
 ## Conclusion
 
-SchoolConnect is a **production-ready, feature-complete** school-parent communication platform that addresses all major pain points in the market. With all critical bugs fixed and comprehensive testing in place, the platform is ready for security audit and pilot deployment.
+Abridge is a **production-ready, feature-complete** school-parent communication platform that addresses all major pain points in the market. With all critical bugs fixed and comprehensive testing in place, the platform is ready for security audit and pilot deployment.
 
 **Key Achievements:**
 - ✅ 100% of MVP features delivered

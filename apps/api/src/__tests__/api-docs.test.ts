@@ -21,7 +21,7 @@ describe("API documentation (Swagger)", () => {
 		await app.register(swagger, {
 			openapi: {
 				info: {
-					title: "SchoolConnect API",
+					title: "Abridge API",
 					description: "School-parent communication platform API",
 					version: "1.0.0",
 				},
@@ -37,7 +37,7 @@ describe("API documentation (Swagger)", () => {
 		expect(spec).toBeDefined();
 		expect(spec.openapi).toMatch(/^3\./);
 		const info = spec.info as Record<string, string>;
-		expect(info.title).toBe("SchoolConnect API");
+		expect(info.title).toBe("Abridge API");
 		expect(info.version).toBe("1.0.0");
 		const servers = spec.servers as Array<{ url: string }>;
 		expect(servers).toHaveLength(1);

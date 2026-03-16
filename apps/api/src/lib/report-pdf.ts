@@ -169,7 +169,7 @@ export async function generateReportPdf(data: ReportPdfData): Promise<Buffer> {
 			h(
 				Text,
 				{ style: styles.footer },
-				`${data.schoolName} · Generated from SchoolConnect on ${new Date().toLocaleDateString("en-GB")}`,
+				`${data.schoolName} · Generated from Abridge on ${new Date().toLocaleDateString("en-GB")}`,
 			),
 		),
 	);

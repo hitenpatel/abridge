@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-15
 **Status:** Approved
-**Scope:** 7 features/improvements to complete the SchoolConnect PRD
+**Scope:** 7 features/improvements to complete the Abridge PRD
 
 After this work, only the external security audit remains before production readiness.
 
@@ -390,7 +390,7 @@ Add `.meta()` to each router procedure with:
 
 Register Swagger plugin in `apps/api/src/index.ts`:
 ```typescript
-app.register(swagger, { openapi: { info: { title: "SchoolConnect API", version: "1.0.0" } } });
+app.register(swagger, { openapi: { info: { title: "Abridge API", version: "1.0.0" } } });
 app.register(swaggerUi, { routePrefix: "/api/docs" });
 ```
 

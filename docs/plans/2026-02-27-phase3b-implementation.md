@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Add Meal Booking & Dietary Management, Community Hub, and Digital Report Cards with branded PDF export to SchoolConnect.
+**Goal:** Add Meal Booking & Dietary Management, Community Hub, and Digital Report Cards with branded PDF export to Abridge.
 
 **Architecture:** Three new feature modules. Meal Booking links to existing Stripe payment flow (`DINNER_MONEY` category). Community Hub is standalone with post-moderation and volunteer signups. Report Cards use `@react-pdf/renderer` for server-side branded PDF generation using the school branding fields added in Phase 3A.
 
@@ -2089,7 +2089,7 @@ function ReportPdf({ data }: { data: ReportPdfData }) {
       React.createElement(
         Text,
         { style: styles.footer },
-        `${data.schoolName} · Generated from SchoolConnect on ${new Date().toLocaleDateString("en-GB")}`,
+        `${data.schoolName} · Generated from Abridge on ${new Date().toLocaleDateString("en-GB")}`,
       ),
     ),
   );

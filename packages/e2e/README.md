@@ -1,6 +1,6 @@
 # @schoolconnect/e2e
 
-End-to-end testing infrastructure for SchoolConnect. Tests web (Playwright) and mobile (Maestro) from a single source of truth: YAML journey specs.
+End-to-end testing infrastructure for Abridge. Tests web (Playwright) and mobile (Maestro) from a single source of truth: YAML journey specs.
 
 ## Architecture
 

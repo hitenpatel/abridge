@@ -1,6 +1,6 @@
-# SchoolConnect User Guide
+# Abridge User Guide
 
-Welcome to SchoolConnect — the all-in-one platform connecting schools and parents. This guide walks through every feature based on how the application actually works today.
+Welcome to Abridge — the all-in-one platform connecting schools and parents. This guide walks through every feature based on how the application actually works today.
 
 ---
 
@@ -227,7 +227,7 @@ The **School Admin** link in the navigation provides access to school-level admi
 Chrome, Safari, Firefox, and Edge (last 2 versions). The app is fully responsive for mobile, tablet, and desktop.
 
 ### Notifications
-SchoolConnect uses a multi-channel notification system:
+Abridge uses a multi-channel notification system:
 1. **Push notifications** — primary channel (via mobile app)
 2. **SMS fallback** — if push is not delivered within 15 minutes
 3. **Email fallback** — if SMS is unavailable (via Resend)
@@ -372,7 +372,7 @@ Parents receive immediate push notifications for all emergency alerts regardless
 
 ## Mobile App
 
-The SchoolConnect mobile app (iOS and Android) provides all parent and staff features on the go.
+The Abridge mobile app (iOS and Android) provides all parent and staff features on the go.
 
 ### Getting Started
 1. Download from the App Store or Google Play (or scan the QR code provided by your school).

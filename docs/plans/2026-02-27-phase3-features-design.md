@@ -1,4 +1,4 @@
-# Phase 3 Feature Design: SchoolConnect Expansion
+# Phase 3 Feature Design: Abridge Expansion
 
 **Date:** 2026-02-27
 **Status:** Approved
@@ -468,7 +468,7 @@ VolunteerSignup
 
 ### 3C.1 MIS Integration Layer
 
-**Purpose:** One-way sync from school MIS (SIMS, Arbor, Bromcom) into SchoolConnect. Eliminates double-entry for student data, attendance, and timetables.
+**Purpose:** One-way sync from school MIS (SIMS, Arbor, Bromcom) into Abridge. Eliminates double-entry for student data, attendance, and timetables.
 
 #### Architecture: Adapter Pattern
 
@@ -537,7 +537,7 @@ TimetableEntry
 
 #### Sync Strategy
 
-One-way: MIS → SchoolConnect. Never write back.
+One-way: MIS → Abridge. Never write back.
 
 | Data | Conflict Resolution |
 |------|---------------------|

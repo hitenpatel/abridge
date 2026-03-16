@@ -1,4 +1,4 @@
-# SchoolConnect
+# Abridge
 
 School-parent communication platform. Staff send messages, track attendance, collect payments, manage forms. Parents view via web or mobile.
 

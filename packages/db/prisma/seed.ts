@@ -251,7 +251,7 @@ async function main() {
 	// 6. Messages (STANDARD, URGENT, FYI categories)
 	const seedMessages = [
 		{
-			subject: "Welcome to SchoolConnect!",
+			subject: "Welcome to Abridge!",
 			body: "We are excited to launch our new communication platform. You can now receive messages, view attendance, and make payments all in one place.",
 			category: "STANDARD" as const,
 		},

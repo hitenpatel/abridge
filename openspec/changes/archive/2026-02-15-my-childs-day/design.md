@@ -1,6 +1,6 @@
 ## Context
 
-SchoolConnect's parent home screen currently serves a summary dashboard (`dashboard.getSummary`) that returns metrics (unread messages, payment counts, attendance alerts), today's attendance, upcoming events, and attendance percentages. This is consumed by both the web and mobile apps.
+Abridge's parent home screen currently serves a summary dashboard (`dashboard.getSummary`) that returns metrics (unread messages, payment counts, attendance alerts), today's attendance, upcoming events, and attendance percentages. This is consumed by both the web and mobile apps.
 
 The change introduces a fundamentally different home screen model: a chronological activity feed with class posts, pinned action items, and inline interactions. This is a cross-cutting change touching the database, API, web, mobile, and introducing new infrastructure (media storage).
 

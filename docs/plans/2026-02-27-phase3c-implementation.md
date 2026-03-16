@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Add Homework Tracker (with grading), Reading Diary, Visitor & Volunteer Management, and MIS Integration Layer to SchoolConnect.
+**Goal:** Add Homework Tracker (with grading), Reading Diary, Visitor & Volunteer Management, and MIS Integration Layer to Abridge.
 
 **Architecture:** Four feature modules. Homework and Reading Diary are standalone CRUD with push notification hooks. Visitor Management is office-staff focused with DBS tracking and fire register integration. MIS Integration uses an adapter pattern for one-way sync from external school systems, starting with CSV upload as the first adapter.
 

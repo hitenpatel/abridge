@@ -1,4 +1,4 @@
-# SchoolConnect
+# Abridge
 
 A comprehensive school-parent communication platform built as a full-stack monorepo.
 

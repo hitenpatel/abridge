@@ -1,6 +1,6 @@
 ## Context
 
-SchoolConnect has 5 parent-facing features (Messaging, Payments, Attendance, Calendar, Forms) that are always enabled for every school. The School model has basic info and notification defaults but no feature configuration. The existing `schoolStaffProcedure` and `schoolAdminProcedure` middleware verify staff membership but don't load any School data — they only query the `StaffMember` table (with Redis caching).
+Abridge has 5 parent-facing features (Messaging, Payments, Attendance, Calendar, Forms) that are always enabled for every school. The School model has basic info and notification defaults but no feature configuration. The existing `schoolStaffProcedure` and `schoolAdminProcedure` middleware verify staff membership but don't load any School data — they only query the `StaffMember` table (with Redis caching).
 
 ## Goals / Non-Goals
 

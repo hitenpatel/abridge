@@ -1,6 +1,6 @@
 ## Why
 
-SchoolConnect has no E2E integration layer connecting frontend to backend. API tests mock Prisma, web has 2 tests total, mobile has 4 screen tests and 4 local-only Maestro flows. Playwright is installed but unconfigured. Critical user journeys (login, messaging, payments) have no automated end-to-end validation, and mobile and web test identical flows independently with no shared infrastructure. Regressions ship undetected.
+Abridge has no E2E integration layer connecting frontend to backend. API tests mock Prisma, web has 2 tests total, mobile has 4 screen tests and 4 local-only Maestro flows. Playwright is installed but unconfigured. Critical user journeys (login, messaging, payments) have no automated end-to-end validation, and mobile and web test identical flows independently with no shared infrastructure. Regressions ship undetected.
 
 ## What Changes
 

@@ -16,7 +16,7 @@
 
 1. After signup, go to **API Keys** in the dashboard
 2. Click **Create API Key**
-3. Name it: `SchoolConnect Development`
+3. Name it: `Abridge Development`
 4. Copy the API key (starts with `re_`)
 
 ### Step 3: Add to Environment
@@ -25,7 +25,7 @@ Add to `apps/api/.env`:
 
 ```bash
 RESEND_API_KEY=re_your_actual_api_key_here
-FROM_EMAIL=SchoolConnect <onboarding@resend.dev>
+FROM_EMAIL=Abridge <onboarding@resend.dev>
 ```
 
 ### Step 4: Test It!
@@ -89,7 +89,7 @@ Then invite a staff member from the admin dashboard - they'll receive an email! 
 
 ✅ **Responsive:** Works on mobile and desktop
 ✅ **Professional:** Gradient header, clean layout
-✅ **Branded:** SchoolConnect colors and styling
+✅ **Branded:** Abridge colors and styling
 ✅ **Accessible:** Good contrast, readable fonts
 ✅ **UC-Compliant:** Receipt emails mention Universal Credit
 
@@ -108,7 +108,7 @@ To send from your own domain (e.g., `noreply@schoolconnect.com`):
 5. Update `.env`:
 
 ```bash
-FROM_EMAIL=SchoolConnect <noreply@schoolconnect.com>
+FROM_EMAIL=Abridge <noreply@schoolconnect.com>
 ```
 
 **Benefits:**
@@ -125,7 +125,7 @@ FROM_EMAIL=SchoolConnect <noreply@schoolconnect.com>
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
 | `RESEND_API_KEY` | ✅ Yes | - | Resend API authentication |
-| `FROM_EMAIL` | ⚠️ Optional | `SchoolConnect <onboarding@resend.dev>` | Sender email address |
+| `FROM_EMAIL` | ⚠️ Optional | `Abridge <onboarding@resend.dev>` | Sender email address |
 | `WEB_URL` | ⚠️ Optional | `http://localhost:3000` | Web app URL for links |
 
 ---
@@ -303,7 +303,7 @@ tail -f logs/app.log | grep "email"
 - Status: [status.resend.com](https://status.resend.com)
 - Support: [resend.com/support](https://resend.com/support)
 
-### SchoolConnect Email Code
+### Abridge Email Code
 
 - Service: `apps/api/src/services/email.ts`
 - Integration: `apps/api/src/router/invitation.ts`

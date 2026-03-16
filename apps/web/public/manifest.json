@@ -1,6 +1,6 @@
 {
-	"name": "SchoolConnect",
-	"short_name": "SchoolConnect",
+	"name": "Abridge",
+	"short_name": "Abridge",
 	"description": "School-parent communication platform for UK schools",
 	"start_url": "/",
 	"display": "standalone",

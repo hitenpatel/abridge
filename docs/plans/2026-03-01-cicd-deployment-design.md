@@ -6,7 +6,7 @@
 
 ## Decision
 
-Deploy SchoolConnect to **Vercel (web) + Railway (API + DB + Redis)** with CI/CD driven entirely from **Forgejo Actions** on the self-hosted NAS runner.
+Deploy Abridge to **Vercel (web) + Railway (API + DB + Redis)** with CI/CD driven entirely from **Forgejo Actions** on the self-hosted NAS runner.
 
 ## Architecture
 

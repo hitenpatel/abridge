@@ -1,6 +1,6 @@
 # CI/CD Architecture
 
-SchoolConnect uses a split CI/CD architecture across two platforms, with a push mirror keeping them in sync.
+Abridge uses a split CI/CD architecture across two platforms, with a push mirror keeping them in sync.
 
 ## Platform Split
 

@@ -39,7 +39,7 @@ node scripts/generate-icons.js
 
 ⚠️ **Placeholder icons needed**: The manifest.json references these icons, but they don't exist yet.
 
-The PWA will work without icons, but browsers will show a default icon instead of the SchoolConnect logo.
+The PWA will work without icons, but browsers will show a default icon instead of the Abridge logo.
 
 ## Optional: Screenshots
 

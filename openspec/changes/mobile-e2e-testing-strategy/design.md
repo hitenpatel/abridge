@@ -1,6 +1,6 @@
 ## Context
 
-SchoolConnect is a monorepo with three apps (API/Fastify+tRPC, Web/Next.js, Mobile/Expo) sharing a Prisma+PostgreSQL data layer. Current testing is unit-level only: API mocks Prisma, web has 2 tests, mobile has 4 screen tests. Playwright is installed but unconfigured. Four Maestro flows exist locally but aren't in CI. No test validates a real user journey across the stack.
+Abridge is a monorepo with three apps (API/Fastify+tRPC, Web/Next.js, Mobile/Expo) sharing a Prisma+PostgreSQL data layer. Current testing is unit-level only: API mocks Prisma, web has 2 tests, mobile has 4 screen tests. Playwright is installed but unconfigured. Four Maestro flows exist locally but aren't in CI. No test validates a real user journey across the stack.
 
 Both platforms implement the same user journeys (login, messaging, attendance, payments, forms) against the same tRPC API. Test logic is duplicated or missing entirely.
 

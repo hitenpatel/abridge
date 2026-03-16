@@ -1,4 +1,4 @@
-# SchoolConnect: PRD vs Implementation Checklist
+# Abridge: PRD vs Implementation Checklist
 
 **Last Updated:** 2026-03-15
 **E2E Test Status:** ~250+ tests across 35 files (Playwright)

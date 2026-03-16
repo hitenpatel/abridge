@@ -117,7 +117,7 @@ async function main() {
 	await server.register(swagger, {
 		openapi: {
 			info: {
-				title: "SchoolConnect API",
+				title: "Abridge API",
 				description: "School-parent communication platform API",
 				version: "1.0.0",
 			},

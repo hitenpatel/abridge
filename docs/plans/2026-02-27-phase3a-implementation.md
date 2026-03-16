@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Add Admin Analytics Dashboard, Wellbeing Check-ins, and Emergency Lockdown Comms to SchoolConnect.
+**Goal:** Add Admin Analytics Dashboard, Wellbeing Check-ins, and Emergency Lockdown Comms to Abridge.
 
 **Architecture:** Three new feature modules following existing tRPC router + Prisma + Next.js patterns. Admin Analytics aggregates existing data with Redis caching. Wellbeing uses a 15-min cron for deterministic alert generation. Emergency Comms fans out via existing NotificationDelivery infrastructure.
 
