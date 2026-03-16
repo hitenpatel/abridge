@@ -41,6 +41,7 @@ function createTestContext(overrides?: Record<string, any>): any {
 				findFirst: vi.fn().mockResolvedValue({
 					parentId: "user-1",
 					childId: "child-1",
+					child: { schoolId: "school-1" },
 				}),
 				findMany: vi.fn().mockResolvedValue([{ childId: "child-1" }]),
 			},

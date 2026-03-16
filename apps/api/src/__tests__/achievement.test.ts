@@ -38,6 +38,12 @@ function createTestContext(overrides?: Record<string, any>): any {
 				}),
 			},
 			achievementCategory: {
+				findFirst: vi.fn().mockResolvedValue({
+					id: "cat-1",
+					schoolId: "school-1",
+					name: "Star of the Week",
+					isActive: true,
+				}),
 				create: vi.fn().mockResolvedValue({
 					id: "cat-1",
 					schoolId: "school-1",
