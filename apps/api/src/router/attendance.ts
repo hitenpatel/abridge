@@ -62,7 +62,7 @@ export const attendanceRouter = router({
 				childId: z.string(),
 				startDate: z.date(),
 				endDate: z.date(),
-				reason: z.string().min(1),
+				reason: z.string().min(1).max(1000),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -102,6 +102,15 @@ export const attendanceRouter = router({
 				throw new TRPCError({
 					code: "BAD_REQUEST",
 					message: "End date cannot be before start date",
+				});
+			}
+
+			// Limit absence reporting to 30 days max
+			const daysDiff = Math.ceil((end.getTime() - current.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+			if (daysDiff > 30) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "Cannot report absence for more than 30 days at once",
 				});
 			}
 
