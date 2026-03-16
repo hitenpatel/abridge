@@ -10,8 +10,8 @@ export const misRouter = router({
 			z.object({
 				schoolId: z.string(),
 				provider: z.enum(["SIMS", "ARBOR", "BROMCOM", "SCHOLARPACK", "CSV_MANUAL"]),
-				apiUrl: z.string().url().optional(),
-				credentials: z.string().min(1),
+				apiUrl: z.string().url().max(2048).optional(),
+				credentials: z.string().min(1).max(4096),
 				syncFrequency: z.enum(["HOURLY", "TWICE_DAILY", "DAILY", "MANUAL"]),
 			}),
 		)
@@ -50,7 +50,15 @@ export const misRouter = router({
 				},
 			});
 
-			return connection;
+			// Never return credentials to the client
+			return {
+				id: connection.id,
+				schoolId: connection.schoolId,
+				provider: connection.provider,
+				apiUrl: connection.apiUrl,
+				syncFrequency: connection.syncFrequency,
+				status: connection.status,
+			};
 		}),
 
 	testConnection: schoolFeatureProcedure
@@ -75,7 +83,7 @@ export const misRouter = router({
 		}),
 
 	uploadStudentsCsv: schoolFeatureProcedure
-		.input(z.object({ schoolId: z.string(), csvData: z.string().min(1) }))
+		.input(z.object({ schoolId: z.string(), csvData: z.string().min(1).max(5_000_000) }))
 		.mutation(async ({ ctx, input }) => {
 			assertFeatureEnabled(ctx, "misIntegration");
 
@@ -207,7 +215,7 @@ export const misRouter = router({
 		}),
 
 	uploadAttendanceCsv: schoolFeatureProcedure
-		.input(z.object({ schoolId: z.string(), csvData: z.string().min(1) }))
+		.input(z.object({ schoolId: z.string(), csvData: z.string().min(1).max(5_000_000) }))
 		.mutation(async ({ ctx, input }) => {
 			assertFeatureEnabled(ctx, "misIntegration");
 
