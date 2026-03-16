@@ -10,7 +10,7 @@ export const authRouter = router({
 		if (!ctx.user) return null;
 
 		// Fetch roles
-		let [parentLinks, staffMember] = await Promise.all([
+		let [parentLinks, staffMember, studentChild] = await Promise.all([
 			ctx.prisma.parentChild.findMany({
 				where: { userId: ctx.user.id },
 				select: { id: true }, // Just check existence
@@ -19,6 +19,10 @@ export const authRouter = router({
 			ctx.prisma.staffMember.findFirst({
 				where: { userId: ctx.user.id },
 				select: { role: true, schoolId: true },
+			}),
+			ctx.prisma.child.findUnique({
+				where: { userId: ctx.user.id },
+				select: { id: true, schoolId: true },
 			}),
 		]);
 
@@ -70,8 +74,10 @@ export const authRouter = router({
 		return {
 			...ctx.user,
 			isParent: parentLinks.length > 0,
+			isStudent: !!studentChild,
+			studentChildId: studentChild?.id || null,
 			staffRole: staffMember?.role || null,
-			schoolId: staffMember?.schoolId || null,
+			schoolId: staffMember?.schoolId || studentChild?.schoolId || null,
 		};
 	}),
 	getSecretMessage: protectedProcedure.query(({ ctx }) => {

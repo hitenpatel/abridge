@@ -28,6 +28,7 @@ import { reportCardRouter } from "./report-card";
 import { settingsRouter } from "./settings";
 import { setupRouter } from "./setup";
 import { staffRouter } from "./staff";
+import { studentRouter } from "./student";
 import { stripeRouter } from "./stripe";
 import { timetableRouter } from "./timetable";
 import { translationRouter } from "./translation";
@@ -56,6 +57,7 @@ export const appRouter = router({
 	invitation: invitationRouter,
 	setup: setupRouter,
 	staff: staffRouter,
+	student: studentRouter,
 	translation: translationRouter,
 	parentsEvening: parentsEveningRouter,
 	wellbeing: wellbeingRouter,
