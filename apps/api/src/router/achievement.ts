@@ -8,8 +8,8 @@ export const achievementRouter = router({
 		.input(
 			z.object({
 				schoolId: z.string(),
-				name: z.string().min(1),
-				icon: z.string().optional(),
+				name: z.string().min(1).max(100),
+				icon: z.string().max(100).optional(),
 				pointValue: z.number().int().positive().default(1),
 				type: z.enum(["POINTS", "BADGE"]).default("POINTS"),
 			}),
@@ -83,7 +83,7 @@ export const achievementRouter = router({
 				schoolId: z.string(),
 				childId: z.string(),
 				categoryId: z.string(),
-				reason: z.string().optional(),
+				reason: z.string().max(500).optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -224,6 +224,14 @@ export const achievementRouter = router({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Verify category belongs to this school
+			const existing = await ctx.prisma.achievementCategory.findFirst({
+				where: { id: input.categoryId, schoolId: ctx.schoolId },
+			});
+			if (!existing) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Category not found" });
+			}
+
 			const category = await ctx.prisma.achievementCategory.update({
 				where: { id: input.categoryId },
 				data: { isActive: false },
