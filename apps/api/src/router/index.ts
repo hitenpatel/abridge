@@ -21,6 +21,7 @@ import { messagingRouter } from "./messaging";
 import { misRouter } from "./mis";
 import { parentsEveningRouter } from "./parents-evening";
 import { paymentsRouter } from "./payments";
+import { progressSummaryRouter } from "./progress-summary";
 import { readingDiaryRouter } from "./reading-diary";
 import { reportCardRouter } from "./report-card";
 import { settingsRouter } from "./settings";
@@ -65,6 +66,7 @@ export const appRouter = router({
 	visitor: visitorRouter,
 	mis: misRouter,
 	reportCard: reportCardRouter,
+	progressSummary: progressSummaryRouter,
 });
 
 export type AppRouter = typeof appRouter;
