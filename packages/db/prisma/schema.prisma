@@ -52,6 +52,7 @@ model School {
   misIntegrationEnabled      Boolean  @default(false)
   achievementsEnabled        Boolean  @default(false)
   galleryEnabled             Boolean  @default(false)
+  progressSummariesEnabled   Boolean  @default(false)
 
   // School branding
   brandColor                String?  @default("#1E3A5F")
@@ -94,6 +95,7 @@ model School {
   achievements        Achievement[]
   mediaUploads        MediaUpload[]
   galleryAlbums       GalleryAlbum[]
+  progressSummaries   ProgressSummary[]
 
   @@map("schools")
 }
@@ -270,6 +272,7 @@ model Child {
   timetableEntries    TimetableEntry[]
   eventRsvps          EventRsvp[]
   achievements        Achievement[]
+  progressSummaries   ProgressSummary[]
 
   @@map("children")
 }
@@ -1634,4 +1637,24 @@ model MessageAttachment {
 
   @@unique([messageId, mediaId])
   @@map("message_attachment")
+}
+
+// ─── Progress Summaries ────────────────────────────────────
+
+model ProgressSummary {
+  id           String   @id @default(cuid())
+  childId      String
+  child        Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+  schoolId     String
+  school       School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  weekStart    DateTime @db.Date
+  templateData Json
+  insight      String?
+  summary      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([childId, weekStart])
+  @@index([schoolId, weekStart])
+  @@map("progress_summary")
 }
