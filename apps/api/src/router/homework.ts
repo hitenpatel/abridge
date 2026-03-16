@@ -11,11 +11,11 @@ export const homeworkRouter = router({
 				subject: z.string().min(1).max(100),
 				title: z.string().min(1).max(200),
 				description: z.string().max(2000).optional(),
-				yearGroup: z.string().min(1),
-				className: z.string().optional(),
+				yearGroup: z.string().min(1).max(50),
+				className: z.string().max(100).optional(),
 				setDate: z.date(),
 				dueDate: z.date(),
-				attachmentUrls: z.array(z.string().url()).default([]),
+				attachmentUrls: z.array(z.string().url().max(2000)).max(10).default([]),
 				isReadingTask: z.boolean().default(false),
 			}),
 		)
@@ -202,6 +202,17 @@ export const homeworkRouter = router({
 		.mutation(async ({ ctx, input }) => {
 			assertFeatureEnabled(ctx, "homework");
 
+			const completion = await ctx.prisma.homeworkCompletion.findUnique({
+				where: { id: input.completionId },
+				include: { assignment: { select: { schoolId: true } } },
+			});
+			if (!completion || completion.assignment.schoolId !== input.schoolId) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Completion not found",
+				});
+			}
+
 			return ctx.prisma.homeworkCompletion.update({
 				where: { id: input.completionId },
 				data: {
@@ -218,13 +229,15 @@ export const homeworkRouter = router({
 			z.object({
 				schoolId: z.string(),
 				assignmentId: z.string(),
-				grades: z.array(
-					z.object({
-						childId: z.string(),
-						grade: z.string().min(1).max(10),
-						feedback: z.string().max(500).optional(),
-					}),
-				),
+				grades: z
+					.array(
+						z.object({
+							childId: z.string(),
+							grade: z.string().min(1).max(10),
+							feedback: z.string().max(500).optional(),
+						}),
+					)
+					.max(100),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -268,6 +281,16 @@ export const homeworkRouter = router({
 		)
 		.mutation(async ({ ctx, input }) => {
 			assertFeatureEnabled(ctx, "homework");
+
+			const assignment = await ctx.prisma.homeworkAssignment.findUnique({
+				where: { id: input.assignmentId },
+			});
+			if (!assignment || assignment.schoolId !== input.schoolId) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Assignment not found",
+				});
+			}
 
 			return ctx.prisma.homeworkAssignment.update({
 				where: { id: input.assignmentId },

@@ -37,6 +37,11 @@ function createTestContext(overrides?: Record<string, any>): any {
 				}),
 			},
 			homeworkAssignment: {
+				findUnique: vi.fn().mockResolvedValue({
+					id: "hw-1",
+					schoolId: "school-1",
+					status: "ACTIVE",
+				}),
 				create: vi.fn().mockResolvedValue({
 					id: "hw-1",
 					schoolId: "school-1",
@@ -70,6 +75,12 @@ function createTestContext(overrides?: Record<string, any>): any {
 				}),
 			},
 			homeworkCompletion: {
+				findUnique: vi.fn().mockResolvedValue({
+					id: "comp-1",
+					assignmentId: "hw-1",
+					childId: "child-1",
+					assignment: { schoolId: "school-1" },
+				}),
 				upsert: vi.fn().mockResolvedValue({
 					id: "comp-1",
 					assignmentId: "hw-1",

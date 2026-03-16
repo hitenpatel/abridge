@@ -41,8 +41,8 @@ export const settingsRouter = router({
 	updateProfile: protectedProcedure
 		.input(
 			z.object({
-				name: z.string().min(1, "Name is required"),
-				phone: z.string().nullable(),
+				name: z.string().min(1, "Name is required").max(100),
+				phone: z.string().max(20).nullable(),
 				language: z.string().min(2).max(5).optional(),
 			}),
 		)
@@ -114,7 +114,7 @@ export const settingsRouter = router({
 	updateSchoolSettings: schoolAdminProcedure
 		.input(
 			z.object({
-				name: z.string().min(1, "School name is required"),
+				name: z.string().min(1, "School name is required").max(200),
 				defaultNotifyByPush: z.boolean(),
 				defaultNotifyBySms: z.boolean(),
 				defaultNotifyByEmail: z.boolean(),
