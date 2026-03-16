@@ -1,0 +1,27 @@
+appId: com.abridge.app
+name: Parent Gallery
+tags:
+  - parent
+  - gallery
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Wait for home data to load (dev nav buttons only render after loading)
+- extendedWaitUntil:
+    visible:
+      id: "nav-gallery"
+    timeout: 120000
+
+# Navigate to gallery screen
+- tapOn:
+    id: "nav-gallery"
+
+# Verify gallery screen loaded
+- extendedWaitUntil:
+    visible: "Gallery"
+    timeout: 60000
+
+# Verify subtitle
+- extendedWaitUntil:
+    visible: "School photo albums"
+    timeout: 60000
