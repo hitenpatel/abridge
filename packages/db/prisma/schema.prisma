@@ -60,6 +60,7 @@ model School {
   // Phase 2 feature toggles
   aiDraftingEnabled          Boolean  @default(false)
   attendanceAlertsEnabled    Boolean  @default(false)
+  studentPortalEnabled       Boolean  @default(false)
 
   // School branding
   brandColor                String?  @default("#1E3A5F")
@@ -78,6 +79,7 @@ model School {
   attendance AttendanceRecord[]
   formTemplates FormTemplate[]
   invitations Invitation[]
+  studentInvites StudentInvite[]
   classPosts ClassPost[]
   conversations Conversation[]
   parentsEvenings ParentsEvening[]
@@ -125,6 +127,22 @@ model Invitation {
 
   @@unique([email, schoolId])
   @@map("invitations")
+}
+
+model StudentInvite {
+  id        String    @id @default(cuid())
+  childId   String
+  schoolId  String
+  code      String    @unique
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  usedAt    DateTime?
+  usedBy    String?
+
+  child  Child  @relation(fields: [childId], references: [id], onDelete: Cascade)
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@map("student_invites")
 }
 
 // ─── Users & Roles ───────────────────────────────────────────
@@ -185,6 +203,7 @@ model User {
   chatConversationsAsStaff    ChatConversation[] @relation("ChatStaff")
   chatMessagesSent            ChatMessage[]      @relation("ChatMessageSender")
   attendanceAlertsAcknowledged AttendanceAlert[] @relation("AttendanceAlertAcknowledger")
+  studentChild                 Child?            @relation("StudentUser")
 
   @@map("users")
 }
@@ -264,10 +283,12 @@ model Child {
   className   String?
   avatarUrl   String?
   schoolId    String
+  userId      String?  @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   school      School            @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  user        User?             @relation("StudentUser", fields: [userId], references: [id])
   parentLinks ParentChild[]
   attendance  AttendanceRecord[]
   messages    MessageChild[]
@@ -287,6 +308,7 @@ model Child {
   achievements        Achievement[]
   progressSummaries   ProgressSummary[]
   attendanceAlerts    AttendanceAlert[] @relation("AttendanceAlerts")
+  studentInvites      StudentInvite[]
 
   @@map("children")
 }
