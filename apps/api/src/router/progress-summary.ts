@@ -1,14 +1,9 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { assertFeatureEnabled } from "../lib/feature-guards";
-import { generateWeeklySummary } from "../lib/progress-summary";
 import { logger } from "../lib/logger";
-import {
-	protectedProcedure,
-	router,
-	schoolAdminProcedure,
-	schoolFeatureProcedure,
-} from "../trpc";
+import { generateWeeklySummary } from "../lib/progress-summary";
+import { protectedProcedure, router, schoolAdminProcedure, schoolFeatureProcedure } from "../trpc";
 
 export const progressSummaryRouter = router({
 	getLatestSummary: protectedProcedure

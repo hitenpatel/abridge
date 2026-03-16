@@ -857,7 +857,7 @@ async function main() {
 					wellbeing: { avgMood: "GOOD", checkInCount: 5, trend: "stable" },
 				},
 				summary:
-					"Attendance: 100% (5/5 days).\nHomework: completed 3 of 4 assignments.\nReading: read 4 days this week (avg 18 min/day, 4-day streak). Currently reading \"Charlotte's Web\".\nAchievements: earned 15 points — Star of the Week, Reading Champion.\nWellbeing: mood average GOOD, stable trend.",
+					'Attendance: 100% (5/5 days).\nHomework: completed 3 of 4 assignments.\nReading: read 4 days this week (avg 18 min/day, 4-day streak). Currently reading "Charlotte\'s Web".\nAchievements: earned 15 points — Star of the Week, Reading Champion.\nWellbeing: mood average GOOD, stable trend.',
 			},
 		});
 		console.log("Seeded progress summary");

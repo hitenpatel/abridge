@@ -96,10 +96,7 @@ function createTestContext(overrides?: Record<string, any>): any {
 				}),
 			},
 			child: {
-				findMany: vi.fn().mockResolvedValue([
-					{ id: "child-1" },
-					{ id: "child-2" },
-				]),
+				findMany: vi.fn().mockResolvedValue([{ id: "child-1" }, { id: "child-2" }]),
 			},
 		},
 		user: { id: "user-1", name: "Test User" },
@@ -135,9 +132,9 @@ describe("progress summary router", () => {
 		});
 		const caller = appRouter.createCaller(ctx);
 
-		await expect(
-			caller.progressSummary.getLatestSummary({ childId: "child-1" }),
-		).rejects.toThrow("You do not have access to this child's data");
+		await expect(caller.progressSummary.getLatestSummary({ childId: "child-1" })).rejects.toThrow(
+			"You do not have access to this child's data",
+		);
 	});
 
 	it("getSummaryHistory returns paginated results", async () => {

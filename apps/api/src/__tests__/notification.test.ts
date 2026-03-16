@@ -84,9 +84,10 @@ describe("NotificationService", () => {
 		const mockCreate = vi.fn();
 		const mockPrisma = {
 			user: {
-				findMany: vi
-					.fn()
-					.mockResolvedValue([{ id: "user-1", pushToken: null }, { id: "user-2", pushToken: "invalid-token" }]),
+				findMany: vi.fn().mockResolvedValue([
+					{ id: "user-1", pushToken: null },
+					{ id: "user-2", pushToken: "invalid-token" },
+				]),
 			},
 			notificationDelivery: {
 				create: mockCreate,

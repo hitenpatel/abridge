@@ -1,7 +1,7 @@
 import type { PrismaClient } from "@schoolconnect/db";
+import { NotificationService } from "../services/notification";
 import { logger } from "./logger";
 import { generateWeeklySummary } from "./progress-summary";
-import { NotificationService } from "../services/notification";
 
 const MAX_WEEKLY_TOKENS = 500_000;
 
@@ -120,13 +120,16 @@ export function startProgressSummaryCron(prisma: PrismaClient): void {
 	const cronHour = Number.parseInt(process.env.SUMMARY_CRON_HOUR || "6", 10);
 	logger.info({ cronHour }, "Starting progress summary cron (checks every hour, runs Monday)");
 
-	setInterval(() => {
-		const now = new Date();
-		// Only run on Monday (day 1) at the configured hour
-		if (now.getDay() !== 1 || now.getHours() !== cronHour) return;
+	setInterval(
+		() => {
+			const now = new Date();
+			// Only run on Monday (day 1) at the configured hour
+			if (now.getDay() !== 1 || now.getHours() !== cronHour) return;
 
-		runWeeklySummaries(prisma).catch((err) => {
-			logger.error({ err }, "Progress summary cron failed");
-		});
-	}, 60 * 60 * 1000);
+			runWeeklySummaries(prisma).catch((err) => {
+				logger.error({ err }, "Progress summary cron failed");
+			});
+		},
+		60 * 60 * 1000,
+	);
 }

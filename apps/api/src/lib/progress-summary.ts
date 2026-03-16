@@ -76,12 +76,15 @@ export async function gatherChildMetrics(
 	// Count unique days (AM/PM sessions)
 	const dayMap = new Map<string, { present: boolean; late: boolean }>();
 	for (const rec of attendanceRecords) {
-		const dateKey = rec.date.toISOString().split("T")[0];
+		const dateKey = rec.date.toISOString().split("T")[0] ?? "";
 		const existing = dayMap.get(dateKey) ?? { present: false, late: false };
 		if (rec.mark === "PRESENT") {
 			existing.present = true;
 		}
-		if (rec.mark === "LATE" || (rec.mark === "PRESENT" && rec.note?.toLowerCase().includes("late"))) {
+		if (
+			rec.mark === "LATE" ||
+			(rec.mark === "PRESENT" && rec.note?.toLowerCase().includes("late"))
+		) {
 			existing.late = true;
 		}
 		dayMap.set(dateKey, existing);
@@ -110,11 +113,11 @@ export async function gatherChildMetrics(
 	});
 
 	const completedCount = homeworkCompletions.filter(
-		(c) => c.status === "COMPLETED" || c.status === "GRADED",
+		(c) => c.status === "COMPLETED",
 	).length;
 	const overdueCount = homeworkAssignments.filter((a) => {
 		const completion = homeworkCompletions.find((c) => c.assignmentId === a.id);
-		return !completion || (completion.status !== "COMPLETED" && completion.status !== "GRADED");
+		return !completion || completion.status !== "COMPLETED";
 	}).length;
 
 	// 3. Reading
@@ -123,14 +126,20 @@ export async function gatherChildMetrics(
 		select: { id: true, currentBook: true },
 	});
 
-	let readingMetrics = { daysRead: 0, totalMinutes: 0, avgMinutes: 0, currentStreak: 0, currentBook: null as string | null };
+	let readingMetrics = {
+		daysRead: 0,
+		totalMinutes: 0,
+		avgMinutes: 0,
+		currentStreak: 0,
+		currentBook: null as string | null,
+	};
 	if (readingDiary) {
 		const readingEntries = await prisma.readingEntry.findMany({
 			where: { diaryId: readingDiary.id, date: { gte: weekStart, lt: weekEnd } },
 			orderBy: { date: "asc" },
 		});
 
-		const uniqueDays = new Set(readingEntries.map((e) => e.date.toISOString().split("T")[0]));
+		const uniqueDays = new Set(readingEntries.map((e) => e.date.toISOString().split("T")[0] ?? ""));
 		const totalMinutes = readingEntries.reduce((sum, e) => sum + (e.minutesRead ?? 0), 0);
 
 		// Calculate streak: consecutive days reading ending at weekEnd
@@ -292,9 +301,7 @@ export async function generateInsight(metrics: ChildWeeklyMetrics): Promise<stri
 					"You are a primary school teaching assistant writing a one-sentence weekly insight for a parent about their child's progress. Be warm, specific, and encouraging. Reference concrete data. Do not be generic. Maximum 150 characters.",
 				messages: [{ role: "user", content: `Child: ${metrics.childName}\n\n${metricsText}` }],
 			}),
-			new Promise<never>((_, reject) =>
-				setTimeout(() => reject(new Error("AI timeout")), 5000),
-			),
+			new Promise<never>((_, reject) => setTimeout(() => reject(new Error("AI timeout")), 5000)),
 		]);
 
 		const text = response.content[0]?.type === "text" ? response.content[0].text : null;

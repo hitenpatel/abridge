@@ -45,6 +45,7 @@ export const galleryRouter = router({
 					visitorManagementEnabled: true,
 					misIntegrationEnabled: true,
 					achievementsEnabled: true,
+					progressSummariesEnabled: true,
 				},
 			});
 			if (!school) {

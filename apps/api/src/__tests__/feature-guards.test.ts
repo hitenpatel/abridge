@@ -28,6 +28,7 @@ function allTogglesEnabled() {
 		misIntegrationEnabled: true,
 		achievementsEnabled: true,
 		galleryEnabled: true,
+		progressSummariesEnabled: true,
 	};
 }
 
@@ -58,6 +59,7 @@ function allTogglesDisabled() {
 		misIntegrationEnabled: false,
 		achievementsEnabled: false,
 		galleryEnabled: false,
+		progressSummariesEnabled: false,
 	};
 }
 

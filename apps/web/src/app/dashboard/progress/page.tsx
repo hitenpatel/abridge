@@ -229,9 +229,7 @@ function ParentView() {
 
 	const history = historyData?.items ?? [];
 	// Filter out the latest from history to avoid duplication
-	const pastSummaries = latestSummary
-		? history.filter((s) => s.id !== latestSummary.id)
-		: history;
+	const pastSummaries = latestSummary ? history.filter((s) => s.id !== latestSummary.id) : history;
 
 	return (
 		<div className="space-y-6">
@@ -280,9 +278,7 @@ function ParentView() {
 						{historyLoading ? (
 							<Skeleton className="h-16 w-full" />
 						) : (
-							pastSummaries.map((summary) => (
-								<SummaryCard key={summary.id} summary={summary} />
-							))
+							pastSummaries.map((summary) => <SummaryCard key={summary.id} summary={summary} />)
 						)}
 					</div>
 				</div>

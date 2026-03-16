@@ -169,7 +169,9 @@ describe("progress summary service", () => {
 
 		expect(text).toContain("Attendance: 100% (4/4 days, 1 late).");
 		expect(text).toContain("Homework: completed 3 of 4 assignments (1 overdue).");
-		expect(text).toContain('Reading: read 4 days this week (avg 18 min/day, 3-day streak). Currently reading "Charlotte\'s Web".');
+		expect(text).toContain(
+			'Reading: read 4 days this week (avg 18 min/day, 3-day streak). Currently reading "Charlotte\'s Web".',
+		);
 		expect(text).toContain("Achievements: earned 15 points — Star of the Week, Kindness.");
 		expect(text).toContain("Wellbeing: mood average GOOD, stable trend.");
 	});
@@ -177,7 +179,13 @@ describe("progress summary service", () => {
 	it("renderTemplateSummary omits empty sections", () => {
 		const metrics = createFullMetrics();
 		metrics.homework = { completed: 0, total: 0, overdue: 0 };
-		metrics.reading = { daysRead: 0, totalMinutes: 0, avgMinutes: 0, currentStreak: 0, currentBook: null };
+		metrics.reading = {
+			daysRead: 0,
+			totalMinutes: 0,
+			avgMinutes: 0,
+			currentStreak: 0,
+			currentBook: null,
+		};
 		metrics.achievements = { pointsEarned: 0, awardsReceived: 0, categories: [] };
 		metrics.wellbeing = { avgMood: null, checkInCount: 0, trend: null };
 
