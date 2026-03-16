@@ -27,6 +27,8 @@ function allTogglesEnabled() {
 		paymentClubsEnabled: true,
 		paymentUniformEnabled: true,
 		paymentOtherEnabled: true,
+		aiDraftingEnabled: true,
+		attendanceAlertsEnabled: true,
 	};
 }
 

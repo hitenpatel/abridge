@@ -44,6 +44,9 @@ function createTestContext(overrides?: Record<string, any>): any {
 					paymentOtherEnabled: true,
 				}),
 			},
+			user: {
+				findUnique: vi.fn().mockResolvedValue({ language: null }),
+			},
 		},
 		req: {},
 		res: {},

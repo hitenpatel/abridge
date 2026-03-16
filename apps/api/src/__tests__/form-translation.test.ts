@@ -53,8 +53,11 @@ function createTestContext(overrides?: Record<string, any>): any {
 				findFirst: vi.fn().mockResolvedValue(null),
 				create: vi.fn().mockResolvedValue({}),
 			},
+			user: {
+				findUnique: vi.fn().mockResolvedValue({ language: "pl" }),
+			},
 		},
-		user: { id: "user-1", name: "Test Parent", language: "pl" },
+		user: { id: "user-1", name: "Test Parent" },
 		session: { id: "session-1" },
 		...overrides,
 	};
@@ -116,6 +119,9 @@ describe("form translation", () => {
 						translated: JSON.stringify(cachedFields),
 					}),
 					create: vi.fn(),
+				},
+				user: {
+					findUnique: vi.fn().mockResolvedValue({ language: "pl" }),
 				},
 			},
 		});

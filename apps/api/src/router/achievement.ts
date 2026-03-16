@@ -46,6 +46,8 @@ export const achievementRouter = router({
 					galleryEnabled: true,
 					progressSummariesEnabled: true,
 					liveChatEnabled: true,
+					aiDraftingEnabled: true,
+					attendanceAlertsEnabled: true,
 				},
 			});
 			if (!school) {

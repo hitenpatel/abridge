@@ -47,7 +47,7 @@ export async function detectPatterns(
 					schoolId,
 					type: alert.type,
 					description: alert.description,
-					data: alert.data,
+					data: alert.data as any,
 				},
 			});
 			created++;

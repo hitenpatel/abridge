@@ -268,7 +268,11 @@ export const formsRouter = router({
 			}
 
 			// Translate form fields if user's language is not English
-			const userLang = ctx.user?.language;
+			const userRecord = await ctx.prisma.user.findUnique({
+				where: { id: ctx.user.id },
+				select: { language: true },
+			});
+			const userLang = userRecord?.language;
 			if (userLang && userLang !== "en") {
 				// Check if translation is enabled for this school
 				const school = await ctx.prisma.school.findUnique({
