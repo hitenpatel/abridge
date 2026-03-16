@@ -7,6 +7,7 @@ import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
+import websocket from "@fastify/websocket";
 import { prisma } from "@schoolconnect/db";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 // toNodeHandler doesn't work properly with Fastify, removed
@@ -19,6 +20,7 @@ import { auth } from "./lib/auth";
 import { logger } from "./lib/logger";
 import { startMisSyncCron } from "./lib/mis-sync-cron";
 import { startProgressSummaryCron } from "./lib/progress-summary-cron";
+import { registerChatWebSocket } from "./lib/chat/ws-handler";
 import { appRouter } from "./router";
 import { pdfRoutes } from "./routes/pdf";
 import { testSeedRoutes } from "./routes/test-seed";
@@ -103,6 +105,9 @@ async function main() {
 	});
 
 	await server.register(cors, getCorsOptions());
+
+	await server.register(websocket);
+	registerChatWebSocket(server, prisma);
 
 	await server.register(webhookRoutes);
 
