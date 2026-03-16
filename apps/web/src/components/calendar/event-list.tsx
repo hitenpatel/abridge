@@ -249,7 +249,7 @@ export function EventList() {
 													)}
 													{evt.rsvpRequired && isStaff && session?.schoolId && (
 														<RsvpHeadcount
-															eventId={event.id.includes("_") ? event.id.split("_")[0] : event.id}
+															eventId={event.id.includes("_") ? (event.id.split("_")[0] ?? event.id) : event.id}
 															schoolId={session.schoolId}
 														/>
 													)}
@@ -281,7 +281,7 @@ export function EventList() {
 												</div>
 												{evt.rsvpRequired && isParent && (
 													<RsvpButtons
-														eventId={event.id.includes("_") ? event.id.split("_")[0] : event.id}
+														eventId={event.id.includes("_") ? (event.id.split("_")[0] ?? event.id) : event.id}
 													/>
 												)}
 											</div>

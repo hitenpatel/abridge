@@ -103,13 +103,9 @@ test.describe("Event RSVP", () => {
 		// === STEP 5: Navigate to calendar ===
 		await page.getByRole("link", { name: "Calendar" }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/calendar/);
-		await expect(page.getByRole("heading", { name: /School Calendar/i })).toBeVisible();
 
-		// Wait for events to load
-		await page.waitForTimeout(2000);
-
-		// Verify calendar renders (staff should see create button)
-		await expect(page.getByTestId("create-event-button")).toBeVisible();
+		// Verify the RSVP event appears
+		await expect(page.getByText("Sports Day Headcount")).toBeVisible({ timeout: 10000 });
 	});
 
 	test("parent should submit RSVP and see response saved", async ({ page }) => {
