@@ -1,9 +1,12 @@
+import { createHash } from "node:crypto";
 import type { Prisma } from "@schoolconnect/db";
 import { TRPCError } from "@trpc/server";
 import PDFDocument from "pdfkit";
 import { z } from "zod";
+import { callAIProvider } from "../lib/ai-provider";
 import { assertFeatureEnabled } from "../lib/feature-guards";
 import { logger } from "../lib/logger";
+import { translateText } from "../services/translator";
 import { protectedProcedure, router, schoolFeatureProcedure } from "../trpc";
 
 function generateFormPdf(options: {
@@ -81,6 +84,113 @@ function generateFormPdf(options: {
 	});
 }
 
+/**
+ * Translate form field labels and descriptions using AI (contextual) with
+ * Google Translate fallback. Results are cached in TranslationCache.
+ */
+async function translateFormFields(
+	// biome-ignore lint/suspicious/noExplicitAny: Prisma client passed from context
+	prisma: any,
+	fields: Array<{ id: string; label: string; type: string; options?: string[] }>,
+	targetLang: string,
+): Promise<Array<{ id: string; label: string; type: string; options?: string[] }>> {
+	// Build a combined text for hashing/caching: all labels joined
+	const textsToTranslate = fields.map((f) => f.label);
+	const optionTexts = fields.flatMap((f) => f.options ?? []);
+	const allTexts = [...textsToTranslate, ...optionTexts];
+
+	const cacheKey = createHash("sha256").update(allTexts.join("|||")).digest("hex");
+
+	// Check cache
+	const cached = await prisma.translationCache.findFirst({
+		where: {
+			sourceHash: cacheKey,
+			sourceLang: "en",
+			targetLang,
+		},
+	});
+
+	if (cached) {
+		try {
+			return JSON.parse(cached.translated);
+		} catch {
+			// Corrupted cache entry, fall through to retranslate
+		}
+	}
+
+	// Try AI contextual translation first
+	const systemPrompt = `You are a translator for a UK school communication platform. Translate the following form field labels and options from English to ${targetLang}. Return ONLY a JSON array of objects with the same structure, with translated "label" and "options" values. Keep "id" and "type" unchanged. Be contextually accurate for a school environment.`;
+
+	const userMessage = JSON.stringify(
+		fields.map((f) => ({
+			id: f.id,
+			label: f.label,
+			type: f.type,
+			...(f.options ? { options: f.options } : {}),
+		})),
+	);
+
+	const aiResult = await callAIProvider(systemPrompt, userMessage, {
+		maxTokens: 500,
+		timeoutMs: 5000,
+	});
+
+	let translatedFields: typeof fields | null = null;
+
+	if (aiResult) {
+		try {
+			// Extract JSON from AI response (may be wrapped in markdown code blocks)
+			const jsonStr = aiResult
+				.replace(/```(?:json)?\s*/g, "")
+				.replace(/```/g, "")
+				.trim();
+			translatedFields = JSON.parse(jsonStr);
+		} catch {
+			logger.warn("AI form translation returned invalid JSON, falling back to Google Translate");
+		}
+	}
+
+	// Fallback to Google Translate if AI failed
+	if (!translatedFields) {
+		try {
+			const translatedLabels = await Promise.all(
+				fields.map((f) => translateText(f.label, targetLang)),
+			);
+			const translatedOptions = await Promise.all(
+				fields.map(async (f) => {
+					if (!f.options) return undefined;
+					return Promise.all(f.options.map((opt) => translateText(opt, targetLang)));
+				}),
+			);
+			translatedFields = fields.map((f, i) => ({
+				...f,
+				label: translatedLabels[i] ?? f.label,
+				...(translatedOptions[i] ? { options: translatedOptions[i] } : {}),
+			}));
+		} catch {
+			logger.warn("Google Translate fallback also failed, returning original fields");
+			return fields;
+		}
+	}
+
+	// Cache the result
+	try {
+		await prisma.translationCache.create({
+			data: {
+				sourceHash: cacheKey,
+				sourceLang: "en",
+				targetLang,
+				sourceText: userMessage,
+				translated: JSON.stringify(translatedFields),
+			},
+		});
+	} catch {
+		// Duplicate key or other cache error - not critical
+	}
+
+	return translatedFields;
+}
+
 const fieldSchema = z.object({
 	id: z.string().max(100),
 	type: z.string().max(50),
@@ -155,6 +265,31 @@ export const formsRouter = router({
 					code: "FORBIDDEN",
 					message: "You do not have access to this template",
 				});
+			}
+
+			// Translate form fields if user's language is not English
+			const userLang = ctx.user?.language;
+			if (userLang && userLang !== "en") {
+				// Check if translation is enabled for this school
+				const school = await ctx.prisma.school.findUnique({
+					where: { id: template.schoolId },
+					select: { translationEnabled: true },
+				});
+
+				if (school?.translationEnabled) {
+					try {
+						const fields = template.fields as Array<{
+							id: string;
+							label: string;
+							type: string;
+							options?: string[];
+						}>;
+						const translatedFields = await translateFormFields(ctx.prisma, fields, userLang);
+						return { ...template, fields: translatedFields };
+					} catch (err) {
+						logger.warn({ err }, "Form translation failed, returning original");
+					}
+				}
 			}
 
 			return template;
