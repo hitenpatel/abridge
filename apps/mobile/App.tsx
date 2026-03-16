@@ -44,9 +44,14 @@ import { StaffManagementScreen } from "./src/screens/StaffManagementScreen";
 import { StaffPaymentsScreen } from "./src/screens/StaffPaymentsScreen";
 import { StudentProfileScreen } from "./src/screens/StudentProfileScreen";
 import { AchievementsScreen } from "./src/screens/AchievementsScreen";
+import { GalleryScreen } from "./src/screens/GalleryScreen";
+import { TimetableScreen } from "./src/screens/TimetableScreen";
+import { VisitorsScreen } from "./src/screens/VisitorsScreen";
 import { WellbeingScreen } from "./src/screens/WellbeingScreen";
 import { ProgressScreen } from "./src/screens/ProgressScreen";
 import { ChatScreen } from "./src/screens/ChatScreen";
+import { HomeworkScreen } from "./src/screens/HomeworkScreen";
+import { ReadingDiaryScreen } from "./src/screens/ReadingDiaryScreen";
 
 // Message item type matching the API response
 export interface MessageItem {
@@ -79,6 +84,13 @@ export type RootStackParamList = {
 	PostDetail: { postId: string };
 	Wellbeing: { childId: string };
 	Achievements: undefined;
+	Gallery: undefined;
+	Progress: undefined;
+	Chat: { conversationId?: string } | undefined;
+	Homework: undefined;
+	ReadingDiary: undefined;
+	Timetable: undefined;
+	Visitors: undefined;
 };
 
 export type ParentTabParamList = {
@@ -320,6 +332,41 @@ function AuthenticatedApp() {
 					name="Achievements"
 					component={AchievementsScreen}
 					options={{ title: "Achievements" }}
+				/>
+				<Stack.Screen
+					name="Gallery"
+					component={GalleryScreen}
+					options={{ title: "Gallery" }}
+				/>
+				<Stack.Screen
+					name="Progress"
+					component={ProgressScreen}
+					options={{ title: "Progress" }}
+				/>
+				<Stack.Screen
+					name="Chat"
+					component={ChatScreen}
+					options={{ title: "Chat" }}
+				/>
+				<Stack.Screen
+					name="Homework"
+					component={HomeworkScreen}
+					options={{ title: "Homework" }}
+				/>
+				<Stack.Screen
+					name="ReadingDiary"
+					component={ReadingDiaryScreen}
+					options={{ title: "Reading Diary" }}
+				/>
+				<Stack.Screen
+					name="Timetable"
+					component={TimetableScreen}
+					options={{ title: "Timetable" }}
+				/>
+				<Stack.Screen
+					name="Visitors"
+					component={VisitorsScreen}
+					options={{ title: "Visitors" }}
 				/>
 			</Stack.Navigator>
 		</NavigationContainer>

@@ -251,6 +251,41 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 					>
 						<Text className="text-text-muted text-xs">Achievements</Text>
 					</Pressable>
+					<Pressable
+						testID="nav-progress"
+						onPress={() => navigation.navigate("Progress")}
+						className="bg-neutral-surface rounded-full px-3 py-1"
+					>
+						<Text className="text-text-muted text-xs">Progress</Text>
+					</Pressable>
+					<Pressable
+						testID="nav-chat"
+						onPress={() => navigation.navigate("Chat")}
+						className="bg-neutral-surface rounded-full px-3 py-1"
+					>
+						<Text className="text-text-muted text-xs">Chat</Text>
+					</Pressable>
+					<Pressable
+						testID="nav-homework"
+						onPress={() => navigation.navigate("Homework")}
+						className="bg-neutral-surface rounded-full px-3 py-1"
+					>
+						<Text className="text-text-muted text-xs">Homework</Text>
+					</Pressable>
+					<Pressable
+						testID="nav-reading-diary"
+						onPress={() => navigation.navigate("ReadingDiary")}
+						className="bg-neutral-surface rounded-full px-3 py-1"
+					>
+						<Text className="text-text-muted text-xs">Reading</Text>
+					</Pressable>
+					<Pressable
+						testID="nav-timetable"
+						onPress={() => navigation.navigate("Timetable")}
+						className="bg-neutral-surface rounded-full px-3 py-1"
+					>
+						<Text className="text-text-muted text-xs">Timetable</Text>
+					</Pressable>
 				</View>
 			)}
 

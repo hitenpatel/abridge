@@ -1,0 +1,24 @@
+appId: com.abridge.app
+name: Parent Homework
+tags:
+  - parent
+  - homework
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Navigate to homework via dev nav button
+- tapOn:
+    id: "nav-homework"
+- extendedWaitUntil:
+    visible: "Homework"
+    timeout: 60000
+
+# Verify assignments section loads
+- extendedWaitUntil:
+    visible: "Assignments"
+    timeout: 60000
+
+# Verify either assignments appear or empty state
+- extendedWaitUntil:
+    visible: "No homework assigned|Upcoming|Due Soon|Overdue|Done"
+    timeout: 60000
