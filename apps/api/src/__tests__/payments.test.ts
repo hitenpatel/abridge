@@ -42,6 +42,7 @@ function createTestContext(overrides?: Partial<Context>): Context {
 			},
 			parentChild: {
 				findMany: vi.fn(),
+				findFirst: vi.fn().mockResolvedValue({ userId: "user-1", childId: "child-1" }),
 			},
 			staffMember: {
 				findUnique: vi.fn(),
@@ -180,6 +181,7 @@ describe("payments router", () => {
 	describe("createCartCheckout", () => {
 		it("should throw NOT_FOUND if items are missing", async () => {
 			const ctx = createTestContext({ user: mockUser as any, session: mockSession as any });
+			(ctx.prisma.parentChild.findMany as any).mockResolvedValue([{ childId: "child-1" }]);
 			(ctx.prisma.paymentItem.findMany as any).mockResolvedValue([]);
 
 			const caller = appRouter.createCaller(ctx);
@@ -193,6 +195,7 @@ describe("payments router", () => {
 
 		it("should throw BAD_REQUEST if items belong to different schools", async () => {
 			const ctx = createTestContext({ user: mockUser as any, session: mockSession as any });
+			(ctx.prisma.parentChild.findMany as any).mockResolvedValue([{ childId: "child-1" }, { childId: "child-2" }]);
 			(ctx.prisma.paymentItem.findMany as any).mockResolvedValue([
 				{
 					id: "item-1",
@@ -222,6 +225,7 @@ describe("payments router", () => {
 
 		it("should create a checkout session and return the URL", async () => {
 			const ctx = createTestContext({ user: mockUser as any, session: mockSession as any });
+			(ctx.prisma.parentChild.findMany as any).mockResolvedValue([{ childId: "child-1" }]);
 			const mockPaymentItem = {
 				id: "item-1",
 				title: "School Trip",
