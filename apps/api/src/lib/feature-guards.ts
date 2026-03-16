@@ -25,7 +25,8 @@ type FeatureName =
 	| "progressSummaries"
 	| "liveChat"
 	| "aiDrafting"
-	| "attendanceAlerts";
+	| "attendanceAlerts"
+	| "studentPortal";
 
 interface SchoolFeatures {
 	messagingEnabled: boolean;
@@ -57,6 +58,7 @@ interface SchoolFeatures {
 	liveChatEnabled: boolean;
 	aiDraftingEnabled: boolean;
 	attendanceAlertsEnabled: boolean;
+	studentPortalEnabled: boolean;
 }
 
 const featureFieldMap: Record<FeatureName, keyof SchoolFeatures> = {
@@ -84,6 +86,7 @@ const featureFieldMap: Record<FeatureName, keyof SchoolFeatures> = {
 	liveChat: "liveChatEnabled",
 	aiDrafting: "aiDraftingEnabled",
 	attendanceAlerts: "attendanceAlertsEnabled",
+	studentPortal: "studentPortalEnabled",
 };
 
 const featureLabel: Record<FeatureName, string> = {
@@ -111,6 +114,7 @@ const featureLabel: Record<FeatureName, string> = {
 	liveChat: "Live Chat",
 	aiDrafting: "AI Drafting",
 	attendanceAlerts: "Attendance Alerts",
+	studentPortal: "Student Portal",
 };
 
 const categoryFieldMap: Record<PaymentCategory, keyof SchoolFeatures> = {

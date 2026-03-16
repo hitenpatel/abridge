@@ -44,7 +44,8 @@ interface NavItem {
 		| "achievementsEnabled"
 		| "galleryEnabled"
 		| "progressSummariesEnabled"
-		| "liveChatEnabled";
+		| "liveChatEnabled"
+		| "studentPortalEnabled";
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

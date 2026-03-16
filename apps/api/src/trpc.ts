@@ -146,6 +146,7 @@ export const schoolFeatureProcedure = schoolStaffProcedure.use(async ({ ctx, nex
 			liveChatEnabled: true,
 			aiDraftingEnabled: true,
 			attendanceAlertsEnabled: true,
+			studentPortalEnabled: true,
 		},
 	});
 
@@ -160,6 +161,27 @@ export const schoolFeatureProcedure = schoolStaffProcedure.use(async ({ ctx, nex
 		ctx: {
 			...ctx,
 			schoolFeatures: school,
+		},
+	});
+});
+
+// Student procedure - verifies user is linked to a child via Child.userId
+export const studentProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+	const studentChild = await ctx.prisma.child.findUnique({
+		where: { userId: ctx.user.id },
+	});
+
+	if (!studentChild) {
+		throw new TRPCError({
+			code: "FORBIDDEN",
+			message: "Student access required",
+		});
+	}
+
+	return next({
+		ctx: {
+			...ctx,
+			studentChild,
 		},
 	});
 });

@@ -48,6 +48,7 @@ export const achievementRouter = router({
 					liveChatEnabled: true,
 					aiDraftingEnabled: true,
 					attendanceAlertsEnabled: true,
+					studentPortalEnabled: true,
 				},
 			});
 			if (!school) {

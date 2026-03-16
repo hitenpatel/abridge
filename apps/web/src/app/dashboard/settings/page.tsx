@@ -412,6 +412,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 	const [liveChat, setLiveChat] = useState(false);
 	const [aiDrafting, setAiDrafting] = useState(false);
 	const [attendanceAlerts, setAttendanceAlerts] = useState(false);
+	const [studentPortal, setStudentPortal] = useState(false);
 
 	useEffect(() => {
 		if (data) {
@@ -443,6 +444,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 			setLiveChat(data.liveChatEnabled);
 			setAiDrafting(data.aiDraftingEnabled);
 			setAttendanceAlerts(data.attendanceAlertsEnabled);
+			setStudentPortal(data.studentPortalEnabled);
 		}
 	}, [data]);
 
@@ -513,6 +515,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							liveChatEnabled: liveChat,
 							aiDraftingEnabled: aiDrafting,
 							attendanceAlertsEnabled: attendanceAlerts,
+							studentPortalEnabled: studentPortal,
 						});
 					}}
 					className="space-y-4"
@@ -690,6 +693,12 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							onChange={setAttendanceAlerts}
 							label="Attendance Alerts"
 							data-testid="toggle-attendance-alerts"
+						/>
+						<Toggle
+							checked={studentPortal}
+							onChange={setStudentPortal}
+							label="Student Portal"
+							data-testid="toggle-student-portal"
 						/>
 					</div>
 

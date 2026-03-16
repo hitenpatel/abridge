@@ -32,6 +32,7 @@ function allTogglesEnabled() {
 		liveChatEnabled: true,
 		aiDraftingEnabled: true,
 		attendanceAlertsEnabled: true,
+		studentPortalEnabled: true,
 	};
 }
 
@@ -66,6 +67,7 @@ function allTogglesDisabled() {
 		liveChatEnabled: false,
 		aiDraftingEnabled: false,
 		attendanceAlertsEnabled: false,
+		studentPortalEnabled: false,
 	};
 }
 

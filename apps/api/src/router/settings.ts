@@ -31,6 +31,7 @@ const featureToggleSelect = {
 	liveChatEnabled: true,
 	aiDraftingEnabled: true,
 	attendanceAlertsEnabled: true,
+	studentPortalEnabled: true,
 } as const;
 
 export const settingsRouter = router({
@@ -192,6 +193,7 @@ export const settingsRouter = router({
 				liveChatEnabled: z.boolean().optional(),
 				aiDraftingEnabled: z.boolean().optional(),
 				attendanceAlertsEnabled: z.boolean().optional(),
+				studentPortalEnabled: z.boolean().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

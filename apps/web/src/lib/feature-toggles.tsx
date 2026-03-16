@@ -33,6 +33,7 @@ interface FeatureToggles {
 	liveChatEnabled: boolean;
 	aiDraftingEnabled: boolean;
 	attendanceAlertsEnabled: boolean;
+	studentPortalEnabled: boolean;
 }
 
 const defaultToggles: FeatureToggles = {
@@ -65,6 +66,7 @@ const defaultToggles: FeatureToggles = {
 	liveChatEnabled: false,
 	aiDraftingEnabled: false,
 	attendanceAlertsEnabled: false,
+	studentPortalEnabled: false,
 };
 
 const FeatureToggleContext = createContext<FeatureToggles>(defaultToggles);
