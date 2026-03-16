@@ -286,30 +286,88 @@ export function renderTemplateSummary(metrics: ChildWeeklyMetrics): string {
 	return lines.join("\n");
 }
 
+const INSIGHT_SYSTEM_PROMPT =
+	"You are a primary school teaching assistant writing a one-sentence weekly insight for a parent about their child's progress. Be warm, specific, and encouraging. Reference concrete data. Do not be generic. Maximum 150 characters.";
+
+/**
+ * Generate an AI insight using the configured provider.
+ *
+ * Supported AI_SUMMARY_PROVIDER values:
+ *   "claude"  — Anthropic Claude API (requires ANTHROPIC_API_KEY)
+ *   "openai"  — OpenAI-compatible API (requires AI_API_KEY, optional AI_BASE_URL for Ollama/Groq/Azure)
+ *   "template" — no AI, returns null (zero cost)
+ *
+ * Environment variables:
+ *   AI_SUMMARY_PROVIDER — "claude" | "openai" | "template" (default: "template")
+ *   AI_MODEL — model name override (default: provider-specific)
+ *   AI_API_KEY — API key for openai-compatible providers
+ *   AI_BASE_URL — base URL for openai-compatible providers (e.g. "http://localhost:11434/v1" for Ollama)
+ *   ANTHROPIC_API_KEY — API key for Claude provider
+ */
 export async function generateInsight(metrics: ChildWeeklyMetrics): Promise<string | null> {
-	if (process.env.AI_SUMMARY_PROVIDER !== "claude") return null;
+	const provider = process.env.AI_SUMMARY_PROVIDER || "template";
+	if (provider === "template" || provider === "none") return null;
+
+	const metricsText = renderTemplateSummary(metrics);
+	const userMessage = `Child: ${metrics.childName}\n\n${metricsText}`;
 
 	try {
-		const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-		const metricsText = renderTemplateSummary(metrics);
-
-		const response = await Promise.race([
-			client.messages.create({
-				model: "claude-haiku-4-5-20251001",
-				max_tokens: 100,
-				system:
-					"You are a primary school teaching assistant writing a one-sentence weekly insight for a parent about their child's progress. Be warm, specific, and encouraging. Reference concrete data. Do not be generic. Maximum 150 characters.",
-				messages: [{ role: "user", content: `Child: ${metrics.childName}\n\n${metricsText}` }],
-			}),
+		const result = await Promise.race([
+			callAIProvider(provider, userMessage),
 			new Promise<never>((_, reject) => setTimeout(() => reject(new Error("AI timeout")), 5000)),
 		]);
-
-		const text = response.content[0]?.type === "text" ? response.content[0].text : null;
-		return text;
+		return result;
 	} catch (err) {
 		logger.warn({ err }, "AI insight generation failed, falling back to template");
 		return null;
 	}
+}
+
+async function callAIProvider(provider: string, userMessage: string): Promise<string | null> {
+	if (provider === "claude") {
+		const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+		const model = process.env.AI_MODEL || "claude-haiku-4-5-20251001";
+		const response = await client.messages.create({
+			model,
+			max_tokens: 100,
+			system: INSIGHT_SYSTEM_PROMPT,
+			messages: [{ role: "user", content: userMessage }],
+		});
+		return response.content[0]?.type === "text" ? response.content[0].text : null;
+	}
+
+	if (provider === "openai") {
+		// OpenAI-compatible API (works with OpenAI, Ollama, Groq, Azure, Together, etc.)
+		const baseUrl = process.env.AI_BASE_URL || "https://api.openai.com/v1";
+		const apiKey = process.env.AI_API_KEY || "";
+		const model = process.env.AI_MODEL || "gpt-4o-mini";
+
+		const response = await fetch(`${baseUrl}/chat/completions`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
+			},
+			body: JSON.stringify({
+				model,
+				max_tokens: 100,
+				messages: [
+					{ role: "system", content: INSIGHT_SYSTEM_PROMPT },
+					{ role: "user", content: userMessage },
+				],
+			}),
+		});
+
+		if (!response.ok) {
+			throw new Error(`AI API error: ${response.status} ${response.statusText}`);
+		}
+
+		const data = (await response.json()) as { choices?: Array<{ message?: { content?: string } }> };
+		return data.choices?.[0]?.message?.content ?? null;
+	}
+
+	logger.warn({ provider }, "Unknown AI provider, falling back to template");
+	return null;
 }
 
 export async function generateWeeklySummary(
