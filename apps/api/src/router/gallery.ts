@@ -46,6 +46,7 @@ export const galleryRouter = router({
 					misIntegrationEnabled: true,
 					achievementsEnabled: true,
 					progressSummariesEnabled: true,
+					liveChatEnabled: true,
 				},
 			});
 			if (!school) {

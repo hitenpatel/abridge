@@ -4,6 +4,7 @@ import { analyticsRouter } from "./analytics";
 import { attendanceRouter } from "./attendance";
 import { authRouter } from "./auth";
 import { calendarRouter } from "./calendar";
+import { chatRouter } from "./chat";
 import { classPostRouter } from "./class-post";
 import { clubBookingRouter } from "./club-booking";
 import { communityRouter } from "./community";
@@ -39,6 +40,7 @@ export const appRouter = router({
 	achievement: achievementRouter,
 	analytics: analyticsRouter,
 	calendar: calendarRouter,
+	chat: chatRouter,
 	classPost: classPostRouter,
 	dashboard: dashboardRouter,
 	emergency: emergencyRouter,
