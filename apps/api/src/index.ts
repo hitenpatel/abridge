@@ -18,6 +18,7 @@ import { checkUndeliveredNotifications } from "./jobs/notification-fallback";
 import { auth } from "./lib/auth";
 import { logger } from "./lib/logger";
 import { startMisSyncCron } from "./lib/mis-sync-cron";
+import { startProgressSummaryCron } from "./lib/progress-summary-cron";
 import { appRouter } from "./router";
 import { pdfRoutes } from "./routes/pdf";
 import { testSeedRoutes } from "./routes/test-seed";
@@ -220,6 +221,9 @@ async function main() {
 
 	// Run MIS auto-sync every 15 minutes
 	startMisSyncCron(prisma);
+
+	// Run weekly progress summary generation (checks every hour, runs Monday)
+	startProgressSummaryCron(prisma);
 }
 
 main().catch((err) => {
