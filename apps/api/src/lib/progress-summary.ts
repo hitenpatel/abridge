@@ -1,3 +1,4 @@
+import Anthropic from "@anthropic-ai/sdk";
 import type { PrismaClient } from "@schoolconnect/db";
 import { logger } from "./logger";
 
@@ -223,4 +224,116 @@ export async function gatherChildMetrics(
 		},
 		wellbeing: wellbeingMetrics,
 	};
+}
+
+export function renderTemplateSummary(metrics: ChildWeeklyMetrics): string {
+	const lines: string[] = [];
+
+	// Attendance line (always present)
+	lines.push(
+		`Attendance: ${metrics.attendance.percentage}% (${metrics.attendance.daysPresent}/${metrics.attendance.daysTotal} days${metrics.attendance.lateCount > 0 ? `, ${metrics.attendance.lateCount} late` : ""}).`,
+	);
+
+	// Homework line (if any assignments)
+	if (metrics.homework.total > 0) {
+		lines.push(
+			`Homework: completed ${metrics.homework.completed} of ${metrics.homework.total} assignments${metrics.homework.overdue > 0 ? ` (${metrics.homework.overdue} overdue)` : ""}.`,
+		);
+	}
+
+	// Reading line (if any entries)
+	if (metrics.reading.daysRead > 0) {
+		let readingLine = `Reading: read ${metrics.reading.daysRead} days this week (avg ${metrics.reading.avgMinutes} min/day`;
+		if (metrics.reading.currentStreak > 0) {
+			readingLine += `, ${metrics.reading.currentStreak}-day streak`;
+		}
+		readingLine += ").";
+		if (metrics.reading.currentBook) {
+			readingLine += ` Currently reading "${metrics.reading.currentBook}".`;
+		}
+		lines.push(readingLine);
+	}
+
+	// Achievements line (if any)
+	if (metrics.achievements.awardsReceived > 0) {
+		let achieveLine = `Achievements: earned ${metrics.achievements.pointsEarned} points`;
+		if (metrics.achievements.categories.length > 0) {
+			achieveLine += ` — ${metrics.achievements.categories.join(", ")}`;
+		}
+		achieveLine += ".";
+		lines.push(achieveLine);
+	}
+
+	// Wellbeing line (if any check-ins)
+	if (metrics.wellbeing.checkInCount > 0) {
+		let wellbeingLine = `Wellbeing: mood average ${metrics.wellbeing.avgMood}`;
+		if (metrics.wellbeing.trend) {
+			wellbeingLine += `, ${metrics.wellbeing.trend} trend`;
+		}
+		wellbeingLine += ".";
+		lines.push(wellbeingLine);
+	}
+
+	return lines.join("\n");
+}
+
+export async function generateInsight(metrics: ChildWeeklyMetrics): Promise<string | null> {
+	if (process.env.AI_SUMMARY_PROVIDER !== "claude") return null;
+
+	try {
+		const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+		const metricsText = renderTemplateSummary(metrics);
+
+		const response = await Promise.race([
+			client.messages.create({
+				model: "claude-haiku-4-5-20251001",
+				max_tokens: 100,
+				system:
+					"You are a primary school teaching assistant writing a one-sentence weekly insight for a parent about their child's progress. Be warm, specific, and encouraging. Reference concrete data. Do not be generic. Maximum 150 characters.",
+				messages: [{ role: "user", content: `Child: ${metrics.childName}\n\n${metricsText}` }],
+			}),
+			new Promise<never>((_, reject) =>
+				setTimeout(() => reject(new Error("AI timeout")), 5000),
+			),
+		]);
+
+		const text = response.content[0]?.type === "text" ? response.content[0].text : null;
+		return text;
+	} catch (err) {
+		logger.warn({ err }, "AI insight generation failed, falling back to template");
+		return null;
+	}
+}
+
+export async function generateWeeklySummary(
+	prisma: PrismaClient,
+	childId: string,
+	weekStart: Date,
+): Promise<{ id: string; summary: string }> {
+	const weekEnd = new Date(weekStart);
+	weekEnd.setDate(weekEnd.getDate() + 7);
+
+	const child = await prisma.child.findUniqueOrThrow({
+		where: { id: childId },
+		select: { schoolId: true },
+	});
+	const metrics = await gatherChildMetrics(prisma, childId, weekStart, weekEnd);
+	const templateText = renderTemplateSummary(metrics);
+	const insight = await generateInsight(metrics);
+	const summary = insight ? `${templateText}\n\nInsight: ${insight}` : templateText;
+
+	const result = await prisma.progressSummary.upsert({
+		where: { childId_weekStart: { childId, weekStart } },
+		update: { templateData: metrics as any, insight, summary },
+		create: {
+			childId,
+			schoolId: child.schoolId,
+			weekStart,
+			templateData: metrics as any,
+			insight,
+			summary,
+		},
+	});
+
+	return { id: result.id, summary: result.summary };
 }
