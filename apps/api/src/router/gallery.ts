@@ -49,6 +49,7 @@ export const galleryRouter = router({
 					liveChatEnabled: true,
 					aiDraftingEnabled: true,
 					attendanceAlertsEnabled: true,
+					studentPortalEnabled: true,
 				},
 			});
 			if (!school) {
