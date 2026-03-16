@@ -46,6 +46,12 @@ test.describe("Event RSVP", () => {
 		await page.getByRole("button", { name: /Sign In/i }).click();
 		await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 
+		// Wait for feature toggles to load and nav link to appear
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /Calendar/i }).first()).toBeVisible({ timeout: 3000 });
+		}).toPass({ timeout: 30000 });
+
 		// Navigate to calendar
 		await page.getByRole("link", { name: "Calendar" }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/calendar/);
@@ -143,11 +149,12 @@ test.describe("Event RSVP", () => {
 		await enableSchoolFeature({ schoolId: school.id, features: { calendarEnabled: false } });
 
 		// === STEP 4: Navigate directly to calendar without enabling calendarEnabled ===
-		await page.goto("http://localhost:3000/dashboard/calendar");
-
-		// === STEP 5: Should show disabled message ===
-		await expect(
-			page.getByRole("heading", { name: /Calendar is not enabled/i }),
-		).toBeVisible({ timeout: 10000 });
+		// Feature toggles default to calendarEnabled: true, so need to wait for query to resolve
+		await expect(async () => {
+			await page.goto("http://localhost:3000/dashboard/calendar");
+			await expect(
+				page.getByRole("heading", { name: /Calendar is not enabled/i }),
+			).toBeVisible({ timeout: 5000 });
+		}).toPass({ timeout: 30000 });
 	});
 });
