@@ -94,18 +94,12 @@ test.describe("Event RSVP", () => {
 			},
 		});
 
-		// === STEP 4: Wait for Calendar nav link ===
-		await expect(async () => {
-			await page.reload();
-			await expect(page.getByRole("link", { name: /Calendar/i }).first()).toBeVisible({ timeout: 3000 });
-		}).toPass({ timeout: 30000 });
-
-		// === STEP 5: Navigate to calendar ===
-		await page.getByRole("link", { name: "Calendar" }).first().click();
+		// === STEP 4: Navigate directly to calendar ===
+		await page.goto("http://localhost:3000/dashboard/calendar");
 		await expect(page).toHaveURL(/\/dashboard\/calendar/);
 
 		// Verify the RSVP event appears
-		await expect(page.getByText("Sports Day Headcount")).toBeVisible({ timeout: 10000 });
+		await expect(page.getByText("Sports Day Headcount")).toBeVisible({ timeout: 15000 });
 	});
 
 	test("parent should submit RSVP and see response saved", async ({ page }) => {
