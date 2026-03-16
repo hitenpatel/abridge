@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { checkRateLimit, generateDraft } from "../lib/ai-drafting";
 import { assertFeatureEnabled } from "../lib/feature-guards";
 import { logger } from "../lib/logger";
 import { notificationService } from "../services/notification";
@@ -680,5 +681,40 @@ export const messagingRouter = router({
 			});
 
 			return { success: true };
+		}),
+
+	generateDraft: schoolFeatureProcedure
+		.input(
+			z.object({
+				schoolId: z.string(),
+				prompt: z.string().min(1).max(500),
+				tone: z.enum(["formal", "friendly", "urgent"]),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "messaging");
+
+			const provider = process.env.AI_SUMMARY_PROVIDER || "template";
+			if (provider === "template" || provider === "none") {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "AI drafting is not available when using template provider",
+				});
+			}
+
+			if (!checkRateLimit(ctx.user.id)) {
+				throw new TRPCError({
+					code: "TOO_MANY_REQUESTS",
+					message: "Rate limit exceeded. Maximum 20 AI drafts per hour.",
+				});
+			}
+
+			const school = await ctx.prisma.school.findUniqueOrThrow({
+				where: { id: input.schoolId },
+				select: { name: true },
+			});
+
+			const draft = await generateDraft(input.prompt, input.tone, school.name);
+			return { draft };
 		}),
 });

@@ -29,6 +29,8 @@ const featureToggleSelect = {
 	galleryEnabled: true,
 	progressSummariesEnabled: true,
 	liveChatEnabled: true,
+	aiDraftingEnabled: true,
+	attendanceAlertsEnabled: true,
 } as const;
 
 export const settingsRouter = router({
@@ -188,6 +190,8 @@ export const settingsRouter = router({
 				galleryEnabled: z.boolean().optional(),
 				progressSummariesEnabled: z.boolean().optional(),
 				liveChatEnabled: z.boolean().optional(),
+				aiDraftingEnabled: z.boolean().optional(),
+				attendanceAlertsEnabled: z.boolean().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

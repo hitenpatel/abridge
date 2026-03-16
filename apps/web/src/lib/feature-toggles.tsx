@@ -31,6 +31,8 @@ interface FeatureToggles {
 	galleryEnabled: boolean;
 	progressSummariesEnabled: boolean;
 	liveChatEnabled: boolean;
+	aiDraftingEnabled: boolean;
+	attendanceAlertsEnabled: boolean;
 }
 
 const defaultToggles: FeatureToggles = {
@@ -61,6 +63,8 @@ const defaultToggles: FeatureToggles = {
 	galleryEnabled: false,
 	progressSummariesEnabled: false,
 	liveChatEnabled: false,
+	aiDraftingEnabled: false,
+	attendanceAlertsEnabled: false,
 };
 
 const FeatureToggleContext = createContext<FeatureToggles>(defaultToggles);

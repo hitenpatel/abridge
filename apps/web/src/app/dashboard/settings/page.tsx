@@ -410,6 +410,8 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 	const [gallery, setGallery] = useState(false);
 	const [progressSummaries, setProgressSummaries] = useState(false);
 	const [liveChat, setLiveChat] = useState(false);
+	const [aiDrafting, setAiDrafting] = useState(false);
+	const [attendanceAlerts, setAttendanceAlerts] = useState(false);
 
 	useEffect(() => {
 		if (data) {
@@ -439,6 +441,8 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 			setGallery(data.galleryEnabled);
 			setProgressSummaries(data.progressSummariesEnabled);
 			setLiveChat(data.liveChatEnabled);
+			setAiDrafting(data.aiDraftingEnabled);
+			setAttendanceAlerts(data.attendanceAlertsEnabled);
 		}
 	}, [data]);
 
@@ -507,6 +511,8 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							galleryEnabled: gallery,
 							progressSummariesEnabled: progressSummaries,
 							liveChatEnabled: liveChat,
+							aiDraftingEnabled: aiDrafting,
+							attendanceAlertsEnabled: attendanceAlerts,
 						});
 					}}
 					className="space-y-4"
@@ -672,6 +678,18 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							onChange={setLiveChat}
 							label="Live Chat"
 							data-testid="toggle-live-chat"
+						/>
+						<Toggle
+							checked={aiDrafting}
+							onChange={setAiDrafting}
+							label="AI Drafting"
+							data-testid="toggle-ai-drafting"
+						/>
+						<Toggle
+							checked={attendanceAlerts}
+							onChange={setAttendanceAlerts}
+							label="Attendance Alerts"
+							data-testid="toggle-attendance-alerts"
 						/>
 					</div>
 

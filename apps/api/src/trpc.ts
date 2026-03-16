@@ -144,6 +144,8 @@ export const schoolFeatureProcedure = schoolStaffProcedure.use(async ({ ctx, nex
 			galleryEnabled: true,
 			progressSummariesEnabled: true,
 			liveChatEnabled: true,
+			aiDraftingEnabled: true,
+			attendanceAlertsEnabled: true,
 		},
 	});
 

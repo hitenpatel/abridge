@@ -30,6 +30,8 @@ function allTogglesEnabled() {
 		galleryEnabled: true,
 		progressSummariesEnabled: true,
 		liveChatEnabled: true,
+		aiDraftingEnabled: true,
+		attendanceAlertsEnabled: true,
 	};
 }
 
@@ -62,6 +64,8 @@ function allTogglesDisabled() {
 		galleryEnabled: false,
 		progressSummariesEnabled: false,
 		liveChatEnabled: false,
+		aiDraftingEnabled: false,
+		attendanceAlertsEnabled: false,
 	};
 }
 
