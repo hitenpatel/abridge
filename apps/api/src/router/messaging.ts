@@ -10,8 +10,8 @@ export const messagingRouter = router({
 		.input(
 			z.object({
 				schoolId: z.string(),
-				subject: z.string().min(1),
-				body: z.string().min(1),
+				subject: z.string().min(1).max(500),
+				body: z.string().min(1).max(10000),
 				category: z.enum(["STANDARD", "URGENT", "FYI"]),
 				allChildren: z.boolean().default(false),
 				childIds: z.array(z.string()).optional(),
@@ -72,14 +72,21 @@ export const messagingRouter = router({
 				},
 			});
 
-			// 2b. Create message attachments if provided
+			// 2b. Create message attachments if provided (validate they belong to this school)
 			if (input.attachmentIds.length > 0) {
-				await ctx.prisma.messageAttachment.createMany({
-					data: input.attachmentIds.map((mediaId) => ({
-						messageId: message.id,
-						mediaId,
-					})),
+				const validMedia = await ctx.prisma.mediaUpload.findMany({
+					where: { id: { in: input.attachmentIds }, schoolId: input.schoolId },
+					select: { id: true },
 				});
+				const validMediaIds = validMedia.map((m: { id: string }) => m.id);
+				if (validMediaIds.length > 0) {
+					await ctx.prisma.messageAttachment.createMany({
+						data: validMediaIds.map((mediaId) => ({
+							messageId: message.id,
+							mediaId,
+						})),
+					});
+				}
 			}
 
 			// 3. Find parents to notify (async)
@@ -304,7 +311,7 @@ export const messagingRouter = router({
 		.input(
 			z.object({
 				messageId: z.string(),
-				body: z.string().min(1),
+				body: z.string().min(1).max(10000),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -434,8 +441,8 @@ export const messagingRouter = router({
 		.input(
 			z.object({
 				staffId: z.string(),
-				subject: z.string().optional(),
-				body: z.string().min(1),
+				subject: z.string().max(500).optional(),
+				body: z.string().min(1).max(10000),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -504,7 +511,7 @@ export const messagingRouter = router({
 		.input(
 			z.object({
 				conversationId: z.string(),
-				body: z.string().min(1),
+				body: z.string().min(1).max(10000),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
