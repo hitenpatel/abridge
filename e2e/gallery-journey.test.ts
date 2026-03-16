@@ -21,6 +21,12 @@ test.describe("Gallery", () => {
 		await page.getByRole("button", { name: /Sign In/i }).click();
 		await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 
+		// Wait for feature toggles to load and nav link to appear
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /Gallery/i }).first()).toBeVisible({ timeout: 3000 });
+		}).toPass({ timeout: 30000 });
+
 		// Navigate to gallery page
 		await page.getByRole("link", { name: "Gallery" }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/gallery/);
@@ -42,6 +48,12 @@ test.describe("Gallery", () => {
 		await page.getByLabel("Password").fill("password123");
 		await page.getByRole("button", { name: /Sign In/i }).click();
 		await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
+
+		// Wait for feature toggles to load and nav link to appear
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /Gallery/i }).first()).toBeVisible({ timeout: 3000 });
+		}).toPass({ timeout: 30000 });
 
 		// Navigate to gallery page
 		await page.getByRole("link", { name: "Gallery" }).first().click();
