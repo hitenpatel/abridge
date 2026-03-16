@@ -22,6 +22,7 @@ model ProgressSummary {
   insight      String?  // AI-generated sentence (null if AI disabled)
   summary      String   // full rendered summary text
   createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@unique([childId, weekStart])
   @@index([schoolId, weekStart])
@@ -90,13 +91,15 @@ interface ChildWeeklyMetrics {
 }
 ```
 
-Data sources:
+Data sources and query paths:
 - `AttendanceRecord` — filter by childId + date range
-- `HomeworkAssignment` + `HomeworkCompletion` — filter by child's yearGroup + date range
-- `ReadingDiary` + `ReadingEntry` — filter by childId + date range
-- `Achievement` — filter by childId + date range
-- `WellbeingCheckIn` — filter by childId + date range
-- `ReportCard` — latest for child (not date-scoped)
+- Homework: query `HomeworkCompletion` by childId in date range, join to `HomeworkAssignment` for titles/due dates. For total count, query `HomeworkAssignment` by child's schoolId + yearGroup + dueDate range, then left-join completions for this child.
+- Reading: find `ReadingDiary` by childId (unique), then query `ReadingEntry` by diaryId + date range.
+- Achievements: query `Achievement` by childId + date range, join `AchievementCategory` via categoryId to get category names.
+- `WellbeingCheckIn` — filter by childId + date range. Trend: compare average mood ordinal (GREAT=5, GOOD=4, OK=3, LOW=2, STRUGGLING=1) of current week vs prior week.
+- `ReportCard` — latest for child via cycleId join to `ReportCycle`, aggregate `SubjectGrade.level` values for overall level.
+
+**Batch optimization:** For `generateWeeklyBatch`, fetch all records per data source for the entire school + date range in one query, then partition by childId in memory. Avoids N+1 queries (6 queries × 200 children = 1200 → reduced to 6 queries total).
 
 ### renderTemplateSummary(metrics)
 
@@ -151,7 +154,9 @@ Orchestrates all three steps:
 - **Fallback:** If Claude API fails or times out (5s), save template-only summary without insight — never block on AI
 - **Admin kill switch:** Set `AI_SUMMARY_PROVIDER=template` to instantly disable AI calls without deploy
 - **Usage tracking:** Store `tokensUsed: { input, output }` in `templateData` JSON for cost monitoring
-- **Budget alert:** If weekly token usage exceeds configurable threshold, log warning but continue generating
+- **Hard budget cap:** If cumulative token usage for a school in a given week exceeds `MAX_WEEKLY_TOKENS` (default: 500,000 — ~$0.50 on Haiku), stop generating AI insights for that school and fall back to template-only for remaining children. Prevents runaway costs from bugs or retries.
+- **Short-circuit on `generateNow`:** If a `ProgressSummary` already exists for this child+week and was updated less than 1 hour ago, return the existing one without regenerating (avoids repeated AI calls from staff clicking "generate" multiple times).
+- **Budget alert:** If weekly token usage exceeds 80% of cap, log warning.
 
 Estimated cost: ~$0.50-2.00 per school per month (Haiku pricing, ~200 children, weekly generation).
 
@@ -169,7 +174,20 @@ Feature guard: `assertFeatureEnabled(ctx, "progressSummaries")`
 
 - `generateNow` — `schoolFeatureProcedure`. Input: `{ schoolId, childId }`. Staff manually triggers summary generation for one child. Returns the generated summary.
 
-- `generateWeeklyBatch` — `schoolAdminProcedure`. Input: `{ schoolId }`. Admin triggers batch generation for all children in school. Returns count of summaries generated. Runs async (fire-and-forget after initial response).
+- `generateWeeklyBatch` — `schoolAdminProcedure`. Input: `{ schoolId }`. Admin triggers batch generation for all children in school. Returns immediately with `{ status: "started", childCount }`. Runs generation in background wrapped in try-catch with per-child error logging. Does NOT fire-and-forget — logs completion status and error count.
+
+## Notifications
+
+When a weekly summary is generated (via cron or batch), send a push notification to the parent:
+- Title: "Weekly Progress Summary"
+- Body: "{childName}'s weekly summary is ready"
+- Deep link to `/dashboard/progress`
+- Uses existing `notificationService.sendPush()` pattern
+- Respects quiet hours and notification preferences
+
+## Mobile
+
+Mobile screens (Expo) are out of scope for this initial implementation. Web page comes first; mobile can follow.
 
 ## Cron
 
@@ -228,7 +246,17 @@ Use Ralph Loop for iterating on:
 - Edge cases: child with no data, child with perfect scores, child with concerning patterns
 - Template formatting for different data combinations
 
+## Seed Data
+
+Add to `packages/db/prisma/seed.ts`:
+- Enable `progressSummariesEnabled: true` on seed school
+- Create a sample `ProgressSummary` for child1 with realistic metrics and a template summary (no AI insight in seed — AI_SUMMARY_PROVIDER may not be set)
+
+The existing seed data already includes attendance records, homework assignments, reading entries, achievements, and wellbeing check-ins — sufficient for `gatherChildMetrics` to produce meaningful results.
+
 ## Feature Toggle Registration
+
+**REQUIRED** — `"progressSummaries"` must be added to the `FeatureName` type union, `SchoolFeatures` interface, `featureFieldMap`, and `featureLabel` in `feature-guards.ts`, or the router will not compile.
 
 Same pattern as achievements/gallery:
 - `apps/api/src/lib/feature-guards.ts` — add `"progressSummaries"`
