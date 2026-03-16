@@ -33,14 +33,14 @@ export const visitorRouter = router({
 		.input(
 			z.object({
 				schoolId: z.string(),
-				name: z.string().min(1),
-				organisation: z.string().optional(),
-				phone: z.string().optional(),
-				email: z.string().optional(),
+				name: z.string().min(1).max(200),
+				organisation: z.string().max(200).optional(),
+				phone: z.string().max(30).optional(),
+				email: z.string().email().max(254).optional(),
 				isRegular: z.boolean().default(false),
 				purpose: visitPurposeEnum,
-				visitingStaff: z.string().optional(),
-				badgeNumber: z.string().optional(),
+				visitingStaff: z.string().max(200).optional(),
+				badgeNumber: z.string().max(50).optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -124,7 +124,7 @@ export const visitorRouter = router({
 		.input(
 			z.object({
 				schoolId: z.string(),
-				query: z.string(),
+				query: z.string().max(200),
 			}),
 		)
 		.query(async ({ ctx, input }) => {
@@ -163,8 +163,8 @@ export const visitorRouter = router({
 		.input(
 			z.object({
 				schoolId: z.string(),
-				name: z.string().min(1),
-				dbsNumber: z.string().min(1),
+				name: z.string().min(1).max(200),
+				dbsNumber: z.string().min(1).max(50),
 				dbsType: dbsTypeEnum,
 				issueDate: z.date(),
 				expiryDate: z.date().optional(),
@@ -217,7 +217,7 @@ export const visitorRouter = router({
 				cursor: z.string().optional(),
 				startDate: z.date().optional(),
 				endDate: z.date().optional(),
-				name: z.string().optional(),
+				name: z.string().max(200).optional(),
 				purpose: visitPurposeEnum.optional(),
 			}),
 		)
