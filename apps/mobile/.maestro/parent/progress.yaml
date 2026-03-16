@@ -1,0 +1,27 @@
+appId: com.abridge.app
+name: Parent Progress Summary
+tags:
+  - parent
+  - progress
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Wait for home data to load (dev nav buttons only render after loading)
+- extendedWaitUntil:
+    visible:
+      id: "nav-progress"
+    timeout: 120000
+
+# Navigate to progress screen
+- tapOn:
+    id: "nav-progress"
+
+# Verify progress screen loaded
+- extendedWaitUntil:
+    visible: "Progress"
+    timeout: 60000
+
+# Verify weekly summary section renders
+- extendedWaitUntil:
+    visible: "Weekly progress summary"
+    timeout: 60000

@@ -22,12 +22,16 @@ import { TRPCProvider, clearAuthTokenCache } from "./src/lib/provider";
 import { ThemeProvider } from "./src/lib/theme-provider";
 import { trpc } from "./src/lib/trpc";
 import { useTheme } from "./src/lib/use-theme";
+import { AchievementsScreen } from "./src/screens/AchievementsScreen";
 import { AttendanceScreen } from "./src/screens/AttendanceScreen";
 import { CalendarScreen } from "./src/screens/CalendarScreen";
+import { ChatScreen } from "./src/screens/ChatScreen";
 import { ComposeMessageScreen } from "./src/screens/ComposeMessageScreen";
 import { ComposePostScreen } from "./src/screens/ComposePostScreen";
 import { FormDetailScreen } from "./src/screens/FormDetailScreen";
 import { FormsScreen } from "./src/screens/FormsScreen";
+import { GalleryScreen } from "./src/screens/GalleryScreen";
+import { HomeworkScreen } from "./src/screens/HomeworkScreen";
 import { LoginScreen } from "./src/screens/LoginScreen";
 import { MessageDetailScreen } from "./src/screens/MessageDetailScreen";
 import { MessagesScreen } from "./src/screens/MessagesScreen";
@@ -36,6 +40,8 @@ import { PaymentHistoryScreen } from "./src/screens/PaymentHistoryScreen";
 import { PaymentSuccessScreen } from "./src/screens/PaymentSuccessScreen";
 import { PaymentsScreen } from "./src/screens/PaymentsScreen";
 import { PostDetailScreen } from "./src/screens/PostDetailScreen";
+import { ProgressScreen } from "./src/screens/ProgressScreen";
+import { ReadingDiaryScreen } from "./src/screens/ReadingDiaryScreen";
 import { SearchScreen } from "./src/screens/SearchScreen";
 import { SettingsScreen } from "./src/screens/SettingsScreen";
 import { StaffAttendanceScreen } from "./src/screens/StaffAttendanceScreen";
@@ -43,15 +49,9 @@ import { StaffHomeScreen } from "./src/screens/StaffHomeScreen";
 import { StaffManagementScreen } from "./src/screens/StaffManagementScreen";
 import { StaffPaymentsScreen } from "./src/screens/StaffPaymentsScreen";
 import { StudentProfileScreen } from "./src/screens/StudentProfileScreen";
-import { AchievementsScreen } from "./src/screens/AchievementsScreen";
-import { GalleryScreen } from "./src/screens/GalleryScreen";
 import { TimetableScreen } from "./src/screens/TimetableScreen";
 import { VisitorsScreen } from "./src/screens/VisitorsScreen";
 import { WellbeingScreen } from "./src/screens/WellbeingScreen";
-import { ProgressScreen } from "./src/screens/ProgressScreen";
-import { ChatScreen } from "./src/screens/ChatScreen";
-import { HomeworkScreen } from "./src/screens/HomeworkScreen";
-import { ReadingDiaryScreen } from "./src/screens/ReadingDiaryScreen";
 
 // Message item type matching the API response
 export interface MessageItem {
@@ -333,26 +333,10 @@ function AuthenticatedApp() {
 					component={AchievementsScreen}
 					options={{ title: "Achievements" }}
 				/>
-				<Stack.Screen
-					name="Gallery"
-					component={GalleryScreen}
-					options={{ title: "Gallery" }}
-				/>
-				<Stack.Screen
-					name="Progress"
-					component={ProgressScreen}
-					options={{ title: "Progress" }}
-				/>
-				<Stack.Screen
-					name="Chat"
-					component={ChatScreen}
-					options={{ title: "Chat" }}
-				/>
-				<Stack.Screen
-					name="Homework"
-					component={HomeworkScreen}
-					options={{ title: "Homework" }}
-				/>
+				<Stack.Screen name="Gallery" component={GalleryScreen} options={{ title: "Gallery" }} />
+				<Stack.Screen name="Progress" component={ProgressScreen} options={{ title: "Progress" }} />
+				<Stack.Screen name="Chat" component={ChatScreen} options={{ title: "Chat" }} />
+				<Stack.Screen name="Homework" component={HomeworkScreen} options={{ title: "Homework" }} />
 				<Stack.Screen
 					name="ReadingDiary"
 					component={ReadingDiaryScreen}
@@ -363,11 +347,7 @@ function AuthenticatedApp() {
 					component={TimetableScreen}
 					options={{ title: "Timetable" }}
 				/>
-				<Stack.Screen
-					name="Visitors"
-					component={VisitorsScreen}
-					options={{ title: "Visitors" }}
-				/>
+				<Stack.Screen name="Visitors" component={VisitorsScreen} options={{ title: "Visitors" }} />
 			</Stack.Navigator>
 		</NavigationContainer>
 	);
