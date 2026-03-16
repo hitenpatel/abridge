@@ -205,7 +205,7 @@ describe("chat router", () => {
 			});
 
 			expect(result.items).toHaveLength(1);
-			expect(result.items[0].body).toBe("Hello teacher");
+			expect(result.items[0]?.body).toBe("Hello teacher");
 			expect(result.nextCursor).toBeUndefined();
 		});
 	});
