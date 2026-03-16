@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { generateComment as generateAIComment } from "../lib/ai-report-comments";
 import { assertFeatureEnabled } from "../lib/feature-guards";
 import { generateReportPdf } from "../lib/report-pdf";
 import { protectedProcedure, router, schoolFeatureProcedure } from "../trpc";
@@ -383,5 +384,46 @@ export const reportCardRouter = router({
 				pdf: pdfBuffer.toString("base64"),
 				filename: `Report-${reportCard.child.firstName}-${reportCard.child.lastName}-${reportCard.cycle.name.replace(/\s+/g, "-")}.pdf`,
 			};
+		}),
+
+	generateComment: schoolFeatureProcedure
+		.input(
+			z.object({
+				schoolId: z.string(),
+				childId: z.string(),
+				subject: z.string().min(1).max(100),
+				currentGrade: z.string().max(50).optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "reportCards");
+
+			// Verify the child belongs to this school
+			const child = await ctx.prisma.child.findUnique({
+				where: { id: input.childId },
+				select: { schoolId: true },
+			});
+
+			if (!child || child.schoolId !== input.schoolId) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Child not found in this school",
+				});
+			}
+
+			// Check AI provider is configured
+			const provider = process.env.AI_SUMMARY_PROVIDER || "template";
+			if (provider === "template" || provider === "none") {
+				return { comment: null };
+			}
+
+			const comment = await generateAIComment(
+				ctx.prisma,
+				input.childId,
+				input.subject,
+				input.currentGrade,
+			);
+
+			return { comment };
 		}),
 });
