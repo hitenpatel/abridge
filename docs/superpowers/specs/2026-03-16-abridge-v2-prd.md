@@ -21,7 +21,9 @@ Abridge's moat is the **AI layer** — no competitor has AI-powered insights, an
 | AI absence pattern detection | no | no | no | no | **Phase 2** |
 | Student self-service portal | no | no | no | yes | **Phase 4** |
 | Feature toggles per school | no | no | no | partial | **yes** |
-| Open deployment (self-host) | no | no | no | no | **yes** |
+| Open deployment (cloud, self-host planned) | no | no | no | no | **yes** |
+
+Note: Self-hosting via Docker Compose is planned but not yet implemented. Current deployment is Vercel + Railway.
 
 ---
 
@@ -33,10 +35,10 @@ Abridge's moat is the **AI layer** — no competitor has AI-powered insights, an
 | 1 | Real-time Chat | WebSocket parent-teacher chat | Large | Yes |
 | 2 | AI Everywhere | 6 AI features across the platform | Large | Yes (4 of 6) |
 | 3 | Mobile Parity | 8 Expo screens + Maestro E2E | Medium | Yes |
-| 4 | Student Portal | Student login with filtered access | Medium | No |
+| 4 | Student Portal | Student login with filtered access | Medium | Yes |
 | 5 | Polish & Production | Tests, staging, migrations, timetable | Small | Yes (tests) |
 
-**Build order:** 0 → 5.1 → 1 → 2.1+2.2 → 3 (high priority screens) → 2.3-2.6 → 4 → 3 (remaining) → 5.2-5.5
+**Build order:** 0 → 5.1 → 5.3 → 1 → 2.1+2.2 → 3 (high priority screens) → 2.3-2.6 → 4 → 3 (remaining) → 5.2+5.4+5.5
 
 ---
 
@@ -82,6 +84,8 @@ No — find-and-replace task, not iterative.
   - Heartbeat ping every 30 seconds, disconnect after 3 missed pongs
   - Reconnection: client uses exponential backoff (1s, 2s, 4s, 8s, max 30s)
 
+**Scaling note:** In-memory connection manager is single-instance only. For horizontal scaling (2+ API servers), add Redis pub/sub as a message broker between instances. Single-instance is appropriate for school-sized deployments (typically <500 concurrent users per school).
+
 **Message types over WebSocket:**
 ```typescript
 type WsMessage =
@@ -97,7 +101,7 @@ type WsMessage =
 model ChatMessage {
   id             String       @id @default(cuid())
   conversationId String
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversation   ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   senderId       String
   sender         User         @relation("ChatMessageSender", fields: [senderId], references: [id])
   body           String
@@ -109,7 +113,10 @@ model ChatMessage {
 }
 ```
 
-Extend existing `Conversation` model: add `chatMessages ChatMessage[]` relation.
+**Unread count strategy:** Since chat is 1:1, `readAt` on `ChatMessage` is unambiguous (only one recipient). Unread count = `COUNT(*) WHERE conversationId = X AND senderId != currentUser AND readAt IS NULL`. Acceptable performance for school chat volumes.
+
+Note: Create a separate `ChatConversation` model rather than extending the existing `Conversation` (which is used for async messaging threads with the `Message` model). This avoids architectural confusion between real-time chat and broadcast messaging. The `ChatMessage` model references `ChatConversation` instead of `Conversation`.
+
 Add `User` relation: `chatMessagesSent ChatMessage[] @relation("ChatMessageSender")`
 
 Feature toggle: `liveChatEnabled Boolean @default(false)` on School.
@@ -123,7 +130,9 @@ Feature toggle: `liveChatEnabled Boolean @default(false)` on School.
 - **Messages cannot be deleted** — only archived. Full audit trail.
 - Admin export: download full conversation as PDF for safeguarding reviews
 - Max message length: 2000 characters
-- Auto-flag: optional keyword list for concerning content (configurable per school)
+- **Retention policy:** Chat messages retained for 6 years (UK school record-keeping requirement), then automatically purged. A scheduled job removes messages older than the retention period monthly.
+- Reopening: when a parent messages a staff member with a closed conversation, the existing conversation is reopened (closedAt set back to null) rather than creating a new one. The `@@unique([schoolId, parentId, staffId])` constraint on ChatConversation enforces this.
+- Auto-flag: optional keyword list for concerning content (configurable per school). When triggered: creates a safeguarding alert visible to the school's Designated Safeguarding Lead (DSL) via the admin panel, logs the flagged message + conversation for review. Does NOT block message delivery.
 
 ### Delivery
 - Real-time via WebSocket if recipient is connected
@@ -177,6 +186,8 @@ Feature toggle: `liveChatEnabled Boolean @default(false)` on School.
 - Tone selector: Formal / Friendly / Urgent
 - Generated draft fills the message body (editable before sending)
 - "Regenerate" button for a different version
+
+**Rate limit:** 20 AI drafts per user per hour. Returns cached previous generation if limit exceeded.
 
 **Service:** `apps/api/src/lib/ai-drafting.ts`
 - `generateDraft(prompt, tone, schoolName)` — calls AI provider with a system prompt tailored to the tone
@@ -300,7 +311,7 @@ model AttendanceAlert {
 - Early reminder sent 3 days before due date (vs standard 1 day)
 - Extends existing notification service schedule
 
-**No new schema** — add a `reminderSentAt` field to `PaymentItem` to prevent duplicate reminders.
+Add `reminderSentAt DateTime?` to `PaymentItemChild` (not `PaymentItem`) — reminders are per-child since some parents pay early and others don't.
 
 **Feature toggle:** Part of existing `paymentsEnabled`.
 
@@ -403,12 +414,17 @@ Feature toggle: `studentPortalEnabled Boolean @default(false)`
 - Student sessions have role `"student"` for RBAC
 - Same web + mobile app, filtered by role
 
+**Middleware:** Add `studentProcedure` to `apps/api/src/trpc.ts` — checks `child.userId === ctx.user.id`. Students bypass `parentChild` checks and access their own `Child` record directly. Existing `protectedProcedure` works for student login; `studentProcedure` adds the child-self-access pattern.
+
 ### Tests
 - 4 API tests: student auth, homework access, payment rejection, timetable access
 - 2 E2E tests: student views homework, student can't access payments
 
 ### Ralph Loop
-No — straightforward RBAC extension.
+**Ralph Loop: YES (short)**
+```
+/ralph-loop "Test student access matrix. Login as student. Verify: can view homework, timetable, reading diary, achievements, progress, attendance. Verify CANNOT access: payments, forms, messages, chat, wellbeing. Fix any RBAC leaks. Output <promise>STUDENT RBAC VERIFIED</promise> when all access controls hold." --max-iterations 5
+```
 
 ---
 
@@ -467,6 +483,7 @@ No — straightforward RBAC extension.
 | 2.4 | Report card comment quality | 8 | Tone, factual accuracy, subject context |
 | 2.6 | Homework hint guidance | 10 | Guide vs answer, age-appropriate language |
 | 3 | Mobile screen polish (×8) | 8 each | Layout, data rendering, Maestro stability |
+| 4 | Student RBAC verification | 5 | Access controls, permission leaks |
 | 5.1 | Test + lint cleanup | 10 | Test reliability, lint compliance |
 
 **Total Ralph Loop iterations:** ~100 across all phases
