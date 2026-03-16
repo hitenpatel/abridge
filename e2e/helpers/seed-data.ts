@@ -518,6 +518,7 @@ export async function enableSchoolFeature(params: {
 		calendarEnabled: boolean;
 		progressSummariesEnabled: boolean;
 		liveChatEnabled: boolean;
+		studentPortalEnabled: boolean;
 	}>;
 }): Promise<void> {
 	await prisma.school.update({
@@ -1182,6 +1183,52 @@ export async function seedChatMessage(params: {
 	});
 
 	return { id: msg.id };
+}
+
+/**
+ * Create a child and link to a user as a student (via Child.userId)
+ */
+export async function seedChildForStudent(params: {
+	userId: string;
+	schoolId: string;
+	firstName?: string;
+	lastName?: string;
+	yearGroup?: string;
+}): Promise<TestChild> {
+	const firstName = params.firstName || "Test";
+	const lastName = params.lastName || "Student";
+
+	const child = await prisma.child.create({
+		data: {
+			firstName,
+			lastName,
+			dateOfBirth: new Date("2011-09-01"), // 14-15 years old (Year 10)
+			yearGroup: params.yearGroup || "10",
+			className: "10A",
+			schoolId: params.schoolId,
+			userId: params.userId,
+		},
+	});
+
+	return {
+		id: child.id,
+		firstName: child.firstName,
+		lastName: child.lastName,
+		schoolId: child.schoolId,
+	};
+}
+
+/**
+ * Link an existing child to a user as a student
+ */
+export async function linkChildToStudent(params: {
+	childId: string;
+	userId: string;
+}): Promise<void> {
+	await prisma.child.update({
+		where: { id: params.childId },
+		data: { userId: params.userId },
+	});
 }
 
 export { prisma };
