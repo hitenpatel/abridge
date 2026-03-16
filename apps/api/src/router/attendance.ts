@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { endOfDay, startOfDay } from "date-fns";
 import { z } from "zod";
 import { assertFeatureEnabled } from "../lib/feature-guards";
+import { isParentOrStudentOfChild } from "../lib/student-auth";
 import { protectedProcedure, router, schoolFeatureProcedure, schoolStaffProcedure } from "../trpc";
 
 export const attendanceRouter = router({
@@ -14,25 +15,21 @@ export const attendanceRouter = router({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
-			// Verify parent link
-			const parentChild = await ctx.prisma.parentChild.findUnique({
-				where: {
-					userId_childId: {
-						userId: ctx.user.id,
-						childId: input.childId,
-					},
-				},
-				include: { child: { select: { school: { select: { attendanceEnabled: true } } } } },
-			});
-
-			if (!parentChild) {
+			// Verify parent or student link
+			const hasAccess = await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId);
+			if (!hasAccess) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
 					message: "You are not authorized to view attendance for this child",
 				});
 			}
 
-			if (!parentChild.child.school.attendanceEnabled) {
+			// Verify attendance is enabled for the school
+			const child = await ctx.prisma.child.findUnique({
+				where: { id: input.childId },
+				include: { school: { select: { attendanceEnabled: true } } },
+			});
+			if (!child?.school.attendanceEnabled) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
 					message: "Attendance is disabled for this school",

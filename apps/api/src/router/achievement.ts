@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { assertFeatureEnabled } from "../lib/feature-guards";
+import { isParentOrStudentOfChild } from "../lib/student-auth";
 import { protectedProcedure, router, schoolAdminProcedure, schoolFeatureProcedure } from "../trpc";
 
 export const achievementRouter = router({
@@ -125,12 +126,10 @@ export const achievementRouter = router({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
-			// Verify parent-child link
-			const parentChild = await ctx.prisma.parentChild.findFirst({
-				where: { userId: ctx.user.id, childId: input.childId },
-			});
-			if (!parentChild) {
-				throw new TRPCError({ code: "FORBIDDEN", message: "Not a parent of this child" });
+			// Verify parent-child or student link
+			const hasAccess = await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId);
+			if (!hasAccess) {
+				throw new TRPCError({ code: "FORBIDDEN", message: "Not authorised to view this child's achievements" });
 			}
 
 			const [awards, totalPointsResult] = await Promise.all([

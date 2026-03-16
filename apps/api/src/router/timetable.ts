@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isParentOrStudentOfChild } from "../lib/student-auth";
 import { protectedProcedure, router } from "../trpc";
 
 export const timetableRouter = router({
@@ -9,11 +10,9 @@ export const timetableRouter = router({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
-			// Verify parent has access to this child
-			const parentChild = await ctx.prisma.parentChild.findFirst({
-				where: { userId: ctx.user.id, childId: input.childId },
-			});
-			if (!parentChild) {
+			// Verify parent, student, or staff has access to this child
+			const hasAccess = await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId);
+			if (!hasAccess) {
 				const staffMember = await ctx.prisma.staffMember.findFirst({
 					where: { userId: ctx.user.id },
 				});

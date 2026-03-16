@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { assertFeatureEnabled } from "../lib/feature-guards";
+import { isParentOrStudentOfChild } from "../lib/student-auth";
 import { protectedProcedure, router, schoolFeatureProcedure } from "../trpc";
 
 const readWithEnum = z.enum(["ALONE", "PARENT", "TEACHER", "SIBLING", "OTHER"]);
@@ -19,13 +20,11 @@ export const readingDiaryRouter = router({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const parentChild = await ctx.prisma.parentChild.findFirst({
-				where: { userId: ctx.user.id, childId: input.childId },
-			});
-			if (!parentChild) {
+			const hasAccess = await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId);
+			if (!hasAccess) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
-					message: "Not a parent of this child",
+					message: "Not authorised to log reading for this child",
 				});
 			}
 
@@ -73,14 +72,18 @@ export const readingDiaryRouter = router({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
-			// Verify parent or staff
-			const parentChild = await ctx.prisma.parentChild.findFirst({
-				where: { userId: ctx.user.id, childId: input.childId },
-			});
+			// Verify parent, student, or staff
 			const child = await ctx.prisma.child.findUnique({
 				where: { id: input.childId },
 			});
-			if (!parentChild && child) {
+			if (!child) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Child not found",
+				});
+			}
+			const hasAccess = await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId);
+			if (!hasAccess) {
 				const staffMember = await ctx.prisma.staffMember.findUnique({
 					where: {
 						userId_schoolId: {
@@ -95,12 +98,6 @@ export const readingDiaryRouter = router({
 						message: "Not authorised to view this child's reading diary",
 					});
 				}
-			}
-			if (!child) {
-				throw new TRPCError({
-					code: "NOT_FOUND",
-					message: "Child not found",
-				});
 			}
 
 			const diary = await ctx.prisma.readingDiary.findUnique({
@@ -209,32 +206,29 @@ export const readingDiaryRouter = router({
 	getDiary: protectedProcedure
 		.input(z.object({ childId: z.string() }))
 		.query(async ({ ctx, input }) => {
-			const parentChild = await ctx.prisma.parentChild.findFirst({
-				where: { userId: ctx.user.id, childId: input.childId },
+			const child = await ctx.prisma.child.findUnique({
+				where: { id: input.childId },
 			});
-			if (!parentChild) {
-				const child = await ctx.prisma.child.findUnique({
-					where: { id: input.childId },
+			if (!child) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Child not found",
 				});
-				if (child) {
-					const staffMember = await ctx.prisma.staffMember.findUnique({
-						where: {
-							userId_schoolId: {
-								userId: ctx.user.id,
-								schoolId: child.schoolId,
-							},
+			}
+			const hasAccess = await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId);
+			if (!hasAccess) {
+				const staffMember = await ctx.prisma.staffMember.findUnique({
+					where: {
+						userId_schoolId: {
+							userId: ctx.user.id,
+							schoolId: child.schoolId,
 						},
-					});
-					if (!staffMember) {
-						throw new TRPCError({
-							code: "FORBIDDEN",
-							message: "Not authorised to view this child's reading diary",
-						});
-					}
-				} else {
+					},
+				});
+				if (!staffMember) {
 					throw new TRPCError({
-						code: "NOT_FOUND",
-						message: "Child not found",
+						code: "FORBIDDEN",
+						message: "Not authorised to view this child's reading diary",
 					});
 				}
 			}
@@ -296,32 +290,29 @@ export const readingDiaryRouter = router({
 	getStats: protectedProcedure
 		.input(z.object({ childId: z.string() }))
 		.query(async ({ ctx, input }) => {
-			const parentChild = await ctx.prisma.parentChild.findFirst({
-				where: { userId: ctx.user.id, childId: input.childId },
+			const child = await ctx.prisma.child.findUnique({
+				where: { id: input.childId },
 			});
-			if (!parentChild) {
-				const child = await ctx.prisma.child.findUnique({
-					where: { id: input.childId },
+			if (!child) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Child not found",
 				});
-				if (child) {
-					const staffMember = await ctx.prisma.staffMember.findUnique({
-						where: {
-							userId_schoolId: {
-								userId: ctx.user.id,
-								schoolId: child.schoolId,
-							},
+			}
+			const hasAccess = await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId);
+			if (!hasAccess) {
+				const staffMember = await ctx.prisma.staffMember.findUnique({
+					where: {
+						userId_schoolId: {
+							userId: ctx.user.id,
+							schoolId: child.schoolId,
 						},
-					});
-					if (!staffMember) {
-						throw new TRPCError({
-							code: "FORBIDDEN",
-							message: "Not authorised to view this child's reading stats",
-						});
-					}
-				} else {
+					},
+				});
+				if (!staffMember) {
 					throw new TRPCError({
-						code: "NOT_FOUND",
-						message: "Child not found",
+						code: "FORBIDDEN",
+						message: "Not authorised to view this child's reading stats",
 					});
 				}
 			}

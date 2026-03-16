@@ -3,17 +3,16 @@ import { z } from "zod";
 import { assertFeatureEnabled } from "../lib/feature-guards";
 import { logger } from "../lib/logger";
 import { generateWeeklySummary } from "../lib/progress-summary";
+import { isParentOrStudentOfChild } from "../lib/student-auth";
 import { protectedProcedure, router, schoolAdminProcedure, schoolFeatureProcedure } from "../trpc";
 
 export const progressSummaryRouter = router({
 	getLatestSummary: protectedProcedure
 		.input(z.object({ childId: z.string().min(1) }))
 		.query(async ({ ctx, input }) => {
-			// Verify parent-child relationship
-			const parentChild = await ctx.prisma.parentChild.findFirst({
-				where: { userId: ctx.user.id, childId: input.childId },
-			});
-			if (!parentChild) {
+			// Verify parent-child or student relationship
+			const hasAccess = await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId);
+			if (!hasAccess) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
 					message: "You do not have access to this child's data",
@@ -37,11 +36,9 @@ export const progressSummaryRouter = router({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
-			// Verify parent-child relationship
-			const parentChild = await ctx.prisma.parentChild.findFirst({
-				where: { userId: ctx.user.id, childId: input.childId },
-			});
-			if (!parentChild) {
+			// Verify parent-child or student relationship
+			const hasAccess = await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId);
+			if (!hasAccess) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
 					message: "You do not have access to this child's data",

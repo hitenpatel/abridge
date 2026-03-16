@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { generateHint } from "../lib/ai-homework-hints";
 import { assertFeatureEnabled } from "../lib/feature-guards";
+import { isParentOrStudentOfChild } from "../lib/student-auth";
 import { protectedProcedure, router, schoolFeatureProcedure } from "../trpc";
 
 export const homeworkRouter = router({
@@ -59,13 +60,11 @@ export const homeworkRouter = router({
 				});
 			}
 
-			const parentChild = await ctx.prisma.parentChild.findFirst({
-				where: { userId: ctx.user.id, childId: input.childId },
-			});
-			if (!parentChild) {
+			const hasAccess = await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId);
+			if (!hasAccess) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
-					message: "Not a parent of this child",
+					message: "Not authorised to view this child's homework",
 				});
 			}
 
@@ -123,13 +122,11 @@ export const homeworkRouter = router({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const parentChild = await ctx.prisma.parentChild.findFirst({
-				where: { userId: ctx.user.id, childId: input.childId },
-			});
-			if (!parentChild) {
+			const hasAccess = await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId);
+			if (!hasAccess) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
-					message: "Not a parent of this child",
+					message: "Not authorised to mark this child's homework",
 				});
 			}
 
@@ -163,13 +160,11 @@ export const homeworkRouter = router({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const parentChild = await ctx.prisma.parentChild.findFirst({
-				where: { userId: ctx.user.id, childId: input.childId },
-			});
-			if (!parentChild) {
+			const hasAccess = await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId);
+			if (!hasAccess) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
-					message: "Not a parent of this child",
+					message: "Not authorised to update this child's homework",
 				});
 			}
 
@@ -307,14 +302,12 @@ export const homeworkRouter = router({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// Verify parent-child relationship
-			const parentChild = await ctx.prisma.parentChild.findFirst({
-				where: { userId: ctx.user.id, childId: input.childId },
-			});
-			if (!parentChild) {
+			// Verify parent-child or student relationship
+			const hasAccess = await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId);
+			if (!hasAccess) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
-					message: "Not a parent of this child",
+					message: "Not authorised to get hints for this child",
 				});
 			}
 
