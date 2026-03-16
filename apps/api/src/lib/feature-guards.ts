@@ -22,7 +22,8 @@ type FeatureName =
 	| "misIntegration"
 	| "achievements"
 	| "gallery"
-	| "progressSummaries";
+	| "progressSummaries"
+	| "liveChat";
 
 interface SchoolFeatures {
 	messagingEnabled: boolean;
@@ -51,6 +52,7 @@ interface SchoolFeatures {
 	achievementsEnabled: boolean;
 	galleryEnabled: boolean;
 	progressSummariesEnabled: boolean;
+	liveChatEnabled: boolean;
 }
 
 const featureFieldMap: Record<FeatureName, keyof SchoolFeatures> = {
@@ -75,6 +77,7 @@ const featureFieldMap: Record<FeatureName, keyof SchoolFeatures> = {
 	achievements: "achievementsEnabled",
 	gallery: "galleryEnabled",
 	progressSummaries: "progressSummariesEnabled",
+	liveChat: "liveChatEnabled",
 };
 
 const featureLabel: Record<FeatureName, string> = {
@@ -99,6 +102,7 @@ const featureLabel: Record<FeatureName, string> = {
 	achievements: "Achievements",
 	gallery: "Gallery",
 	progressSummaries: "Progress Summaries",
+	liveChat: "Live Chat",
 };
 
 const categoryFieldMap: Record<PaymentCategory, keyof SchoolFeatures> = {

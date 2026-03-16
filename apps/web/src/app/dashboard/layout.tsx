@@ -43,7 +43,8 @@ interface NavItem {
 		| "misIntegrationEnabled"
 		| "achievementsEnabled"
 		| "galleryEnabled"
-		| "progressSummariesEnabled";
+		| "progressSummariesEnabled"
+		| "liveChatEnabled";
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -172,6 +173,12 @@ function DashboardLayoutInner({
 			icon: "insights",
 			featureKey: "progressSummariesEnabled",
 		},
+		{
+			name: "Chat",
+			href: "/dashboard/chat",
+			icon: "chat",
+			featureKey: "liveChatEnabled",
+		},
 		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];
 
@@ -284,6 +291,12 @@ function DashboardLayoutInner({
 			href: "/dashboard/progress",
 			icon: "insights",
 			featureKey: "progressSummariesEnabled",
+		},
+		{
+			name: "Chat",
+			href: "/dashboard/chat",
+			icon: "chat",
+			featureKey: "liveChatEnabled",
 		},
 		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];

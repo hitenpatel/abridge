@@ -409,6 +409,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 	const [achievements, setAchievements] = useState(false);
 	const [gallery, setGallery] = useState(false);
 	const [progressSummaries, setProgressSummaries] = useState(false);
+	const [liveChat, setLiveChat] = useState(false);
 
 	useEffect(() => {
 		if (data) {
@@ -437,6 +438,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 			setAchievements(data.achievementsEnabled);
 			setGallery(data.galleryEnabled);
 			setProgressSummaries(data.progressSummariesEnabled);
+			setLiveChat(data.liveChatEnabled);
 		}
 	}, [data]);
 
@@ -504,6 +506,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							achievementsEnabled: achievements,
 							galleryEnabled: gallery,
 							progressSummariesEnabled: progressSummaries,
+							liveChatEnabled: liveChat,
 						});
 					}}
 					className="space-y-4"
@@ -663,6 +666,12 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							onChange={setProgressSummaries}
 							label="Progress Summaries"
 							data-testid="toggle-progress-summaries"
+						/>
+						<Toggle
+							checked={liveChat}
+							onChange={setLiveChat}
+							label="Live Chat"
+							data-testid="toggle-live-chat"
 						/>
 					</div>
 

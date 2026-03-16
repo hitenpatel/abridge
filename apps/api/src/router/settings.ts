@@ -28,6 +28,7 @@ const featureToggleSelect = {
 	achievementsEnabled: true,
 	galleryEnabled: true,
 	progressSummariesEnabled: true,
+	liveChatEnabled: true,
 } as const;
 
 export const settingsRouter = router({
@@ -186,6 +187,7 @@ export const settingsRouter = router({
 				achievementsEnabled: z.boolean().optional(),
 				galleryEnabled: z.boolean().optional(),
 				progressSummariesEnabled: z.boolean().optional(),
+				liveChatEnabled: z.boolean().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

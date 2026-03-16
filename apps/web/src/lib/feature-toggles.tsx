@@ -30,6 +30,7 @@ interface FeatureToggles {
 	achievementsEnabled: boolean;
 	galleryEnabled: boolean;
 	progressSummariesEnabled: boolean;
+	liveChatEnabled: boolean;
 }
 
 const defaultToggles: FeatureToggles = {
@@ -59,6 +60,7 @@ const defaultToggles: FeatureToggles = {
 	achievementsEnabled: false,
 	galleryEnabled: false,
 	progressSummariesEnabled: false,
+	liveChatEnabled: false,
 };
 
 const FeatureToggleContext = createContext<FeatureToggles>(defaultToggles);

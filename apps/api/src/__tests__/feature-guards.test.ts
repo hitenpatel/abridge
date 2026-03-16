@@ -29,6 +29,7 @@ function allTogglesEnabled() {
 		achievementsEnabled: true,
 		galleryEnabled: true,
 		progressSummariesEnabled: true,
+		liveChatEnabled: true,
 	};
 }
 
@@ -60,6 +61,7 @@ function allTogglesDisabled() {
 		achievementsEnabled: false,
 		galleryEnabled: false,
 		progressSummariesEnabled: false,
+		liveChatEnabled: false,
 	};
 }
 
