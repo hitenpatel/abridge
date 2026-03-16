@@ -57,6 +57,10 @@ model School {
   // Phase 1 feature toggles
   liveChatEnabled            Boolean  @default(false)
 
+  // Phase 2 feature toggles
+  aiDraftingEnabled          Boolean  @default(false)
+  attendanceAlertsEnabled    Boolean  @default(false)
+
   // School branding
   brandColor                String?  @default("#1E3A5F")
   secondaryColor            String?
@@ -100,6 +104,7 @@ model School {
   galleryAlbums       GalleryAlbum[]
   progressSummaries   ProgressSummary[]
   chatConversations   ChatConversation[]
+  attendanceAlerts    AttendanceAlert[]
 
   @@map("schools")
 }
@@ -179,6 +184,7 @@ model User {
   chatConversationsAsParent   ChatConversation[] @relation("ChatParent")
   chatConversationsAsStaff    ChatConversation[] @relation("ChatStaff")
   chatMessagesSent            ChatMessage[]      @relation("ChatMessageSender")
+  attendanceAlertsAcknowledged AttendanceAlert[] @relation("AttendanceAlertAcknowledger")
 
   @@map("users")
 }
@@ -280,6 +286,7 @@ model Child {
   eventRsvps          EventRsvp[]
   achievements        Achievement[]
   progressSummaries   ProgressSummary[]
+  attendanceAlerts    AttendanceAlert[] @relation("AttendanceAlerts")
 
   @@map("children")
 }
@@ -444,6 +451,7 @@ model PaymentItem {
 model PaymentItemChild {
   paymentItemId String
   childId       String
+  reminderSentAt DateTime?
 
   paymentItem PaymentItem @relation(fields: [paymentItemId], references: [id], onDelete: Cascade)
   child       Child       @relation(fields: [childId], references: [id], onDelete: Cascade)
@@ -1276,6 +1284,7 @@ model HomeworkCompletion {
   gradedBy     String?
   grader       User?                      @relation("HomeworkGradedBy", fields: [gradedBy], references: [id])
   gradedAt     DateTime?
+  hintCount    Int                        @default(0)
   createdAt    DateTime                   @default(now())
   updatedAt    DateTime                   @updatedAt
 
@@ -1700,4 +1709,40 @@ model ChatMessage {
 
   @@index([conversationId, createdAt])
   @@map("chat_message")
+}
+
+// ─── Attendance Alerts ──────────────────────────────────────────
+
+enum AttendanceAlertType {
+  CONSECUTIVE_ABSENCE
+  DECLINING_TREND
+  DAY_PATTERN
+  POST_HOLIDAY
+  BELOW_THRESHOLD
+}
+
+enum AttendanceAlertStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+}
+
+model AttendanceAlert {
+  id             String                @id @default(cuid())
+  childId        String
+  child          Child                 @relation("AttendanceAlerts", fields: [childId], references: [id], onDelete: Cascade)
+  schoolId       String
+  school         School                @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  type           AttendanceAlertType
+  status         AttendanceAlertStatus @default(OPEN)
+  description    String
+  data           Json
+  acknowledgedBy String?
+  acknowledger   User?                 @relation("AttendanceAlertAcknowledger", fields: [acknowledgedBy], references: [id])
+  resolvedAt     DateTime?
+  createdAt      DateTime              @default(now())
+
+  @@index([schoolId, status])
+  @@index([childId, createdAt])
+  @@map("attendance_alert")
 }

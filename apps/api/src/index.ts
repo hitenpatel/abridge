@@ -19,6 +19,7 @@ import { checkUndeliveredNotifications } from "./jobs/notification-fallback";
 import { auth } from "./lib/auth";
 import { logger } from "./lib/logger";
 import { startMisSyncCron } from "./lib/mis-sync-cron";
+import { startPaymentReminderCron } from "./lib/payment-reminder-cron";
 import { startProgressSummaryCron } from "./lib/progress-summary-cron";
 import { registerChatWebSocket } from "./lib/chat/ws-handler";
 import { appRouter } from "./router";
@@ -229,6 +230,9 @@ async function main() {
 
 	// Run weekly progress summary generation (checks every hour, runs Monday)
 	startProgressSummaryCron(prisma);
+
+	// Run daily payment reminder checks (checks every hour, sends at 9am)
+	startPaymentReminderCron(prisma);
 }
 
 main().catch((err) => {
