@@ -42,7 +42,8 @@ interface NavItem {
 		| "visitorManagementEnabled"
 		| "misIntegrationEnabled"
 		| "achievementsEnabled"
-		| "galleryEnabled";
+		| "galleryEnabled"
+		| "progressSummariesEnabled";
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -165,6 +166,12 @@ function DashboardLayoutInner({
 			icon: "photo_library",
 			featureKey: "galleryEnabled",
 		},
+		{
+			name: "Progress",
+			href: "/dashboard/progress",
+			icon: "insights",
+			featureKey: "progressSummariesEnabled",
+		},
 		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];
 
@@ -271,6 +278,12 @@ function DashboardLayoutInner({
 			href: "/dashboard/gallery",
 			icon: "photo_library",
 			featureKey: "galleryEnabled",
+		},
+		{
+			name: "Progress",
+			href: "/dashboard/progress",
+			icon: "insights",
+			featureKey: "progressSummariesEnabled",
 		},
 		{ name: "Settings", href: "/dashboard/settings", icon: "settings" },
 	];

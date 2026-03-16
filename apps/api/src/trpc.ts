@@ -142,6 +142,7 @@ export const schoolFeatureProcedure = schoolStaffProcedure.use(async ({ ctx, nex
 			misIntegrationEnabled: true,
 			achievementsEnabled: true,
 			galleryEnabled: true,
+			progressSummariesEnabled: true,
 		},
 	});
 

@@ -408,6 +408,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 	const [misIntegration, setMisIntegration] = useState(false);
 	const [achievements, setAchievements] = useState(false);
 	const [gallery, setGallery] = useState(false);
+	const [progressSummaries, setProgressSummaries] = useState(false);
 
 	useEffect(() => {
 		if (data) {
@@ -435,6 +436,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 			setMisIntegration(data.misIntegrationEnabled);
 			setAchievements(data.achievementsEnabled);
 			setGallery(data.galleryEnabled);
+			setProgressSummaries(data.progressSummariesEnabled);
 		}
 	}, [data]);
 
@@ -501,6 +503,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							misIntegrationEnabled: misIntegration,
 							achievementsEnabled: achievements,
 							galleryEnabled: gallery,
+							progressSummariesEnabled: progressSummaries,
 						});
 					}}
 					className="space-y-4"
@@ -654,6 +657,12 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							onChange={setGallery}
 							label="Gallery"
 							data-testid="toggle-gallery"
+						/>
+						<Toggle
+							checked={progressSummaries}
+							onChange={setProgressSummaries}
+							label="Progress Summaries"
+							data-testid="toggle-progress-summaries"
 						/>
 					</div>
 

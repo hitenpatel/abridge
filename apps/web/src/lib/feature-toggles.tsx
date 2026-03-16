@@ -29,6 +29,7 @@ interface FeatureToggles {
 	misIntegrationEnabled: boolean;
 	achievementsEnabled: boolean;
 	galleryEnabled: boolean;
+	progressSummariesEnabled: boolean;
 }
 
 const defaultToggles: FeatureToggles = {
@@ -57,6 +58,7 @@ const defaultToggles: FeatureToggles = {
 	misIntegrationEnabled: false,
 	achievementsEnabled: false,
 	galleryEnabled: false,
+	progressSummariesEnabled: false,
 };
 
 const FeatureToggleContext = createContext<FeatureToggles>(defaultToggles);
