@@ -50,6 +50,7 @@ describe("auth router", () => {
 					prisma: {
 						parentChild: { findMany: async () => [] },
 						staffMember: { findFirst: async () => null },
+						child: { findUnique: async () => null },
 						$queryRaw: async () => [],
 					} as unknown as Context["prisma"],
 				}),
@@ -59,6 +60,8 @@ describe("auth router", () => {
 			expect(result).toEqual({
 				...mockUser,
 				isParent: false,
+				isStudent: false,
+				studentChildId: null,
 				staffRole: null,
 				schoolId: null,
 			});

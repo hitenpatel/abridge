@@ -8,6 +8,7 @@ function createTestContext(overrides?: any): any {
 		prisma: {
 			parentChild: {
 				findUnique: vi.fn(),
+				findFirst: vi.fn(),
 			},
 			child: {
 				findUnique: vi.fn(),
@@ -33,10 +34,14 @@ describe("attendance router", () => {
 				{ id: "1", date: new Date("2023-10-01T00:00:00.000Z"), session: "AM", mark: "PRESENT" },
 			];
 			const ctx = createTestContext();
-			ctx.prisma.parentChild.findUnique.mockResolvedValue({
+			// isParentOrStudentOfChild: child.findUnique returns non-matching userId (not student)
+			// then parentChild.findFirst returns truthy (is parent)
+			ctx.prisma.child.findUnique
+				.mockResolvedValueOnce({ userId: null }) // for isParentOrStudentOfChild
+				.mockResolvedValueOnce({ school: { attendanceEnabled: true } }); // for feature check
+			ctx.prisma.parentChild.findFirst.mockResolvedValue({
 				userId: "user-1",
 				childId: "child-1",
-				child: { school: { attendanceEnabled: true } },
 			});
 			ctx.prisma.attendanceRecord.findMany.mockResolvedValue(mockRecords);
 
@@ -59,7 +64,8 @@ describe("attendance router", () => {
 
 		it("throws FORBIDDEN if user is not parent", async () => {
 			const ctx = createTestContext();
-			ctx.prisma.parentChild.findUnique.mockResolvedValue(null);
+			ctx.prisma.child.findUnique.mockResolvedValue({ userId: null }); // not student
+			ctx.prisma.parentChild.findFirst.mockResolvedValue(null); // not parent
 
 			const caller = appRouter.createCaller(ctx);
 

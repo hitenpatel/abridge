@@ -97,6 +97,7 @@ function createTestContext(overrides?: Record<string, any>): any {
 			},
 			child: {
 				findMany: vi.fn().mockResolvedValue([{ id: "child-1" }, { id: "child-2" }]),
+				findUnique: vi.fn().mockResolvedValue(null),
 			},
 		},
 		user: { id: "user-1", name: "Test User" },
