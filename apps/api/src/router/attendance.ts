@@ -1,7 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { endOfDay, startOfDay } from "date-fns";
 import { z } from "zod";
-import { protectedProcedure, router, schoolStaffProcedure } from "../trpc";
+import { assertFeatureEnabled } from "../lib/feature-guards";
+import { protectedProcedure, router, schoolFeatureProcedure, schoolStaffProcedure } from "../trpc";
 
 export const attendanceRouter = router({
 	getAttendanceForChild: protectedProcedure
@@ -227,4 +228,97 @@ export const attendanceRouter = router({
 
 		return { summary: { present, absent, late, unmarked, total: children.length }, rows };
 	}),
+
+	getAlerts: schoolFeatureProcedure
+		.input(
+			z.object({
+				schoolId: z.string(),
+				status: z.enum(["OPEN", "ACKNOWLEDGED", "RESOLVED"]).optional(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "attendanceAlerts");
+
+			const where: Record<string, unknown> = { schoolId: input.schoolId };
+			if (input.status) {
+				where.status = input.status;
+			}
+
+			const alerts = await ctx.prisma.attendanceAlert.findMany({
+				where,
+				orderBy: { createdAt: "desc" },
+				include: {
+					child: { select: { firstName: true, lastName: true, className: true, yearGroup: true } },
+					acknowledger: { select: { name: true } },
+				},
+			});
+
+			return alerts;
+		}),
+
+	acknowledgeAlert: schoolFeatureProcedure
+		.input(
+			z.object({
+				schoolId: z.string(),
+				alertId: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "attendanceAlerts");
+
+			const alert = await ctx.prisma.attendanceAlert.findFirst({
+				where: { id: input.alertId, schoolId: input.schoolId },
+			});
+
+			if (!alert) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Alert not found" });
+			}
+
+			if (alert.status !== "OPEN") {
+				throw new TRPCError({ code: "BAD_REQUEST", message: "Alert is not in OPEN status" });
+			}
+
+			const updated = await ctx.prisma.attendanceAlert.update({
+				where: { id: input.alertId },
+				data: {
+					status: "ACKNOWLEDGED",
+					acknowledgedBy: ctx.user.id,
+				},
+			});
+
+			return updated;
+		}),
+
+	resolveAlert: schoolFeatureProcedure
+		.input(
+			z.object({
+				schoolId: z.string(),
+				alertId: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "attendanceAlerts");
+
+			const alert = await ctx.prisma.attendanceAlert.findFirst({
+				where: { id: input.alertId, schoolId: input.schoolId },
+			});
+
+			if (!alert) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Alert not found" });
+			}
+
+			if (alert.status === "RESOLVED") {
+				throw new TRPCError({ code: "BAD_REQUEST", message: "Alert is already resolved" });
+			}
+
+			const updated = await ctx.prisma.attendanceAlert.update({
+				where: { id: input.alertId },
+				data: {
+					status: "RESOLVED",
+					resolvedAt: new Date(),
+				},
+			});
+
+			return updated;
+		}),
 });
