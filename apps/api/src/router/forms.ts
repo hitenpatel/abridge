@@ -82,11 +82,11 @@ function generateFormPdf(options: {
 }
 
 const fieldSchema = z.object({
-	id: z.string(),
-	type: z.string(),
-	label: z.string(),
+	id: z.string().max(100),
+	type: z.string().max(50),
+	label: z.string().max(200),
 	required: z.boolean(),
-	options: z.array(z.string()).optional(),
+	options: z.array(z.string().max(200)).optional(),
 });
 
 export const formsRouter = router({
@@ -101,9 +101,9 @@ export const formsRouter = router({
 	createTemplate: schoolFeatureProcedure
 		.input(
 			z.object({
-				title: z.string(),
-				description: z.string().optional(),
-				fields: z.array(fieldSchema),
+				title: z.string().min(1).max(200),
+				description: z.string().max(2000).optional(),
+				fields: z.array(fieldSchema).max(50),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -129,6 +129,31 @@ export const formsRouter = router({
 				throw new TRPCError({
 					code: "NOT_FOUND",
 					message: "Template not found",
+				});
+			}
+
+			// Verify user has access to this school (as parent or staff)
+			const [parentLink, staffLink] = await Promise.all([
+				ctx.prisma.parentChild.findFirst({
+					where: {
+						userId: ctx.user.id,
+						child: { schoolId: template.schoolId },
+					},
+				}),
+				ctx.prisma.staffMember.findUnique({
+					where: {
+						userId_schoolId: {
+							userId: ctx.user.id,
+							schoolId: template.schoolId,
+						},
+					},
+				}),
+			]);
+
+			if (!parentLink && !staffLink) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "You do not have access to this template",
 				});
 			}
 
@@ -240,7 +265,7 @@ export const formsRouter = router({
 				templateId: z.string(),
 				childId: z.string(),
 				data: z.record(z.any()),
-				signature: z.string().optional(),
+				signature: z.string().max(500000).optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -267,12 +292,20 @@ export const formsRouter = router({
 				}),
 				ctx.prisma.child.findUnique({
 					where: { id: input.childId },
-					select: { firstName: true, lastName: true },
+					select: { firstName: true, lastName: true, schoolId: true },
 				}),
 			]);
 
 			if (!template) {
 				throw new TRPCError({ code: "NOT_FOUND", message: "Template not found" });
+			}
+
+			// Verify template belongs to the child's school
+			if (child && template.schoolId !== child.schoolId) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "This form does not belong to your child's school",
+				});
 			}
 
 			const form = await ctx.prisma.formResponse.create({

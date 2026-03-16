@@ -137,7 +137,7 @@ describe("forms router", () => {
 
 	describe("getTemplate", () => {
 		it("returns a template by ID", async () => {
-			const mockTemplate = { id: "t1", title: "Consent Form", fields: [] };
+			const mockTemplate = { id: "t1", title: "Consent Form", fields: [], schoolId: "school-1" };
 			const ctx = createTestContext({
 				prisma: {
 					...createTestContext().prisma,
@@ -145,6 +145,10 @@ describe("forms router", () => {
 						findMany: vi.fn(),
 						findUnique: vi.fn().mockResolvedValue(mockTemplate),
 						create: vi.fn(),
+					},
+					parentChild: {
+						findUnique: vi.fn().mockResolvedValue(null),
+						findFirst: vi.fn().mockResolvedValue({ id: "pc-1" }),
 					},
 				},
 			});
@@ -275,6 +279,7 @@ describe("forms router", () => {
 			const mockTemplate = {
 				id: "t1",
 				title: "Consent Form",
+				schoolId: "school-1",
 				fields: [{ id: "q1", type: "text", label: "Child Name" }],
 				school: { name: "Test School" },
 			};
@@ -290,7 +295,7 @@ describe("forms router", () => {
 						create: vi.fn(),
 					},
 					child: {
-						findUnique: vi.fn().mockResolvedValue({ firstName: "Emma", lastName: "Smith" }),
+						findUnique: vi.fn().mockResolvedValue({ firstName: "Emma", lastName: "Smith", schoolId: "school-1" }),
 					},
 					formResponse: {
 						findMany: vi.fn(),
