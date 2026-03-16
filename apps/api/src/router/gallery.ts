@@ -9,10 +9,10 @@ export const galleryRouter = router({
 		.input(
 			z.object({
 				schoolId: z.string(),
-				title: z.string().min(1),
-				description: z.string().optional(),
-				yearGroup: z.string().optional(),
-				className: z.string().optional(),
+				title: z.string().min(1).max(200),
+				description: z.string().max(2000).optional(),
+				yearGroup: z.string().max(50).optional(),
+				className: z.string().max(100).optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -74,7 +74,7 @@ export const galleryRouter = router({
 				photos: z.array(
 					z.object({
 						mediaId: z.string(),
-						caption: z.string().optional(),
+						caption: z.string().max(500).optional(),
 					}),
 				),
 			}),
