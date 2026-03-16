@@ -1,0 +1,38 @@
+appId: com.abridge.app
+name: Parent Achievements
+tags:
+  - parent
+  - achievements
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Wait for home data to load (dev nav buttons only render after loading)
+- extendedWaitUntil:
+    visible:
+      id: "nav-achievements"
+    timeout: 120000
+
+# Navigate to achievements screen
+- tapOn:
+    id: "nav-achievements"
+
+# Verify achievements screen loaded
+- extendedWaitUntil:
+    visible: "Achievements"
+    timeout: 60000
+
+# Verify total points card is visible
+- extendedWaitUntil:
+    visible: "Total Points"
+    timeout: 60000
+
+# Verify badges section
+- extendedWaitUntil:
+    visible: "Badges Earned"
+    timeout: 60000
+
+# Scroll down to see recent awards
+- scrollUntilVisible:
+    element: "Recent Awards"
+    direction: DOWN
+    timeout: 60000
