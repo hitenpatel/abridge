@@ -51,6 +51,7 @@ async function main() {
 			misIntegrationEnabled: false,
 			achievementsEnabled: true,
 			galleryEnabled: true,
+			progressSummariesEnabled: true,
 			communityTags: ["General", "Events", "Help Needed", "PTA", "Lost & Found"],
 			brandColor: "#1E3A5F",
 			brandFont: "DEFAULT",
@@ -822,6 +823,44 @@ async function main() {
 		});
 
 		console.log("Seeded gallery albums and photos");
+	}
+
+	// ─── Progress Summaries ─────────────────────────────────
+	const lastMonday = new Date(today);
+	lastMonday.setDate(lastMonday.getDate() - ((lastMonday.getDay() + 6) % 7));
+	const existingProgressSummary = await prisma.progressSummary.findUnique({
+		where: { childId_weekStart: { childId: child1.id, weekStart: lastMonday } },
+	});
+	if (!existingProgressSummary) {
+		await prisma.progressSummary.create({
+			data: {
+				childId: child1.id,
+				schoolId: school.id,
+				weekStart: lastMonday,
+				templateData: {
+					childName: "Emily Johnson",
+					weekStart: lastMonday.toISOString(),
+					attendance: { percentage: 100, daysPresent: 5, daysTotal: 5, lateCount: 0 },
+					homework: { completed: 3, total: 4, overdue: 0 },
+					reading: {
+						daysRead: 4,
+						totalMinutes: 72,
+						avgMinutes: 18,
+						currentStreak: 4,
+						currentBook: "Charlotte's Web",
+					},
+					achievements: {
+						pointsEarned: 15,
+						awardsReceived: 2,
+						categories: ["Star of the Week", "Reading Champion"],
+					},
+					wellbeing: { avgMood: "GOOD", checkInCount: 5, trend: "stable" },
+				},
+				summary:
+					"Attendance: 100% (5/5 days).\nHomework: completed 3 of 4 assignments.\nReading: read 4 days this week (avg 18 min/day, 4-day streak). Currently reading \"Charlotte's Web\".\nAchievements: earned 15 points — Star of the Week, Reading Champion.\nWellbeing: mood average GOOD, stable trend.",
+			},
+		});
+		console.log("Seeded progress summary");
 	}
 
 	console.log("Seed data created successfully");

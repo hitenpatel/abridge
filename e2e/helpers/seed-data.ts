@@ -516,6 +516,7 @@ export async function enableSchoolFeature(params: {
 		achievementsEnabled: boolean;
 		galleryEnabled: boolean;
 		calendarEnabled: boolean;
+		progressSummariesEnabled: boolean;
 	}>;
 }): Promise<void> {
 	await prisma.school.update({
@@ -1079,6 +1080,64 @@ export async function seedGalleryPhoto(params: {
 	});
 
 	return { id: photo.id };
+}
+
+/**
+ * Seed a progress summary for a child
+ */
+export async function seedProgressSummary(params: {
+	childId: string;
+	schoolId: string;
+	weekStart?: Date;
+	summary?: string;
+	insight?: string | null;
+}): Promise<{ id: string }> {
+	const weekStart =
+		params.weekStart ||
+		(() => {
+			const d = new Date();
+			const day = d.getDay();
+			d.setDate(d.getDate() - day + (day === 0 ? -6 : 1));
+			d.setHours(0, 0, 0, 0);
+			return d;
+		})();
+
+	const summary =
+		params.summary ||
+		'Attendance: 100% (5/5 days).\nHomework: completed 3 of 4 assignments.\nReading: read 4 days this week (avg 18 min/day, 4-day streak). Currently reading "Charlotte\'s Web".\nAchievements: earned 15 points — Star of the Week, Reading Champion.\nWellbeing: mood average GOOD, stable trend.';
+
+	const record = await prisma.progressSummary.upsert({
+		where: { childId_weekStart: { childId: params.childId, weekStart } },
+		update: { summary, insight: params.insight ?? null },
+		create: {
+			childId: params.childId,
+			schoolId: params.schoolId,
+			weekStart,
+			templateData: {
+				childName: "Test Child",
+				weekStart: weekStart.toISOString(),
+				attendance: { percentage: 100, daysPresent: 5, daysTotal: 5, lateCount: 0 },
+				homework: { completed: 3, total: 4, overdue: 0 },
+				reading: {
+					daysRead: 4,
+					totalMinutes: 72,
+					avgMinutes: 18,
+					currentStreak: 4,
+					currentBook: "Charlotte's Web",
+				},
+				achievements: {
+					pointsEarned: 15,
+					awardsReceived: 2,
+					categories: ["Star of the Week", "Reading Champion"],
+				},
+				wellbeing: { avgMood: "GOOD", checkInCount: 5, trend: "stable" },
+			},
+			summary,
+			insight: params.insight ?? null,
+		},
+	});
+
+	return { id: record.id };
 }
 
 export { prisma };
