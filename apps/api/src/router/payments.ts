@@ -123,12 +123,15 @@ export const paymentsRouter = router({
 	createCartCheckout: protectedProcedure
 		.input(
 			z.object({
-				items: z.array(
-					z.object({
-						paymentItemId: z.string(),
-						childId: z.string(),
-					}),
-				).min(1).max(50),
+				items: z
+					.array(
+						z.object({
+							paymentItemId: z.string(),
+							childId: z.string(),
+						}),
+					)
+					.min(1)
+					.max(50),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -141,7 +144,10 @@ export const paymentsRouter = router({
 			const ownedChildIds = new Set(parentLinks.map((p: { childId: string }) => p.childId));
 			for (const cid of childIds) {
 				if (!ownedChildIds.has(cid)) {
-					throw new TRPCError({ code: "FORBIDDEN", message: "Not a parent of all children in cart" });
+					throw new TRPCError({
+						code: "FORBIDDEN",
+						message: "Not a parent of all children in cart",
+					});
 				}
 			}
 

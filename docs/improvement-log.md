@@ -19,11 +19,12 @@
 - [x] settings (clean, already has proper validation)
 
 ## Lint Cleanup
-- [ ] Phase 3C files clean
-- [ ] Remaining PRD files clean
+- [x] Phase 3C files clean
+- [x] Remaining PRD files clean
+- Note: 8 pre-existing lint errors remain in files we didn't create (WellbeingScreen, attendance, reports)
 
 ## Test Coverage
-- [ ] Every router has 3+ tests
+- [x] Every router has 3+ tests (notification bumped from 2 to 3)
 
 ## Mobile Screens
 - [ ] Homework

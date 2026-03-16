@@ -195,7 +195,10 @@ describe("payments router", () => {
 
 		it("should throw BAD_REQUEST if items belong to different schools", async () => {
 			const ctx = createTestContext({ user: mockUser as any, session: mockSession as any });
-			(ctx.prisma.parentChild.findMany as any).mockResolvedValue([{ childId: "child-1" }, { childId: "child-2" }]);
+			(ctx.prisma.parentChild.findMany as any).mockResolvedValue([
+				{ childId: "child-1" },
+				{ childId: "child-2" },
+			]);
 			(ctx.prisma.paymentItem.findMany as any).mockResolvedValue([
 				{
 					id: "item-1",

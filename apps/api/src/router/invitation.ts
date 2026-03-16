@@ -171,46 +171,44 @@ export const invitationRouter = router({
 			return { success: true };
 		}),
 
-	verify: publicProcedure
-		.input(z.object({ token: tokenSchema }))
-		.query(async ({ ctx, input }) => {
-			const results: RawInvitation[] = await ctx.prisma.$queryRaw`
+	verify: publicProcedure.input(z.object({ token: tokenSchema })).query(async ({ ctx, input }) => {
+		const results: RawInvitation[] = await ctx.prisma.$queryRaw`
 			SELECT i.id, i.email, i."schoolId", i.role, i."expiresAt", i."acceptedAt", s.name as "schoolName"
 			FROM invitations i
 			JOIN schools s ON i."schoolId" = s.id
 			WHERE i.token = ${input.token} LIMIT 1
 		`;
 
-			const invitation = results[0];
+		const invitation = results[0];
 
-			if (!invitation) {
-				throw new TRPCError({
-					code: "NOT_FOUND",
-					message: "Invalid invitation token",
-				});
-			}
+		if (!invitation) {
+			throw new TRPCError({
+				code: "NOT_FOUND",
+				message: "Invalid invitation token",
+			});
+		}
 
-			if (new Date(invitation.expiresAt) < new Date()) {
-				throw new TRPCError({
-					code: "BAD_REQUEST",
-					message: "Invitation has expired",
-				});
-			}
+		if (new Date(invitation.expiresAt) < new Date()) {
+			throw new TRPCError({
+				code: "BAD_REQUEST",
+				message: "Invitation has expired",
+			});
+		}
 
-			if (invitation.acceptedAt) {
-				throw new TRPCError({
-					code: "BAD_REQUEST",
-					message: "Invitation has already been accepted",
-				});
-			}
+		if (invitation.acceptedAt) {
+			throw new TRPCError({
+				code: "BAD_REQUEST",
+				message: "Invitation has already been accepted",
+			});
+		}
 
-			return {
-				email: invitation.email,
-				role: invitation.role,
-				schoolName: invitation.schoolName,
-				schoolId: invitation.schoolId,
-			};
-		}),
+		return {
+			email: invitation.email,
+			role: invitation.role,
+			schoolName: invitation.schoolName,
+			schoolId: invitation.schoolId,
+		};
+	}),
 
 	list: schoolAdminProcedure.query(async ({ ctx }) => {
 		return ctx.prisma.$queryRaw`

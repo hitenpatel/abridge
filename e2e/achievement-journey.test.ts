@@ -57,7 +57,9 @@ test.describe("Achievements", () => {
 		// === STEP 4: Wait for Awards nav link to appear ===
 		await expect(async () => {
 			await page.reload();
-			await expect(page.getByRole("link", { name: /Awards/i }).first()).toBeVisible({ timeout: 3000 });
+			await expect(page.getByRole("link", { name: /Awards/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
 		}).toPass({ timeout: 30000 });
 
 		// === STEP 5: Navigate to achievements page ===
@@ -119,7 +121,10 @@ test.describe("Achievements", () => {
 
 		// === STEP 4: Navigate to achievements ===
 		await page.reload();
-		await page.getByRole("link", { name: /Awards/i }).first().click();
+		await page
+			.getByRole("link", { name: /Awards/i })
+			.first()
+			.click();
 		await expect(page).toHaveURL(/\/dashboard\/achievements/);
 
 		// === STEP 5: Fill the quick-award form ===
@@ -165,9 +170,9 @@ test.describe("Achievements", () => {
 		await page.goto("http://localhost:3000/dashboard/achievements");
 
 		// === STEP 4: Should show disabled message ===
-		await expect(
-			page.getByRole("heading", { name: /Achievements is not enabled/i }),
-		).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: /Achievements is not enabled/i })).toBeVisible({
+			timeout: 10000,
+		});
 	});
 
 	test("parent should see achievements page with total points", async ({ page }) => {
@@ -221,7 +226,9 @@ test.describe("Achievements", () => {
 		// === STEP 4: Wait for Achievements nav link ===
 		await expect(async () => {
 			await page.reload();
-			await expect(page.getByRole("link", { name: /Achievements/i }).first()).toBeVisible({ timeout: 3000 });
+			await expect(page.getByRole("link", { name: /Achievements/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
 		}).toPass({ timeout: 30000 });
 
 		// === STEP 5: Navigate to achievements page ===

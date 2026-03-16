@@ -3,9 +3,9 @@ import {
 	enableSchoolFeature,
 	getSchoolByURN,
 	getUserByEmail,
+	prisma,
 	seedChildForParent,
 	seedEventWithRsvp,
-	prisma,
 } from "./helpers/seed-data";
 
 /**

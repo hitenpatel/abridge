@@ -2,8 +2,8 @@
 // Parses Playwright JSON + Maestro JUnit XML into a dashboard run object.
 // Zero dependencies — uses regex for XML, built-in JSON for Playwright.
 
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 
 function parseArgs() {
 	const args = {};
@@ -103,7 +103,7 @@ function parsePlaywrightJson(jsonPath) {
 							let screenshot = null;
 							if (result.attachments) {
 								const ss = result.attachments.find((a) => a.name === "screenshot" && a.path);
-								if (ss && ss.path && fs.existsSync(ss.path)) {
+								if (ss?.path && fs.existsSync(ss.path)) {
 									const buf = fs.readFileSync(ss.path);
 									if (buf.length <= 200000) {
 										screenshot = `data:image/png;base64,${buf.toString("base64")}`;

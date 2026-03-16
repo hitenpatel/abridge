@@ -101,7 +101,7 @@ export default function DashboardPage() {
 	// Set first child as default when data arrives
 	useEffect(() => {
 		if (children.length > 0 && !selectedChildId) {
-			setSelectedChildId(children[0]!.id);
+			setSelectedChildId(children[0]?.id);
 		}
 	}, [children, selectedChildId]);
 

@@ -79,4 +79,25 @@ describe("NotificationService", () => {
 			}),
 		);
 	});
+
+	it("skips users without valid push tokens", async () => {
+		const mockCreate = vi.fn();
+		const mockPrisma = {
+			user: {
+				findMany: vi
+					.fn()
+					.mockResolvedValue([{ id: "user-1", pushToken: null }, { id: "user-2", pushToken: "invalid-token" }]),
+			},
+			notificationDelivery: {
+				create: mockCreate,
+				update: vi.fn(),
+			},
+		};
+
+		const svc = new NotificationService(mockPrisma as any);
+		await svc.sendPush(["user-1", "user-2"], "Test", "Body", { messageId: "msg-1" });
+
+		// No deliveries created for users without valid Expo push tokens
+		expect(mockCreate).not.toHaveBeenCalled();
+	});
 });

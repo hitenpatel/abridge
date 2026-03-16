@@ -50,7 +50,9 @@ test.describe("Gallery", () => {
 		// === STEP 4: Wait for Gallery nav link ===
 		await expect(async () => {
 			await page.reload();
-			await expect(page.getByRole("link", { name: /Gallery/i }).first()).toBeVisible({ timeout: 3000 });
+			await expect(page.getByRole("link", { name: /Gallery/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
 		}).toPass({ timeout: 30000 });
 
 		// === STEP 5: Navigate to gallery page ===
@@ -111,12 +113,19 @@ test.describe("Gallery", () => {
 			filename: "sports-1.jpg",
 		});
 
-		await seedGalleryPhoto({ albumId: album.id, mediaId: media.id, caption: "Running race", sortOrder: 0 });
+		await seedGalleryPhoto({
+			albumId: album.id,
+			mediaId: media.id,
+			caption: "Running race",
+			sortOrder: 0,
+		});
 
 		// === STEP 4: Wait for Gallery nav link ===
 		await expect(async () => {
 			await page.reload();
-			await expect(page.getByRole("link", { name: /Gallery/i }).first()).toBeVisible({ timeout: 3000 });
+			await expect(page.getByRole("link", { name: /Gallery/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
 		}).toPass({ timeout: 30000 });
 
 		// === STEP 5: Navigate to gallery page ===
@@ -174,7 +183,9 @@ test.describe("Gallery", () => {
 		await page.reload();
 		await page.getByRole("link", { name: "Gallery" }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/gallery/);
-		await expect(page.getByRole("heading", { name: /Manage Gallery/i })).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: /Manage Gallery/i })).toBeVisible({
+			timeout: 10000,
+		});
 
 		// === STEP 5: Create album ===
 		await page.getByRole("button", { name: /Create Album/i }).click();
@@ -245,14 +256,26 @@ test.describe("Gallery", () => {
 			filename: "nature-2.jpg",
 		});
 
-		await seedGalleryPhoto({ albumId: album.id, mediaId: media1.id, caption: "By the pond", sortOrder: 0 });
-		await seedGalleryPhoto({ albumId: album.id, mediaId: media2.id, caption: "Wildflowers", sortOrder: 1 });
+		await seedGalleryPhoto({
+			albumId: album.id,
+			mediaId: media1.id,
+			caption: "By the pond",
+			sortOrder: 0,
+		});
+		await seedGalleryPhoto({
+			albumId: album.id,
+			mediaId: media2.id,
+			caption: "Wildflowers",
+			sortOrder: 1,
+		});
 
 		// === STEP 4: Navigate to gallery ===
 		await page.reload();
 		await page.getByRole("link", { name: "Gallery" }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/gallery/);
-		await expect(page.getByRole("heading", { name: /Photo Gallery/i })).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: /Photo Gallery/i })).toBeVisible({
+			timeout: 10000,
+		});
 
 		// === STEP 5: Verify album title visible ===
 		await expect(page.getByText("Nature Walk Photos")).toBeVisible({ timeout: 10000 });
@@ -284,8 +307,8 @@ test.describe("Gallery", () => {
 		await page.goto("http://localhost:3000/dashboard/gallery");
 
 		// === STEP 4: Verify disabled heading ===
-		await expect(
-			page.getByRole("heading", { name: /Gallery is not enabled/i }),
-		).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: /Gallery is not enabled/i })).toBeVisible({
+			timeout: 10000,
+		});
 	});
 });

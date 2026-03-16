@@ -295,7 +295,9 @@ describe("forms router", () => {
 						create: vi.fn(),
 					},
 					child: {
-						findUnique: vi.fn().mockResolvedValue({ firstName: "Emma", lastName: "Smith", schoolId: "school-1" }),
+						findUnique: vi
+							.fn()
+							.mockResolvedValue({ firstName: "Emma", lastName: "Smith", schoolId: "school-1" }),
 					},
 					formResponse: {
 						findMany: vi.fn(),
