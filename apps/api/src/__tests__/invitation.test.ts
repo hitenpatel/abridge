@@ -11,6 +11,12 @@ vi.mock("../services/email", () => ({
 	sendStaffInvitationEmail: vi.fn().mockResolvedValue({ success: true }),
 }));
 
+// Valid 64-char hex tokens for tests (matches router validation: length 64, lowercase hex)
+const VALID_TOKEN = "a".repeat(64);
+const BAD_TOKEN = "d".repeat(64);
+const EXPIRED_TOKEN = "b".repeat(64);
+const USED_TOKEN = "c".repeat(64);
+
 function createAdminContext(overrides?: Record<string, any>): any {
 	return {
 		prisma: {
@@ -174,7 +180,7 @@ describe("invitation router", () => {
 							schoolId: "school-1",
 							schoolName: "Test School",
 							role: "TEACHER",
-							token: "valid-token",
+							token: VALID_TOKEN,
 							expiresAt: new Date(Date.now() + 86400000),
 							acceptedAt: null,
 						},
@@ -183,7 +189,7 @@ describe("invitation router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			const result = await caller.invitation.verify({ token: "valid-token" });
+			const result = await caller.invitation.verify({ token: VALID_TOKEN });
 
 			expect(result).toEqual({
 				email: "test@example.com",
@@ -197,7 +203,7 @@ describe("invitation router", () => {
 			const ctx = createPublicContext();
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(caller.invitation.verify({ token: "bad-token" })).rejects.toThrow(
+			await expect(caller.invitation.verify({ token: BAD_TOKEN })).rejects.toThrow(
 				"Invalid invitation token",
 			);
 		});
@@ -218,7 +224,7 @@ describe("invitation router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(caller.invitation.verify({ token: "expired-token" })).rejects.toThrow(
+			await expect(caller.invitation.verify({ token: EXPIRED_TOKEN })).rejects.toThrow(
 				"Invitation has expired",
 			);
 		});
@@ -239,7 +245,7 @@ describe("invitation router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(caller.invitation.verify({ token: "used-token" })).rejects.toThrow(
+			await expect(caller.invitation.verify({ token: USED_TOKEN })).rejects.toThrow(
 				"Invitation has already been accepted",
 			);
 		});
@@ -256,7 +262,7 @@ describe("invitation router", () => {
 							schoolId: "school-1",
 							schoolName: "Test School",
 							role: "TEACHER",
-							token: "valid-token",
+							token: VALID_TOKEN,
 							expiresAt: new Date(Date.now() + 86400000),
 							acceptedAt: null,
 						},
@@ -285,7 +291,7 @@ describe("invitation router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			const result = await caller.invitation.accept({ token: "valid-token" });
+			const result = await caller.invitation.accept({ token: VALID_TOKEN });
 
 			expect(result).toEqual({ success: true });
 			expect(ctx.prisma.staffMember.create).toHaveBeenCalledWith({
@@ -302,7 +308,7 @@ describe("invitation router", () => {
 			const ctx = createPublicContext();
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(caller.invitation.accept({ token: "bad-token" })).rejects.toThrow(
+			await expect(caller.invitation.accept({ token: BAD_TOKEN })).rejects.toThrow(
 				"Invalid invitation token",
 			);
 		});
@@ -323,7 +329,7 @@ describe("invitation router", () => {
 			});
 			const caller = appRouter.createCaller(ctx);
 
-			await expect(caller.invitation.accept({ token: "expired-token" })).rejects.toThrow(
+			await expect(caller.invitation.accept({ token: EXPIRED_TOKEN })).rejects.toThrow(
 				"Invitation has expired",
 			);
 		});
