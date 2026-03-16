@@ -834,6 +834,535 @@ Returns class posts for a child's class.
 
 ---
 
+## Homework
+
+### `homework.setHomework` (mutation)
+**Access:** schoolFeature
+
+Creates a new homework assignment.
+
+**Input:**
+| Field | Type | Required |
+|-------|------|----------|
+| schoolId | string | yes |
+| subject | string (1-100) | yes |
+| title | string (1-200) | yes |
+| description | string (max 2000) | no |
+| yearGroup | string (1-50) | yes |
+| className | string (max 100) | no |
+| setDate | Date | yes |
+| dueDate | Date | yes |
+| attachmentUrls | string[] (max 10) | no |
+| isReadingTask | boolean | no (default false) |
+
+### `homework.listForChild` (query)
+**Access:** protected
+
+Lists active homework assignments for a child (parent must be linked).
+
+**Input:** `{ childId, cursor?, limit? (1-50, default 20) }`
+
+### `homework.listForTeacher` (query)
+**Access:** schoolFeature
+
+Lists homework assignments set by the current teacher.
+
+**Input:** `{ schoolId }`
+
+### `homework.markComplete` (mutation)
+**Access:** protected
+
+Marks a homework assignment as completed for a child.
+
+**Input:** `{ assignmentId, childId }`
+
+### `homework.markInProgress` (mutation)
+**Access:** protected
+
+Marks a homework assignment as in-progress for a child.
+
+**Input:** `{ assignmentId, childId }`
+
+### `homework.gradeHomework` (mutation)
+**Access:** schoolFeature
+
+Grades a single homework completion.
+
+**Input:** `{ schoolId, completionId, grade (1-10 chars), feedback? (max 500) }`
+
+### `homework.bulkGrade` (mutation)
+**Access:** schoolFeature
+
+Grades multiple homework completions for an assignment in a single transaction.
+
+**Input:** `{ schoolId, assignmentId, grades: [{ childId, grade (1-10 chars), feedback? }] (max 100) }`
+
+### `homework.cancelHomework` (mutation)
+**Access:** schoolFeature
+
+Cancels a homework assignment.
+
+**Input:** `{ schoolId, assignmentId }`
+
+---
+
+## Reading Diary
+
+### `readingDiary.logReading` (mutation)
+**Access:** protected
+
+Logs a reading entry for a child (parent only).
+
+**Input:**
+| Field | Type | Required |
+|-------|------|----------|
+| childId | string | yes |
+| date | Date | yes |
+| bookTitle | string (1-200) | yes |
+| pagesOrChapter | string (max 100) | no |
+| minutesRead | number (0-600) | no |
+| readWith | `ALONE` \| `PARENT` \| `TEACHER` \| `SIBLING` \| `OTHER` | yes |
+| parentComment | string (max 1000) | no |
+
+### `readingDiary.getEntries` (query)
+**Access:** protected
+
+Returns reading entries for a child within a date range. Accessible by parent or staff at the child's school.
+
+**Input:** `{ childId, startDate, endDate }`
+
+### `readingDiary.addTeacherComment` (mutation)
+**Access:** schoolFeature
+
+Adds a teacher comment to an existing reading entry.
+
+**Input:** `{ schoolId, entryId, teacherComment (max 500) }`
+
+### `readingDiary.createTeacherEntry` (mutation)
+**Access:** schoolFeature
+
+Creates a reading entry on behalf of a child (teacher-initiated).
+
+**Input:** `{ schoolId, childId, date, bookTitle (1-200), minutesRead? (0-600), readWith, teacherComment? (max 500) }`
+
+### `readingDiary.updateDiary` (mutation)
+**Access:** schoolFeature
+
+Updates diary metadata (current book, reading level, target minutes).
+
+**Input:** `{ schoolId, childId, currentBook? (max 200), readingLevel? (max 50), targetMinsPerDay? (0-300) }`
+
+### `readingDiary.getDiary` (query)
+**Access:** protected
+
+Returns reading diary metadata for a child. Accessible by parent or staff.
+
+**Input:** `{ childId }`
+
+### `readingDiary.getClassOverview` (query)
+**Access:** schoolFeature
+
+Returns a reading overview for all children at the school (reading level, last entry, entries this week).
+
+**Input:** `{ schoolId }`
+
+### `readingDiary.getStats` (query)
+**Access:** protected
+
+Returns reading statistics for a child (total entries, avg minutes, days read this week, current streak). Accessible by parent or staff.
+
+**Input:** `{ childId }`
+
+---
+
+## Visitor
+
+### `visitor.signIn` (mutation)
+**Access:** schoolFeature
+
+Signs in a visitor. Creates a new visitor record if not found. Returns a DBS warning if the visitor is volunteering without a valid DBS check.
+
+**Input:**
+| Field | Type | Required |
+|-------|------|----------|
+| schoolId | string | yes |
+| name | string (1-200) | yes |
+| organisation | string (max 200) | no |
+| phone | string (max 30) | no |
+| email | string (email, max 254) | no |
+| isRegular | boolean | no (default false) |
+| purpose | `MEETING` \| `MAINTENANCE` \| `DELIVERY` \| `VOLUNTEERING` \| `INSPECTION` \| `PARENT_VISIT` \| `CONTRACTOR` \| `OTHER` | yes |
+| visitingStaff | string (max 200) | no |
+| badgeNumber | string (max 50) | no |
+
+### `visitor.signOut` (mutation)
+**Access:** schoolFeature
+
+Signs out a visitor by updating the visitor log.
+
+**Input:** `{ schoolId, logId }`
+
+### `visitor.searchVisitors` (query)
+**Access:** schoolFeature
+
+Searches visitors by name (case-insensitive). Returns up to 10 results, regulars first.
+
+**Input:** `{ schoolId, query (max 200) }`
+
+### `visitor.getOnSite` (query)
+**Access:** schoolFeature
+
+Returns all visitors currently on site (not signed out).
+
+**Input:** `{ schoolId }`
+
+### `visitor.addOrUpdateDbs` (mutation)
+**Access:** schoolFeature
+
+Adds a DBS record for a visitor or user. Status is auto-computed from the expiry date.
+
+**Input:**
+| Field | Type | Required |
+|-------|------|----------|
+| schoolId | string | yes |
+| name | string (1-200) | yes |
+| dbsNumber | string (1-50) | yes |
+| dbsType | `BASIC` \| `STANDARD` \| `ENHANCED` \| `ENHANCED_BARRED` | yes |
+| issueDate | Date | yes |
+| expiryDate | Date | no |
+| visitorId | string | no |
+| userId | string | no |
+
+### `visitor.getDbsRegister` (query)
+**Access:** schoolFeature
+
+Returns all DBS records for the school.
+
+**Input:** `{ schoolId }`
+
+### `visitor.getVisitorHistory` (query)
+**Access:** schoolFeature
+
+Returns paginated visitor log history with optional filters.
+
+**Input:** `{ schoolId, limit? (1-100, default 20), cursor?, startDate?, endDate?, name? (max 200), purpose? }`
+
+### `visitor.getFireRegister` (query)
+**Access:** schoolFeature
+
+Returns all visitors currently on site plus staff count, for fire evacuation purposes.
+
+**Input:** `{ schoolId }`
+
+---
+
+## MIS (Management Information System)
+
+### `mis.setupConnection` (mutation)
+**Access:** schoolAdmin
+
+Configures or updates the MIS connection for a school. Credentials are never returned to the client.
+
+**Input:**
+| Field | Type | Required |
+|-------|------|----------|
+| schoolId | string | yes |
+| provider | `SIMS` \| `ARBOR` \| `BROMCOM` \| `SCHOLARPACK` \| `CSV_MANUAL` | yes |
+| apiUrl | string (url, max 2048) | no |
+| credentials | string (1-4096) | yes |
+| syncFrequency | `HOURLY` \| `TWICE_DAILY` \| `DAILY` \| `MANUAL` | yes |
+
+### `mis.testConnection` (query)
+**Access:** schoolFeature
+
+Tests the current MIS connection.
+
+**Input:** `{ schoolId }`
+
+**Response:** `{ success: boolean }`
+
+### `mis.uploadStudentsCsv` (mutation)
+**Access:** schoolFeature
+
+Imports students from CSV data. Matches existing students by firstName + lastName + DOB. Creates or updates child records.
+
+**Input:** `{ schoolId, csvData (max 5MB) }`
+
+**Response:** `{ created, updated, skipped, errors[], total }`
+
+### `mis.uploadAttendanceCsv` (mutation)
+**Access:** schoolFeature
+
+Imports attendance records from CSV data. Matches students by name + DOB.
+
+**Input:** `{ schoolId, csvData (max 5MB) }`
+
+**Response:** `{ created, updated, skipped, errors[], total }`
+
+### `mis.getConnectionStatus` (query)
+**Access:** schoolFeature
+
+Returns the current MIS connection status (or null if not configured).
+
+**Input:** `{ schoolId }`
+
+### `mis.getSyncHistory` (query)
+**Access:** schoolFeature
+
+Returns recent sync log entries.
+
+**Input:** `{ schoolId, limit? (1-100, default 20) }`
+
+### `mis.disconnect` (mutation)
+**Access:** schoolAdmin
+
+Disconnects the MIS integration (sets status to DISCONNECTED).
+
+**Input:** `{ schoolId }`
+
+---
+
+## Achievement
+
+### `achievement.createCategory` (mutation)
+**Access:** schoolAdmin
+
+Creates an achievement category (e.g. "Star of the Week", "Reading Champion").
+
+**Input:**
+| Field | Type | Required |
+|-------|------|----------|
+| schoolId | string | yes |
+| name | string (1-100) | yes |
+| icon | string (max 100) | no |
+| pointValue | number (positive int, default 1) | no |
+| type | `POINTS` \| `BADGE` | no (default `POINTS`) |
+
+### `achievement.listCategories` (query)
+**Access:** schoolFeature
+
+Lists active achievement categories for the school.
+
+**Input:** `{ schoolId }`
+
+### `achievement.awardAchievement` (mutation)
+**Access:** schoolFeature
+
+Awards an achievement to a child. Points are derived from the category.
+
+**Input:** `{ schoolId, childId, categoryId, reason? (max 500) }`
+
+### `achievement.getChildAchievements` (query)
+**Access:** protected
+
+Returns paginated achievements and total points for a child (parent only).
+
+**Input:** `{ childId, cursor?, limit? (1-50, default 20) }`
+
+**Response:** `{ awards[], totalPoints, nextCursor? }`
+
+### `achievement.getClassLeaderboard` (query)
+**Access:** schoolFeature
+
+Returns top 20 children by total achievement points.
+
+**Input:** `{ schoolId }`
+
+### `achievement.getRecentAwards` (query)
+**Access:** protected
+
+Returns the 10 most recent achievements across all of the parent's children. No input required.
+
+### `achievement.deactivateCategory` (mutation)
+**Access:** schoolAdmin
+
+Deactivates an achievement category (soft-delete).
+
+**Input:** `{ schoolId, categoryId }`
+
+---
+
+## Gallery
+
+### `gallery.createAlbum` (mutation)
+**Access:** schoolStaff
+
+Creates a new photo album.
+
+**Input:** `{ schoolId, title (1-200), description? (max 2000), yearGroup? (max 50), className? (max 100) }`
+
+### `gallery.addPhotos` (mutation)
+**Access:** schoolStaff
+
+Adds photos to an album. Photos are linked via media upload IDs.
+
+**Input:** `{ schoolId, albumId, photos: [{ mediaId, caption? (max 500) }] }`
+
+### `gallery.listAlbums` (query)
+**Access:** protected
+
+Lists albums. Staff see all albums; parents see only published albums filtered by their children's year groups.
+
+**Input:** `{ schoolId? }`
+
+### `gallery.getAlbum` (query)
+**Access:** protected
+
+Returns album details with all photos. Parents can only view published albums.
+
+**Input:** `{ albumId }`
+
+### `gallery.publishAlbum` (mutation)
+**Access:** schoolStaff
+
+Publishes or unpublishes an album.
+
+**Input:** `{ schoolId, albumId, isPublished }`
+
+### `gallery.deleteAlbum` (mutation)
+**Access:** schoolStaff
+
+Deletes an album and its photos.
+
+**Input:** `{ schoolId, albumId }`
+
+### `gallery.deletePhoto` (mutation)
+**Access:** schoolStaff
+
+Deletes a single photo from an album.
+
+**Input:** `{ schoolId, photoId }`
+
+---
+
+## Media
+
+### `media.getUploadUrl` (mutation)
+**Access:** schoolFeature
+
+Gets a presigned S3 upload URL. Validates file type and size (images and videos).
+
+**Input:** `{ schoolId, filename (1-255), mimeType (1-127), sizeBytes (positive int) }`
+
+### `media.confirmUpload` (mutation)
+**Access:** schoolFeature
+
+Confirms a completed upload and creates the media record in the database.
+
+**Input:** `{ schoolId, key (1-512), filename (1-255), mimeType (1-127), sizeBytes (positive int), width?, height? }`
+
+---
+
+## Progress Summary
+
+### `progressSummary.getLatestSummary` (query)
+**Access:** protected
+
+Returns the most recent weekly progress summary for a child (parent only).
+
+**Input:** `{ childId }`
+
+### `progressSummary.getSummaryHistory` (query)
+**Access:** protected
+
+Returns paginated progress summary history for a child (parent only).
+
+**Input:** `{ childId, limit? (1-50, default 10), cursor? }`
+
+**Response:** `{ items[], nextCursor? }`
+
+### `progressSummary.generateNow` (mutation)
+**Access:** schoolFeature
+
+Generates a weekly progress summary for a specific child. Skips regeneration if the summary was updated within the last hour.
+
+**Input:** `{ schoolId, childId }`
+
+### `progressSummary.generateWeeklyBatch` (mutation)
+**Access:** schoolAdmin
+
+Starts background generation of weekly summaries for all children at the school.
+
+**Input:** `{ schoolId }`
+
+**Response:** `{ status: "started", childCount }`
+
+---
+
+## Club Booking
+
+### `clubBooking.listClubs` (query)
+**Access:** protected
+
+Lists clubs for a school.
+
+**Input:** `{ schoolId, activeOnly? (default true) }`
+
+### `clubBooking.getClub` (query)
+**Access:** protected
+
+Returns club details including active enrollments.
+
+**Input:** `{ clubId }`
+
+### `clubBooking.createClub` (mutation)
+**Access:** schoolFeature
+
+Creates a new club.
+
+**Input:**
+| Field | Type | Required |
+|-------|------|----------|
+| schoolId | string | yes |
+| name | string (1-200) | yes |
+| description | string (max 1000) | no |
+| staffLead | string (max 200) | no |
+| day | `MONDAY` \| `TUESDAY` \| `WEDNESDAY` \| `THURSDAY` \| `FRIDAY` \| `SATURDAY` \| `SUNDAY` | yes |
+| startTime | string (HH:mm) | yes |
+| endTime | string (HH:mm) | yes |
+| maxCapacity | number (1-500) | yes |
+| feeInPence | number (min 0, default 0) | no |
+| yearGroups | string[] | no |
+| termStartDate | Date | yes |
+| termEndDate | Date | yes |
+
+### `clubBooking.updateClub` (mutation)
+**Access:** schoolFeature
+
+Updates an existing club. All fields except `schoolId` and `clubId` are optional.
+
+**Input:** `{ schoolId, clubId, name?, description?, staffLead?, day?, startTime?, endTime?, maxCapacity?, feeInPence?, yearGroups?, isActive? }`
+
+### `clubBooking.deleteClub` (mutation)
+**Access:** schoolFeature
+
+Deletes a club.
+
+**Input:** `{ schoolId, clubId }`
+
+### `clubBooking.enroll` (mutation)
+**Access:** protected
+
+Enrols a child in a club. Checks capacity, year group restrictions, and duplicate enrolment.
+
+**Input:** `{ clubId, childId }`
+
+### `clubBooking.unenroll` (mutation)
+**Access:** protected
+
+Cancels a child's club enrolment.
+
+**Input:** `{ clubId, childId }`
+
+### `clubBooking.getEnrollmentsForChild` (query)
+**Access:** protected
+
+Returns all active club enrolments for a child.
+
+**Input:** `{ childId }`
+
+---
+
 ## DB Init (dev only)
 
 ### `dbInit.initTables` (mutation)
