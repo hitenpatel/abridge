@@ -8,8 +8,8 @@ export const mediaRouter = router({
 		.input(
 			z.object({
 				schoolId: z.string(),
-				filename: z.string().min(1),
-				mimeType: z.string().min(1),
+				filename: z.string().min(1).max(255),
+				mimeType: z.string().min(1).max(127),
 				sizeBytes: z.number().int().positive(),
 			}),
 		)
@@ -43,9 +43,9 @@ export const mediaRouter = router({
 		.input(
 			z.object({
 				schoolId: z.string(),
-				key: z.string().min(1),
-				filename: z.string().min(1),
-				mimeType: z.string().min(1),
+				key: z.string().min(1).max(512),
+				filename: z.string().min(1).max(255),
+				mimeType: z.string().min(1).max(127),
 				sizeBytes: z.number().int().positive(),
 				width: z.number().int().positive().optional(),
 				height: z.number().int().positive().optional(),
