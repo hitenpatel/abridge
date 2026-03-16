@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { generateHint } from "../lib/ai-homework-hints";
 import { assertFeatureEnabled } from "../lib/feature-guards";
 import { protectedProcedure, router, schoolFeatureProcedure } from "../trpc";
 
@@ -296,5 +297,92 @@ export const homeworkRouter = router({
 				where: { id: input.assignmentId },
 				data: { status: "CANCELLED" },
 			});
+		}),
+
+	getHint: protectedProcedure
+		.input(
+			z.object({
+				assignmentId: z.string(),
+				childId: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// Verify parent-child relationship
+			const parentChild = await ctx.prisma.parentChild.findFirst({
+				where: { userId: ctx.user.id, childId: input.childId },
+			});
+			if (!parentChild) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "Not a parent of this child",
+				});
+			}
+
+			// Get assignment details
+			const assignment = await ctx.prisma.homeworkAssignment.findUnique({
+				where: { id: input.assignmentId },
+			});
+			if (!assignment) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Assignment not found",
+				});
+			}
+
+			// Get or create completion record to track hint count
+			let completion = await ctx.prisma.homeworkCompletion.findUnique({
+				where: {
+					assignmentId_childId: {
+						assignmentId: input.assignmentId,
+						childId: input.childId,
+					},
+				},
+			});
+
+			if (!completion) {
+				completion = await ctx.prisma.homeworkCompletion.create({
+					data: {
+						assignmentId: input.assignmentId,
+						childId: input.childId,
+						status: "NOT_STARTED",
+						hintCount: 0,
+					},
+				});
+			}
+
+			// Check hint limit (max 3 per assignment per child)
+			if (completion.hintCount >= 3) {
+				throw new TRPCError({
+					code: "TOO_MANY_REQUESTS",
+					message:
+						"Maximum hints reached for this assignment (3 of 3 used)",
+				});
+			}
+
+			// Get child's year group for age-appropriate hints
+			const child = await ctx.prisma.child.findUnique({
+				where: { id: input.childId },
+				select: { yearGroup: true },
+			});
+
+			// Generate hint via AI
+			const hint = await generateHint(
+				assignment.title,
+				assignment.description,
+				assignment.subject,
+				child?.yearGroup ?? "Year 4",
+			);
+
+			// Increment hint count
+			await ctx.prisma.homeworkCompletion.update({
+				where: { id: completion.id },
+				data: { hintCount: completion.hintCount + 1 },
+			});
+
+			return {
+				hint,
+				hintsUsed: completion.hintCount + 1,
+				hintsRemaining: 2 - completion.hintCount,
+			};
 		}),
 });
