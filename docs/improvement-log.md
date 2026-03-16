@@ -3,7 +3,7 @@
 ## Security Audits
 - [x] auth (clean, no issues)
 - [x] messaging (fixed: added max lengths on subject/body, validated attachment school ownership)
-- [ ] payments
+- [x] payments (fixed: added parent-child ownership check on checkout, cart size limit, input max lengths)
 - [ ] forms
 - [ ] attendance
 - [ ] calendar

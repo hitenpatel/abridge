@@ -13,6 +13,14 @@ export const paymentsRouter = router({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// 0. Verify parent-child relationship
+			const parentChild = await ctx.prisma.parentChild.findFirst({
+				where: { userId: ctx.user.id, childId: input.childId },
+			});
+			if (!parentChild) {
+				throw new TRPCError({ code: "FORBIDDEN", message: "Not a parent of this child" });
+			}
+
 			// 1. Verify access and get data
 			const paymentItem = await ctx.prisma.paymentItem.findUnique({
 				where: { id: input.paymentItemId },
@@ -120,10 +128,23 @@ export const paymentsRouter = router({
 						paymentItemId: z.string(),
 						childId: z.string(),
 					}),
-				),
+				).min(1).max(50),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Verify parent owns all children in cart
+			const childIds = [...new Set(input.items.map((i) => i.childId))];
+			const parentLinks = await ctx.prisma.parentChild.findMany({
+				where: { userId: ctx.user.id, childId: { in: childIds } },
+				select: { childId: true },
+			});
+			const ownedChildIds = new Set(parentLinks.map((p: { childId: string }) => p.childId));
+			for (const cid of childIds) {
+				if (!ownedChildIds.has(cid)) {
+					throw new TRPCError({ code: "FORBIDDEN", message: "Not a parent of all children in cart" });
+				}
+			}
+
 			if (input.items.length === 0) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
@@ -362,9 +383,9 @@ export const paymentsRouter = router({
 		.input(
 			z.object({
 				schoolId: z.string(),
-				title: z.string().min(1),
-				description: z.string().optional(),
-				amount: z.number().int().positive(), // in pence
+				title: z.string().min(1).max(200),
+				description: z.string().max(1000).optional(),
+				amount: z.number().int().positive().max(1000000), // in pence, max £10,000
 				dueDate: z.date().optional(),
 				category: z.enum(["DINNER_MONEY", "TRIP", "CLUB", "UNIFORM", "OTHER"]),
 				allChildren: z.boolean().default(false),
