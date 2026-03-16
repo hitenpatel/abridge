@@ -1,0 +1,33 @@
+appId: com.abridge.app
+name: Staff Visitors
+tags:
+  - staff
+  - visitors
+---
+- runFlow: ../_helpers/login-staff.yaml
+
+# Navigate to visitors via dev nav button
+- tapOn:
+    id: "nav-visitors"
+- extendedWaitUntil:
+    visible: "Visitors"
+    timeout: 60000
+
+# Verify header and sign-in form
+- extendedWaitUntil:
+    visible: "Sign In Visitor"
+    timeout: 60000
+- extendedWaitUntil:
+    visible: "on-site"
+    timeout: 60000
+
+# Verify purpose selector is visible
+- extendedWaitUntil:
+    visible: "Meeting"
+    timeout: 60000
+
+# Verify on-site section
+- scrollUntilVisible:
+    element: "On-Site Now"
+    direction: DOWN
+    timeout: 60000

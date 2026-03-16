@@ -107,6 +107,13 @@ export function StaffHomeScreen() {
 					>
 						<Text className="text-text-muted text-xs">Payments</Text>
 					</Pressable>
+					<Pressable
+						testID="nav-visitors"
+						onPress={() => navigation.navigate("Visitors" as never)}
+						className="bg-neutral-surface rounded-full px-3 py-1"
+					>
+						<Text className="text-text-muted text-xs">Visitors</Text>
+					</Pressable>
 					{session?.staffRole === "ADMIN" && (
 						<Pressable
 							testID="nav-staff-management"
