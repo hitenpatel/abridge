@@ -26,6 +26,12 @@ test.describe("Achievements", () => {
 		await page.getByRole("button", { name: /Sign In/i }).click();
 		await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 
+		// Wait for feature toggles to load and nav link to appear
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /Awards/i }).first()).toBeVisible({ timeout: 3000 });
+		}).toPass({ timeout: 30000 });
+
 		// Navigate to achievements page
 		await page.getByRole("link", { name: "Awards" }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/achievements/);
@@ -143,6 +149,12 @@ test.describe("Achievements", () => {
 		await page.getByLabel("Password").fill("password123");
 		await page.getByRole("button", { name: /Sign In/i }).click();
 		await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
+
+		// Wait for feature toggles to load and nav link to appear
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByRole("link", { name: /Achievements/i }).first()).toBeVisible({ timeout: 3000 });
+		}).toPass({ timeout: 30000 });
 
 		// Navigate to achievements page
 		await page.getByRole("link", { name: "Achievements" }).first().click();
