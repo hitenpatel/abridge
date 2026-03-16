@@ -24,7 +24,7 @@ export const staffRouter = router({
 	}),
 
 	remove: schoolAdminProcedure
-		.input(z.object({ userId: z.string() }))
+		.input(z.object({ userId: z.string().max(128) }))
 		.mutation(async ({ ctx, input }) => {
 			// Prevent removing yourself
 			if (input.userId === ctx.user.id) {
@@ -52,7 +52,7 @@ export const staffRouter = router({
 	updateRole: schoolAdminProcedure
 		.input(
 			z.object({
-				userId: z.string(),
+				userId: z.string().max(128),
 				role: z.enum(["ADMIN", "TEACHER", "OFFICE"]),
 			}),
 		)
