@@ -1,0 +1,25 @@
+appId: com.abridge.app
+name: Parent Reading Diary
+tags:
+  - parent
+  - reading-diary
+---
+- runFlow: ../_helpers/login-parent.yaml
+
+# Navigate to reading diary via dev nav button
+- tapOn:
+    id: "nav-reading-diary"
+- extendedWaitUntil:
+    visible: "Reading Diary"
+    timeout: 60000
+
+# Verify recent entries section loads
+- extendedWaitUntil:
+    visible: "Recent Entries"
+    timeout: 60000
+
+# Verify log reading button is visible
+- extendedWaitUntil:
+    visible:
+      id: "log-reading-button"
+    timeout: 60000
