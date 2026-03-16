@@ -403,13 +403,222 @@ Admin staff also see a **Staff Management** link to invite and manage team membe
 
 ---
 
-## Known Limitations
+## Homework Tracker
 
-These items are planned but not yet available:
+Teachers set homework assignments with subjects, due dates, and optional attachments. Parents track their child's progress and mark work as complete. Teachers can grade and provide feedback individually or in bulk.
 
-- **MIS integration** — attendance data is entered manually; live sync with school MIS systems is planned.
-- **Achievement/reward tracking** — planned for a future phase.
+**Enable it:** Admin Settings > Feature Toggles > Homework.
+
+### For Parents
+Navigate to **Homework** from the sidebar (if enabled).
+
+- View all active homework assignments for your child, sorted by due date.
+- Each assignment shows the subject, title, description, set/due dates, and any attachments.
+- Mark homework as **In Progress** or **Completed**.
+- Once graded by a teacher, the grade and feedback appear on the assignment.
+
+### For Staff
+Navigate to **Homework** from the sidebar.
+
+- **Set Homework** — enter a subject, title, optional description, year group, set date, due date, and optional attachments. Mark it as a reading task if applicable.
+- **View Assignments** — see all homework you've set with completion counts.
+- **Grade** — grade individual submissions or use **Bulk Grade** to grade an entire class at once.
+- **Cancel** — cancel an assignment if it's no longer needed.
 
 ---
 
-*Last updated: 2026-03-04*
+## Reading Diary
+
+Parents log daily reading sessions for their children, recording book titles, pages read, duration, and who the child read with. Teachers monitor reading activity across the class and can add comments or set reading targets.
+
+**Enable it:** Admin Settings > Feature Toggles > Reading Diary.
+
+### For Parents
+Navigate to **Reading Diary** from the sidebar (if enabled).
+
+- **Log Reading** — record the date, book title, pages/chapter, minutes read, who the child read with (Alone, Parent, Teacher, Sibling, Other), and an optional comment.
+- **View Entries** — browse past reading entries by date range.
+- **Stats** — see total entries this term, average minutes per session, days read this week, and current reading streak.
+- **Diary Info** — view the child's current book, reading level, and daily reading target (set by the teacher).
+
+### For Staff
+Navigate to **Reading Diary** from the sidebar.
+
+- **Class Overview** — see all children with their reading level, last entry date, and entries this week at a glance.
+- **Add Teacher Entry** — log a reading session observed in class.
+- **Add Comment** — leave feedback on a parent's reading entry.
+- **Update Diary** — set a child's current book, reading level, and target minutes per day.
+
+---
+
+## Visitor Management
+
+Staff sign visitors in and out of the school, maintaining a live register for safeguarding and fire safety purposes. The system also manages DBS (Disclosure and Barring Service) records for volunteers.
+
+**Enable it:** Admin Settings > Feature Toggles > Visitor Management.
+
+### For Staff
+Navigate to **Visitors** from the sidebar (if enabled).
+
+- **Sign In** — record a visitor's name, organisation, phone, email, visit purpose (Meeting, Maintenance, Delivery, Volunteering, Inspection, Parent Visit, Contractor, Other), the staff member they're visiting, and a badge number. Regular visitors are remembered for faster sign-in next time.
+- **Sign Out** — sign a visitor out when they leave.
+- **On-Site Register** — see all visitors currently on the premises.
+- **Fire Register** — view all on-site visitors alongside the staff headcount, ready for emergency evacuation.
+- **DBS Register** — add and view DBS records with certificate number, type (Basic, Standard, Enhanced, Enhanced with Barred List), issue date, and expiry date. Volunteers signing in without a valid DBS trigger a warning.
+- **Visitor History** — search past visits by date range, name, or purpose.
+- **Search** — quickly find returning visitors by name.
+
+---
+
+## MIS Integration
+
+Import student and attendance data from your school's Management Information System. Supports CSV upload for any MIS, with a SIMS adapter for direct API sync. Sync logs track every import with record counts and error details.
+
+**Enable it:** Admin Settings > Feature Toggles > MIS Integration.
+
+### For Admins
+Navigate to **MIS Integration** from the sidebar (if enabled).
+
+- **Set Up Connection** — choose a provider (SIMS, Arbor, Bromcom, ScholarPack, or CSV Manual), enter API credentials, and set a sync frequency (Hourly, Twice Daily, Daily, or Manual).
+- **Test Connection** — verify the MIS link is working.
+- **Upload Students CSV** — import or update student records from a CSV file. Existing children are matched by first name, last name, and date of birth; new children are created automatically.
+- **Upload Attendance CSV** — import attendance marks from a CSV file. Records are matched to children and upserted by date and session.
+- **Connection Status** — view the current provider, sync frequency, last sync time, and any errors.
+- **Sync History** — review past sync operations with status (Success, Partial, Failed), record counts (created, updated, skipped), and duration.
+- **Disconnect** — disable the MIS connection.
+
+---
+
+## Event RSVPs
+
+Parents can RSVP to school events (Yes, No, or Maybe) for each of their children. Staff see a headcount summary with response breakdowns to help with planning. Events can optionally have a maximum capacity, enforced automatically.
+
+**Enable it:** RSVPs are part of the Calendar feature. When creating an event, check **RSVP Required** and optionally set a **Max Capacity**.
+
+### For Parents
+On the **Calendar** page, events that require an RSVP show a response option. Select **Yes**, **No**, or **Maybe** for each child and add an optional note. You can change your response at any time before the event.
+
+### For Staff
+View the **RSVP Summary** for any event to see the total count of Yes, No, and Maybe responses, along with a full list of respondents and their children.
+
+---
+
+## Achievement & Reward System
+
+Staff award points and badges to children for positive behaviour, academic effort, or other achievements. Parents can view their child's awards and total points. A class leaderboard encourages healthy competition.
+
+**Enable it:** Admin Settings > Feature Toggles > Achievements.
+
+### For Parents
+Navigate to **Achievements** from the sidebar (if enabled).
+
+- View all awards for your child, each showing the category name, icon, points earned, reason, and the staff member who awarded it.
+- See your child's **total points** across all categories.
+- **Recent Awards** — a quick feed of the latest awards across all your children.
+
+### For Staff
+Navigate to **Achievements** from the sidebar.
+
+- **Award Achievement** — select a child, pick a category, and add an optional reason.
+- **Class Leaderboard** — see the top 20 children by total points.
+
+### For Admins
+- **Create Category** — define achievement categories with a name, icon, point value, and type (Points or Badge).
+- **Deactivate Category** — retire a category without deleting historical awards.
+
+---
+
+## Photo Gallery
+
+Teachers create photo albums from school activities and trips. Albums can be targeted to specific year groups or classes. Parents see published albums relevant to their children.
+
+**Enable it:** Admin Settings > Feature Toggles > Gallery.
+
+### For Parents
+Navigate to **Gallery** from the sidebar (if enabled).
+
+- Browse published albums filtered to your children's year groups.
+- Each album shows a thumbnail, title, description, and photo count.
+- Open an album to view all photos with captions.
+
+### For Staff
+Navigate to **Gallery** from the sidebar.
+
+- **Create Album** — give it a title, optional description, and optionally target a year group or class.
+- **Add Photos** — upload photos to an album with optional captions. Photos are stored via the media service and sorted in the order you add them.
+- **Publish / Unpublish** — control when parents can see the album.
+- **Delete** — remove albums or individual photos.
+
+---
+
+## Message Attachments
+
+Staff can attach files to messages when composing. Upload files via the media service first, then attach them by ID when sending the message.
+
+### For Staff
+When composing a message, use the **Attach Files** option to include documents, images, or other files. Attachments are linked to the school's media library.
+
+### For Parents
+Attachments appear alongside the message content. Click to download or preview.
+
+---
+
+## AI Progress Summaries
+
+Weekly per-child progress summaries are generated automatically, combining attendance, homework completions, reading diary activity, achievements, and wellbeing data into a concise overview. An optional AI-generated insight provides a personalised one-sentence highlight.
+
+**Enable it:** Admin Settings > Feature Toggles > Progress Summaries.
+
+### For Parents
+Navigate to **Progress** from the sidebar (if enabled).
+
+- View the **latest weekly summary** for each child, showing key metrics and trends.
+- Browse **summary history** to track progress over time.
+- If AI insights are enabled by the school, each summary includes a short personalised comment.
+
+### For Staff / Admins
+- **Generate Now** — manually trigger a summary for a specific child (rate-limited to once per hour per child).
+- **Generate Weekly Batch** — trigger summary generation for all children in the school at once (runs in the background).
+
+### AI Configuration
+
+Progress summaries work in three modes, controlled by the `AI_SUMMARY_PROVIDER` environment variable:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `AI_SUMMARY_PROVIDER` | Provider to use: `claude`, `openai`, or `template` | `template` |
+| `AI_MODEL` | Model name override | Provider-specific (see below) |
+| `AI_API_KEY` | API key for OpenAI-compatible providers | — |
+| `AI_BASE_URL` | Base URL for OpenAI-compatible providers | `https://api.openai.com/v1` |
+| `ANTHROPIC_API_KEY` | API key for Claude provider | — |
+
+**Provider examples:**
+
+| Provider | `AI_SUMMARY_PROVIDER` | `AI_MODEL` | `AI_API_KEY` / `ANTHROPIC_API_KEY` | `AI_BASE_URL` |
+|----------|----------------------|-----------|-----------------------------------|--------------|
+| Template (no AI) | `template` | — | — | — |
+| Anthropic Claude | `claude` | `claude-haiku-4-5-20251001` (default) | Set `ANTHROPIC_API_KEY` | — |
+| OpenAI | `openai` | `gpt-4o-mini` (default) | Set `AI_API_KEY` | — |
+| Google Gemini | `openai` | `gemini-2.0-flash` | Set `AI_API_KEY` | `https://generativelanguage.googleapis.com/v1beta/openai` |
+| Ollama (local) | `openai` | `llama3` | — | `http://localhost:11434/v1` |
+| Groq | `openai` | `llama-3.1-8b-instant` | Set `AI_API_KEY` | `https://api.groq.com/openai/v1` |
+
+When set to `template`, summaries contain structured metrics only and no AI insight is generated (zero cost). The AI call has a 5-second timeout and falls back to template mode on failure.
+
+---
+
+## API Documentation
+
+Interactive API documentation is available at `/api/docs` via Swagger UI. The documentation is generated from the OpenAPI 3.x specification and covers all REST endpoints including the health check and authentication routes.
+
+Navigate to `https://your-domain/api/docs` to browse available endpoints, view request/response schemas, and test API calls directly from the browser.
+
+---
+
+## Known Limitations
+
+No major limitations at this time. All planned Phase 3C features have been implemented.
+
+---
+
+*Last updated: 2026-03-16*
