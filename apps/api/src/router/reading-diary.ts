@@ -11,11 +11,11 @@ export const readingDiaryRouter = router({
 			z.object({
 				childId: z.string(),
 				date: z.date(),
-				bookTitle: z.string().min(1),
-				pagesOrChapter: z.string().optional(),
-				minutesRead: z.number().int().optional(),
+				bookTitle: z.string().min(1).max(200),
+				pagesOrChapter: z.string().max(100).optional(),
+				minutesRead: z.number().int().min(0).max(600).optional(),
 				readWith: readWithEnum,
-				parentComment: z.string().optional(),
+				parentComment: z.string().max(1000).optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -142,8 +142,8 @@ export const readingDiaryRouter = router({
 				schoolId: z.string(),
 				childId: z.string(),
 				date: z.date(),
-				bookTitle: z.string().min(1),
-				minutesRead: z.number().int().optional(),
+				bookTitle: z.string().min(1).max(200),
+				minutesRead: z.number().int().min(0).max(600).optional(),
 				readWith: readWithEnum,
 				teacherComment: z.string().max(500).optional(),
 			}),
@@ -188,9 +188,9 @@ export const readingDiaryRouter = router({
 			z.object({
 				schoolId: z.string(),
 				childId: z.string(),
-				currentBook: z.string().optional(),
-				readingLevel: z.string().optional(),
-				targetMinsPerDay: z.number().int().optional(),
+				currentBook: z.string().max(200).optional(),
+				readingLevel: z.string().max(50).optional(),
+				targetMinsPerDay: z.number().int().min(0).max(300).optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -209,6 +209,36 @@ export const readingDiaryRouter = router({
 	getDiary: protectedProcedure
 		.input(z.object({ childId: z.string() }))
 		.query(async ({ ctx, input }) => {
+			const parentChild = await ctx.prisma.parentChild.findFirst({
+				where: { userId: ctx.user.id, childId: input.childId },
+			});
+			if (!parentChild) {
+				const child = await ctx.prisma.child.findUnique({
+					where: { id: input.childId },
+				});
+				if (child) {
+					const staffMember = await ctx.prisma.staffMember.findUnique({
+						where: {
+							userId_schoolId: {
+								userId: ctx.user.id,
+								schoolId: child.schoolId,
+							},
+						},
+					});
+					if (!staffMember) {
+						throw new TRPCError({
+							code: "FORBIDDEN",
+							message: "Not authorised to view this child's reading diary",
+						});
+					}
+				} else {
+					throw new TRPCError({
+						code: "NOT_FOUND",
+						message: "Child not found",
+					});
+				}
+			}
+
 			return ctx.prisma.readingDiary.findUnique({
 				where: { childId: input.childId },
 				select: {
@@ -266,6 +296,36 @@ export const readingDiaryRouter = router({
 	getStats: protectedProcedure
 		.input(z.object({ childId: z.string() }))
 		.query(async ({ ctx, input }) => {
+			const parentChild = await ctx.prisma.parentChild.findFirst({
+				where: { userId: ctx.user.id, childId: input.childId },
+			});
+			if (!parentChild) {
+				const child = await ctx.prisma.child.findUnique({
+					where: { id: input.childId },
+				});
+				if (child) {
+					const staffMember = await ctx.prisma.staffMember.findUnique({
+						where: {
+							userId_schoolId: {
+								userId: ctx.user.id,
+								schoolId: child.schoolId,
+							},
+						},
+					});
+					if (!staffMember) {
+						throw new TRPCError({
+							code: "FORBIDDEN",
+							message: "Not authorised to view this child's reading stats",
+						});
+					}
+				} else {
+					throw new TRPCError({
+						code: "NOT_FOUND",
+						message: "Child not found",
+					});
+				}
+			}
+
 			const diary = await ctx.prisma.readingDiary.findUnique({
 				where: { childId: input.childId },
 				include: {
