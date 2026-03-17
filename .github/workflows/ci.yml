@@ -113,6 +113,10 @@ jobs:
           done
           npx playwright test
 
+      - name: Capture app screenshots (desktop + mobile)
+        if: success()
+        run: node scripts/capture-screenshots.js screenshots
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -121,6 +125,13 @@ jobs:
             playwright-report.json
             playwright-report/
           retention-days: 7
+
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: app-screenshots
+          path: screenshots/
+          retention-days: 30
 
   # ── Android: build APK once, then run test shards in parallel ──
 
