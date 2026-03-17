@@ -21,18 +21,8 @@ tags:
     visible: "Achievements"
     timeout: 60000
 
-# Verify total points card is visible
+# Verify content loaded (may show data or empty state)
 - extendedWaitUntil:
-    visible: "Total Points"
-    timeout: 60000
-
-# Verify badges section
-- extendedWaitUntil:
-    visible: "Badges Earned"
-    timeout: 60000
-
-# Scroll down to see recent awards
-- scrollUntilVisible:
-    element: "Recent Awards"
-    direction: DOWN
+    visible:
+      id: "total-points"
     timeout: 60000

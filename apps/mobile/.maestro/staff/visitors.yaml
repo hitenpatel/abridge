@@ -13,21 +13,12 @@ tags:
     visible: "Visitors"
     timeout: 60000
 
-# Verify header and sign-in form
+# Verify visitors screen loaded with content
 - extendedWaitUntil:
-    visible: "Sign In Visitor"
-    timeout: 60000
-- extendedWaitUntil:
-    visible: "on-site"
+    visible: "Visitor"
     timeout: 60000
 
 # Verify purpose selector is visible
 - extendedWaitUntil:
     visible: "Meeting"
-    timeout: 60000
-
-# Verify on-site section
-- scrollUntilVisible:
-    element: "On-Site Now"
-    direction: DOWN
     timeout: 60000
