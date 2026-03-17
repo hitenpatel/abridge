@@ -44,16 +44,16 @@ const FEATURES = [
 		title: "AI Progress Summaries",
 		description:
 			"Weekly reports enriched with AI-generated insights. Highlight trends, celebrate wins, and flag concerns automatically. No competitor offers this.",
-		color: "text-[#2567EB]",
-		bg: "bg-[#2567EB]/10",
+		color: "text-[#1E3A5F]",
+		bg: "bg-[#1E3A5F]/10",
 	},
 	{
 		icon: MessageCircle,
 		title: "Real-time Chat",
 		description:
 			"Replace WhatsApp groups with GDPR-compliant, auditable parent-teacher messaging. Instant delivery, full control.",
-		color: "text-[#3B82F6]",
-		bg: "bg-[#3B82F6]/10",
+		color: "text-[#1E3A5F]",
+		bg: "bg-[#1E3A5F]/10",
 	},
 	{
 		icon: CheckCircle,
@@ -221,18 +221,18 @@ export default function Home() {
 			<nav
 				className={`fixed top-0 w-full z-50 transition-all duration-300 ${
 					scrolled
-						? "bg-white/90 backdrop-blur-lg shadow-sm border-b border-slate-200"
-						: "bg-transparent"
+						? "bg-[#1E3A5F]/95 backdrop-blur-lg shadow-sm border-b border-[#1E3A5F]"
+						: "bg-[#1E3A5F]"
 				}`}
 			>
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="flex items-center justify-between h-16 lg:h-20">
 						{/* Logo */}
 						<a href="/" className="flex items-center gap-2.5 group">
-							<div className="w-9 h-9 rounded-xl bg-[#2567EB] flex items-center justify-center transition-transform group-hover:scale-105">
+							<div className="w-9 h-9 rounded-xl bg-[#FF7D45] flex items-center justify-center transition-transform group-hover:scale-105">
 								<BookOpen className="w-5 h-5 text-white" strokeWidth={2.5} />
 							</div>
-							<span className="text-xl font-bold tracking-tight">Abridge</span>
+							<span className="text-xl font-bold tracking-tight text-white">Abridge</span>
 						</a>
 
 						{/* Desktop links */}
@@ -241,7 +241,7 @@ export default function Home() {
 								<a
 									key={link.href}
 									href={link.href}
-									className="text-sm font-medium text-slate-600 hover:text-[#2567EB] transition-colors"
+									className="text-sm font-medium text-blue-100 hover:text-white transition-colors"
 								>
 									{link.label}
 								</a>
@@ -252,13 +252,13 @@ export default function Home() {
 						<div className="hidden lg:flex items-center gap-3">
 							<Link
 								href="/login"
-								className="text-sm font-medium text-slate-600 hover:text-[#2567EB] transition-colors px-4 py-2"
+								className="text-sm font-medium text-blue-100 hover:text-white transition-colors px-4 py-2"
 							>
 								Log in
 							</Link>
 							<Link
 								href="/register"
-								className="inline-flex items-center gap-2 bg-[#F97316] hover:bg-[#EA6C10] text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors shadow-sm"
+								className="inline-flex items-center gap-2 bg-[#FF7D45] hover:bg-[#E86B35] text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors shadow-sm"
 							>
 								Get Started Free
 								<ArrowRight className="w-4 h-4" />
@@ -268,7 +268,7 @@ export default function Home() {
 						{/* Mobile menu toggle */}
 						<button
 							type="button"
-							className="lg:hidden p-2 text-slate-600"
+							className="lg:hidden p-2 text-blue-100"
 							onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
 							aria-label="Toggle menu"
 						>
@@ -279,28 +279,28 @@ export default function Home() {
 
 				{/* Mobile menu */}
 				{mobileMenuOpen && (
-					<div className="lg:hidden bg-white border-t border-slate-200 shadow-lg">
+					<div className="lg:hidden bg-[#1E3A5F] border-t border-[#2A4D73]">
 						<div className="px-4 py-4 space-y-1">
 							{NAV_LINKS.map((link) => (
 								<a
 									key={link.href}
 									href={link.href}
-									className="block px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-[#2567EB] hover:bg-slate-50 rounded-lg transition-colors"
+									className="block px-3 py-2.5 text-sm font-medium text-blue-100 hover:text-white hover:bg-[#2A4D73] rounded-lg transition-colors"
 									onClick={() => setMobileMenuOpen(false)}
 								>
 									{link.label}
 								</a>
 							))}
-							<div className="pt-3 border-t border-slate-100 space-y-2">
+							<div className="pt-3 border-t border-[#2A4D73] space-y-2">
 								<Link
 									href="/login"
-									className="block px-3 py-2.5 text-sm font-medium text-slate-600 hover:text-[#2567EB] rounded-lg"
+									className="block px-3 py-2.5 text-sm font-medium text-blue-100 hover:text-white rounded-lg"
 								>
 									Log in
 								</Link>
 								<Link
 									href="/register"
-									className="block text-center bg-[#F97316] hover:bg-[#EA6C10] text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors"
+									className="block text-center bg-[#FF7D45] hover:bg-[#E86B35] text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors"
 								>
 									Get Started Free
 								</Link>
@@ -315,19 +315,19 @@ export default function Home() {
 			{/* ============================================================ */}
 			<section className="relative pt-28 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
 				{/* Gradient background */}
-				<div className="absolute inset-0 bg-gradient-to-b from-[#2567EB]/5 via-[#3B82F6]/3 to-white pointer-events-none" />
-				<div className="absolute top-20 right-0 w-[600px] h-[600px] bg-[#2567EB]/5 rounded-full blur-3xl pointer-events-none" />
-				<div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#3B82F6]/5 rounded-full blur-3xl pointer-events-none" />
+				<div className="absolute inset-0 bg-gradient-to-b from-[#1E3A5F]/8 via-[#1E3A5F]/3 to-white pointer-events-none" />
+				<div className="absolute top-20 right-0 w-[600px] h-[600px] bg-[#1E3A5F]/5 rounded-full blur-3xl pointer-events-none" />
+				<div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#FF7D45]/5 rounded-full blur-3xl pointer-events-none" />
 
 				<div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 					<div className="max-w-4xl mx-auto">
-						<div className="inline-flex items-center gap-2 bg-[#2567EB]/10 text-[#2567EB] text-sm font-medium px-4 py-1.5 rounded-full mb-8">
+						<div className="inline-flex items-center gap-2 bg-[#1E3A5F]/10 text-[#1E3A5F] text-sm font-medium px-4 py-1.5 rounded-full mb-8">
 							<Zap className="w-4 h-4" />
 							AI-powered school communications
 						</div>
 
 						<h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.1] mb-6">
-							The AI-first school <span className="text-[#2567EB]">communication</span> platform
+							The AI-first school <span className="text-[#1E3A5F]">communication</span> platform
 						</h1>
 
 						<p className="text-lg sm:text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed">
@@ -338,14 +338,14 @@ export default function Home() {
 						<div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
 							<Link
 								href="/register"
-								className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#F97316] hover:bg-[#EA6C10] text-white font-semibold px-8 py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/30 text-base"
+								className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#FF7D45] hover:bg-[#E86B35] text-white font-semibold px-8 py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/30 text-base"
 							>
 								Get Started Free
 								<ArrowRight className="w-5 h-5" />
 							</Link>
 							<a
 								href="#pricing"
-								className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border-2 border-[#2567EB] text-[#2567EB] hover:bg-[#2567EB] hover:text-white font-semibold px-8 py-3.5 rounded-xl transition-all duration-200 text-base"
+								className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border-2 border-[#1E3A5F] text-[#1E3A5F] hover:bg-[#1E3A5F] hover:text-white font-semibold px-8 py-3.5 rounded-xl transition-all duration-200 text-base"
 							>
 								Book a Demo
 							</a>
@@ -408,7 +408,7 @@ export default function Home() {
 							{ value: "99.9%", label: "Uptime" },
 						].map((stat) => (
 							<div key={stat.label} className="text-center">
-								<div className="text-3xl lg:text-4xl font-bold text-[#2567EB]">{stat.value}</div>
+								<div className="text-3xl lg:text-4xl font-bold text-[#1E3A5F]">{stat.value}</div>
 								<div className="text-sm text-slate-500 mt-1">{stat.label}</div>
 							</div>
 						))}
@@ -437,7 +437,7 @@ export default function Home() {
 							return (
 								<div
 									key={feature.title}
-									className="group bg-white rounded-2xl p-8 border border-slate-100 hover:border-[#2567EB]/20 hover:shadow-lg hover:shadow-[#2567EB]/5 transition-all duration-300"
+									className="group bg-white rounded-2xl p-8 border border-slate-100 hover:border-[#1E3A5F]/20 hover:shadow-lg hover:shadow-[#1E3A5F]/5 transition-all duration-300"
 								>
 									<div
 										className={`w-12 h-12 rounded-xl ${feature.bg} flex items-center justify-center mb-5`}
@@ -489,8 +489,8 @@ export default function Home() {
 										key={provider.name}
 										className="flex items-center gap-3 bg-slate-50 rounded-xl p-3 border border-slate-100"
 									>
-										<div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#2567EB]/20 to-violet-500/20 flex items-center justify-center">
-											<Brain className="w-4 h-4 text-[#2567EB]" />
+										<div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#1E3A5F]/20 to-violet-500/20 flex items-center justify-center">
+											<Brain className="w-4 h-4 text-[#1E3A5F]" />
 										</div>
 										<div>
 											<div className="text-sm font-medium">{provider.name}</div>
@@ -514,13 +514,13 @@ export default function Home() {
 							<div className="bg-slate-50 rounded-xl p-5 border border-slate-100 space-y-4">
 								<div className="flex items-center justify-between text-sm">
 									<span className="font-medium">Week of 10 Mar 2026</span>
-									<span className="text-xs bg-[#2567EB]/10 text-[#2567EB] px-2 py-0.5 rounded-full font-medium">
+									<span className="text-xs bg-[#1E3A5F]/10 text-[#1E3A5F] px-2 py-0.5 rounded-full font-medium">
 										AI Generated
 									</span>
 								</div>
 								<div className="grid grid-cols-3 gap-3">
 									<div className="text-center">
-										<div className="text-2xl font-bold text-[#2567EB]">96%</div>
+										<div className="text-2xl font-bold text-[#1E3A5F]">96%</div>
 										<div className="text-xs text-slate-400">Attendance</div>
 									</div>
 									<div className="text-center">
@@ -533,7 +533,7 @@ export default function Home() {
 									</div>
 								</div>
 								<div className="text-sm text-slate-600 bg-white p-3 rounded-lg border border-slate-100">
-									<Sparkles className="w-4 h-4 text-[#2567EB] inline mr-1.5" />
+									<Sparkles className="w-4 h-4 text-[#FF7D45] inline mr-1.5" />
 									<span className="italic">
 										"Excellent week. Attendance improved from 90% to 96%. Strong participation in
 										maths — consider advanced problem sets."
@@ -557,14 +557,14 @@ export default function Home() {
 									</div>
 								</div>
 								<div className="flex justify-center">
-									<div className="flex items-center gap-1 text-[#2567EB]">
+									<div className="flex items-center gap-1 text-[#1E3A5F]">
 										<Sparkles className="w-4 h-4" />
 										<span className="text-xs font-medium">AI generates</span>
 										<ArrowRight className="w-3 h-3" />
 									</div>
 								</div>
-								<div className="bg-[#2567EB]/5 rounded-xl p-4 border border-[#2567EB]/10">
-									<div className="text-xs text-[#2567EB] mb-2 font-medium">Generated message:</div>
+								<div className="bg-[#1E3A5F]/5 rounded-xl p-4 border border-[#1E3A5F]/10">
+									<div className="text-xs text-[#1E3A5F] mb-2 font-medium">Generated message:</div>
 									<div className="text-sm text-slate-700 leading-relaxed">
 										Dear Year 4 Parents,
 										<br />
@@ -602,7 +602,7 @@ export default function Home() {
 									<th className="text-left py-4 px-6 text-sm font-medium text-slate-500">
 										Feature
 									</th>
-									<th className="py-4 px-6 text-sm font-semibold text-white bg-[#2567EB] text-center">
+									<th className="py-4 px-6 text-sm font-semibold text-white bg-[#1E3A5F] text-center">
 										Abridge
 									</th>
 									{COMPETITORS.map((c) => (
@@ -622,9 +622,9 @@ export default function Home() {
 										className={`border-b border-slate-100 ${i % 2 === 0 ? "bg-white" : "bg-slate-50/50"}`}
 									>
 										<td className="py-4 px-6 text-sm font-medium">{feature}</td>
-										<td className="py-4 px-6 text-center bg-[#2567EB]/5">
+										<td className="py-4 px-6 text-center bg-[#1E3A5F]/5">
 											{COMPETITOR_DATA.Abridge[i] ? (
-												<Check className="w-5 h-5 text-[#2567EB] mx-auto" />
+												<Check className="w-5 h-5 text-[#FF7D45] mx-auto" />
 											) : (
 												<X className="w-5 h-5 text-slate-300 mx-auto" />
 											)}
@@ -653,13 +653,13 @@ export default function Home() {
 									{["Abridge", ...COMPETITORS].map((name) => (
 										<div key={name}>
 											<div
-												className={`text-xs mb-1 ${name === "Abridge" ? "font-semibold text-[#2567EB]" : "text-slate-400"}`}
+												className={`text-xs mb-1 ${name === "Abridge" ? "font-semibold text-[#1E3A5F]" : "text-slate-400"}`}
 											>
 												{name}
 											</div>
 											{COMPETITOR_DATA[name]?.[i] ? (
 												<Check
-													className={`w-4 h-4 mx-auto ${name === "Abridge" ? "text-[#2567EB]" : "text-emerald-500"}`}
+													className={`w-4 h-4 mx-auto ${name === "Abridge" ? "text-[#FF7D45]" : "text-emerald-500"}`}
 												/>
 											) : (
 												<X className="w-4 h-4 text-slate-300 mx-auto" />
@@ -693,12 +693,12 @@ export default function Home() {
 								key={tier.name}
 								className={`relative bg-white rounded-2xl p-8 border-2 transition-shadow ${
 									tier.highlighted
-										? "border-[#2567EB] shadow-xl shadow-[#2567EB]/10"
+										? "border-[#FF7D45] shadow-xl shadow-orange-500/10"
 										: "border-slate-200 hover:shadow-lg"
 								}`}
 							>
 								{tier.highlighted && (
-									<div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#2567EB] text-white text-xs font-semibold px-4 py-1 rounded-full">
+									<div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#FF7D45] text-white text-xs font-semibold px-4 py-1 rounded-full">
 										Most Popular
 									</div>
 								)}
@@ -713,7 +713,7 @@ export default function Home() {
 								<ul className="space-y-3 mb-8">
 									{tier.features.map((feature) => (
 										<li key={feature} className="flex items-start gap-3 text-sm">
-											<Check className="w-4 h-4 text-[#2567EB] mt-0.5 shrink-0" />
+											<Check className="w-4 h-4 text-[#FF7D45] mt-0.5 shrink-0" />
 											<span>{feature}</span>
 										</li>
 									))}
@@ -722,7 +722,7 @@ export default function Home() {
 									href={tier.name === "Enterprise" ? "#footer" : "/register"}
 									className={`block text-center font-semibold py-3 px-6 rounded-xl transition-all duration-200 text-sm ${
 										tier.highlighted
-											? "bg-[#F97316] hover:bg-[#EA6C10] text-white shadow-lg shadow-orange-500/25"
+											? "bg-[#FF7D45] hover:bg-[#E86B35] text-white shadow-lg shadow-orange-500/25"
 											: "bg-slate-100 hover:bg-slate-200 text-slate-700"
 									}`}
 								>
@@ -785,7 +785,7 @@ export default function Home() {
 			{/* ============================================================ */}
 
 			{/* Final CTA */}
-			<section className="py-20 lg:py-28 bg-[#2567EB]">
+			<section className="py-20 lg:py-28 bg-[#1E3A5F]">
 				<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 					<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-6">
 						Ready to transform your school?
@@ -797,7 +797,7 @@ export default function Home() {
 					<div className="flex flex-col sm:flex-row items-center justify-center gap-4">
 						<Link
 							href="/register"
-							className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#F97316] hover:bg-[#EA6C10] text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200 shadow-lg shadow-black/20 text-base"
+							className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#FF7D45] hover:bg-[#E86B35] text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200 shadow-lg shadow-black/20 text-base"
 						>
 							Get Started Free
 							<ArrowRight className="w-5 h-5" />
@@ -813,13 +813,13 @@ export default function Home() {
 			</section>
 
 			{/* Footer */}
-			<footer id="footer" className="bg-slate-900 text-slate-400 py-16">
+			<footer id="footer" className="bg-[#1E3A5F] text-blue-200 py-16 border-t border-[#2A4D73]">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
 						{/* Brand */}
 						<div className="col-span-2 md:col-span-4 lg:col-span-1 mb-4 lg:mb-0">
 							<div className="flex items-center gap-2.5 mb-4">
-								<div className="w-8 h-8 rounded-lg bg-[#2567EB] flex items-center justify-center">
+								<div className="w-8 h-8 rounded-lg bg-[#FF7D45] flex items-center justify-center">
 									<BookOpen className="w-4 h-4 text-white" />
 								</div>
 								<span className="text-lg font-bold text-white">Abridge</span>
@@ -943,7 +943,7 @@ export default function Home() {
 					</div>
 
 					{/* Bottom bar */}
-					<div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+					<div className="border-t border-[#2A4D73] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
 						<p className="text-sm">
 							&copy; {new Date().getFullYear()} Abridge. All rights reserved.
 						</p>
