@@ -567,6 +567,17 @@ jobs:
           curl -sSf "https://hitenpatel.github.io/abridge/data/history.json" \
             -o dashboard/data/history.json 2>/dev/null || echo "[]" > dashboard/data/history.json
 
+      - name: Copy screenshots into dashboard
+        run: |
+          if [ -d "artifacts/app-screenshots" ]; then
+            mkdir -p dashboard/screenshots
+            cp -r artifacts/app-screenshots/*.png dashboard/screenshots/ 2>/dev/null || true
+            cp artifacts/app-screenshots/screenshots-data.json dashboard/screenshots-data.json 2>/dev/null || true
+            echo "Copied $(ls dashboard/screenshots/*.png 2>/dev/null | wc -l) screenshots to dashboard"
+          else
+            echo "No screenshots artifact found — skipping"
+          fi
+
       - name: Parse results and update history
         env:
           RUN_ID: ${{ github.run_id }}

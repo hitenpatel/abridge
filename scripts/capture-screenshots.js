@@ -135,6 +135,51 @@ async function main() {
 	console.log(`📄 View gallery: ${OUTPUT_DIR}/index.html`);
 	console.log(`   ${files.length} screenshots captured`);
 
+	// Generate screenshots-data.json for the E2E dashboard gallery
+	const allScreens = [...PARENT_SCREENS, ...STAFF_SCREENS];
+	const screenshotsData = {
+		generated: new Date().toISOString().split("T")[0],
+		desktop: desktopFiles.map((f) => {
+			const screenName = f.replace("desktop-", "").replace(".png", "");
+			const screen = allScreens.find((s) => s.name === screenName);
+			return { name: screenName, label: screen ? screen.label : screenName, file: f };
+		}),
+		mobile: mobileFiles.map((f) => {
+			const screenName = f.replace("mobile-", "").replace(".png", "");
+			const screen = allScreens.find((s) => s.name === screenName);
+			return { name: screenName, label: screen ? screen.label : screenName, file: f };
+		}),
+	};
+	fs.writeFileSync(
+		path.join(OUTPUT_DIR, "screenshots-data.json"),
+		JSON.stringify(screenshotsData, null, 2),
+	);
+	console.log(`📊 Generated screenshots-data.json`);
+
+	// Copy screenshots to dashboard/screenshots/ for GitHub Pages deployment
+	const dashboardScreenshotsDir = path.resolve(__dirname, "..", "dashboard", "screenshots");
+	fs.mkdirSync(dashboardScreenshotsDir, { recursive: true });
+	for (const f of files) {
+		fs.copyFileSync(path.join(OUTPUT_DIR, f), path.join(dashboardScreenshotsDir, f));
+	}
+	fs.copyFileSync(
+		path.join(OUTPUT_DIR, "screenshots-data.json"),
+		path.resolve(__dirname, "..", "dashboard", "screenshots-data.json"),
+	);
+	console.log(`📂 Copied screenshots to dashboard/screenshots/`);
+
+	// Copy screenshots to apps/web/public/screenshots/ for the marketing site
+	const webScreenshotsDir = path.resolve(__dirname, "..", "apps", "web", "public", "screenshots");
+	fs.mkdirSync(webScreenshotsDir, { recursive: true });
+	for (const f of files) {
+		fs.copyFileSync(path.join(OUTPUT_DIR, f), path.join(webScreenshotsDir, f));
+	}
+	fs.copyFileSync(
+		path.join(OUTPUT_DIR, "screenshots-data.json"),
+		path.join(webScreenshotsDir, "screenshots-data.json"),
+	);
+	console.log(`📂 Copied screenshots to apps/web/public/screenshots/`);
+
 	await browser.close();
 }
 

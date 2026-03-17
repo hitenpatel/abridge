@@ -221,9 +221,68 @@
   .modal.open { display: flex; }
   .modal img { max-width: 90vw; max-height: 90vh; border-radius: 8px; }
 
+  /* Screenshots gallery */
+  .screenshots-section {
+    margin-top: 24px;
+  }
+  .screenshots-section h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .screenshots-section h3 {
+    font-size: 14px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin: 16px 0 10px;
+  }
+  .screenshots-grid {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .screenshots-grid.desktop { grid-template-columns: repeat(3, 1fr); }
+  .screenshots-grid.mobile { grid-template-columns: repeat(5, 1fr); }
+  .screenshot-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .screenshot-card:hover { border-color: var(--orange); }
+  .screenshot-card img {
+    width: 100%;
+    display: block;
+  }
+  .screenshot-card .screenshot-label {
+    padding: 8px 10px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+  }
+  .screenshots-empty {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  @media (max-width: 900px) {
+    .screenshots-grid.desktop { grid-template-columns: repeat(2, 1fr); }
+    .screenshots-grid.mobile { grid-template-columns: repeat(3, 1fr); }
+  }
+
   @media (max-width: 640px) {
     .summary { grid-template-columns: repeat(2, 1fr); }
     .message { max-width: 150px; }
+    .screenshots-grid.desktop { grid-template-columns: 1fr; }
+    .screenshots-grid.mobile { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
 </head>
@@ -253,6 +312,7 @@
       </tr></thead>
       <tbody id="runsBody"></tbody>
     </table>
+    <div class="screenshots-section" id="screenshotsSection"></div>
   </div>
 
   <div class="detail" id="detail"></div>
@@ -478,8 +538,51 @@ function formatTime(ts) {
   }
 }
 
+async function loadScreenshots() {
+  const section = document.getElementById('screenshotsSection');
+  try {
+    const resp = await fetch('screenshots-data.json');
+    if (!resp.ok) throw new Error('not found');
+    const data = await resp.json();
+    let html = '<h2>\ud83d\udcf8 Latest Screenshots</h2>';
+
+    if (data.desktop && data.desktop.length > 0) {
+      html += '<h3>Desktop (1440\u00d7900)</h3>';
+      html += '<div class="screenshots-grid desktop">';
+      for (const s of data.desktop) {
+        html += `<div class="screenshot-card" onclick="showModal('screenshots/${s.file}')">
+          <img src="screenshots/${s.file}" alt="${escHtml(s.label)}" loading="lazy">
+          <div class="screenshot-label">${escHtml(s.label)}</div>
+        </div>`;
+      }
+      html += '</div>';
+    }
+
+    if (data.mobile && data.mobile.length > 0) {
+      html += '<h3>Mobile (375\u00d7812)</h3>';
+      html += '<div class="screenshots-grid mobile">';
+      for (const s of data.mobile) {
+        html += `<div class="screenshot-card" onclick="showModal('screenshots/${s.file}')">
+          <img src="screenshots/${s.file}" alt="${escHtml(s.label)}" loading="lazy">
+          <div class="screenshot-label">${escHtml(s.label)}</div>
+        </div>`;
+      }
+      html += '</div>';
+    }
+
+    if ((!data.desktop || data.desktop.length === 0) && (!data.mobile || data.mobile.length === 0)) {
+      throw new Error('empty');
+    }
+
+    section.innerHTML = html;
+  } catch (e) {
+    section.innerHTML = '<div class="screenshots-section"><h2>\ud83d\udcf8 Latest Screenshots</h2><div class="screenshots-empty">No screenshots captured yet \u2014 screenshots are generated automatically during CI runs.</div></div>';
+  }
+}
+
 window.addEventListener('hashchange', handleHash);
 loadData();
+loadScreenshots();
 </script>
 </body>
 </html>
