@@ -25,7 +25,7 @@ interface WsMessage {
 
 function useChatWebSocket(sessionToken: string | undefined) {
 	const wsRef = useRef<WebSocket | null>(null);
-	const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+	const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 	const reconnectDelayRef = useRef(1000);
 	const [isConnected, setIsConnected] = useState(false);
 	const [lastMessage, setLastMessage] = useState<WsMessage | null>(null);
@@ -90,24 +90,26 @@ function useChatWebSocket(sessionToken: string | undefined) {
 
 interface Conversation {
 	id: string;
+	schoolId: string;
 	parentId: string;
 	staffId: string;
 	subject: string | null;
-	lastMessageAt: string;
-	closedAt: string | null;
+	lastMessageAt: Date;
+	closedAt: Date | null;
+	createdAt: Date;
 	parent: { id: string; name: string | null };
 	staff: { id: string; name: string | null };
-	_count?: { messages: number };
-	unreadCount?: number;
-	lastMessage?: { body: string; senderId: string } | null;
+	school: { id: string; name: string };
+	_count?: undefined;
+	unreadCount: number;
 }
 
 interface Message {
 	id: string;
 	senderId: string;
 	body: string;
-	readAt: string | null;
-	createdAt: string;
+	readAt: Date | null;
+	createdAt: Date;
 	sender: { id: string; name: string | null };
 }
 
@@ -129,7 +131,6 @@ function ConversationList({
 			{conversations.map((conv) => {
 				const isSelected = conv.id === selectedId;
 				const otherPerson = conv.parentId === currentUserId ? conv.staff : conv.parent;
-				const lastMsg = conv.lastMessage;
 
 				return (
 					<button
@@ -148,12 +149,6 @@ function ConversationList({
 						</div>
 						{conv.subject && (
 							<p className="text-xs text-muted-foreground truncate mt-0.5">{conv.subject}</p>
-						)}
-						{lastMsg && (
-							<p className="text-xs text-gray-400 truncate mt-0.5">
-								{lastMsg.senderId === currentUserId ? "You: " : ""}
-								{lastMsg.body}
-							</p>
 						)}
 						<p className="text-xs text-gray-300 mt-1">
 							{new Date(conv.lastMessageAt).toLocaleDateString("en-GB", {
@@ -264,7 +259,7 @@ function MessageInput({
 	disabled?: boolean;
 }) {
 	const [body, setBody] = useState("");
-	const typingTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+	const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -316,7 +311,7 @@ function NewChatDialog({
 	onStart: (staffId: string, subject?: string) => void;
 	onClose: () => void;
 }) {
-	const { data: staffList, isLoading } = trpc.chat.getAvailableStaff.useQuery();
+	const { data: staffData, isLoading } = trpc.messaging.listSchoolStaff.useQuery();
 	const [selectedStaff, setSelectedStaff] = useState<string>("");
 	const [subject, setSubject] = useState("");
 
@@ -349,9 +344,9 @@ function NewChatDialog({
 								className="w-full rounded-md border p-2 text-sm"
 							>
 								<option value="">Choose a staff member...</option>
-								{staffList?.map((s: { id: string; name: string | null }) => (
-									<option key={s.id} value={s.id}>
-										{s.name ?? "Unknown"}
+								{staffData?.staff?.map((s) => (
+									<option key={s.userId} value={s.userId}>
+										{s.name ?? "Unknown"} ({s.role})
 									</option>
 								))}
 							</select>
@@ -467,7 +462,7 @@ function ParentView({ userId, sessionToken }: { userId: string; sessionToken?: s
 		}
 	}, [selectedConversationId]);
 
-	const selectedConv = conversations?.find((c: Conversation) => c.id === selectedConversationId);
+	const selectedConv = conversations?.find((c) => c.id === selectedConversationId);
 
 	const handleSend = (body: string) => {
 		if (!selectedConversationId) return;
@@ -512,7 +507,7 @@ function ParentView({ userId, sessionToken }: { userId: string; sessionToken?: s
 						<p className="text-sm text-muted-foreground text-center py-8">No conversations yet</p>
 					) : (
 						<ConversationList
-							conversations={conversations as Conversation[]}
+							conversations={conversations as unknown as Conversation[]}
 							selectedId={selectedConversationId}
 							onSelect={setSelectedConversationId}
 							currentUserId={userId}
@@ -530,9 +525,9 @@ function ParentView({ userId, sessionToken }: { userId: string; sessionToken?: s
 							<div>
 								<p className="font-medium text-sm">
 									{selectedConv
-										? (selectedConv as Conversation).parentId === userId
-											? (selectedConv as Conversation).staff.name
-											: (selectedConv as Conversation).parent.name
+										? selectedConv.parentId === userId
+											? selectedConv.staff.name
+											: selectedConv.parent.name
 										: "Chat"}
 								</p>
 								{selectedConv?.subject && (
@@ -541,7 +536,7 @@ function ParentView({ userId, sessionToken }: { userId: string; sessionToken?: s
 							</div>
 						</div>
 						<MessageThread
-							messages={(messagesData?.messages ?? messagesData ?? []) as Message[]}
+							messages={(messagesData?.items ?? []) as Message[]}
 							currentUserId={userId}
 							isLoading={msgsLoading}
 							typingUser={typingUser}
@@ -650,7 +645,7 @@ function StaffView({
 		}
 	}, [selectedConversationId]);
 
-	const selectedConv = conversations?.find((c: Conversation) => c.id === selectedConversationId);
+	const selectedConv = conversations?.find((c) => c.id === selectedConversationId);
 
 	const handleSend = (body: string) => {
 		if (!selectedConversationId) return;
@@ -687,7 +682,7 @@ function StaffView({
 						<p className="text-sm text-muted-foreground text-center py-8">No conversations yet</p>
 					) : (
 						<ConversationList
-							conversations={conversations as Conversation[]}
+							conversations={conversations as unknown as Conversation[]}
 							selectedId={selectedConversationId}
 							onSelect={setSelectedConversationId}
 							currentUserId={userId}
@@ -705,7 +700,7 @@ function StaffView({
 								<MessageCircle className="h-5 w-5 text-primary" />
 								<div>
 									<p className="font-medium text-sm">
-										{selectedConv ? (selectedConv as Conversation).parent.name : "Chat"}
+										{selectedConv ? selectedConv.parent.name : "Chat"}
 									</p>
 									{selectedConv?.subject && (
 										<p className="text-xs text-muted-foreground">{selectedConv.subject}</p>
@@ -729,7 +724,7 @@ function StaffView({
 							)}
 						</div>
 						<MessageThread
-							messages={(messagesData?.messages ?? messagesData ?? []) as Message[]}
+							messages={(messagesData?.items ?? []) as Message[]}
 							currentUserId={userId}
 							isLoading={msgsLoading}
 							typingUser={typingUser}
@@ -759,13 +754,7 @@ function AdminView({ userId, schoolId }: { userId: string; schoolId: string }) {
 	const [viewAll, setViewAll] = useState(false);
 	const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
 
-	const { data: myConversations, isLoading: myLoading } = trpc.chat.getConversations.useQuery();
-
-	const { data: allConversations, isLoading: allLoading } =
-		trpc.chat.adminGetConversations.useQuery({ schoolId }, { enabled: viewAll });
-
-	const conversations = viewAll ? allConversations : myConversations;
-	const isLoading = viewAll ? allLoading : myLoading;
+	const { data: conversations, isLoading } = trpc.chat.getConversations.useQuery();
 
 	const { data: messagesData, isLoading: msgsLoading } = trpc.chat.getMessages.useQuery(
 		{ conversationId: selectedConversationId ?? "" },
@@ -780,7 +769,7 @@ function AdminView({ userId, schoolId }: { userId: string; schoolId: string }) {
 
 	const displayMessages = viewAll
 		? (adminMessagesData?.messages ?? [])
-		: (messagesData?.messages ?? messagesData ?? []);
+		: (messagesData?.items ?? []);
 
 	return (
 		<div className="space-y-4">
@@ -816,7 +805,7 @@ function AdminView({ userId, schoolId }: { userId: string; schoolId: string }) {
 							<p className="text-sm text-muted-foreground text-center py-8">No conversations</p>
 						) : (
 							<ConversationList
-								conversations={conversations as Conversation[]}
+								conversations={conversations as unknown as Conversation[]}
 								selectedId={selectedConversationId}
 								onSelect={setSelectedConversationId}
 								currentUserId={userId}
@@ -873,7 +862,7 @@ export default function ChatPage() {
 					?.split("=")[1]
 			: undefined;
 
-	if (!(features as Record<string, boolean>).liveChatEnabled) {
+	if (!features.liveChatEnabled) {
 		return <FeatureDisabled featureName="Live Chat" />;
 	}
 
