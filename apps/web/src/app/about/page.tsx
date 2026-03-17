@@ -282,9 +282,9 @@ export default function AboutPage() {
 						The team
 					</h2>
 					<p className="text-lg text-slate-500 mb-10 leading-relaxed">
-						Abridge is built by a small team that cares about education
-						technology done right. We are based in the UK and work closely with
-						pilot schools to make sure every feature solves a real problem.
+						Abridge was built by a developer who saw how broken school-parent
+						communication is. No background in edtech — just frustration
+						with WhatsApp groups and a belief that AI can help.
 					</p>
 
 					<div className="bg-[#F8FAFC] rounded-2xl p-8 border border-slate-100">
@@ -300,10 +300,9 @@ export default function AboutPage() {
 									Founder & Developer
 								</p>
 								<p className="text-slate-600 leading-relaxed">
-									Full-stack engineer with experience in education technology.
-									Building Abridge to solve the communication problems that
-									schools face every day. Passionate about using AI responsibly
-									to reduce admin burden and keep parents connected.
+									Software engineer passionate about making school communication
+									better for parents and teachers. Building Abridge to replace
+									WhatsApp groups with something that actually works for schools.
 								</p>
 							</div>
 						</div>

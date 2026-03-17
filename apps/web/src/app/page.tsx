@@ -344,7 +344,7 @@ export default function Home() {
 							},
 							{
 								icon: CheckCircle,
-								label: "Independently Audited",
+								label: "Security-First Design",
 								color: "text-[#FF7D45]",
 								bg: "bg-[#FF7D45]/5",
 							},
@@ -389,35 +389,28 @@ export default function Home() {
 					<div className="grid md:grid-cols-3 gap-6 lg:gap-8">
 						{[
 							{
-								stat: "78%",
+								key: "whatsapp",
 								description:
-									"of UK schools use WhatsApp groups despite GDPR concerns",
-								source: "Source: Ofsted",
+									"Most UK schools rely on WhatsApp groups despite GDPR concerns",
 							},
 							{
-								stat: "5+ hrs",
+								key: "admin",
 								description:
-									"per week spent by teachers on parent communication admin",
-								source: "Source: DfE workload survey",
+									"Teachers spend hours every week on parent communication admin",
 							},
 							{
-								stat: "23%",
+								key: "progress",
 								description:
-									"of parents feel adequately informed about their child\u2019s progress",
-								source: "Source: Parentkind survey",
+									"Too many parents only hear about their child\u2019s progress at parents\u2019 evening",
 							},
 						].map((card) => (
 							<div
-								key={card.stat}
+								key={card.key}
 								className="bg-white rounded-2xl p-8 border border-slate-100 text-center shadow-sm"
 							>
-								<div className="text-4xl lg:text-5xl font-bold text-[#FF7D45] mb-3">
-									{card.stat}
-								</div>
-								<p className="text-slate-600 leading-relaxed mb-3">
+								<p className="text-slate-600 leading-relaxed">
 									{card.description}
 								</p>
-								<p className="text-xs text-slate-400">{card.source}</p>
 							</div>
 						))}
 					</div>

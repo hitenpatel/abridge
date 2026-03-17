@@ -267,14 +267,9 @@ export default function PricingPage() {
 								{[
 									"Everything in Free",
 									"Payment collection (Stripe)",
-									"Advanced analytics",
-									"Custom branding",
 									"Data export tools",
 									"Priority support",
-									"SLA guarantee",
-									"Staff training sessions",
-									"Dedicated account manager",
-									"Custom integrations (on request)",
+									"Volume discounts for MATs",
 								].map((feature) => (
 									<li key={feature} className="flex items-start gap-3 text-sm">
 										<Check className="w-4 h-4 text-[#FF7D45] mt-0.5 shrink-0" />

@@ -44,7 +44,7 @@ const FEATURES = [
 		paragraphs: [
 			"Every week, Abridge analyses each child\u2019s attendance, homework completion, reading diary entries, achievement points, and teacher notes. It then generates a clear, concise summary that parents can read in under two minutes.",
 			"Teachers review and approve summaries before they go out. The AI drafts; humans decide. Schools choose which AI provider to use \u2014 Claude, GPT-4, Gemini, Groq, or run Ollama locally so no data leaves the network.",
-			"No other school communication platform offers AI-generated progress reports. This is the feature that makes Abridge different.",
+			"AI-generated progress reports are what make Abridge different.",
 		],
 		highlights: [
 			"Personalised per-child insights",
