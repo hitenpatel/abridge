@@ -71,7 +71,7 @@ test.describe("Progress Summary", () => {
 			timeout: 10000,
 		});
 		await expect(page.getByText(/Attendance/i).first()).toBeVisible({ timeout: 10000 });
-		await expect(page.getByText(/100%/)).toBeVisible({ timeout: 10000 });
+		await expect(page.getByText(/100%/).first()).toBeVisible({ timeout: 10000 });
 		await expect(page.getByText(/Homework/i).first()).toBeVisible();
 	});
 

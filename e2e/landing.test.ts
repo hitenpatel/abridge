@@ -9,23 +9,23 @@ test.describe("Landing Page", () => {
 
 		// Verify hero heading
 		await expect(
-			page.getByRole("heading", { name: /School communications, simplified/i }),
+			page.getByRole("heading", { name: /Every child.s progress/i }),
 		).toBeVisible();
 
 		// Verify CTA buttons
-		await expect(page.getByRole("link", { name: /Start Free Trial/i })).toBeVisible();
-		await expect(page.getByRole("link", { name: /View Features/i })).toBeVisible();
+		await expect(page.getByRole("link", { name: /Apply for Early Access/i }).first()).toBeVisible();
+		await expect(page.getByText(/See How It Works/i)).toBeVisible();
 	});
 
 	test("should display features section", async ({ page }) => {
 		await page.goto("http://localhost:3000");
 
 		// Verify features heading
-		await expect(page.getByRole("heading", { name: /Everything you need/i })).toBeVisible();
+		await expect(page.getByRole("heading", { name: /Everything your school needs/i })).toBeVisible();
 
 		// Verify feature cards
-		await expect(page.getByRole("heading", { name: "Instant Updates" })).toBeVisible();
-		await expect(page.getByRole("heading", { name: "Secure Payments" })).toBeVisible();
+		await expect(page.getByRole("heading", { name: "AI Progress Summaries" })).toBeVisible();
+		await expect(page.getByRole("heading", { name: "Real-time Chat" })).toBeVisible();
 		await expect(page.getByRole("heading", { name: "Smart Attendance" })).toBeVisible();
 	});
 
@@ -34,25 +34,25 @@ test.describe("Landing Page", () => {
 
 		// Verify nav links
 		const loginLink = page.getByRole("link", { name: /Log in/i });
-		const getStartedLink = page.getByRole("link", { name: /Get Started/i });
+		const earlyAccessLink = page.getByRole("link", { name: /Apply for Early Access/i }).first();
 		await expect(loginLink).toBeVisible();
-		await expect(getStartedLink).toBeVisible();
+		await expect(earlyAccessLink).toBeVisible();
 
 		// Verify login link navigates correctly
 		await loginLink.click();
 		await expect(page).toHaveURL(/\/login/);
 	});
 
-	test("should navigate to register from Get Started", async ({ page }) => {
+	test("should navigate to setup from Apply for Early Access", async ({ page }) => {
 		await page.goto("http://localhost:3000");
 
-		await page.getByRole("link", { name: /Get Started/i }).click();
-		await expect(page).toHaveURL(/\/register/);
+		await page.getByRole("link", { name: /Apply for Early Access/i }).first().click();
+		await expect(page).toHaveURL(/\/setup/);
 	});
 
 	test("should display footer with copyright", async ({ page }) => {
 		await page.goto("http://localhost:3000");
 
-		await expect(page.getByText("© 2026 Abridge. All rights reserved.")).toBeVisible();
+		await expect(page.getByText(/© \d{4} Abridge\. All rights reserved\./)).toBeVisible();
 	});
 });

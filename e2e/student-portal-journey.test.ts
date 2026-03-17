@@ -3,6 +3,7 @@ import {
 	enableSchoolFeature,
 	getSchoolByURN,
 	getUserByEmail,
+	prisma,
 	seedChildForStudent,
 	seedHomeworkAssignment,
 } from "./helpers/seed-data";
@@ -57,6 +58,16 @@ test.describe("Student Portal", () => {
 			schoolId: school.id,
 			firstName: "Alex",
 			lastName: "Student",
+		});
+
+		// Also create a parentChild link so the homework page can find the child
+		// (the homework page uses listChildren which queries parentChild)
+		await prisma.parentChild.create({
+			data: {
+				userId: user.id,
+				childId: child.id,
+				relation: "PARENT",
+			},
 		});
 
 		// Seed a homework assignment

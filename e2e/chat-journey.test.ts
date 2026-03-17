@@ -65,9 +65,9 @@ test.describe("Parent-Teacher Chat", () => {
 		await expect(page.getByRole("heading", { name: /Chat/i })).toBeVisible({ timeout: 10000 });
 		await expect(page.getByText(/Chat with your child/i)).toBeVisible();
 
-		// === STEP 6: Click New Chat button ===
+		// === STEP 6: Click New Chat button (icon-only button with aria-label) ===
 		await page.getByLabel("New Chat").click();
-		await expect(page.getByText("New Chat")).toBeVisible();
+		await expect(page.getByRole("heading", { name: "New Chat" })).toBeVisible();
 
 		// === STEP 7: Verify staff selector is shown ===
 		await expect(page.getByText("Select Staff Member")).toBeVisible();
@@ -150,8 +150,11 @@ test.describe("Parent-Teacher Chat", () => {
 		await expect(page).toHaveURL(/\/dashboard\/chat/);
 
 		// === STEP 5: Verify conversations list shows the conversation ===
-		await expect(page.getByText("Mrs Teacher")).toBeVisible({ timeout: 10000 });
-		await expect(page.getByText("Homework help")).toBeVisible();
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByText("Mrs Teacher")).toBeVisible();
+			await expect(page.getByText("Homework help")).toBeVisible();
+		}).toPass({ timeout: 15000 });
 
 		// === STEP 6: Click on the conversation ===
 		await page.getByText("Mrs Teacher").click();
