@@ -3,6 +3,7 @@
 import { ReactionBar } from "@/components/feed/reaction-bar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
 import { format } from "date-fns";
@@ -95,90 +96,92 @@ export default function PostDetailPage() {
 
 	return (
 		<>
-			<div className="max-w-2xl mx-auto space-y-6" data-testid="post-detail">
-				<div className="flex items-center gap-3">
-					<Link href="/dashboard">
-						<Button variant="ghost" size="icon">
-							<ArrowLeft className="h-4 w-4" />
-						</Button>
-					</Link>
-					<h1 className="text-xl font-bold">Class Post</h1>
-					<span className="text-sm text-muted-foreground ml-auto">
-						{post.yearGroup} {post.className}
-					</span>
-				</div>
+			<PageShell maxWidth="2xl">
+				<div className="space-y-6 p-6" data-testid="post-detail">
+					<div className="flex items-center gap-3">
+						<Link href="/dashboard">
+							<Button variant="ghost" size="icon">
+								<ArrowLeft className="h-4 w-4" />
+							</Button>
+						</Link>
+						<h1 className="text-xl font-bold">Class Post</h1>
+						<span className="text-sm text-muted-foreground ml-auto">
+							{post.yearGroup} {post.className}
+						</span>
+					</div>
 
-				<Card>
-					<CardContent className="p-6 space-y-4">
-						{/* Author */}
-						<div className="flex items-center gap-3">
-							<div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-								<User className="h-5 w-5 text-muted-foreground" />
-							</div>
-							<div>
-								<p className="text-sm font-medium">{post.authorName}</p>
-								<p className="text-xs text-muted-foreground">
-									{format(ts, "EEEE d MMMM yyyy, h:mm a")}
-								</p>
-							</div>
-						</div>
-
-						{/* Body */}
-						{post.body && (
-							<p className="text-base text-foreground whitespace-pre-wrap leading-relaxed">
-								{post.body}
-							</p>
-						)}
-
-						{/* Images */}
-						{images.length > 0 && (
-							<div className="space-y-2">
-								{images.map((url, i) => (
-									<button
-										key={url}
-										type="button"
-										onClick={() => setExpandedImage(url)}
-										className="w-full overflow-hidden rounded-xl"
-									>
-										<img
-											src={url}
-											alt={`Post media ${i + 1}`}
-											className="w-full max-h-96 object-cover hover:scale-105 transition-transform"
-										/>
-									</button>
-								))}
-							</div>
-						)}
-
-						{/* Videos */}
-						{videos.map((url) => (
-							<button
-								key={url}
-								type="button"
-								onClick={() => window.open(url, "_blank")}
-								className="relative w-full rounded-xl overflow-hidden bg-muted"
-							>
-								<video src={url} className="w-full h-64 object-cover" preload="metadata">
-									<track kind="captions" />
-								</video>
-								<div className="absolute inset-0 flex items-center justify-center bg-black/30">
-									<div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 shadow-lg">
-										<Play className="h-6 w-6 text-foreground ml-0.5" />
-									</div>
+					<Card>
+						<CardContent className="p-6 space-y-4">
+							{/* Author */}
+							<div className="flex items-center gap-3">
+								<div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+									<User className="h-5 w-5 text-muted-foreground" />
 								</div>
-							</button>
-						))}
+								<div>
+									<p className="text-sm font-medium">{post.authorName}</p>
+									<p className="text-xs text-muted-foreground">
+										{format(ts, "EEEE d MMMM yyyy, h:mm a")}
+									</p>
+								</div>
+							</div>
 
-						{/* Reactions */}
-						<ReactionBar
-							reactionCounts={post.reactionCounts as Partial<Record<Emoji, number>>}
-							myReaction={post.myReaction as Emoji | null}
-							onReact={handleReact}
-							onRemoveReaction={handleRemoveReaction}
-						/>
-					</CardContent>
-				</Card>
-			</div>
+							{/* Body */}
+							{post.body && (
+								<p className="text-base text-foreground whitespace-pre-wrap leading-relaxed">
+									{post.body}
+								</p>
+							)}
+
+							{/* Images */}
+							{images.length > 0 && (
+								<div className="space-y-2">
+									{images.map((url, i) => (
+										<button
+											key={url}
+											type="button"
+											onClick={() => setExpandedImage(url)}
+											className="w-full overflow-hidden rounded-xl"
+										>
+											<img
+												src={url}
+												alt={`Post media ${i + 1}`}
+												className="w-full max-h-96 object-cover hover:scale-105 transition-transform"
+											/>
+										</button>
+									))}
+								</div>
+							)}
+
+							{/* Videos */}
+							{videos.map((url) => (
+								<button
+									key={url}
+									type="button"
+									onClick={() => window.open(url, "_blank")}
+									className="relative w-full rounded-xl overflow-hidden bg-muted"
+								>
+									<video src={url} className="w-full h-64 object-cover" preload="metadata">
+										<track kind="captions" />
+									</video>
+									<div className="absolute inset-0 flex items-center justify-center bg-black/30">
+										<div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 shadow-lg">
+											<Play className="h-6 w-6 text-foreground ml-0.5" />
+										</div>
+									</div>
+								</button>
+							))}
+
+							{/* Reactions */}
+							<ReactionBar
+								reactionCounts={post.reactionCounts as Partial<Record<Emoji, number>>}
+								myReaction={post.myReaction as Emoji | null}
+								onReact={handleReact}
+								onRemoveReaction={handleRemoveReaction}
+							/>
+						</CardContent>
+					</Card>
+				</div>
+			</PageShell>
 
 			{/* Lightbox */}
 			{expandedImage && (

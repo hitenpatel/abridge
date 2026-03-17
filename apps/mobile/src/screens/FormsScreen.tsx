@@ -3,6 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../../App";
 import { ChildSelector } from "../components/ChildSelector";
 import { Skeleton } from "../components/ui";
@@ -12,6 +13,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export function FormsScreen() {
 	const navigation = useNavigation<NavigationProp>();
+	const insets = useSafeAreaInsets();
 
 	const { data: summary, isLoading: summaryLoading } = trpc.dashboard.getSummary.useQuery();
 	const children = (summary?.children ?? []) as Array<{
@@ -67,7 +69,7 @@ export function FormsScreen() {
 		<ScrollView
 			testID="forms-screen"
 			className="flex-1 bg-background"
-			contentContainerStyle={{ paddingBottom: 40 }}
+			contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
 			refreshControl={
 				<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#f56e3d" />
 			}

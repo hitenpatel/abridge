@@ -38,12 +38,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="en" suppressHydrationWarning>
-			<head>
-				<link
-					href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0"
-					rel="stylesheet"
-				/>
-			</head>
+			<head />
 			<body className={cn("min-h-screen bg-background font-sans antialiased", poppins.variable)}>
 				<a
 					href="#main-content"

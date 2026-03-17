@@ -1,6 +1,7 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ScrollView, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../../App";
 import { AchievementBadge } from "../components/AchievementBadge";
 import { ProgressBar } from "../components/ProgressBar";
@@ -11,6 +12,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "StudentProfile">;
 
 export function StudentProfileScreen({ route }: Props) {
 	const { childId } = route.params;
+	const insets = useSafeAreaInsets();
 
 	const { data: summary, isLoading } = trpc.dashboard.getSummary.useQuery();
 
@@ -52,7 +54,7 @@ export function StudentProfileScreen({ route }: Props) {
 		<ScrollView
 			testID="student-profile-screen"
 			className="flex-1 bg-background"
-			contentContainerStyle={{ paddingBottom: 40 }}
+			contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
 		>
 			{/* Hero Avatar Section */}
 			<View className="items-center pt-8 pb-6">

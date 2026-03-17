@@ -1,8 +1,10 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { trpc } from "../lib/trpc";
 
 export function PaymentHistoryScreen() {
+	const insets = useSafeAreaInsets();
 	const { data: payments, isLoading } = trpc.payments.listOutstandingPayments.useQuery();
 
 	if (isLoading) {
@@ -18,7 +20,7 @@ export function PaymentHistoryScreen() {
 			<FlatList
 				data={payments ?? []}
 				keyExtractor={(item) => `${item.id}-${item.childId}`}
-				contentContainerStyle={{ padding: 24, paddingBottom: 40, flexGrow: 1 }}
+				contentContainerStyle={{ padding: 24, paddingBottom: insets.bottom + 100, flexGrow: 1 }}
 				renderItem={({ item }) => (
 					<View className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 mb-3 flex-row items-center gap-3">
 						<View className="w-10 h-10 rounded-full bg-primary/10 items-center justify-center">

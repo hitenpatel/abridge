@@ -93,7 +93,10 @@ async function main() {
 	}
 
 	// Generate index.html for easy browsing
-	const files = fs.readdirSync(OUTPUT_DIR).filter((f) => f.endsWith(".png")).sort();
+	const files = fs
+		.readdirSync(OUTPUT_DIR)
+		.filter((f) => f.endsWith(".png"))
+		.sort();
 	const desktopFiles = files.filter((f) => f.startsWith("desktop-"));
 	const mobileFiles = files.filter((f) => f.startsWith("mobile-"));
 

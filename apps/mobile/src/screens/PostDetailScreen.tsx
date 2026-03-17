@@ -114,7 +114,7 @@ export function PostDetailScreen() {
 
 			<ScrollView
 				className="flex-1"
-				contentContainerStyle={{ padding: 24, gap: 16 }}
+				contentContainerStyle={{ padding: 24, gap: 16, paddingBottom: insets.bottom + 100 }}
 				showsVerticalScrollIndicator={false}
 			>
 				{/* Author row */}

@@ -11,12 +11,15 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
-import { Download, FileText, Plus, Trash2 } from "lucide-react";
+import { ChevronRight, Clock, Download, FileText, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
@@ -92,9 +95,7 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 			{pendingForms && pendingForms.length > 0 && (
 				<div className="space-y-3" data-testid="pending-forms-section">
 					<h3 className="text-sm font-medium text-warning flex items-center gap-1">
-						<span className="material-symbols-rounded text-base" aria-hidden="true">
-							schedule
-						</span>
+						<Clock className="h-4 w-4" aria-hidden="true" />
 						Action Required
 					</h3>
 					<div className="grid gap-3">
@@ -105,13 +106,11 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 								className="group"
 								data-testid="form-item"
 							>
-								<Card className="hover:border-warning transition-colors border-warning/30">
+								<Card className="hover-lift hover:border-warning transition-colors border-warning/30">
 									<CardContent className="flex items-center justify-between p-4">
 										<div className="flex items-center gap-3">
 											<div className="p-2 bg-warning/10 rounded-xl">
-												<span className="material-symbols-rounded text-warning" aria-hidden="true">
-													description
-												</span>
+												<FileText className="h-5 w-5 text-warning" aria-hidden="true" />
 											</div>
 											<div>
 												<h4 className="font-medium text-foreground">{template.title}</h4>
@@ -124,9 +123,7 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 										</div>
 										<div className="flex items-center gap-2 text-warning font-medium text-sm">
 											Complete
-											<span className="material-symbols-rounded text-base" aria-hidden="true">
-												chevron_right
-											</span>
+											<ChevronRight className="h-4 w-4" aria-hidden="true" />
 										</div>
 									</CardContent>
 								</Card>
@@ -139,9 +136,7 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 			{completedForms && completedForms.length > 0 && (
 				<div className="space-y-3" data-testid="completed-forms-section">
 					<h3 className="text-sm font-medium text-success flex items-center gap-1">
-						<span className="material-symbols-rounded text-base" aria-hidden="true">
-							check_circle
-						</span>
+						<FileText className="h-4 w-4" aria-hidden="true" />
 						Completed
 					</h3>
 					<div className="grid gap-3">
@@ -179,10 +174,17 @@ function ChildFormsList({ childId, childName }: { childId: string; childName: st
 	);
 }
 
-function StaffFormsView({ schoolId }: { schoolId: string }) {
+function StaffFormsView({
+	schoolId,
+	showCreate,
+	setShowCreate,
+}: {
+	schoolId: string;
+	showCreate: boolean;
+	setShowCreate: (open: boolean) => void;
+}) {
 	const utils = trpc.useUtils();
 	const { data: templates, isLoading } = trpc.forms.getTemplates.useQuery({ schoolId });
-	const [showCreate, setShowCreate] = useState(false);
 	const [title, setTitle] = useState("");
 	const [fields, setFields] = useState<
 		Array<{ id: string; type: string; label: string; required: boolean }>
@@ -226,20 +228,7 @@ function StaffFormsView({ schoolId }: { schoolId: string }) {
 	};
 
 	return (
-		<div className="p-8 max-w-5xl mx-auto" data-testid="forms-list">
-			<div className="mb-8 flex items-center justify-between">
-				<div>
-					<h1 className="text-3xl font-bold text-foreground">Form Templates</h1>
-					<p className="text-muted-foreground mt-1">
-						Create and manage forms for parents to complete.
-					</p>
-				</div>
-				<Button data-testid="create-form-button" onClick={() => setShowCreate(true)}>
-					<Plus className="h-4 w-4 mr-1" />
-					Create Form
-				</Button>
-			</div>
-
+		<div data-testid="forms-list">
 			{isLoading ? (
 				<div className="space-y-4">
 					<Skeleton className="h-20 w-full" />
@@ -249,7 +238,7 @@ function StaffFormsView({ schoolId }: { schoolId: string }) {
 				<div className="grid gap-3">
 					{/* biome-ignore lint/suspicious/noExplicitAny: UI component */}
 					{templates.map((template: any) => (
-						<Card key={template.id}>
+						<Card key={template.id} className="hover-lift">
 							<CardContent className="flex items-center justify-between p-4">
 								<div className="flex items-center gap-3">
 									<div className="p-2 bg-primary/10 rounded-xl">
@@ -270,10 +259,13 @@ function StaffFormsView({ schoolId }: { schoolId: string }) {
 					))}
 				</div>
 			) : (
-				<div className="bg-muted rounded-lg p-12 text-center border border-dashed border-border">
-					<FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-					<p className="text-muted-foreground">No form templates yet. Create one to get started.</p>
-				</div>
+				<EmptyState
+					icon={FileText}
+					title="No form templates yet"
+					description="Create one to get started."
+					actionLabel="Create Form"
+					onAction={() => setShowCreate(true)}
+				/>
 			)}
 
 			<Dialog open={showCreate} onOpenChange={setShowCreate}>
@@ -355,6 +347,7 @@ export default function FormsPage() {
 	const features = useFeatureToggles();
 	const { data: session } = trpc.auth.getSession.useQuery();
 	const isStaff = !!session?.staffRole && !!session?.schoolId;
+	const [staffCreateOpen, setStaffCreateOpen] = useState(false);
 	const {
 		data: summaryData,
 		isLoading,
@@ -364,54 +357,69 @@ export default function FormsPage() {
 	if (!features.formsEnabled) return <FeatureDisabled featureName="Forms" />;
 
 	if (isStaff && session.schoolId) {
-		return <StaffFormsView schoolId={session.schoolId} />;
+		return (
+			<PageShell maxWidth="4xl">
+				<PageHeader icon={FileText} title="Forms" description="School forms and submissions">
+					<Button data-testid="create-form-button" onClick={() => setStaffCreateOpen(true)}>
+						<Plus className="h-4 w-4 mr-1" />
+						Create Form
+					</Button>
+				</PageHeader>
+				<StaffFormsView
+					schoolId={session.schoolId}
+					showCreate={staffCreateOpen}
+					setShowCreate={setStaffCreateOpen}
+				/>
+			</PageShell>
+		);
 	}
 
 	if (isLoading) {
 		return (
-			<div className="p-8 max-w-5xl mx-auto space-y-8">
-				<Skeleton className="h-10 w-1/4" />
-				<div className="space-y-4">
-					<Skeleton className="h-32 w-full" />
-					<Skeleton className="h-32 w-full" />
+			<PageShell maxWidth="4xl">
+				<PageHeader icon={FileText} title="Forms" description="School forms and submissions" />
+				<div className="space-y-8">
+					<Skeleton className="h-10 w-1/4" />
+					<div className="space-y-4">
+						<Skeleton className="h-32 w-full" />
+						<Skeleton className="h-32 w-full" />
+					</div>
 				</div>
-			</div>
+			</PageShell>
 		);
 	}
 
 	if (error) {
 		return (
-			<div className="p-8 max-w-5xl mx-auto text-center text-destructive">
-				Error loading forms: {error.message}
-			</div>
+			<PageShell maxWidth="4xl">
+				<PageHeader icon={FileText} title="Forms" description="School forms and submissions" />
+				<div className="text-center text-destructive">Error loading forms: {error.message}</div>
+			</PageShell>
 		);
 	}
 
 	const children = summaryData?.children || [];
 
 	return (
-		<div className="p-8 max-w-5xl mx-auto" data-testid="forms-list">
-			<div className="mb-8">
-				<h1 className="text-3xl font-bold text-foreground">Forms & Consent</h1>
-				<p className="text-muted-foreground mt-1">
-					Review and sign important documents from your children&apos;s school.
-				</p>
-			</div>
-
-			{children.length > 0 ? (
-				children.map((child) => (
-					<ChildFormsList
-						key={child.id}
-						childId={child.id}
-						childName={`${child.firstName} ${child.lastName}`}
+		<PageShell maxWidth="4xl">
+			<PageHeader icon={FileText} title="Forms" description="School forms and submissions" />
+			<div data-testid="forms-list">
+				{children.length > 0 ? (
+					children.map((child) => (
+						<ChildFormsList
+							key={child.id}
+							childId={child.id}
+							childName={`${child.firstName} ${child.lastName}`}
+						/>
+					))
+				) : (
+					<EmptyState
+						icon={FileText}
+						title="No forms available"
+						description="No forms available at this time."
 					/>
-				))
-			) : (
-				<div className="bg-muted rounded-lg p-12 text-center border border-dashed border-border">
-					<FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-					<p className="text-muted-foreground">No forms available at this time.</p>
-				</div>
-			)}
-		</div>
+				)}
+			</div>
+		</PageShell>
 	);
 }

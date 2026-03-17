@@ -186,9 +186,7 @@ export default function Home() {
 							<div className="w-9 h-9 rounded-xl bg-[#FF7D45] flex items-center justify-center transition-transform group-hover:scale-105">
 								<BookOpen className="w-5 h-5 text-white" strokeWidth={2.5} />
 							</div>
-							<span className="text-xl font-bold tracking-tight text-white">
-								Abridge
-							</span>
+							<span className="text-xl font-bold tracking-tight text-white">Abridge</span>
 						</Link>
 
 						{/* Desktop links */}
@@ -228,11 +226,7 @@ export default function Home() {
 							onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
 							aria-label="Toggle menu"
 						>
-							{mobileMenuOpen ? (
-								<XIcon className="w-6 h-6" />
-							) : (
-								<Menu className="w-6 h-6" />
-							)}
+							{mobileMenuOpen ? <XIcon className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
 						</button>
 					</div>
 				</div>
@@ -273,7 +267,7 @@ export default function Home() {
 			{/* ============================================================ */}
 			{/*  1. HERO SECTION                                              */}
 			{/* ============================================================ */}
-			<section className="relative pt-28 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
+			<section className="relative pt-28 pb-20 lg:pt-40 lg:pb-32 overflow-hidden bg-gradient-to-b from-orange-50/50 to-background dark:from-orange-950/20">
 				{/* Gradient background */}
 				<div className="absolute inset-0 bg-gradient-to-b from-[#1E3A5F]/8 via-[#1E3A5F]/3 to-white pointer-events-none" />
 				<div className="absolute top-20 right-0 w-[600px] h-[600px] bg-[#1E3A5F]/5 rounded-full blur-3xl pointer-events-none" />
@@ -293,8 +287,8 @@ export default function Home() {
 						</h1>
 
 						<p className="text-lg sm:text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed">
-							Abridge is the AI-first school communication platform. Replace
-							WhatsApp. Automate reports. Keep every parent engaged.
+							Abridge is the AI-first school communication platform. Replace WhatsApp. Automate
+							reports. Keep every parent engaged.
 						</p>
 
 						<div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
@@ -365,9 +359,7 @@ export default function Home() {
 									className={`flex flex-col items-center text-center gap-3 ${badge.bg} rounded-xl py-5 px-4`}
 								>
 									<Icon className={`w-7 h-7 ${badge.color}`} />
-									<span className="text-sm font-semibold text-slate-700">
-										{badge.label}
-									</span>
+									<span className="text-sm font-semibold text-slate-700">{badge.label}</span>
 								</div>
 							);
 						})}
@@ -388,10 +380,9 @@ export default function Home() {
 							Why Abridge exists
 						</h2>
 						<p className="text-lg text-slate-500 leading-relaxed">
-							Schools spend hours on admin that could be automated. Parents miss
-							updates buried in WhatsApp groups. Children&apos;s progress goes
-							unreported until parents&apos; evening. We built Abridge to fix all
-							three.
+							Schools spend hours on admin that could be automated. Parents miss updates buried in
+							WhatsApp groups. Children&apos;s progress goes unreported until parents&apos; evening.
+							We built Abridge to fix all three.
 						</p>
 					</div>
 
@@ -399,13 +390,11 @@ export default function Home() {
 						{[
 							{
 								key: "whatsapp",
-								description:
-									"Most UK schools rely on WhatsApp groups despite GDPR concerns",
+								description: "Most UK schools rely on WhatsApp groups despite GDPR concerns",
 							},
 							{
 								key: "admin",
-								description:
-									"Teachers spend hours every week on parent communication admin",
+								description: "Teachers spend hours every week on parent communication admin",
 							},
 							{
 								key: "progress",
@@ -417,9 +406,7 @@ export default function Home() {
 								key={card.key}
 								className="bg-white rounded-2xl p-8 border border-slate-100 text-center shadow-sm"
 							>
-								<p className="text-slate-600 leading-relaxed">
-									{card.description}
-								</p>
+								<p className="text-slate-600 leading-relaxed">{card.description}</p>
 							</div>
 						))}
 					</div>
@@ -443,12 +430,14 @@ export default function Home() {
 
 					{/* Main 2x2 grid */}
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
-						{([
-							{ src: "dashboard", alt: "Parent Dashboard", label: "Parent Dashboard" },
-							{ src: "homework", alt: "Homework Tracker", label: "Homework Tracker" },
-							{ src: "progress", alt: "AI Progress Summaries", label: "AI Progress Summaries" },
-							{ src: "achievements", alt: "Achievement Wall", label: "Achievement Wall" },
-						] as const).map((shot) => (
+						{(
+							[
+								{ src: "dashboard", alt: "Parent Dashboard", label: "Parent Dashboard" },
+								{ src: "homework", alt: "Homework Tracker", label: "Homework Tracker" },
+								{ src: "progress", alt: "AI Progress Summaries", label: "AI Progress Summaries" },
+								{ src: "achievements", alt: "Achievement Wall", label: "Achievement Wall" },
+							] as const
+						).map((shot) => (
 							<div key={shot.src} className="flex flex-col gap-3">
 								{/* Browser-window frame */}
 								<div className="rounded-xl overflow-hidden shadow-lg border border-slate-200">
@@ -471,12 +460,14 @@ export default function Home() {
 
 					{/* "See more" row — 4 smaller thumbnails */}
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-						{([
-							{ src: "reading", alt: "Reading Diary", label: "Reading Diary" },
-							{ src: "calendar", alt: "School Calendar", label: "School Calendar" },
-							{ src: "messages", alt: "Messages", label: "Messages" },
-							{ src: "attendance", alt: "Attendance", label: "Attendance" },
-						] as const).map((shot) => (
+						{(
+							[
+								{ src: "reading", alt: "Reading Diary", label: "Reading Diary" },
+								{ src: "calendar", alt: "School Calendar", label: "School Calendar" },
+								{ src: "messages", alt: "Messages", label: "Messages" },
+								{ src: "attendance", alt: "Attendance", label: "Attendance" },
+							] as const
+						).map((shot) => (
 							<div key={shot.src} className="flex flex-col gap-2">
 								<div className="rounded-lg overflow-hidden shadow-md border border-slate-200">
 									<div className="bg-slate-100 border-b border-slate-200 px-3 py-2 flex items-center gap-1">
@@ -500,18 +491,15 @@ export default function Home() {
 			{/* ============================================================ */}
 			{/*  4. FEATURES — ALTERNATING LAYOUT                             */}
 			{/* ============================================================ */}
-			<section
-				id="features"
-				className="py-20 lg:py-28 bg-gradient-to-b from-white to-slate-50"
-			>
+			<section id="features" className="py-20 lg:py-28 bg-gradient-to-b from-white to-slate-50">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="text-center max-w-3xl mx-auto mb-16">
 						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-[#1E3A5F]">
 							Everything your school needs
 						</h2>
 						<p className="text-lg text-slate-500">
-							Six powerful modules that replace fragmented tools with one
-							unified, AI-enhanced platform.
+							Six powerful modules that replace fragmented tools with one unified, AI-enhanced
+							platform.
 						</p>
 					</div>
 
@@ -522,18 +510,17 @@ export default function Home() {
 							return (
 								<div
 									key={feature.title}
-									className={`flex flex-col lg:flex-row items-center gap-8 lg:gap-16 ${
+									className={`stagger-child flex flex-col lg:flex-row items-center gap-8 lg:gap-16 ${
 										isReversed ? "lg:flex-row-reverse" : ""
 									}`}
+									style={{ "--stagger-index": i } as React.CSSProperties}
 								>
 									{/* Visual placeholder */}
 									<div className="w-full lg:w-1/2">
 										<div
 											className={`${feature.bg} rounded-2xl aspect-[4/3] flex items-center justify-center relative overflow-hidden`}
 										>
-											<Icon
-												className={`w-20 h-20 ${feature.color} opacity-20`}
-											/>
+											<Icon className={`w-20 h-20 ${feature.color} opacity-20`} />
 											{feature.badge && (
 												<div className="absolute top-4 right-4 bg-[#FF7D45]/10 text-[#FF7D45] text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
 													<Sparkles className="w-3 h-3" />
@@ -549,15 +536,9 @@ export default function Home() {
 										>
 											<Icon className={`w-6 h-6 ${feature.color}`} />
 										</div>
-										<h3 className="text-2xl font-bold mb-3 text-[#1E3A5F]">
-											{feature.title}
-										</h3>
-										<p className="text-slate-500 leading-relaxed mb-2">
-											{feature.description}
-										</p>
-										<p className="text-sm text-slate-400 mb-4">
-											{feature.detail}
-										</p>
+										<h3 className="text-2xl font-bold mb-3 text-[#1E3A5F]">{feature.title}</h3>
+										<p className="text-slate-500 leading-relaxed mb-2">{feature.description}</p>
+										<p className="text-sm text-slate-400 mb-4">{feature.detail}</p>
 										<Link
 											href="/features"
 											className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#FF7D45] hover:text-[#E86B35] transition-colors"
@@ -576,10 +557,7 @@ export default function Home() {
 			{/* ============================================================ */}
 			{/*  5. AI SHOWCASE                                               */}
 			{/* ============================================================ */}
-			<section
-				id="ai-showcase"
-				className="py-20 lg:py-28 bg-gradient-to-b from-slate-50 to-white"
-			>
+			<section id="ai-showcase" className="py-20 lg:py-28 bg-gradient-to-b from-slate-50 to-white">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="max-w-3xl mx-auto text-center mb-16">
 						<div className="inline-flex items-center gap-2 bg-violet-100 text-violet-700 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
@@ -590,20 +568,17 @@ export default function Home() {
 							AI that respects your data
 						</h2>
 						<p className="text-lg text-slate-500">
-							Choose your provider. Run locally with Ollama. Or turn AI off
-							entirely. You are always in control.
+							Choose your provider. Run locally with Ollama. Or turn AI off entirely. You are always
+							in control.
 						</p>
 					</div>
 
 					<div className="max-w-2xl mx-auto">
 						{/* Provider selection card */}
 						<div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
-							<h3 className="text-lg font-semibold mb-2 text-[#1E3A5F]">
-								Choose your AI provider
-							</h3>
+							<h3 className="text-lg font-semibold mb-2 text-[#1E3A5F]">Choose your AI provider</h3>
 							<p className="text-sm text-slate-500 mb-6">
-								Your data, your rules. Run AI locally with Ollama for complete
-								data sovereignty.
+								Your data, your rules. Run AI locally with Ollama for complete data sovereignty.
 							</p>
 							<div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
 								{[
@@ -620,21 +595,15 @@ export default function Home() {
 											<Brain className="w-5 h-5 text-[#1E3A5F]" />
 										</div>
 										<div className="text-center">
-											<div className="text-sm font-medium">
-												{provider.name}
-											</div>
-											<div className="text-xs text-slate-400">
-												{provider.sub}
-											</div>
+											<div className="text-sm font-medium">{provider.name}</div>
+											<div className="text-xs text-slate-400">{provider.sub}</div>
 										</div>
 									</div>
 								))}
 							</div>
 							<div className="mt-6 flex items-center gap-2 text-xs text-emerald-600 bg-emerald-50 px-4 py-2.5 rounded-lg">
 								<Lock className="w-3.5 h-3.5 shrink-0" />
-								<span>
-									On-premises option keeps all student data on your network
-								</span>
+								<span>On-premises option keeps all student data on your network</span>
 							</div>
 						</div>
 					</div>
@@ -651,8 +620,8 @@ export default function Home() {
 							See how Abridge compares
 						</h2>
 						<p className="text-lg text-slate-500">
-							The only platform that combines AI insights, real-time chat, and
-							full school management in one place.
+							The only platform that combines AI insights, real-time chat, and full school
+							management in one place.
 						</p>
 					</div>
 
@@ -683,9 +652,7 @@ export default function Home() {
 										key={feature}
 										className={`border-b border-slate-100 ${i % 2 === 0 ? "bg-white" : "bg-slate-50/50"}`}
 									>
-										<td className="py-4 px-6 text-sm font-medium">
-											{feature}
-										</td>
+										<td className="py-4 px-6 text-sm font-medium">{feature}</td>
 										<td className="py-4 px-6 text-center bg-[#1E3A5F]/5">
 											{COMPETITOR_DATA.Abridge?.[i] ? (
 												<Check className="w-5 h-5 text-[#FF7D45] mx-auto" />
@@ -711,10 +678,7 @@ export default function Home() {
 					{/* Mobile comparison cards */}
 					<div className="lg:hidden space-y-4">
 						{COMPARISON_FEATURES.map((feature, i) => (
-							<div
-								key={feature}
-								className="bg-white rounded-xl border border-slate-200 p-4"
-							>
+							<div key={feature} className="bg-white rounded-xl border border-slate-200 p-4">
 								<div className="text-sm font-medium mb-3">{feature}</div>
 								<div className="grid grid-cols-5 gap-2 text-center">
 									{["Abridge", ...COMPETITORS].map((name) => (
@@ -729,9 +693,7 @@ export default function Home() {
 													className={`w-4 h-4 mx-auto ${name === "Abridge" ? "text-[#FF7D45]" : "text-emerald-500"}`}
 												/>
 											) : (
-												<span className="text-slate-300 text-sm">
-													&mdash;
-												</span>
+												<span className="text-slate-300 text-sm">&mdash;</span>
 											)}
 										</div>
 									))}
@@ -745,10 +707,7 @@ export default function Home() {
 			{/* ============================================================ */}
 			{/*  7. PRICING                                                   */}
 			{/* ============================================================ */}
-			<section
-				id="pricing"
-				className="py-20 lg:py-28 bg-gradient-to-b from-slate-50 to-white"
-			>
+			<section id="pricing" className="py-20 lg:py-28 bg-gradient-to-b from-slate-50 to-white">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="text-center max-w-3xl mx-auto mb-16">
 						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-[#1E3A5F]">
@@ -763,17 +722,11 @@ export default function Home() {
 						{/* Free tier */}
 						<div className="relative bg-white rounded-2xl p-8 border-2 border-slate-200 hover:shadow-lg transition-shadow">
 							<div className="mb-6">
-								<h3 className="text-lg font-semibold mb-1 text-[#1E3A5F]">
-									Free
-								</h3>
-								<p className="text-sm text-slate-500">
-									For pilot programme schools
-								</p>
+								<h3 className="text-lg font-semibold mb-1 text-[#1E3A5F]">Free</h3>
+								<p className="text-sm text-slate-500">For pilot programme schools</p>
 							</div>
 							<div className="mb-6">
-								<span className="text-4xl font-bold text-[#1E3A5F]">
-									{"\u00A3"}0
-								</span>
+								<span className="text-4xl font-bold text-[#1E3A5F]">{"\u00A3"}0</span>
 								<span className="text-slate-500 ml-1">/month</span>
 							</div>
 							<ul className="space-y-3 mb-8">
@@ -805,21 +758,13 @@ export default function Home() {
 								After Pilot
 							</div>
 							<div className="mb-6">
-								<h3 className="text-lg font-semibold mb-1 text-[#1E3A5F]">
-									Pro
-								</h3>
-								<p className="text-sm text-slate-500">
-									For schools ready to commit
-								</p>
+								<h3 className="text-lg font-semibold mb-1 text-[#1E3A5F]">Pro</h3>
+								<p className="text-sm text-slate-500">For schools ready to commit</p>
 							</div>
 							<div className="mb-6">
-								<span className="text-4xl font-bold text-[#1E3A5F]">
-									{"\u00A3"}42
-								</span>
+								<span className="text-4xl font-bold text-[#1E3A5F]">{"\u00A3"}42</span>
 								<span className="text-slate-500 ml-1">/month</span>
-								<p className="text-xs text-slate-400 mt-1">
-									Billed annually at {"\u00A3"}500/year
-								</p>
+								<p className="text-xs text-slate-400 mt-1">Billed annually at {"\u00A3"}500/year</p>
 							</div>
 							<ul className="space-y-3 mb-8">
 								{[
@@ -856,9 +801,7 @@ export default function Home() {
 						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-[#1E3A5F]">
 							Frequently asked questions
 						</h2>
-						<p className="text-lg text-slate-500">
-							Everything you need to know about Abridge.
-						</p>
+						<p className="text-lg text-slate-500">Everything you need to know about Abridge.</p>
 					</div>
 
 					<div className="space-y-3">
@@ -882,9 +825,7 @@ export default function Home() {
 								</button>
 								<div
 									className={`overflow-hidden transition-all duration-300 ${
-										openFaq === i
-											? "max-h-96 opacity-100"
-											: "max-h-0 opacity-0"
+										openFaq === i ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
 									}`}
 								>
 									<div className="px-6 pb-5 text-sm text-slate-500 leading-relaxed">
@@ -908,8 +849,8 @@ export default function Home() {
 						Ready for yours.
 					</h2>
 					<p className="text-lg text-blue-100 mb-10 max-w-2xl mx-auto">
-						We are onboarding a small number of pilot schools to help shape the
-						platform. Apply today and get full access at no cost.
+						We are onboarding a small number of pilot schools to help shape the platform. Apply
+						today and get full access at no cost.
 					</p>
 					<Link
 						href="/setup"
@@ -936,38 +877,26 @@ export default function Home() {
 								<span className="text-lg font-bold text-white">Abridge</span>
 							</div>
 							<p className="text-sm leading-relaxed">
-								The AI-first school communication platform. Built for UK
-								schools.
+								The AI-first school communication platform. Built for UK schools.
 							</p>
 						</div>
 
 						{/* Product */}
 						<div>
-							<h4 className="text-sm font-semibold text-white mb-4">
-								Product
-							</h4>
+							<h4 className="text-sm font-semibold text-white mb-4">Product</h4>
 							<ul className="space-y-2.5 text-sm">
 								<li>
-									<Link
-										href="/features"
-										className="hover:text-white transition-colors"
-									>
+									<Link href="/features" className="hover:text-white transition-colors">
 										Features
 									</Link>
 								</li>
 								<li>
-									<Link
-										href="/pricing"
-										className="hover:text-white transition-colors"
-									>
+									<Link href="/pricing" className="hover:text-white transition-colors">
 										Pricing
 									</Link>
 								</li>
 								<li>
-									<a
-										href="#comparison"
-										className="hover:text-white transition-colors"
-									>
+									<a href="#comparison" className="hover:text-white transition-colors">
 										Compare
 									</a>
 								</li>
@@ -976,15 +905,10 @@ export default function Home() {
 
 						{/* Company */}
 						<div>
-							<h4 className="text-sm font-semibold text-white mb-4">
-								Company
-							</h4>
+							<h4 className="text-sm font-semibold text-white mb-4">Company</h4>
 							<ul className="space-y-2.5 text-sm">
 								<li>
-									<Link
-										href="/about"
-										className="hover:text-white transition-colors"
-									>
+									<Link href="/about" className="hover:text-white transition-colors">
 										About
 									</Link>
 								</li>
@@ -1005,18 +929,12 @@ export default function Home() {
 							<h4 className="text-sm font-semibold text-white mb-4">Legal</h4>
 							<ul className="space-y-2.5 text-sm">
 								<li>
-									<a
-										href="/privacy"
-										className="hover:text-white transition-colors"
-									>
+									<a href="/privacy" className="hover:text-white transition-colors">
 										Privacy Policy
 									</a>
 								</li>
 								<li>
-									<a
-										href="/terms"
-										className="hover:text-white transition-colors"
-									>
+									<a href="/terms" className="hover:text-white transition-colors">
 										Terms of Service
 									</a>
 								</li>

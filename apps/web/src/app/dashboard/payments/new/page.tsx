@@ -1,9 +1,11 @@
 "use client";
 
 import { PaymentItemForm } from "@/components/payments/payment-item-form";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
-import Link from "next/link";
+import { CreditCard } from "lucide-react";
 
 export default function NewPaymentItemPage() {
 	const { data: session, isLoading } = trpc.auth.getSession.useQuery();
@@ -11,35 +13,29 @@ export default function NewPaymentItemPage() {
 
 	if (isLoading) {
 		return (
-			<div className="max-w-2xl mx-auto px-4 py-8 space-y-4">
-				<Skeleton className="h-8 w-1/3" />
-				<Skeleton className="h-64 w-full" />
-			</div>
+			<PageShell maxWidth="2xl">
+				<div className="space-y-4">
+					<Skeleton className="h-8 w-1/3" />
+					<Skeleton className="h-64 w-full" />
+				</div>
+			</PageShell>
 		);
 	}
 
 	if (!schoolId) {
 		return (
-			<div className="max-w-2xl mx-auto px-4 py-8 text-center text-muted-foreground">
-				You must be a staff member to create payment items.
-			</div>
+			<PageShell maxWidth="2xl">
+				<div className="text-center text-muted-foreground py-8">
+					You must be a staff member to create payment items.
+				</div>
+			</PageShell>
 		);
 	}
 
 	return (
-		<div className="max-w-2xl mx-auto px-4 py-8">
-			<div className="mb-8">
-				<Link
-					href="/dashboard/payments"
-					className="text-primary-600 hover:text-primary-700 text-sm font-medium mb-2 inline-block"
-				>
-					&larr; Back to Payments
-				</Link>
-				<h1 className="text-2xl font-bold text-foreground">Create Payment Item</h1>
-				<p className="text-muted-foreground">Assign a new fee or contribution to students.</p>
-			</div>
-
+		<PageShell maxWidth="2xl">
+			<PageHeader icon={CreditCard} title="New Payment Request" />
 			<PaymentItemForm schoolId={schoolId} />
-		</div>
+		</PageShell>
 	);
 }

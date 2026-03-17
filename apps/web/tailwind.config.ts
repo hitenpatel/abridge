@@ -66,6 +66,31 @@ const config: Config = {
 			boxShadow: {
 				soft: "0 4px 20px -2px rgba(0, 0, 0, 0.05)",
 				glow: "0 0 15px rgba(255, 125, 69, 0.3)",
+				glass: "0 8px 32px rgba(0, 0, 0, 0.08)",
+			},
+			keyframes: {
+				fadeInUp: {
+					from: { opacity: "0", transform: "translateY(12px)" },
+					to: { opacity: "1", transform: "translateY(0)" },
+				},
+				fadeIn: {
+					from: { opacity: "0" },
+					to: { opacity: "1" },
+				},
+				slideInRight: {
+					from: { opacity: "0", transform: "translateX(12px)" },
+					to: { opacity: "1", transform: "translateX(0)" },
+				},
+				scaleIn: {
+					from: { opacity: "0", transform: "scale(0.95)" },
+					to: { opacity: "1", transform: "scale(1)" },
+				},
+			},
+			animation: {
+				"fade-in-up": "fadeInUp 0.4s ease-out",
+				"fade-in": "fadeIn 0.3s ease-out",
+				"slide-in-right": "slideInRight 0.3s ease-out",
+				"scale-in": "scaleIn 0.3s ease-out",
 			},
 		},
 	},

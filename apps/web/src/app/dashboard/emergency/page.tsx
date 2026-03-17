@@ -3,6 +3,8 @@
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
@@ -297,17 +299,18 @@ export default function EmergencyPage() {
 	}
 
 	return (
-		<div className="space-y-6 p-6">
-			<div>
-				<h1 className="text-2xl font-bold">Emergency Communications</h1>
-				<p className="text-muted-foreground">
-					Alert all parents immediately during critical incidents
-				</p>
-			</div>
+		<PageShell maxWidth="4xl">
+			<div className="space-y-6 p-6">
+				<PageHeader
+					icon={Shield}
+					title="Emergency Communications"
+					description="Alert all parents immediately during critical incidents"
+				/>
 
-			<ActiveAlert schoolId={session.schoolId} />
-			<InitiateAlert schoolId={session.schoolId} />
-			<AlertHistory schoolId={session.schoolId} />
-		</div>
+				<ActiveAlert schoolId={session.schoolId} />
+				<InitiateAlert schoolId={session.schoolId} />
+				<AlertHistory schoolId={session.schoolId} />
+			</div>
+		</PageShell>
 	);
 }

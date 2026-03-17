@@ -12,11 +12,14 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
-import { Clock, Plus, Users, X } from "lucide-react";
+import { Clock, Plus, Trophy, Users, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -154,21 +157,15 @@ export default function ClubsPage() {
 	}
 
 	return (
-		<div className="max-w-4xl mx-auto">
-			<div className="flex items-center justify-between mb-6">
-				<div className="flex items-center gap-3">
-					<span className="material-symbols-rounded text-primary text-3xl" aria-hidden="true">
-						sports_soccer
-					</span>
-					<h1 className="text-3xl font-bold text-slate-800">Clubs</h1>
-				</div>
+		<PageShell maxWidth="4xl">
+			<PageHeader icon={Trophy} title="Clubs" description="After-school clubs and activities">
 				{isStaff && (
 					<Button onClick={() => setShowCreate(true)}>
 						<Plus className="w-4 h-4 mr-1" />
 						Create Club
 					</Button>
 				)}
-			</div>
+			</PageHeader>
 
 			{/* Club listing */}
 			<div className="space-y-4">
@@ -176,7 +173,7 @@ export default function ClubsPage() {
 					clubs.map((club) => {
 						const spotsLeft = club.maxCapacity - club._count.enrollments;
 						return (
-							<Card key={club.id} className="hover:shadow-md transition-shadow">
+							<Card key={club.id} className="hover-lift">
 								<CardContent className="p-5">
 									<div className="flex items-start justify-between">
 										<div className="flex-1">
@@ -232,18 +229,11 @@ export default function ClubsPage() {
 						);
 					})
 				) : (
-					<div className="text-center py-12 bg-muted rounded-lg border-2 border-dashed border-border">
-						<span
-							className="material-symbols-rounded text-5xl text-muted-foreground mb-3 block"
-							aria-hidden="true"
-						>
-							sports_soccer
-						</span>
-						<p className="text-muted-foreground font-medium">No clubs available</p>
-						{isStaff && (
-							<p className="text-sm text-muted-foreground mt-1">Create a club to get started</p>
-						)}
-					</div>
+					<EmptyState
+						icon={Trophy}
+						title="No clubs available"
+						description={isStaff ? "Create a club to get started" : undefined}
+					/>
 				)}
 			</div>
 
@@ -439,7 +429,7 @@ export default function ClubsPage() {
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
-		</div>
+		</PageShell>
 	);
 }
 

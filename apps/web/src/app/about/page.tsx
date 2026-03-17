@@ -61,9 +61,7 @@ export default function AboutPage() {
 							<div className="w-9 h-9 rounded-xl bg-[#FF7D45] flex items-center justify-center transition-transform group-hover:scale-105">
 								<BookOpen className="w-5 h-5 text-white" strokeWidth={2.5} />
 							</div>
-							<span className="text-xl font-bold tracking-tight text-white">
-								Abridge
-							</span>
+							<span className="text-xl font-bold tracking-tight text-white">Abridge</span>
 						</Link>
 						<div className="hidden lg:flex items-center gap-8">
 							{NAV_LINKS.map((link) => (
@@ -97,11 +95,7 @@ export default function AboutPage() {
 							onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
 							aria-label="Toggle menu"
 						>
-							{mobileMenuOpen ? (
-								<XIcon className="w-6 h-6" />
-							) : (
-								<Menu className="w-6 h-6" />
-							)}
+							{mobileMenuOpen ? <XIcon className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
 						</button>
 					</div>
 				</div>
@@ -149,8 +143,8 @@ export default function AboutPage() {
 						better tools
 					</h1>
 					<p className="text-lg sm:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
-						Abridge exists because the way schools communicate with parents is
-						broken. We are building the platform to fix it.
+						Abridge exists because the way schools communicate with parents is broken. We are
+						building the platform to fix it.
 					</p>
 				</div>
 			</section>
@@ -165,23 +159,21 @@ export default function AboutPage() {
 					</h2>
 					<div className="space-y-6 text-lg text-slate-600 leading-relaxed">
 						<p>
-							School staff spend hours every week on communication admin that
-							adds no educational value. Writing individual messages to parents.
-							Chasing absent students. Compiling progress reports by hand. Filing
-							paper forms. Managing WhatsApp groups that technically violate
-							GDPR.
+							School staff spend hours every week on communication admin that adds no educational
+							value. Writing individual messages to parents. Chasing absent students. Compiling
+							progress reports by hand. Filing paper forms. Managing WhatsApp groups that
+							technically violate GDPR.
 						</p>
 						<p>
-							On the other side, parents feel disconnected. They hear about their
-							child&apos;s progress twice a year at parents&apos; evening. They
-							miss important announcements buried in email inboxes. They resort
-							to WhatsApp groups because the school&apos;s official tools are
-							clunky and slow.
+							On the other side, parents feel disconnected. They hear about their child&apos;s
+							progress twice a year at parents&apos; evening. They miss important announcements
+							buried in email inboxes. They resort to WhatsApp groups because the school&apos;s
+							official tools are clunky and slow.
 						</p>
 						<p>
-							And the children? Their day-to-day achievements, struggles, and
-							progress go largely unrecorded and uncommunicated. The gap between
-							what happens at school and what parents know about it is enormous.
+							And the children? Their day-to-day achievements, struggles, and progress go largely
+							unrecorded and uncommunicated. The gap between what happens at school and what parents
+							know about it is enormous.
 						</p>
 					</div>
 				</div>
@@ -197,18 +189,16 @@ export default function AboutPage() {
 					</h2>
 					<div className="space-y-6 text-lg text-slate-600 leading-relaxed mb-12">
 						<p>
-							Abridge is an AI-first school communication platform. That means
-							AI is not bolted on as an afterthought &mdash; it is woven into
-							every feature. Weekly progress summaries are generated
-							automatically. Messages are drafted intelligently. Attendance
-							patterns are detected before they become problems.
+							Abridge is an AI-first school communication platform. That means AI is not bolted on
+							as an afterthought &mdash; it is woven into every feature. Weekly progress summaries
+							are generated automatically. Messages are drafted intelligently. Attendance patterns
+							are detected before they become problems.
 						</p>
 						<p>
-							But &ldquo;AI-first&rdquo; does not mean &ldquo;AI-only&rdquo;.
-							Every AI feature is optional and toggled per-school. Schools choose
-							their AI provider &mdash; or run Ollama locally so no data ever
-							leaves their network. Teachers always review AI output before it
-							reaches parents.
+							But &ldquo;AI-first&rdquo; does not mean &ldquo;AI-only&rdquo;. Every AI feature is
+							optional and toggled per-school. Schools choose their AI provider &mdash; or run
+							Ollama locally so no data ever leaves their network. Teachers always review AI output
+							before it reaches parents.
 						</p>
 					</div>
 
@@ -260,12 +250,8 @@ export default function AboutPage() {
 									<div className="w-10 h-10 rounded-xl bg-[#1E3A5F]/5 flex items-center justify-center mb-4">
 										<Icon className="w-5 h-5 text-[#1E3A5F]" />
 									</div>
-									<h3 className="text-lg font-semibold mb-2 text-[#1E3A5F]">
-										{value.title}
-									</h3>
-									<p className="text-sm text-slate-500 leading-relaxed">
-										{value.description}
-									</p>
+									<h3 className="text-lg font-semibold mb-2 text-[#1E3A5F]">{value.title}</h3>
+									<p className="text-sm text-slate-500 leading-relaxed">{value.description}</p>
 								</div>
 							);
 						})}
@@ -282,9 +268,9 @@ export default function AboutPage() {
 						The team
 					</h2>
 					<p className="text-lg text-slate-500 mb-10 leading-relaxed">
-						Abridge was built by a developer who saw how broken school-parent
-						communication is. No background in edtech — just frustration
-						with WhatsApp groups and a belief that AI can help.
+						Abridge was built by a developer who saw how broken school-parent communication is. No
+						background in edtech — just frustration with WhatsApp groups and a belief that AI can
+						help.
 					</p>
 
 					<div className="bg-[#F8FAFC] rounded-2xl p-8 border border-slate-100">
@@ -293,16 +279,12 @@ export default function AboutPage() {
 								<span className="text-2xl font-bold text-[#1E3A5F]">HP</span>
 							</div>
 							<div>
-								<h3 className="text-lg font-semibold text-[#1E3A5F]">
-									Hiten Patel
-								</h3>
-								<p className="text-sm text-[#FF7D45] font-medium mb-3">
-									Founder & Developer
-								</p>
+								<h3 className="text-lg font-semibold text-[#1E3A5F]">Hiten Patel</h3>
+								<p className="text-sm text-[#FF7D45] font-medium mb-3">Founder & Developer</p>
 								<p className="text-slate-600 leading-relaxed">
-									Software engineer passionate about making school communication
-									better for parents and teachers. Building Abridge to replace
-									WhatsApp groups with something that actually works for schools.
+									Software engineer passionate about making school communication better for parents
+									and teachers. Building Abridge to replace WhatsApp groups with something that
+									actually works for schools.
 								</p>
 							</div>
 						</div>
@@ -319,9 +301,8 @@ export default function AboutPage() {
 						Get in touch
 					</h2>
 					<p className="text-lg text-slate-500 mb-8 leading-relaxed">
-						Whether you are a school interested in the pilot programme, a parent
-						with questions, or a developer who wants to contribute, we would love
-						to hear from you.
+						Whether you are a school interested in the pilot programme, a parent with questions, or
+						a developer who wants to contribute, we would love to hear from you.
 					</p>
 
 					<div className="grid sm:grid-cols-2 gap-6">
@@ -352,9 +333,7 @@ export default function AboutPage() {
 								<h3 className="font-semibold text-[#1E3A5F] group-hover:text-[#FF7D45] transition-colors">
 									GitHub
 								</h3>
-								<p className="text-sm text-slate-500">
-									View the source code
-								</p>
+								<p className="text-sm text-slate-500">View the source code</p>
 							</div>
 						</a>
 					</div>
@@ -370,9 +349,8 @@ export default function AboutPage() {
 						Join the pilot programme
 					</h2>
 					<p className="text-lg text-blue-100 mb-10 max-w-2xl mx-auto">
-						We are looking for UK schools that want to transform how they
-						communicate with parents. Apply today and help shape the future of
-						school communication.
+						We are looking for UK schools that want to transform how they communicate with parents.
+						Apply today and help shape the future of school communication.
 					</p>
 					<Link
 						href="/setup"
@@ -398,43 +376,29 @@ export default function AboutPage() {
 								<span className="text-lg font-bold text-white">Abridge</span>
 							</div>
 							<p className="text-sm leading-relaxed">
-								The AI-first school communication platform. Built for UK
-								schools.
+								The AI-first school communication platform. Built for UK schools.
 							</p>
 						</div>
 						<div>
-							<h4 className="text-sm font-semibold text-white mb-4">
-								Product
-							</h4>
+							<h4 className="text-sm font-semibold text-white mb-4">Product</h4>
 							<ul className="space-y-2.5 text-sm">
 								<li>
-									<Link
-										href="/features"
-										className="hover:text-white transition-colors"
-									>
+									<Link href="/features" className="hover:text-white transition-colors">
 										Features
 									</Link>
 								</li>
 								<li>
-									<Link
-										href="/pricing"
-										className="hover:text-white transition-colors"
-									>
+									<Link href="/pricing" className="hover:text-white transition-colors">
 										Pricing
 									</Link>
 								</li>
 							</ul>
 						</div>
 						<div>
-							<h4 className="text-sm font-semibold text-white mb-4">
-								Company
-							</h4>
+							<h4 className="text-sm font-semibold text-white mb-4">Company</h4>
 							<ul className="space-y-2.5 text-sm">
 								<li>
-									<Link
-										href="/about"
-										className="hover:text-white transition-colors"
-									>
+									<Link href="/about" className="hover:text-white transition-colors">
 										About
 									</Link>
 								</li>
@@ -453,18 +417,12 @@ export default function AboutPage() {
 							<h4 className="text-sm font-semibold text-white mb-4">Legal</h4>
 							<ul className="space-y-2.5 text-sm">
 								<li>
-									<a
-										href="/privacy"
-										className="hover:text-white transition-colors"
-									>
+									<a href="/privacy" className="hover:text-white transition-colors">
 										Privacy Policy
 									</a>
 								</li>
 								<li>
-									<a
-										href="/terms"
-										className="hover:text-white transition-colors"
-									>
+									<a href="/terms" className="hover:text-white transition-colors">
 										Terms of Service
 									</a>
 								</li>

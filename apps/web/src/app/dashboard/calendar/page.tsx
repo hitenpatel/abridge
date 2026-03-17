@@ -12,8 +12,11 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
+import { CalendarDays, Plus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -81,23 +84,15 @@ export default function CalendarPage() {
 	};
 
 	return (
-		<div className="max-w-4xl mx-auto">
-			<div className="flex items-center justify-between mb-6">
-				<div className="flex items-center gap-3">
-					<span className="material-symbols-rounded text-primary text-3xl" aria-hidden="true">
-						calendar_month
-					</span>
-					<h1 className="text-3xl font-bold text-slate-800">School Calendar</h1>
-				</div>
+		<PageShell maxWidth="4xl">
+			<PageHeader icon={CalendarDays} title="Calendar" description="Upcoming events">
 				{session?.staffRole && (
 					<Button data-testid="create-event-button" onClick={() => setShowCreate(true)}>
-						<span className="material-symbols-rounded text-base mr-1" aria-hidden="true">
-							add
-						</span>
+						<Plus className="h-4 w-4 mr-1" aria-hidden="true" />
 						Create Event
 					</Button>
 				)}
-			</div>
+			</PageHeader>
 			<EventList />
 
 			<Dialog open={showCreate} onOpenChange={setShowCreate}>
@@ -215,6 +210,6 @@ export default function CalendarPage() {
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
-		</div>
+		</PageShell>
 	);
 }

@@ -3,6 +3,8 @@
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
@@ -797,15 +799,9 @@ export default function MealsPage() {
 	}
 
 	return (
-		<div className="space-y-6 p-6">
-			<div>
-				<h1 className="text-2xl font-bold">Meals</h1>
-				<p className="text-muted-foreground">
-					{isStaff ? "Manage school meal menus" : "Book meals and manage dietary needs"}
-				</p>
-			</div>
-
+		<PageShell maxWidth="4xl">
+			<PageHeader icon={UtensilsCrossed} title="Meals" description="Manage meal bookings" />
 			{isStaff && session.schoolId ? <StaffView schoolId={session.schoolId} /> : <ParentView />}
-		</div>
+		</PageShell>
 	);
 }

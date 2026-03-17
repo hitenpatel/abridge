@@ -1,7 +1,17 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { trpc } from "@/lib/trpc";
+import {
+	BarChart3,
+	ChevronDown,
+	ChevronUp,
+	ClipboardList,
+	CreditCard,
+	MessageSquare,
+} from "lucide-react";
 import { useState } from "react";
 
 type DateRange = "today" | "week" | "month" | "term";
@@ -75,13 +85,13 @@ function Sparkline({ data }: { data: number[] }) {
 
 function CardSkeleton() {
 	return (
-		<Card className="rounded-2xl p-6 border border-gray-100 animate-pulse">
+		<Card className="rounded-2xl p-6 border border-border animate-pulse">
 			<div className="flex items-center gap-3 mb-4">
-				<div className="w-10 h-10 rounded-xl bg-gray-200" />
-				<div className="h-5 w-32 bg-gray-200 rounded" />
+				<div className="w-10 h-10 rounded-xl bg-muted" />
+				<div className="h-5 w-32 bg-muted rounded" />
 			</div>
-			<div className="h-8 w-20 bg-gray-200 rounded mb-2" />
-			<div className="h-4 w-48 bg-gray-200 rounded" />
+			<div className="h-8 w-20 bg-muted rounded mb-2" />
+			<div className="h-4 w-48 bg-muted rounded" />
 		</Card>
 	);
 }
@@ -97,9 +107,9 @@ function DetailTable({
 		<div className="mt-4 overflow-x-auto">
 			<table className="w-full text-sm">
 				<thead>
-					<tr className="border-b border-gray-200">
+					<tr className="border-b border-border">
 						{headers.map((h) => (
-							<th key={h} className="text-left py-2 px-3 font-semibold text-gray-500">
+							<th key={h} className="text-left py-2 px-3 font-semibold text-muted-foreground">
 								{h}
 							</th>
 						))}
@@ -107,9 +117,9 @@ function DetailTable({
 				</thead>
 				<tbody>
 					{rows.map((row, i) => (
-						<tr key={i} className="border-b border-gray-50 hover:bg-gray-50">
+						<tr key={i} className="border-b border-border/50 hover:bg-muted/50">
 							{row.map((cell, j) => (
-								<td key={j} className="py-2 px-3 text-gray-700">
+								<td key={j} className="py-2 px-3">
 									{cell}
 								</td>
 							))}
@@ -168,21 +178,19 @@ export default function AnalyticsPage() {
 
 	if (session && !isStaff) {
 		return (
-			<div className="max-w-2xl mx-auto text-center py-16 text-muted-foreground">
-				<p>Analytics is only available to staff members.</p>
-			</div>
+			<PageShell maxWidth="7xl">
+				<p className="text-center py-16 text-muted-foreground">
+					Analytics is only available to staff members.
+				</p>
+			</PageShell>
 		);
 	}
 
 	return (
-		<div className="max-w-7xl mx-auto" data-testid="analytics-view">
-			<div className="flex items-center justify-between mb-8">
-				<div>
-					<h1 className="text-3xl font-bold text-gray-900">Analytics</h1>
-					<p className="text-gray-500 mt-1">School performance overview</p>
-				</div>
+		<PageShell maxWidth="7xl" data-testid="analytics-view">
+			<PageHeader icon={BarChart3} title="Analytics" description="School performance insights">
 				<div
-					className="flex bg-white rounded-xl p-1 shadow-sm border border-gray-100"
+					className="flex bg-background rounded-xl p-1 shadow-sm border border-border"
 					data-testid="analytics-date-range"
 				>
 					{ranges.map((r) => (
@@ -194,14 +202,14 @@ export default function AnalyticsPage() {
 							className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
 								range === r.key
 									? "bg-primary text-white shadow-sm"
-									: "text-gray-500 hover:bg-gray-50"
+									: "text-muted-foreground hover:bg-muted"
 							}`}
 						>
 							{r.label}
 						</button>
 					))}
 				</div>
-			</div>
+			</PageHeader>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 				{/* Attendance Card */}
@@ -209,27 +217,26 @@ export default function AnalyticsPage() {
 					<CardSkeleton />
 				) : (
 					<Card
-						className="rounded-2xl p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow"
+						className="glass-card hover-lift rounded-2xl p-6 cursor-pointer"
 						data-testid="analytics-attendance-card"
 						onClick={() => toggleExpand("attendance")}
 					>
 						<div className="flex items-center justify-between mb-4">
 							<div className="flex items-center gap-3">
-								<div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
-									<span className="material-symbols-rounded text-green-600" aria-hidden="true">
-										assignment_turned_in
-									</span>
+								<div className="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+									<ClipboardList
+										className="w-5 h-5 text-green-600 dark:text-green-400"
+										aria-hidden="true"
+									/>
 								</div>
-								<h3 className="text-lg font-semibold text-gray-800">Attendance</h3>
+								<h3 className="text-lg font-semibold">Attendance</h3>
 							</div>
-							<div className="text-green-600">
+							<div className="text-green-600 dark:text-green-400">
 								<Sparkline data={attendance.data?.trend.map((t) => t.rate) ?? []} />
 							</div>
 						</div>
-						<div className="text-3xl font-bold text-gray-900 mb-1">
-							{attendance.data?.todayRate ?? 0}%
-						</div>
-						<div className="flex items-center gap-4 text-sm text-gray-500">
+						<div className="text-3xl font-bold mb-1">{attendance.data?.todayRate ?? 0}%</div>
+						<div className="flex items-center gap-4 text-sm text-muted-foreground">
 							<span>Period avg: {attendance.data?.periodRate ?? 0}%</span>
 							<span>Below 90%: {attendance.data?.belowThresholdCount ?? 0} children</span>
 						</div>
@@ -244,10 +251,12 @@ export default function AnalyticsPage() {
 								])}
 							/>
 						) : null}
-						<div className="mt-3 text-xs text-gray-400 flex items-center gap-1">
-							<span className="material-symbols-rounded text-sm" aria-hidden="true">
-								{expanded === "attendance" ? "expand_less" : "expand_more"}
-							</span>
+						<div className="mt-3 text-xs text-muted-foreground flex items-center gap-1">
+							{expanded === "attendance" ? (
+								<ChevronUp className="w-4 h-4" aria-hidden="true" />
+							) : (
+								<ChevronDown className="w-4 h-4" aria-hidden="true" />
+							)}
 							{expanded === "attendance" ? "Collapse" : "View by class"}
 						</div>
 					</Card>
@@ -258,24 +267,23 @@ export default function AnalyticsPage() {
 					<CardSkeleton />
 				) : (
 					<Card
-						className="rounded-2xl p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow"
+						className="glass-card hover-lift rounded-2xl p-6 cursor-pointer"
 						data-testid="analytics-payments-card"
 						onClick={() => toggleExpand("payments")}
 					>
 						<div className="flex items-center justify-between mb-4">
 							<div className="flex items-center gap-3">
-								<div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-									<span className="material-symbols-rounded text-blue-600" aria-hidden="true">
-										payments
-									</span>
+								<div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+									<CreditCard
+										className="w-5 h-5 text-blue-600 dark:text-blue-400"
+										aria-hidden="true"
+									/>
 								</div>
-								<h3 className="text-lg font-semibold text-gray-800">Payments</h3>
+								<h3 className="text-lg font-semibold">Payments</h3>
 							</div>
 						</div>
-						<div className="text-3xl font-bold text-gray-900 mb-1">
-							{payments.data?.collectionRate ?? 0}%
-						</div>
-						<div className="flex items-center gap-4 text-sm text-gray-500">
+						<div className="text-3xl font-bold mb-1">{payments.data?.collectionRate ?? 0}%</div>
+						<div className="flex items-center gap-4 text-sm text-muted-foreground">
 							<span>
 								Collected: {"\u00A3"}
 								{((payments.data?.collectedTotal ?? 0) / 100).toFixed(2)}
@@ -285,7 +293,7 @@ export default function AnalyticsPage() {
 								{((payments.data?.outstandingTotal ?? 0) / 100).toFixed(2)}
 							</span>
 						</div>
-						<div className="text-sm text-gray-500 mt-1">
+						<div className="text-sm text-muted-foreground mt-1">
 							{payments.data?.overdueCount ?? 0} overdue items
 						</div>
 						{expanded === "payments" && payments.data?.byItem.length ? (
@@ -300,10 +308,12 @@ export default function AnalyticsPage() {
 								])}
 							/>
 						) : null}
-						<div className="mt-3 text-xs text-gray-400 flex items-center gap-1">
-							<span className="material-symbols-rounded text-sm" aria-hidden="true">
-								{expanded === "payments" ? "expand_less" : "expand_more"}
-							</span>
+						<div className="mt-3 text-xs text-muted-foreground flex items-center gap-1">
+							{expanded === "payments" ? (
+								<ChevronUp className="w-4 h-4" aria-hidden="true" />
+							) : (
+								<ChevronDown className="w-4 h-4" aria-hidden="true" />
+							)}
 							{expanded === "payments" ? "Collapse" : "View by item"}
 						</div>
 					</Card>
@@ -314,24 +324,23 @@ export default function AnalyticsPage() {
 					<CardSkeleton />
 				) : (
 					<Card
-						className="rounded-2xl p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow"
+						className="glass-card hover-lift rounded-2xl p-6 cursor-pointer"
 						data-testid="analytics-forms-card"
 						onClick={() => toggleExpand("forms")}
 					>
 						<div className="flex items-center justify-between mb-4">
 							<div className="flex items-center gap-3">
-								<div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
-									<span className="material-symbols-rounded text-purple-600" aria-hidden="true">
-										description
-									</span>
+								<div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+									<ClipboardList
+										className="w-5 h-5 text-purple-600 dark:text-purple-400"
+										aria-hidden="true"
+									/>
 								</div>
-								<h3 className="text-lg font-semibold text-gray-800">Forms</h3>
+								<h3 className="text-lg font-semibold">Forms</h3>
 							</div>
 						</div>
-						<div className="text-3xl font-bold text-gray-900 mb-1">
-							{forms.data?.completionRate ?? 0}%
-						</div>
-						<div className="text-sm text-gray-500">
+						<div className="text-3xl font-bold mb-1">{forms.data?.completionRate ?? 0}%</div>
+						<div className="text-sm text-muted-foreground">
 							{forms.data?.pendingCount ?? 0} pending responses
 						</div>
 						{expanded === "forms" && forms.data?.byTemplate.length ? (
@@ -345,10 +354,12 @@ export default function AnalyticsPage() {
 								])}
 							/>
 						) : null}
-						<div className="mt-3 text-xs text-gray-400 flex items-center gap-1">
-							<span className="material-symbols-rounded text-sm" aria-hidden="true">
-								{expanded === "forms" ? "expand_less" : "expand_more"}
-							</span>
+						<div className="mt-3 text-xs text-muted-foreground flex items-center gap-1">
+							{expanded === "forms" ? (
+								<ChevronUp className="w-4 h-4" aria-hidden="true" />
+							) : (
+								<ChevronDown className="w-4 h-4" aria-hidden="true" />
+							)}
 							{expanded === "forms" ? "Collapse" : "View by template"}
 						</div>
 					</Card>
@@ -359,24 +370,23 @@ export default function AnalyticsPage() {
 					<CardSkeleton />
 				) : (
 					<Card
-						className="rounded-2xl p-6 border border-gray-100 cursor-pointer hover:shadow-md transition-shadow"
+						className="glass-card hover-lift rounded-2xl p-6 cursor-pointer"
 						data-testid="analytics-messages-card"
 						onClick={() => toggleExpand("messages")}
 					>
 						<div className="flex items-center justify-between mb-4">
 							<div className="flex items-center gap-3">
-								<div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-									<span className="material-symbols-rounded text-amber-600" aria-hidden="true">
-										chat_bubble
-									</span>
+								<div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+									<MessageSquare
+										className="w-5 h-5 text-amber-600 dark:text-amber-400"
+										aria-hidden="true"
+									/>
 								</div>
-								<h3 className="text-lg font-semibold text-gray-800">Messages</h3>
+								<h3 className="text-lg font-semibold">Messages</h3>
 							</div>
 						</div>
-						<div className="text-3xl font-bold text-gray-900 mb-1">
-							{messages.data?.sentCount ?? 0}
-						</div>
-						<div className="text-sm text-gray-500">
+						<div className="text-3xl font-bold mb-1">{messages.data?.sentCount ?? 0}</div>
+						<div className="text-sm text-muted-foreground">
 							Avg read rate: {messages.data?.avgReadRate ?? 0}%
 						</div>
 						{expanded === "messages" && messages.data?.byMessage.length ? (
@@ -391,15 +401,17 @@ export default function AnalyticsPage() {
 								])}
 							/>
 						) : null}
-						<div className="mt-3 text-xs text-gray-400 flex items-center gap-1">
-							<span className="material-symbols-rounded text-sm" aria-hidden="true">
-								{expanded === "messages" ? "expand_less" : "expand_more"}
-							</span>
+						<div className="mt-3 text-xs text-muted-foreground flex items-center gap-1">
+							{expanded === "messages" ? (
+								<ChevronUp className="w-4 h-4" aria-hidden="true" />
+							) : (
+								<ChevronDown className="w-4 h-4" aria-hidden="true" />
+							)}
 							{expanded === "messages" ? "Collapse" : "View by message"}
 						</div>
 					</Card>
 				)}
 			</div>
-		</div>
+		</PageShell>
 	);
 }

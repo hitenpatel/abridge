@@ -3,6 +3,7 @@
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
@@ -867,25 +868,27 @@ export default function ChatPage() {
 	}
 
 	return (
-		<div className="space-y-6 p-6">
-			<div>
-				<h1 className="text-2xl font-bold">Chat</h1>
-				<p className="text-muted-foreground">
-					{isAdmin
-						? "Manage and monitor school conversations"
-						: isStaff
-							? "Chat with parents"
-							: "Chat with your child's school staff"}
-				</p>
-			</div>
+		<PageShell maxWidth="full">
+			<div className="space-y-6 p-6">
+				<div>
+					<h1 className="text-2xl font-bold">Chat</h1>
+					<p className="text-muted-foreground">
+						{isAdmin
+							? "Manage and monitor school conversations"
+							: isStaff
+								? "Chat with parents"
+								: "Chat with your child's school staff"}
+					</p>
+				</div>
 
-			{isAdmin && session.schoolId ? (
-				<AdminView userId={userId} schoolId={session.schoolId} />
-			) : isStaff && session.schoolId ? (
-				<StaffView userId={userId} schoolId={session.schoolId} sessionToken={sessionToken} />
-			) : (
-				<ParentView userId={userId} sessionToken={sessionToken} />
-			)}
-		</div>
+				{isAdmin && session.schoolId ? (
+					<AdminView userId={userId} schoolId={session.schoolId} />
+				) : isStaff && session.schoolId ? (
+					<StaffView userId={userId} schoolId={session.schoolId} sessionToken={sessionToken} />
+				) : (
+					<ParentView userId={userId} sessionToken={sessionToken} />
+				)}
+			</div>
+		</PageShell>
 	);
 }

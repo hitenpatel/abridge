@@ -3,6 +3,9 @@
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
@@ -272,7 +275,11 @@ function ParentView() {
 				<CardContent>
 					{reportsLoading && <Skeleton className="h-24 w-full" />}
 					{!reportsLoading && reports?.length === 0 && (
-						<p className="text-sm text-muted-foreground">No reports available yet.</p>
+						<EmptyState
+							icon={FileText}
+							title="No reports available yet"
+							description="Your child's report cards will appear here when published"
+						/>
 					)}
 					<div className="space-y-2">
 						{reports?.map((report) => (
@@ -865,9 +872,11 @@ function StaffView({ schoolId }: { schoolId: string }) {
 					)}
 
 					{cycles?.length === 0 && !showCreateForm && (
-						<p className="text-sm text-muted-foreground">
-							No report cycles yet. Create one to get started.
-						</p>
+						<EmptyState
+							icon={FileText}
+							title="No report cycles yet"
+							description="Create a cycle to get started"
+						/>
 					)}
 
 					<div className="space-y-2">
@@ -913,15 +922,9 @@ export default function ReportsPage() {
 	}
 
 	return (
-		<div className="space-y-6 p-6">
-			<div>
-				<h1 className="text-2xl font-bold">Reports</h1>
-				<p className="text-muted-foreground">
-					{isStaff ? "Manage report cards and cycles" : "View your child's report cards"}
-				</p>
-			</div>
-
+		<PageShell maxWidth="4xl">
+			<PageHeader icon={FileText} title="Reports" description="Student report cards" />
 			{isStaff && session.schoolId ? <StaffView schoolId={session.schoolId} /> : <ParentView />}
-		</div>
+		</PageShell>
 	);
 }

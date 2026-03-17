@@ -2,6 +2,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useCallback, useState } from "react";
 import { Alert, Pressable, RefreshControl, ScrollView, Text, TextInput, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../../App";
 import { Skeleton } from "../components/ui";
 import { trpc } from "../lib/trpc";
@@ -66,6 +67,7 @@ function getMoodConfig(mood: string) {
 
 export function WellbeingScreen({ route }: Props) {
 	const { childId } = route.params;
+	const insets = useSafeAreaInsets();
 	const utils = trpc.useUtils();
 	const [selectedMood, setSelectedMood] = useState<Mood | null>(null);
 	const [note, setNote] = useState("");
@@ -141,7 +143,7 @@ export function WellbeingScreen({ route }: Props) {
 	return (
 		<ScrollView
 			className="flex-1 bg-background"
-			contentContainerStyle={{ paddingBottom: 40 }}
+			contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
 			showsVerticalScrollIndicator={false}
 			refreshControl={
 				<RefreshControl refreshing={isRefetching} onRefresh={onRefresh} tintColor="#f56e3d" />

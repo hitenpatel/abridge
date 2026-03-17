@@ -5,6 +5,7 @@ import { MediaPicker } from "@/components/staff/media-picker";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { PageShell } from "@/components/ui/page-shell";
 import { trpc } from "@/lib/trpc";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -101,61 +102,63 @@ export default function ComposePostPage() {
 	};
 
 	return (
-		<div className="max-w-2xl mx-auto space-y-6">
-			<div className="flex items-center gap-3">
-				<Link href="/dashboard">
-					<Button variant="ghost" size="icon">
-						<ArrowLeft className="h-4 w-4" />
-					</Button>
-				</Link>
-				<h1 className="text-2xl font-bold">Post to Class</h1>
+		<PageShell maxWidth="2xl">
+			<div className="space-y-6 p-6">
+				<div className="flex items-center gap-3">
+					<Link href="/dashboard">
+						<Button variant="ghost" size="icon">
+							<ArrowLeft className="h-4 w-4" />
+						</Button>
+					</Link>
+					<h1 className="text-2xl font-bold">Post to Class</h1>
+				</div>
+
+				<Card data-testid="compose-post-form">
+					<CardHeader>
+						<CardTitle>New Class Post</CardTitle>
+					</CardHeader>
+					<CardContent className="space-y-6">
+						<div className="space-y-2">
+							<Label>Class</Label>
+							<ClassSelector value={selectedClass} onChange={setSelectedClass} />
+						</div>
+
+						<div className="space-y-2">
+							<Label htmlFor="caption">Caption</Label>
+							<textarea
+								id="caption"
+								data-testid="post-body-input"
+								value={body}
+								onChange={(e) => setBody(e.target.value)}
+								placeholder="Write something about today's class..."
+								rows={4}
+								className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+							/>
+						</div>
+
+						<div className="space-y-2">
+							<Label>Photos / Videos</Label>
+							<MediaPicker files={files} onChange={setFiles} />
+						</div>
+
+						<Button
+							data-testid="submit-post-button"
+							onClick={handlePost}
+							disabled={!canPost || isPosting}
+							className="w-full"
+						>
+							{isPosting ? (
+								<>
+									<Loader2 className="h-4 w-4 animate-spin mr-2" />
+									Posting...
+								</>
+							) : (
+								"Post"
+							)}
+						</Button>
+					</CardContent>
+				</Card>
 			</div>
-
-			<Card data-testid="compose-post-form">
-				<CardHeader>
-					<CardTitle>New Class Post</CardTitle>
-				</CardHeader>
-				<CardContent className="space-y-6">
-					<div className="space-y-2">
-						<Label>Class</Label>
-						<ClassSelector value={selectedClass} onChange={setSelectedClass} />
-					</div>
-
-					<div className="space-y-2">
-						<Label htmlFor="caption">Caption</Label>
-						<textarea
-							id="caption"
-							data-testid="post-body-input"
-							value={body}
-							onChange={(e) => setBody(e.target.value)}
-							placeholder="Write something about today's class..."
-							rows={4}
-							className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-						/>
-					</div>
-
-					<div className="space-y-2">
-						<Label>Photos / Videos</Label>
-						<MediaPicker files={files} onChange={setFiles} />
-					</div>
-
-					<Button
-						data-testid="submit-post-button"
-						onClick={handlePost}
-						disabled={!canPost || isPosting}
-						className="w-full"
-					>
-						{isPosting ? (
-							<>
-								<Loader2 className="h-4 w-4 animate-spin mr-2" />
-								Posting...
-							</>
-						) : (
-							"Post"
-						)}
-					</Button>
-				</CardContent>
-			</Card>
-		</div>
+		</PageShell>
 	);
 }

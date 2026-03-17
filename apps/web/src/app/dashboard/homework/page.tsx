@@ -3,6 +3,8 @@
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
@@ -572,15 +574,18 @@ export default function HomeworkPage() {
 	}
 
 	return (
-		<div className="space-y-6 p-6">
-			<div>
-				<h1 className="text-2xl font-bold">Homework</h1>
-				<p className="text-muted-foreground">
-					{isStaff ? "Set and manage homework assignments" : "View homework and track progress"}
-				</p>
-			</div>
+		<PageShell maxWidth="4xl">
+			<div className="space-y-6 p-6">
+				<PageHeader
+					icon={BookOpen}
+					title="Homework"
+					description={
+						isStaff ? "Set and manage homework assignments" : "View homework and track progress"
+					}
+				/>
 
-			{isStaff && session.schoolId ? <StaffView schoolId={session.schoolId} /> : <ParentView />}
-		</div>
+				{isStaff && session.schoolId ? <StaffView schoolId={session.schoolId} /> : <ParentView />}
+			</div>
+		</PageShell>
 	);
 }

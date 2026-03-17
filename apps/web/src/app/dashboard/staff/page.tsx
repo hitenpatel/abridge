@@ -12,7 +12,10 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Label } from "@/components/ui/label";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import {
 	Select,
 	SelectContent,
@@ -135,11 +138,12 @@ export default function StaffManagementPage() {
 	}
 
 	return (
-		<div className="space-y-8">
-			<div>
-				<h1 className="text-3xl font-bold">Staff Management</h1>
-				<p className="text-muted-foreground">Manage teachers and staff for your school</p>
-			</div>
+		<PageShell maxWidth="4xl">
+			<PageHeader
+				icon={ShieldCheck}
+				title="Staff Management"
+				description="Manage school staff members"
+			/>
 
 			<div className="grid gap-6 lg:grid-cols-3">
 				{/* Invite New Staff */}
@@ -242,16 +246,17 @@ export default function StaffManagementPage() {
 									))}
 								</div>
 							) : !staff || staff.length === 0 ? (
-								<div className="text-center py-12 text-muted-foreground bg-muted/20 rounded-lg border-2 border-dashed">
-									<Users className="w-12 h-12 mx-auto mb-4 opacity-20" />
-									<p>No staff members found.</p>
-								</div>
+								<EmptyState
+									icon={Users}
+									title="No staff members"
+									description="No staff members found."
+								/>
 							) : (
 								<div className="divide-y divide-border" data-testid="staff-list">
 									{staff.map((member) => (
 										<div
 											key={member.id}
-											className="flex items-center justify-between py-4 first:pt-0 last:pb-0"
+											className="hover-lift flex items-center justify-between py-4 first:pt-0 last:pb-0"
 											data-testid="staff-member-row"
 										>
 											<div className="flex items-center gap-3">
@@ -403,6 +408,6 @@ export default function StaffManagementPage() {
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
-		</div>
+		</PageShell>
 	);
 }

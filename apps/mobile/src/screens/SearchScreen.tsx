@@ -3,6 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, Text, TextInput, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { MessageItem, RootStackParamList } from "../../App";
 import { type RouterOutputs, trpc } from "../lib/trpc";
 
@@ -37,6 +38,7 @@ function getResultColor(index: string): { bg: string; icon: string } {
 
 export function SearchScreen() {
 	const navigation = useNavigation<NavigationProp>();
+	const insets = useSafeAreaInsets();
 	const [query, setQuery] = useState("");
 	const [debouncedQuery, setDebouncedQuery] = useState("");
 
@@ -137,7 +139,7 @@ export function SearchScreen() {
 			<FlatList
 				data={results}
 				keyExtractor={(item) => `${item.index}-${item.id}`}
-				contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}
+				contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: insets.bottom + 100 }}
 				renderItem={({ item }) => {
 					const source = item.source as Record<string, unknown>;
 					const title = (source.subject as string) || (source.title as string) || "No Title";

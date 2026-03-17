@@ -11,6 +11,7 @@ import {
 	TextInput,
 	View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Skeleton } from "../components/ui";
 import { trpc } from "../lib/trpc";
 
@@ -30,6 +31,7 @@ function getRoleBadgeStyle(role: string): { bg: string; text: string } {
 }
 
 export function StaffManagementScreen() {
+	const insets = useSafeAreaInsets();
 	const { data: session } = trpc.auth.getSession.useQuery();
 	const schoolId = session?.schoolId;
 
@@ -126,7 +128,7 @@ export function StaffManagementScreen() {
 
 	return (
 		<View className="flex-1 bg-background">
-			<ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 40 }}>
+			<ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}>
 				{/* Invite Section */}
 				<View className="px-6 pt-4 mb-6" accessibilityLabel="Invite Staff">
 					<Text className="text-sm font-sans-bold uppercase tracking-wider text-text-muted mb-4">

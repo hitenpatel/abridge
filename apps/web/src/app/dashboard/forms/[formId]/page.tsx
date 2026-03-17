@@ -4,6 +4,7 @@ import { FormRenderer, type FormTemplate } from "@/components/forms/form-rendere
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PageShell } from "@/components/ui/page-shell";
 import { trpc } from "@/lib/trpc";
 import { ArrowLeft, CheckCircle2, Users } from "lucide-react";
 import Link from "next/link";
@@ -116,67 +117,69 @@ export default function SingleFormPage() {
 	}
 
 	return (
-		<div className="p-8 max-w-3xl mx-auto">
-			<div className="mb-6">
-				<Link
-					href="/dashboard/forms"
-					className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
-				>
-					<ArrowLeft className="h-4 w-4" />
-					Back to all forms
-				</Link>
-			</div>
-
-			<div className="mb-8">
-				<div className="flex items-center gap-2 mb-2">
-					<Badge variant="info">Form for {currentChild.firstName}</Badge>
+		<PageShell maxWidth="2xl">
+			<div className="p-8">
+				<div className="mb-6">
+					<Link
+						href="/dashboard/forms"
+						className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+					>
+						<ArrowLeft className="h-4 w-4" />
+						Back to all forms
+					</Link>
 				</div>
-				<h1 className="text-3xl font-bold text-foreground">{template.title}</h1>
-				{template.description && (
-					<p className="text-muted-foreground mt-2">{template.description}</p>
-				)}
-			</div>
 
-			{error && (
-				<Alert variant="destructive" className="mb-6">
-					<AlertDescription>{error}</AlertDescription>
-				</Alert>
-			)}
-
-			<div className="grid gap-8">
-				<FormRenderer
-					template={template as unknown as FormTemplate}
-					onSubmit={handleSubmit}
-					isSubmitting={submitMutation.isPending}
-				/>
-
-				{children.length > 1 && (
-					<div className="bg-info/10 border border-info/20 p-4 rounded-lg flex items-start gap-3">
-						<div className="p-2 bg-info/20 rounded-lg">
-							<Users className="h-5 w-5 text-info" />
-						</div>
-						<div className="flex-1">
-							<h4 className="font-semibold text-foreground">Apply to all children?</h4>
-							<p className="text-sm text-muted-foreground mb-3">
-								You have {otherChildren.length} other{" "}
-								{otherChildren.length === 1 ? "child" : "children"} at this school. Would you like
-								to submit this same response for them as well?
-							</p>
-							<label className="flex items-center gap-2 cursor-pointer select-none">
-								<input
-									type="checkbox"
-									checked={applyToAll}
-									onChange={(e) => setApplyToAll(e.target.checked)}
-									className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
-								/>
-								<span className="text-sm font-medium text-foreground">
-									Yes, submit for all my children
-								</span>
-							</label>
-						</div>
+				<div className="mb-8">
+					<div className="flex items-center gap-2 mb-2">
+						<Badge variant="info">Form for {currentChild.firstName}</Badge>
 					</div>
+					<h1 className="text-3xl font-bold text-foreground">{template.title}</h1>
+					{template.description && (
+						<p className="text-muted-foreground mt-2">{template.description}</p>
+					)}
+				</div>
+
+				{error && (
+					<Alert variant="destructive" className="mb-6">
+						<AlertDescription>{error}</AlertDescription>
+					</Alert>
 				)}
+
+				<div className="grid gap-8">
+					<FormRenderer
+						template={template as unknown as FormTemplate}
+						onSubmit={handleSubmit}
+						isSubmitting={submitMutation.isPending}
+					/>
+
+					{children.length > 1 && (
+						<div className="bg-info/10 border border-info/20 p-4 rounded-lg flex items-start gap-3">
+							<div className="p-2 bg-info/20 rounded-lg">
+								<Users className="h-5 w-5 text-info" />
+							</div>
+							<div className="flex-1">
+								<h4 className="font-semibold text-foreground">Apply to all children?</h4>
+								<p className="text-sm text-muted-foreground mb-3">
+									You have {otherChildren.length} other{" "}
+									{otherChildren.length === 1 ? "child" : "children"} at this school. Would you like
+									to submit this same response for them as well?
+								</p>
+								<label className="flex items-center gap-2 cursor-pointer select-none">
+									<input
+										type="checkbox"
+										checked={applyToAll}
+										onChange={(e) => setApplyToAll(e.target.checked)}
+										className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+									/>
+									<span className="text-sm font-medium text-foreground">
+										Yes, submit for all my children
+									</span>
+								</label>
+							</div>
+						</div>
+					)}
+				</div>
 			</div>
-		</div>
+		</PageShell>
 	);
 }

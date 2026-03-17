@@ -3,11 +3,14 @@
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
 import {
 	AlertTriangle,
+	BadgeCheck,
 	ClipboardList,
 	Download,
 	LogIn,
@@ -865,32 +868,35 @@ export default function VisitorsPage() {
 	];
 
 	return (
-		<div className="space-y-6 p-6">
-			<div>
-				<h1 className="text-2xl font-bold">Visitors</h1>
-				<p className="text-muted-foreground">Manage visitor sign-in, DBS checks, and history</p>
-			</div>
+		<PageShell maxWidth="5xl">
+			<div className="space-y-6 p-6">
+				<PageHeader
+					icon={BadgeCheck}
+					title="Visitors"
+					description="Manage visitor sign-in, DBS checks, and history"
+				/>
 
-			{/* Tabs */}
-			<div className="flex gap-2 border-b pb-2">
-				{tabs.map((tab) => (
-					<button
-						key={tab.key}
-						type="button"
-						onClick={() => setActiveTab(tab.key)}
-						className={`rounded-t-md px-4 py-2 text-sm transition-colors ${
-							activeTab === tab.key ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-						}`}
-					>
-						{tab.label}
-					</button>
-				))}
-			</div>
+				{/* Tabs */}
+				<div className="flex gap-2 border-b pb-2">
+					{tabs.map((tab) => (
+						<button
+							key={tab.key}
+							type="button"
+							onClick={() => setActiveTab(tab.key)}
+							className={`rounded-t-md px-4 py-2 text-sm transition-colors ${
+								activeTab === tab.key ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+							}`}
+						>
+							{tab.label}
+						</button>
+					))}
+				</div>
 
-			{activeTab === "signin" && <SignInTab schoolId={schoolId} />}
-			{activeTab === "onsite" && <OnSiteTab schoolId={schoolId} />}
-			{activeTab === "dbs" && <DbsRegisterTab schoolId={schoolId} />}
-			{activeTab === "history" && <HistoryTab schoolId={schoolId} />}
-		</div>
+				{activeTab === "signin" && <SignInTab schoolId={schoolId} />}
+				{activeTab === "onsite" && <OnSiteTab schoolId={schoolId} />}
+				{activeTab === "dbs" && <DbsRegisterTab schoolId={schoolId} />}
+				{activeTab === "history" && <HistoryTab schoolId={schoolId} />}
+			</div>
+		</PageShell>
 	);
 }

@@ -3,6 +3,8 @@
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
@@ -83,7 +85,7 @@ function ParentCheckIn() {
 				</div>
 			)}
 
-			<Card>
+			<Card className="hover-lift">
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
 						<SmilePlus className="h-5 w-5" />
@@ -139,7 +141,7 @@ function ParentCheckIn() {
 				</CardContent>
 			</Card>
 
-			<Card>
+			<Card className="hover-lift">
 				<CardHeader>
 					<CardTitle>Recent Check-ins</CardTitle>
 				</CardHeader>
@@ -187,7 +189,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 	return (
 		<div className="space-y-6">
 			{alerts && alerts.length > 0 && (
-				<Card className="border-red-200">
+				<Card className="border-red-200 hover-lift">
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2 text-red-700">
 							<AlertTriangle className="h-5 w-5" />
@@ -250,7 +252,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 				</Card>
 			)}
 
-			<Card>
+			<Card className="hover-lift">
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
 						<Heart className="h-5 w-5" />
@@ -290,15 +292,14 @@ export default function WellbeingPage() {
 	}
 
 	return (
-		<div className="space-y-6 p-6">
-			<div>
-				<h1 className="text-2xl font-bold">Wellbeing</h1>
-				<p className="text-muted-foreground">
-					{isStaff ? "Class wellbeing overview" : "Daily mood check-in"}
-				</p>
-			</div>
+		<PageShell maxWidth="4xl">
+			<PageHeader
+				icon={Heart}
+				title="Wellbeing"
+				description={isStaff ? "Class wellbeing overview" : "Daily mood check-in"}
+			/>
 
 			{isStaff && session.schoolId ? <StaffView schoolId={session.schoolId} /> : <ParentCheckIn />}
-		</div>
+		</PageShell>
 	);
 }

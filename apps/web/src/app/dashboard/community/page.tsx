@@ -3,6 +3,8 @@
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
@@ -645,7 +647,7 @@ function PostList({
 			{data?.items.map((post) => (
 				<Card
 					key={post.id}
-					className="cursor-pointer transition-colors hover:bg-muted/50"
+					className="cursor-pointer transition-colors hover:bg-muted/50 hover-lift"
 					onClick={() => setSelectedPostId(post.id)}
 				>
 					<CardContent className="pt-6">
@@ -709,25 +711,17 @@ export default function CommunityPage() {
 
 	if (!schoolId) {
 		return (
-			<div className="space-y-6 p-6">
-				<h1 className="text-2xl font-bold">Community</h1>
+			<PageShell maxWidth="4xl">
+				<PageHeader icon={Users} title="Community" description="Community hub and discussions" />
 				<p className="text-muted-foreground">Loading...</p>
-			</div>
+			</PageShell>
 		);
 	}
 
 	return (
-		<div className="space-y-6 p-6">
-			<div>
-				<h1 className="text-2xl font-bold">Community</h1>
-				<p className="text-muted-foreground">
-					{isStaff
-						? "School community discussions and volunteer coordination"
-						: "Connect with your school community"}
-				</p>
-			</div>
-
+		<PageShell maxWidth="4xl">
+			<PageHeader icon={Users} title="Community" description="Community hub and discussions" />
 			<PostList schoolId={schoolId} isStaff={isStaff} userId={session?.id} />
-		</div>
+		</PageShell>
 	);
 }

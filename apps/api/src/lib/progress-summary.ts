@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { type PrismaClient, Prisma } from "@schoolconnect/db";
+import type { Prisma, PrismaClient } from "@schoolconnect/db";
 import { logger } from "./logger";
 
 export interface ChildWeeklyMetrics {

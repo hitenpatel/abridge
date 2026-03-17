@@ -2,6 +2,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useCallback, useEffect } from "react";
 import { ScrollView, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../../App";
 import { trpc } from "../lib/trpc";
 
@@ -36,6 +37,7 @@ const formatFullDate = (date: Date): string => {
 
 export function MessageDetailScreen({ route }: MessageDetailScreenProps) {
 	const { message } = route.params;
+	const insets = useSafeAreaInsets();
 	const categoryColor = getCategoryColor(message.category);
 	const utils = trpc.useUtils();
 
@@ -59,7 +61,11 @@ export function MessageDetailScreen({ route }: MessageDetailScreenProps) {
 	}, [message.isRead, markAsRead]);
 
 	return (
-		<ScrollView testID="message-detail-content" className="flex-1 bg-background">
+		<ScrollView
+			testID="message-detail-content"
+			className="flex-1 bg-background"
+			contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
+		>
 			<View className="p-6">
 				{/* Coral accent bar */}
 				<View className="h-1 w-16 bg-primary rounded-full mb-5" />

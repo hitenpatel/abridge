@@ -8,9 +8,7 @@ test.describe("Landing Page", () => {
 		await expect(page.getByText("Abridge").first()).toBeVisible();
 
 		// Verify hero heading
-		await expect(
-			page.getByRole("heading", { name: /Every child.s progress/i }),
-		).toBeVisible();
+		await expect(page.getByRole("heading", { name: /Every child.s progress/i })).toBeVisible();
 
 		// Verify CTA buttons
 		await expect(page.getByRole("link", { name: /Apply for Early Access/i }).first()).toBeVisible();
@@ -21,7 +19,9 @@ test.describe("Landing Page", () => {
 		await page.goto("http://localhost:3000");
 
 		// Verify features heading
-		await expect(page.getByRole("heading", { name: /Everything your school needs/i })).toBeVisible();
+		await expect(
+			page.getByRole("heading", { name: /Everything your school needs/i }),
+		).toBeVisible();
 
 		// Verify feature cards
 		await expect(page.getByRole("heading", { name: "AI Progress Summaries" })).toBeVisible();
@@ -46,7 +46,10 @@ test.describe("Landing Page", () => {
 	test("should navigate to setup from Apply for Early Access", async ({ page }) => {
 		await page.goto("http://localhost:3000");
 
-		await page.getByRole("link", { name: /Apply for Early Access/i }).first().click();
+		await page
+			.getByRole("link", { name: /Apply for Early Access/i })
+			.first()
+			.click();
 		await expect(page).toHaveURL(/\/setup/);
 	});
 

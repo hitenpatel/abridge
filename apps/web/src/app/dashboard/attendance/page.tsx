@@ -3,9 +3,27 @@
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
+import {
+	AlertCircle,
+	Calendar,
+	CalendarDays,
+	CheckCircle2,
+	ChevronLeft,
+	ChevronRight,
+	ClipboardCheck,
+	Clock,
+	Download,
+	HelpCircle,
+	Send,
+	ShieldCheck,
+	Sun,
+	XCircle,
+} from "lucide-react";
 import { useState } from "react";
 
 function StaffAttendanceView({ schoolId }: { schoolId: string }) {
@@ -63,7 +81,6 @@ function StaffAttendanceView({ schoolId }: { schoolId: string }) {
 		<div data-testid="attendance-view">
 			<header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
 				<div>
-					<h2 className="text-3xl font-bold text-slate-800">Attendance Overview</h2>
 					<p className="text-muted-foreground mt-1">
 						Today &middot;{" "}
 						{new Date().toLocaleDateString("en-GB", {
@@ -77,38 +94,30 @@ function StaffAttendanceView({ schoolId }: { schoolId: string }) {
 
 			{/* Summary Cards */}
 			<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-				<Card className="p-5 text-center">
+				<Card className="glass-card p-5 text-center">
 					<div className="flex items-center justify-center gap-2 mb-2">
-						<span className="material-symbols-rounded" aria-hidden="true">
-							check_circle
-						</span>
+						<CheckCircle2 className="h-5 w-5 text-green-600" aria-hidden="true" />
 						<span className="text-sm font-medium text-muted-foreground">Present</span>
 					</div>
 					<p className="text-3xl font-bold text-green-600">{summary.present}</p>
 				</Card>
-				<Card className="p-5 text-center">
+				<Card className="glass-card p-5 text-center">
 					<div className="flex items-center justify-center gap-2 mb-2">
-						<span className="material-symbols-rounded" aria-hidden="true">
-							cancel
-						</span>
+						<XCircle className="h-5 w-5 text-red-600" aria-hidden="true" />
 						<span className="text-sm font-medium text-muted-foreground">Absent</span>
 					</div>
 					<p className="text-3xl font-bold text-red-600">{summary.absent}</p>
 				</Card>
-				<Card className="p-5 text-center">
+				<Card className="glass-card p-5 text-center">
 					<div className="flex items-center justify-center gap-2 mb-2">
-						<span className="material-symbols-rounded" aria-hidden="true">
-							schedule
-						</span>
+						<Clock className="h-5 w-5 text-yellow-600" aria-hidden="true" />
 						<span className="text-sm font-medium text-muted-foreground">Late</span>
 					</div>
 					<p className="text-3xl font-bold text-yellow-600">{summary.late}</p>
 				</Card>
-				<Card className="p-5 text-center">
+				<Card className="glass-card p-5 text-center">
 					<div className="flex items-center justify-center gap-2 mb-2">
-						<span className="material-symbols-rounded" aria-hidden="true">
-							help_outline
-						</span>
+						<HelpCircle className="h-5 w-5 text-gray-500" aria-hidden="true" />
 						<span className="text-sm font-medium text-muted-foreground">Unmarked</span>
 					</div>
 					<p className="text-3xl font-bold text-gray-500">{summary.unmarked}</p>
@@ -303,7 +312,6 @@ function ParentAttendanceView() {
 				<header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
 					<div>
 						<div className="flex items-center gap-3 mb-2">
-							<h2 className="text-3xl font-bold text-slate-800">Attendance Hub</h2>
 							<span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-bold rounded-lg">
 								95% Present
 							</span>
@@ -331,9 +339,7 @@ function ParentAttendanceView() {
 						type="button"
 						className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-soft text-sm font-medium hover:scale-105 transition-transform"
 					>
-						<span className="material-symbols-rounded" aria-hidden="true">
-							download
-						</span>
+						<Download className="h-4 w-4" aria-hidden="true" />
 						<span>Export Log</span>
 					</button>
 				</header>
@@ -346,12 +352,7 @@ function ParentAttendanceView() {
 							{/* Month Navigation */}
 							<div className="flex justify-between items-center mb-6">
 								<h3 className="text-xl font-bold flex items-center gap-2">
-									<span
-										className="material-symbols-rounded text-secondary text-2xl"
-										aria-hidden="true"
-									>
-										calendar_today
-									</span>
+									<Calendar className="h-6 w-6 text-secondary" aria-hidden="true" />
 									{monthName}
 								</h3>
 								<div className="flex gap-2">
@@ -364,9 +365,7 @@ function ParentAttendanceView() {
 										}}
 										className="p-2 hover:bg-gray-100 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
 									>
-										<span className="material-symbols-rounded" aria-hidden="true">
-											chevron_left
-										</span>
+										<ChevronLeft className="h-5 w-5" aria-hidden="true" />
 									</button>
 									<button
 										type="button"
@@ -377,9 +376,7 @@ function ParentAttendanceView() {
 										}}
 										className="p-2 hover:bg-gray-100 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
 									>
-										<span className="material-symbols-rounded" aria-hidden="true">
-											chevron_right
-										</span>
+										<ChevronRight className="h-5 w-5" aria-hidden="true" />
 									</button>
 								</div>
 							</div>
@@ -482,21 +479,17 @@ function ParentAttendanceView() {
 							<div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-6 rounded-2xl border border-yellow-100">
 								<div className="flex items-start gap-4">
 									<div className="bg-secondary p-3 rounded-full text-white shadow-md">
-										<span className="material-symbols-rounded" aria-hidden="true">
-											wb_sunny
-										</span>
+										<Sun className="h-5 w-5" aria-hidden="true" />
 									</div>
 									<div>
 										<h4 className="font-bold text-lg mb-1">{activeChild.firstName} is at School</h4>
 										<p className="text-sm text-gray-500">Checked in at 8:15 AM • On Time</p>
 									</div>
 									<div className="ml-auto">
-										<span
-											className="material-symbols-rounded text-green-500 bg-white rounded-full p-1"
+										<CheckCircle2
+											className="h-6 w-6 text-green-500 bg-white rounded-full p-0.5"
 											aria-hidden="true"
-										>
-											check_circle
-										</span>
+										/>
 									</div>
 								</div>
 							</div>
@@ -505,9 +498,7 @@ function ParentAttendanceView() {
 						{/* Absence Report Form */}
 						<Card className="p-6 md:p-8 rounded-2xl shadow-soft">
 							<h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-								<span className="material-symbols-rounded text-primary text-2xl" aria-hidden="true">
-									add_moderator
-								</span>
+								<ShieldCheck className="h-6 w-6 text-primary" aria-hidden="true" />
 								Report Upcoming Absence
 							</h3>
 
@@ -520,12 +511,10 @@ function ParentAttendanceView() {
 										Select Date(s)
 									</label>
 									<div className="relative">
-										<span
-											className="material-symbols-rounded absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+										<CalendarDays
+											className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
 											aria-hidden="true"
-										>
-											date_range
-										</span>
+										/>
 										<input
 											id="absence-date"
 											type="date"
@@ -541,37 +530,38 @@ function ParentAttendanceView() {
 									</legend>
 									<div className="grid grid-cols-2 gap-4">
 										{[
-											{ value: "sick", icon: "sick", label: "Sick / Ill", color: "red" },
+											{ value: "sick", icon: AlertCircle, label: "Sick / Ill", color: "red" },
 											{
 												value: "appointment",
-												icon: "medical_services",
+												icon: ShieldCheck,
 												label: "Appointment",
 												color: "blue",
 											},
-											{ value: "trip", icon: "flight", label: "Family/Trip", color: "yellow" },
-											{ value: "other", icon: "more_horiz", label: "Other", color: "gray" },
-										].map((reason) => (
-											<label key={reason.value} className="cursor-pointer group">
-												<input
-													type="radio"
-													name="reason"
-													value={reason.value}
-													checked={selectedReason === reason.value}
-													onChange={(e) => setSelectedReason(e.target.value)}
-													className="peer sr-only"
-												/>
-												<div className="p-4 rounded-xl border-2 border-gray-100 bg-gray-50 peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-center flex flex-col items-center gap-2 h-32 justify-center hover:bg-gray-100">
-													<div
-														className={`w-12 h-12 rounded-full bg-${reason.color}-100 text-${reason.color}-500 flex items-center justify-center mb-1`}
-													>
-														<span className="material-symbols-rounded text-2xl" aria-hidden="true">
-															{reason.icon}
-														</span>
+											{ value: "trip", icon: CalendarDays, label: "Family/Trip", color: "yellow" },
+											{ value: "other", icon: HelpCircle, label: "Other", color: "gray" },
+										].map((reason) => {
+											const ReasonIcon = reason.icon;
+											return (
+												<label key={reason.value} className="cursor-pointer group">
+													<input
+														type="radio"
+														name="reason"
+														value={reason.value}
+														checked={selectedReason === reason.value}
+														onChange={(e) => setSelectedReason(e.target.value)}
+														className="peer sr-only"
+													/>
+													<div className="p-4 rounded-xl border-2 border-gray-100 bg-gray-50 peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-center flex flex-col items-center gap-2 h-32 justify-center hover:bg-gray-100">
+														<div
+															className={`w-12 h-12 rounded-full bg-${reason.color}-100 text-${reason.color}-500 flex items-center justify-center mb-1`}
+														>
+															<ReasonIcon className="h-6 w-6" aria-hidden="true" />
+														</div>
+														<span className="font-bold text-sm text-gray-700">{reason.label}</span>
 													</div>
-													<span className="font-bold text-sm text-gray-700">{reason.label}</span>
-												</div>
-											</label>
-										))}
+												</label>
+											);
+										})}
 									</div>
 								</fieldset>
 
@@ -596,9 +586,7 @@ function ParentAttendanceView() {
 									className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02]"
 								>
 									Submit Absence Report
-									<span className="material-symbols-rounded" aria-hidden="true">
-										send
-									</span>
+									<Send className="h-4 w-4" aria-hidden="true" />
 								</button>
 
 								<p className="text-center text-xs text-gray-500">
@@ -621,8 +609,22 @@ export default function AttendancePage() {
 	if (!features.attendanceEnabled) return <FeatureDisabled featureName="Attendance" />;
 
 	if (isStaff && session.schoolId) {
-		return <StaffAttendanceView schoolId={session.schoolId} />;
+		return (
+			<PageShell maxWidth="5xl">
+				<PageHeader
+					icon={ClipboardCheck}
+					title="Attendance"
+					description="Track student attendance"
+				/>
+				<StaffAttendanceView schoolId={session.schoolId} />
+			</PageShell>
+		);
 	}
 
-	return <ParentAttendanceView />;
+	return (
+		<PageShell maxWidth="5xl">
+			<PageHeader icon={ClipboardCheck} title="Attendance" description="Track student attendance" />
+			<ParentAttendanceView />
+		</PageShell>
+	);
 }

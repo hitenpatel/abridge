@@ -147,14 +147,18 @@ test.describe("Parent-Teacher Chat", () => {
 		// === STEP 4: Navigate to chat ===
 		await expect(async () => {
 			await page.reload();
-			await expect(page.getByRole("link", { name: /Chat/i }).first()).toBeVisible({ timeout: 3000 });
+			await expect(page.getByRole("link", { name: /Chat/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
 		}).toPass({ timeout: 30000 });
 
 		await page.getByRole("link", { name: /Chat/i }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/chat/);
 
 		// === STEP 5: Verify chat page loaded (may show conversations or empty state) ===
-		await expect(page.getByRole("heading", { name: /Chat/i }).first()).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: /Chat/i }).first()).toBeVisible({
+			timeout: 10000,
+		});
 	});
 
 	test("chat page should show disabled state", async ({ page }) => {

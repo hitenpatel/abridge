@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
@@ -453,17 +455,20 @@ export default function AchievementsPage() {
 	}
 
 	return (
-		<div className="space-y-6 p-6">
-			<div>
-				<h1 className="text-2xl font-bold">{isStaff ? "Awards" : "Achievements"}</h1>
-				<p className="text-muted-foreground">
-					{isStaff
-						? "Award achievements and manage categories"
-						: "View your child's achievements and awards"}
-				</p>
-			</div>
+		<PageShell maxWidth="4xl">
+			<div className="space-y-6 p-6">
+				<PageHeader
+					icon={Award}
+					title="Achievements"
+					description={
+						isStaff
+							? "Award achievements and manage categories"
+							: "View your child's achievements and awards"
+					}
+				/>
 
-			{isStaff && session.schoolId ? <StaffView schoolId={session.schoolId} /> : <ParentView />}
-		</div>
+				{isStaff && session.schoolId ? <StaffView schoolId={session.schoolId} /> : <ParentView />}
+			</div>
+		</PageShell>
 	);
 }

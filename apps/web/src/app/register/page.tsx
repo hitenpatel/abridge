@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/lib/trpc";
+import { AlertCircle, GraduationCap, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
@@ -69,13 +70,11 @@ function RegisterForm() {
 	};
 
 	return (
-		<Card className="w-full max-w-md">
+		<Card className="page-enter glass-card w-full max-w-md">
 			<CardHeader className="text-center space-y-4">
 				<div className="flex items-center justify-center gap-2 mb-2">
 					<div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-						<span className="material-symbols-rounded text-white text-[20px]" aria-hidden="true">
-							school
-						</span>
+						<GraduationCap className="w-5 h-5 text-white" aria-hidden="true" />
 					</div>
 					<span className="text-xl font-bold font-heading">Abridge</span>
 				</div>
@@ -85,18 +84,14 @@ function RegisterForm() {
 			<CardContent className="space-y-6">
 				{token && inviteError && (
 					<Alert variant="destructive" data-testid="invitation-error" role="alert">
-						<span className="material-symbols-rounded text-base" aria-hidden="true">
-							error
-						</span>
+						<AlertCircle className="w-4 h-4" aria-hidden="true" />
 						<AlertDescription>{inviteError.message}</AlertDescription>
 					</Alert>
 				)}
 
 				{inviteInfo && (
 					<Alert variant="info" data-testid="invitation-school-name" role="status">
-						<span className="material-symbols-rounded text-base" aria-hidden="true">
-							verified_user
-						</span>
+						<ShieldCheck className="w-4 h-4" aria-hidden="true" />
 						<AlertDescription>
 							You&apos;ve been invited to join <strong>{inviteInfo.schoolName}</strong> as a{" "}
 							<strong>{inviteInfo.role}</strong>.
@@ -172,7 +167,7 @@ function RegisterForm() {
 
 export default function RegisterPage() {
 	return (
-		<div className="flex min-h-screen items-center justify-center bg-background p-4">
+		<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-orange-50/20 to-background dark:via-orange-950/10 p-4">
 			<Suspense fallback={<div className="text-muted-foreground">Loading...</div>}>
 				<RegisterForm />
 			</Suspense>

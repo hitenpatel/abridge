@@ -4,9 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SUPPORTED_LANGUAGES } from "@/hooks/use-translation";
 import { trpc } from "@/lib/trpc";
+import {
+	Bell,
+	CreditCard,
+	GraduationCap,
+	Palette,
+	Settings,
+	ToggleRight,
+	User,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -78,9 +89,7 @@ function ProfileCard() {
 		<Card className="rounded-2xl border border-gray-100">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
-					<span className="material-symbols-rounded text-primary" aria-hidden="true">
-						person
-					</span>
+					<User className="w-5 h-5 text-primary" aria-hidden="true" />
 					Profile
 				</CardTitle>
 			</CardHeader>
@@ -198,9 +207,7 @@ function NotificationsCard() {
 		<Card className="rounded-2xl border border-gray-100">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
-					<span className="material-symbols-rounded text-primary" aria-hidden="true">
-						notifications
-					</span>
+					<Bell className="w-5 h-5 text-primary" aria-hidden="true" />
 					Notifications
 				</CardTitle>
 			</CardHeader>
@@ -328,9 +335,7 @@ function SchoolSettingsCard({ schoolId }: { schoolId: string }) {
 		<Card className="rounded-2xl border border-gray-100">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
-					<span className="material-symbols-rounded text-primary" aria-hidden="true">
-						school
-					</span>
+					<GraduationCap className="w-5 h-5 text-primary" aria-hidden="true" />
 					School Settings
 				</CardTitle>
 			</CardHeader>
@@ -475,9 +480,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 		<Card className="rounded-2xl border border-gray-100" data-testid="feature-toggles-card">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
-					<span className="material-symbols-rounded text-primary" aria-hidden="true">
-						toggle_on
-					</span>
+					<ToggleRight className="w-5 h-5 text-primary" aria-hidden="true" />
 					Features
 				</CardTitle>
 			</CardHeader>
@@ -730,9 +733,7 @@ function StripeCard({ schoolId }: { schoolId: string }) {
 		<Card className="rounded-2xl border border-gray-100 shadow-sm">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
-					<span className="material-symbols-rounded text-primary" aria-hidden="true">
-						payments
-					</span>
+					<CreditCard className="w-5 h-5 text-primary" aria-hidden="true" />
 					Stripe Payments
 				</CardTitle>
 			</CardHeader>
@@ -817,9 +818,7 @@ function BrandingCard({ schoolId }: { schoolId: string }) {
 		<Card className="rounded-2xl border border-gray-100" data-testid="branding-card">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
-					<span className="material-symbols-rounded text-primary" aria-hidden="true">
-						palette
-					</span>
+					<Palette className="w-5 h-5 text-primary" aria-hidden="true" />
 					School Branding
 				</CardTitle>
 			</CardHeader>
@@ -939,11 +938,13 @@ export default function SettingsPage() {
 
 	if (isLoading) {
 		return (
-			<div className="max-w-2xl mx-auto space-y-6">
-				<Skeleton className="h-8 w-32" />
-				<Skeleton className="h-64 w-full rounded-2xl" />
-				<Skeleton className="h-48 w-full rounded-2xl" />
-			</div>
+			<PageShell maxWidth="2xl">
+				<div className="space-y-6">
+					<Skeleton className="h-8 w-32" />
+					<Skeleton className="h-64 w-full rounded-2xl" />
+					<Skeleton className="h-48 w-full rounded-2xl" />
+				</div>
+			</PageShell>
 		);
 	}
 
@@ -951,11 +952,8 @@ export default function SettingsPage() {
 	const schoolId = session?.schoolId;
 
 	return (
-		<div className="max-w-2xl mx-auto" data-testid="settings-view">
-			<div className="mb-8">
-				<h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-				<p className="text-gray-500 mt-1">Manage your account and preferences</p>
-			</div>
+		<PageShell maxWidth="2xl" data-testid="settings-view">
+			<PageHeader icon={Settings} title="Settings" description="Manage your account" />
 
 			<div className="space-y-6">
 				<ProfileCard />
@@ -965,6 +963,6 @@ export default function SettingsPage() {
 				{isAdmin && schoolId && <StripeCard schoolId={schoolId} />}
 				{isAdmin && schoolId && <BrandingCard schoolId={schoolId} />}
 			</div>
-		</div>
+		</PageShell>
 	);
 }

@@ -182,9 +182,7 @@ export default function FeaturesPage() {
 							<div className="w-9 h-9 rounded-xl bg-[#FF7D45] flex items-center justify-center transition-transform group-hover:scale-105">
 								<BookOpen className="w-5 h-5 text-white" strokeWidth={2.5} />
 							</div>
-							<span className="text-xl font-bold tracking-tight text-white">
-								Abridge
-							</span>
+							<span className="text-xl font-bold tracking-tight text-white">Abridge</span>
 						</Link>
 						<div className="hidden lg:flex items-center gap-8">
 							{NAV_LINKS.map((link) => (
@@ -218,11 +216,7 @@ export default function FeaturesPage() {
 							onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
 							aria-label="Toggle menu"
 						>
-							{mobileMenuOpen ? (
-								<XIcon className="w-6 h-6" />
-							) : (
-								<Menu className="w-6 h-6" />
-							)}
+							{mobileMenuOpen ? <XIcon className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
 						</button>
 					</div>
 				</div>
@@ -270,8 +264,8 @@ export default function FeaturesPage() {
 						real schools
 					</h1>
 					<p className="text-lg sm:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
-						Six powerful modules that replace fragmented tools with one unified,
-						AI-enhanced platform. Every feature designed with UK schools in mind.
+						Six powerful modules that replace fragmented tools with one unified, AI-enhanced
+						platform. Every feature designed with UK schools in mind.
 					</p>
 				</div>
 			</section>
@@ -297,9 +291,7 @@ export default function FeaturesPage() {
 									<div
 										className={`${feature.bg} rounded-2xl aspect-[4/3] flex items-center justify-center relative overflow-hidden`}
 									>
-										<Icon
-											className={`w-24 h-24 ${feature.color} opacity-15`}
-										/>
+										<Icon className={`w-24 h-24 ${feature.color} opacity-15`} />
 										{feature.badge && (
 											<div className="absolute top-4 right-4 bg-[#FF7D45]/10 text-[#FF7D45] text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
 												<Sparkles className="w-3 h-3" />
@@ -319,16 +311,11 @@ export default function FeaturesPage() {
 									<h2 className="text-3xl sm:text-4xl font-bold mb-2 text-[#1E3A5F]">
 										{feature.title}
 									</h2>
-									<p className="text-lg text-slate-500 mb-6">
-										{feature.headline}
-									</p>
+									<p className="text-lg text-slate-500 mb-6">{feature.headline}</p>
 
 									<div className="space-y-4 mb-8">
 										{feature.paragraphs.map((p) => (
-											<p
-												key={p.slice(0, 40)}
-												className="text-slate-600 leading-relaxed"
-											>
+											<p key={p.slice(0, 40)} className="text-slate-600 leading-relaxed">
 												{p}
 											</p>
 										))}
@@ -336,10 +323,7 @@ export default function FeaturesPage() {
 
 									<ul className="grid sm:grid-cols-2 gap-3">
 										{feature.highlights.map((h) => (
-											<li
-												key={h}
-												className="flex items-center gap-2.5 text-sm"
-											>
+											<li key={h} className="flex items-center gap-2.5 text-sm">
 												<Check className="w-4 h-4 text-[#FF7D45] shrink-0" />
 												<span className="text-slate-700">{h}</span>
 											</li>
@@ -361,8 +345,8 @@ export default function FeaturesPage() {
 						See it in action
 					</h2>
 					<p className="text-lg text-blue-100 mb-10 max-w-2xl mx-auto">
-						Apply for the pilot programme and get full access to every feature at
-						no cost. No credit card required.
+						Apply for the pilot programme and get full access to every feature at no cost. No credit
+						card required.
 					</p>
 					<Link
 						href="/setup"
@@ -388,43 +372,29 @@ export default function FeaturesPage() {
 								<span className="text-lg font-bold text-white">Abridge</span>
 							</div>
 							<p className="text-sm leading-relaxed">
-								The AI-first school communication platform. Built for UK
-								schools.
+								The AI-first school communication platform. Built for UK schools.
 							</p>
 						</div>
 						<div>
-							<h4 className="text-sm font-semibold text-white mb-4">
-								Product
-							</h4>
+							<h4 className="text-sm font-semibold text-white mb-4">Product</h4>
 							<ul className="space-y-2.5 text-sm">
 								<li>
-									<Link
-										href="/features"
-										className="hover:text-white transition-colors"
-									>
+									<Link href="/features" className="hover:text-white transition-colors">
 										Features
 									</Link>
 								</li>
 								<li>
-									<Link
-										href="/pricing"
-										className="hover:text-white transition-colors"
-									>
+									<Link href="/pricing" className="hover:text-white transition-colors">
 										Pricing
 									</Link>
 								</li>
 							</ul>
 						</div>
 						<div>
-							<h4 className="text-sm font-semibold text-white mb-4">
-								Company
-							</h4>
+							<h4 className="text-sm font-semibold text-white mb-4">Company</h4>
 							<ul className="space-y-2.5 text-sm">
 								<li>
-									<Link
-										href="/about"
-										className="hover:text-white transition-colors"
-									>
+									<Link href="/about" className="hover:text-white transition-colors">
 										About
 									</Link>
 								</li>
@@ -443,18 +413,12 @@ export default function FeaturesPage() {
 							<h4 className="text-sm font-semibold text-white mb-4">Legal</h4>
 							<ul className="space-y-2.5 text-sm">
 								<li>
-									<a
-										href="/privacy"
-										className="hover:text-white transition-colors"
-									>
+									<a href="/privacy" className="hover:text-white transition-colors">
 										Privacy Policy
 									</a>
 								</li>
 								<li>
-									<a
-										href="/terms"
-										className="hover:text-white transition-colors"
-									>
+									<a href="/terms" className="hover:text-white transition-colors">
 										Terms of Service
 									</a>
 								</li>

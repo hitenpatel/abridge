@@ -1,6 +1,7 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
 import { Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Skeleton } from "../components/ui";
 import { trpc } from "../lib/trpc";
 
@@ -22,6 +23,7 @@ function getCategoryColor(category: string): { bg: string; text: string } {
 }
 
 export function CalendarScreen() {
+	const insets = useSafeAreaInsets();
 	const [currentDate, setCurrentDate] = useState(new Date());
 
 	const { startDate, endDate } = useMemo(() => {
@@ -88,6 +90,7 @@ export function CalendarScreen() {
 		<ScrollView
 			testID="calendar-screen"
 			className="flex-1 bg-background"
+			contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
 			refreshControl={
 				<RefreshControl refreshing={isRefetching} onRefresh={onRefresh} tintColor="#f56e3d" />
 			}
@@ -112,7 +115,7 @@ export function CalendarScreen() {
 			</View>
 
 			{/* Events */}
-			<View className="px-6 pb-8">
+			<View className="px-6">
 				{!events || events.length === 0 ? (
 					<View className="items-center py-20">
 						<MaterialIcons name="event" size={48} color="#9CA3AF" />

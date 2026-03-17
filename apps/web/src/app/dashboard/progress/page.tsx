@@ -2,6 +2,8 @@
 
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
@@ -386,17 +388,20 @@ export default function ProgressPage() {
 	}
 
 	return (
-		<div className="space-y-6 p-6">
-			<div>
-				<h1 className="text-2xl font-bold">Progress</h1>
-				<p className="text-muted-foreground">
-					{isStaff
-						? "View and generate weekly progress summaries"
-						: "Weekly progress summaries for your children"}
-				</p>
-			</div>
+		<PageShell maxWidth="4xl">
+			<div className="space-y-6 p-6">
+				<PageHeader
+					icon={TrendingUp}
+					title="Progress"
+					description={
+						isStaff
+							? "View and generate weekly progress summaries"
+							: "Weekly progress summaries for your children"
+					}
+				/>
 
-			{isStaff && session.schoolId ? <StaffView schoolId={session.schoolId} /> : <ParentView />}
-		</div>
+				{isStaff && session.schoolId ? <StaffView schoolId={session.schoolId} /> : <ParentView />}
+			</div>
+		</PageShell>
 	);
 }

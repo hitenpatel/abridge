@@ -5,10 +5,13 @@ import { ActivityFeed } from "@/components/feed/activity-feed";
 import { ChildSwitcher } from "@/components/feed/child-switcher";
 import { ClassPostCard } from "@/components/feed/class-post-card";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/lib/trpc";
-import { AlertTriangle, PenSquare } from "lucide-react";
+import { AlertTriangle, Home, PenSquare, Users } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -67,9 +70,11 @@ function StaffDashboard({ schoolId, userId }: { schoolId: string; userId: string
 					))}
 				</div>
 			) : (
-				<div className="text-center py-12 text-muted-foreground">
-					<p className="text-sm">No posts yet. Create your first class post!</p>
-				</div>
+				<EmptyState
+					icon={PenSquare}
+					title="No posts yet"
+					description="Create your first class post!"
+				/>
 			)}
 		</div>
 	);
@@ -168,12 +173,14 @@ export default function DashboardPage() {
 
 	if (isAuthPending || (session && isSummaryLoading)) {
 		return (
-			<div className="max-w-2xl mx-auto space-y-4 p-4">
-				<Skeleton className="h-10 w-full rounded-full" />
-				<Skeleton className="h-24 w-full rounded-xl" />
-				<Skeleton className="h-64 w-full rounded-xl" />
-				<Skeleton className="h-48 w-full rounded-xl" />
-			</div>
+			<PageShell maxWidth="2xl">
+				<div className="space-y-4 p-4">
+					<Skeleton className="h-10 w-full rounded-full" />
+					<Skeleton className="h-24 w-full rounded-xl" />
+					<Skeleton className="h-64 w-full rounded-xl" />
+					<Skeleton className="h-48 w-full rounded-xl" />
+				</div>
+			</PageShell>
 		);
 	}
 
@@ -181,78 +188,88 @@ export default function DashboardPage() {
 
 	// Staff with no children: show staff dashboard
 	if (isStaff && children.length === 0 && sessionInfo?.schoolId) {
-		return <StaffDashboard schoolId={sessionInfo.schoolId} userId={sessionInfo.id} />;
+		return (
+			<PageShell maxWidth="2xl">
+				<StaffDashboard schoolId={sessionInfo.schoolId} userId={sessionInfo.id} />
+			</PageShell>
+		);
 	}
 
 	if (children.length === 0) {
 		return (
-			<div
-				data-testid="empty-dashboard"
-				className="max-w-2xl mx-auto text-center py-16 text-muted-foreground"
-			>
-				<p className="text-sm">No children linked to your account yet.</p>
-			</div>
+			<PageShell maxWidth="2xl" data-testid="empty-dashboard">
+				<EmptyState
+					icon={Users}
+					title="No children linked"
+					description="No children linked to your account yet."
+				/>
+			</PageShell>
 		);
 	}
 
 	const feedItems = feedData?.pages.flatMap((page) => page.items) ?? [];
 
 	return (
-		<div data-testid="dashboard-view" className="max-w-2xl mx-auto space-y-6">
-			{/* Child Switcher */}
-			{children.length > 1 && (
-				<ChildSwitcher
-					items={children.map((c) => ({
-						id: c.id,
-						firstName: c.firstName,
-						lastName: c.lastName,
-						yearGroup: (c as Record<string, unknown>).yearGroup as string | undefined,
-						className: (c as Record<string, unknown>).className as string | undefined,
-					}))}
-					selectedChildId={selectedChildId ?? ""}
-					onSelect={(id) => setSelectedChildId(id)}
+		<PageShell maxWidth="2xl" data-testid="dashboard-view">
+			<div className="space-y-6">
+				<PageHeader icon={Home} title="Dashboard" description="Welcome back" />
+				{/* Child Switcher */}
+				{children.length > 1 && (
+					<ChildSwitcher
+						items={children.map((c) => ({
+							id: c.id,
+							firstName: c.firstName,
+							lastName: c.lastName,
+							yearGroup: (c as Record<string, unknown>).yearGroup as string | undefined,
+							className: (c as Record<string, unknown>).className as string | undefined,
+						}))}
+						selectedChildId={selectedChildId ?? ""}
+						onSelect={(id) => setSelectedChildId(id)}
+					/>
+				)}
+
+				{/* Action Items Row */}
+				{!isActionItemsLoading && actionItems && actionItems.length > 0 && (
+					<ActionItemsRow
+						items={actionItems.map((item) => ({
+							type: item.type,
+							title: (item as Record<string, unknown>).title as string | undefined,
+							subject: (item as Record<string, unknown>).subject as string | undefined,
+							amountDuePence: (item as Record<string, unknown>).amountDuePence as
+								| number
+								| undefined,
+							dueDate: (item as Record<string, unknown>).dueDate as string | undefined,
+							paymentItemId: (item as Record<string, unknown>).paymentItemId as string | undefined,
+							templateId: (item as Record<string, unknown>).templateId as string | undefined,
+							messageId: (item as Record<string, unknown>).messageId as string | undefined,
+						}))}
+						onPayment={() => router.push("/dashboard/payments")}
+						onForm={(templateId) => router.push(`/dashboard/forms/${templateId}`)}
+						onMessage={() => router.push("/dashboard/messages")}
+					/>
+				)}
+
+				{/* Activity Feed */}
+				<ActivityFeed
+					items={feedItems as unknown as Parameters<typeof ActivityFeed>[0]["items"]}
+					isLoading={isFeedLoading}
+					hasMore={!!hasNextPage}
+					onLoadMore={handleLoadMore}
+					onReact={handleReact}
+					onRemoveReaction={handleRemoveReaction}
+					onPostPress={(postId) => router.push(`/dashboard/posts/${postId}`)}
 				/>
-			)}
 
-			{/* Action Items Row */}
-			{!isActionItemsLoading && actionItems && actionItems.length > 0 && (
-				<ActionItemsRow
-					items={actionItems.map((item) => ({
-						type: item.type,
-						title: (item as Record<string, unknown>).title as string | undefined,
-						subject: (item as Record<string, unknown>).subject as string | undefined,
-						amountDuePence: (item as Record<string, unknown>).amountDuePence as number | undefined,
-						dueDate: (item as Record<string, unknown>).dueDate as string | undefined,
-						paymentItemId: (item as Record<string, unknown>).paymentItemId as string | undefined,
-						templateId: (item as Record<string, unknown>).templateId as string | undefined,
-						messageId: (item as Record<string, unknown>).messageId as string | undefined,
-					}))}
-					onPayment={() => router.push("/dashboard/payments")}
-					onForm={(templateId) => router.push(`/dashboard/forms/${templateId}`)}
-					onMessage={() => router.push("/dashboard/messages")}
-				/>
-			)}
-
-			{/* Activity Feed */}
-			<ActivityFeed
-				items={feedItems as unknown as Parameters<typeof ActivityFeed>[0]["items"]}
-				isLoading={isFeedLoading}
-				hasMore={!!hasNextPage}
-				onLoadMore={handleLoadMore}
-				onReact={handleReact}
-				onRemoveReaction={handleRemoveReaction}
-				onPostPress={(postId) => router.push(`/dashboard/posts/${postId}`)}
-			/>
-
-			{/* Report Absence FAB */}
-			<div className="fixed bottom-6 right-6 z-40">
-				<Link href="/dashboard/attendance">
-					<Button size="lg" className="rounded-full shadow-lg gap-2">
-						<AlertTriangle className="h-4 w-4" />
-						Report Absence
-					</Button>
-				</Link>
+				{/* Report Absence FAB */}
+				<div className="fixed bottom-6 right-6 z-40">
+					<Link href="/dashboard/attendance">
+						<Button size="lg" className="rounded-full shadow-lg gap-2">
+							<AlertTriangle className="h-4 w-4" />
+							Report Absence
+						</Button>
+					</Link>
+				</div>
 			</div>
-		</div>
+		</PageShell>
 	);
 }

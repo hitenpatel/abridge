@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
@@ -569,17 +571,18 @@ export default function GalleryPage() {
 	const schoolId = session?.schoolId ?? "";
 
 	return (
-		<div data-testid="gallery-view">
-			<div className="mb-8">
-				<h1 className="text-3xl font-bold text-gray-900">
-					{isStaff ? "Manage Gallery" : "Photo Gallery"}
-				</h1>
-				<p className="text-gray-500 mt-1">
-					{isStaff ? "Create albums and share photos with parents" : "View photos from your school"}
-				</p>
-			</div>
+		<PageShell maxWidth="5xl">
+			<div data-testid="gallery-view" className="p-6">
+				<PageHeader
+					icon={Image}
+					title="Gallery"
+					description={
+						isStaff ? "Create albums and share photos with parents" : "View photos from your school"
+					}
+				/>
 
-			{isStaff ? <StaffView schoolId={schoolId} /> : <ParentView />}
-		</div>
+				{isStaff ? <StaffView schoolId={schoolId} /> : <ParentView />}
+			</div>
+		</PageShell>
 	);
 }

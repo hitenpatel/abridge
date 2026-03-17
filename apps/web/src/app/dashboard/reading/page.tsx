@@ -3,6 +3,8 @@
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
@@ -1012,17 +1014,20 @@ export default function ReadingPage() {
 	}
 
 	return (
-		<div className="space-y-6 p-6">
-			<div>
-				<h1 className="text-2xl font-bold">Reading Diary</h1>
-				<p className="text-muted-foreground">
-					{isStaff
-						? "Monitor and support reading across the class"
-						: "Track daily reading and build a streak"}
-				</p>
-			</div>
+		<PageShell maxWidth="4xl">
+			<div className="space-y-6 p-6">
+				<PageHeader
+					icon={BookOpen}
+					title="Reading Diary"
+					description={
+						isStaff
+							? "Monitor and support reading across the class"
+							: "Track daily reading and build a streak"
+					}
+				/>
 
-			{isStaff && session.schoolId ? <StaffView schoolId={session.schoolId} /> : <ParentView />}
-		</div>
+				{isStaff && session.schoolId ? <StaffView schoolId={session.schoolId} /> : <ParentView />}
+			</div>
+		</PageShell>
 	);
 }

@@ -1,14 +1,6 @@
 "use client";
 
-import {
-	ArrowRight,
-	BookOpen,
-	Check,
-	ChevronDown,
-	Mail,
-	Menu,
-	XIcon,
-} from "lucide-react";
+import { ArrowRight, BookOpen, Check, ChevronDown, Mail, Menu, XIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -99,9 +91,7 @@ export default function PricingPage() {
 							<div className="w-9 h-9 rounded-xl bg-[#FF7D45] flex items-center justify-center transition-transform group-hover:scale-105">
 								<BookOpen className="w-5 h-5 text-white" strokeWidth={2.5} />
 							</div>
-							<span className="text-xl font-bold tracking-tight text-white">
-								Abridge
-							</span>
+							<span className="text-xl font-bold tracking-tight text-white">Abridge</span>
 						</Link>
 						<div className="hidden lg:flex items-center gap-8">
 							{NAV_LINKS.map((link) => (
@@ -135,11 +125,7 @@ export default function PricingPage() {
 							onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
 							aria-label="Toggle menu"
 						>
-							{mobileMenuOpen ? (
-								<XIcon className="w-6 h-6" />
-							) : (
-								<Menu className="w-6 h-6" />
-							)}
+							{mobileMenuOpen ? <XIcon className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
 						</button>
 					</div>
 				</div>
@@ -185,8 +171,7 @@ export default function PricingPage() {
 						Simple, transparent pricing
 					</h1>
 					<p className="text-lg sm:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
-						Free during the pilot programme. No credit card required. No
-						per-pupil charges. Ever.
+						Free during the pilot programme. No credit card required. No per-pupil charges. Ever.
 					</p>
 				</div>
 			</section>
@@ -201,19 +186,14 @@ export default function PricingPage() {
 						<div className="relative bg-white rounded-2xl p-8 border-2 border-slate-200 hover:shadow-lg transition-shadow">
 							<div className="mb-6">
 								<h2 className="text-xl font-bold mb-1 text-[#1E3A5F]">Free</h2>
-								<p className="text-sm text-slate-500">
-									For pilot programme schools
-								</p>
+								<p className="text-sm text-slate-500">For pilot programme schools</p>
 							</div>
 							<div className="mb-6">
-								<span className="text-5xl font-bold text-[#1E3A5F]">
-									{"\u00A3"}0
-								</span>
+								<span className="text-5xl font-bold text-[#1E3A5F]">{"\u00A3"}0</span>
 								<span className="text-slate-500 ml-1">/month</span>
 							</div>
 							<p className="text-sm text-slate-400 mb-6">
-								Full access to every feature while the pilot runs. No credit
-								card required.
+								Full access to every feature while the pilot runs. No credit card required.
 							</p>
 							<ul className="space-y-3 mb-8">
 								{[
@@ -249,19 +229,14 @@ export default function PricingPage() {
 							</div>
 							<div className="mb-6">
 								<h2 className="text-xl font-bold mb-1 text-[#1E3A5F]">Pro</h2>
-								<p className="text-sm text-slate-500">
-									For schools ready to commit
-								</p>
+								<p className="text-sm text-slate-500">For schools ready to commit</p>
 							</div>
 							<div className="mb-2">
-								<span className="text-5xl font-bold text-[#1E3A5F]">
-									{"\u00A3"}42
-								</span>
+								<span className="text-5xl font-bold text-[#1E3A5F]">{"\u00A3"}42</span>
 								<span className="text-slate-500 ml-1">/month</span>
 							</div>
 							<p className="text-sm text-slate-400 mb-6">
-								Billed annually at {"\u00A3"}500/year. Volume discounts for
-								MATs.
+								Billed annually at {"\u00A3"}500/year. Volume discounts for MATs.
 							</p>
 							<ul className="space-y-3 mb-8">
 								{[
@@ -323,9 +298,7 @@ export default function PricingPage() {
 								</button>
 								<div
 									className={`overflow-hidden transition-all duration-300 ${
-										openFaq === i
-											? "max-h-96 opacity-100"
-											: "max-h-0 opacity-0"
+										openFaq === i ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
 									}`}
 								>
 									<div className="px-6 pb-5 text-sm text-slate-500 leading-relaxed">
@@ -347,8 +320,7 @@ export default function PricingPage() {
 						Ready to get started?
 					</h2>
 					<p className="text-lg text-blue-100 mb-10 max-w-2xl mx-auto">
-						Apply for the pilot programme today. Full access, no cost, no credit
-						card.
+						Apply for the pilot programme today. Full access, no cost, no credit card.
 					</p>
 					<div className="flex flex-col sm:flex-row items-center justify-center gap-4">
 						<Link
@@ -383,43 +355,29 @@ export default function PricingPage() {
 								<span className="text-lg font-bold text-white">Abridge</span>
 							</div>
 							<p className="text-sm leading-relaxed">
-								The AI-first school communication platform. Built for UK
-								schools.
+								The AI-first school communication platform. Built for UK schools.
 							</p>
 						</div>
 						<div>
-							<h4 className="text-sm font-semibold text-white mb-4">
-								Product
-							</h4>
+							<h4 className="text-sm font-semibold text-white mb-4">Product</h4>
 							<ul className="space-y-2.5 text-sm">
 								<li>
-									<Link
-										href="/features"
-										className="hover:text-white transition-colors"
-									>
+									<Link href="/features" className="hover:text-white transition-colors">
 										Features
 									</Link>
 								</li>
 								<li>
-									<Link
-										href="/pricing"
-										className="hover:text-white transition-colors"
-									>
+									<Link href="/pricing" className="hover:text-white transition-colors">
 										Pricing
 									</Link>
 								</li>
 							</ul>
 						</div>
 						<div>
-							<h4 className="text-sm font-semibold text-white mb-4">
-								Company
-							</h4>
+							<h4 className="text-sm font-semibold text-white mb-4">Company</h4>
 							<ul className="space-y-2.5 text-sm">
 								<li>
-									<Link
-										href="/about"
-										className="hover:text-white transition-colors"
-									>
+									<Link href="/about" className="hover:text-white transition-colors">
 										About
 									</Link>
 								</li>
@@ -438,18 +396,12 @@ export default function PricingPage() {
 							<h4 className="text-sm font-semibold text-white mb-4">Legal</h4>
 							<ul className="space-y-2.5 text-sm">
 								<li>
-									<a
-										href="/privacy"
-										className="hover:text-white transition-colors"
-									>
+									<a href="/privacy" className="hover:text-white transition-colors">
 										Privacy Policy
 									</a>
 								</li>
 								<li>
-									<a
-										href="/terms"
-										className="hover:text-white transition-colors"
-									>
+									<a href="/terms" className="hover:text-white transition-colors">
 										Terms of Service
 									</a>
 								</li>

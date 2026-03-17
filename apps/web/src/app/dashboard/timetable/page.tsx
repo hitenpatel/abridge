@@ -1,6 +1,8 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
 import { Clock, ExternalLink } from "lucide-react";
@@ -97,9 +99,7 @@ function TimetableGrid({ entries }: { entries: TimetableEntry[] }) {
 							<th
 								key={day}
 								className={`p-2 text-xs font-semibold text-center rounded-t-lg ${
-									day === todayDay
-										? "bg-primary text-primary-foreground"
-										: "text-muted-foreground"
+									day === todayDay ? "bg-primary text-primary-foreground" : "text-muted-foreground"
 								}`}
 							>
 								{DAY_SHORT[day]}
@@ -130,9 +130,7 @@ function TimetableGrid({ entries }: { entries: TimetableEntry[] }) {
 										<div
 											className={`rounded-lg border p-2 h-[72px] flex flex-col justify-center ${color}`}
 										>
-											<p className="text-xs font-bold leading-tight truncate">
-												{entry.subject}
-											</p>
+											<p className="text-xs font-bold leading-tight truncate">{entry.subject}</p>
 											{entry.teacher && (
 												<p className="text-[10px] opacity-80 leading-tight truncate mt-0.5">
 													{entry.teacher}
@@ -282,15 +280,18 @@ export default function TimetablePage() {
 	const isStaff = !!session?.staffRole && !!session?.schoolId;
 
 	return (
-		<div className="space-y-6 p-6">
-			<div>
-				<h1 className="text-2xl font-bold">Timetable</h1>
-				<p className="text-muted-foreground">
-					{isStaff ? "View and manage class timetables" : "View your child's weekly timetable"}
-				</p>
-			</div>
+		<PageShell maxWidth="5xl">
+			<div className="space-y-6 p-6">
+				<PageHeader
+					icon={Clock}
+					title="Timetable"
+					description={
+						isStaff ? "View and manage class timetables" : "View your child's weekly timetable"
+					}
+				/>
 
-			{isStaff ? <StaffView /> : <ParentView />}
-		</div>
+				{isStaff ? <StaffView /> : <ParentView />}
+			</div>
+		</PageShell>
 	);
 }

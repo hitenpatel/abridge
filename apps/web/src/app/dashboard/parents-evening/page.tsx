@@ -2,11 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
+import { Plus, User, Users, Video } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -18,28 +22,28 @@ export default function ParentsEveningPage() {
 
 	if (sessionLoading) {
 		return (
-			<div className="space-y-6">
-				<Skeleton className="h-8 w-64" />
-				<Skeleton className="h-48 w-full rounded-2xl" />
-				<Skeleton className="h-48 w-full rounded-2xl" />
-			</div>
+			<PageShell maxWidth="4xl">
+				<div className="space-y-6">
+					<Skeleton className="h-8 w-64" />
+					<Skeleton className="h-48 w-full rounded-2xl" />
+					<Skeleton className="h-48 w-full rounded-2xl" />
+				</div>
+			</PageShell>
 		);
 	}
 
 	return (
-		<div className="space-y-6">
-			<div className="flex items-center justify-between">
-				<div>
-					<h1 className="text-3xl font-bold text-gray-900">Parents' Evening</h1>
-					<p className="text-gray-500 mt-1">
-						{isStaff ? "Manage parents' evening events" : "Book appointments with teachers"}
-					</p>
-				</div>
+		<PageShell maxWidth="4xl">
+			<PageHeader
+				icon={Users}
+				title="Parents' Evening"
+				description={isStaff ? "Manage parents' evening events" : "Book appointments with teachers"}
+			>
 				{isAdmin && schoolId && <CreateEveningDialog schoolId={schoolId} />}
-			</div>
+			</PageHeader>
 
 			{isAdmin && schoolId ? <AdminView schoolId={schoolId} /> : <ParentView />}
-		</div>
+		</PageShell>
 	);
 }
 
@@ -68,9 +72,7 @@ function CreateEveningDialog({ schoolId }: { schoolId: string }) {
 	if (!open) {
 		return (
 			<Button onClick={() => setOpen(true)} data-testid="create-evening-button">
-				<span className="material-symbols-rounded mr-2" aria-hidden="true">
-					add
-				</span>
+				<Plus className="h-4 w-4 mr-2" aria-hidden="true" />
 				Create Evening
 			</Button>
 		);
@@ -216,23 +218,17 @@ function AdminView({ schoolId }: { schoolId: string }) {
 	return (
 		<div className="space-y-4">
 			{data?.items.length === 0 && (
-				<Card className="rounded-2xl border border-gray-100">
-					<CardContent className="py-12 text-center text-gray-500">
-						<span
-							className="material-symbols-rounded text-5xl mb-3 text-gray-300 block"
-							aria-hidden="true"
-						>
-							groups
-						</span>
-						<p>No parents' evenings created yet</p>
-					</CardContent>
-				</Card>
+				<EmptyState
+					icon={Users}
+					title="No parents' evenings created yet"
+					description="Create one to get started."
+				/>
 			)}
 			{data?.items.map((evening) => (
 				<Card
 					key={evening.id}
 					data-testid="evening-item"
-					className="rounded-2xl border border-gray-100 cursor-pointer hover:border-primary/30 transition-colors"
+					className="rounded-2xl border border-gray-100 cursor-pointer hover:border-primary/30 transition-colors hover-lift"
 					onClick={() => setSelectedId(selectedId === evening.id ? null : evening.id)}
 				>
 					<CardHeader className="pb-2">
@@ -360,17 +356,11 @@ function ParentView() {
 
 	if (!data?.items.length) {
 		return (
-			<Card className="rounded-2xl border border-gray-100">
-				<CardContent className="py-12 text-center text-gray-500">
-					<span
-						className="material-symbols-rounded text-5xl mb-3 text-gray-300 block"
-						aria-hidden="true"
-					>
-						groups
-					</span>
-					<p>No upcoming parents' evenings</p>
-				</CardContent>
-			</Card>
+			<EmptyState
+				icon={Users}
+				title="No upcoming parents' evenings"
+				description="Check back later for scheduled events."
+			/>
 		);
 	}
 
@@ -385,7 +375,7 @@ function ParentView() {
 					<Card
 						key={evening.id}
 						data-testid="evening-item"
-						className="rounded-2xl border border-gray-100 cursor-pointer hover:border-primary/30 transition-colors"
+						className="rounded-2xl border border-gray-100 cursor-pointer hover:border-primary/30 transition-colors hover-lift"
 						onClick={() => setSelectedId(selectedId === evening.id ? null : evening.id)}
 					>
 						<CardHeader className="pb-2">
@@ -406,9 +396,7 @@ function ParentView() {
 								</span>
 								{evening.allowVideoCall && (
 									<span className="text-blue-600 flex items-center gap-1">
-										<span className="material-symbols-rounded text-sm" aria-hidden="true">
-											videocam
-										</span>
+										<Video className="h-4 w-4" aria-hidden="true" />
 										Video available
 									</span>
 								)}
@@ -482,9 +470,7 @@ function SlotBookingView({
 			{Array.from(grouped.entries()).map(([staffId, { staffName, slots }]) => (
 				<div key={staffId}>
 					<h3 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
-						<span className="material-symbols-rounded text-primary" aria-hidden="true">
-							person
-						</span>
+						<User className="h-4 w-4 text-primary" aria-hidden="true" />
 						{staffName}
 					</h3>
 					<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
