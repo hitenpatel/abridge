@@ -297,7 +297,7 @@ export default function Home() {
 							WhatsApp. Automate reports. Keep every parent engaged.
 						</p>
 
-						<div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+						<div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
 							<Link
 								href="/setup"
 								className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#FF7D45] hover:bg-[#E86B35] text-white font-semibold px-8 py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/30 text-base"
@@ -312,6 +312,15 @@ export default function Home() {
 								See How It Works
 								<ChevronDown className="w-4 h-4" />
 							</a>
+						</div>
+
+						{/* Hero dashboard screenshot */}
+						<div className="mt-4 [perspective:1000px] max-w-5xl mx-auto">
+							<img
+								src="/screenshots/dashboard.png"
+								alt="Abridge dashboard"
+								className="rounded-xl shadow-2xl border border-slate-200 w-full [transform:rotateX(2deg)] block"
+							/>
 						</div>
 					</div>
 				</div>
@@ -411,6 +420,77 @@ export default function Home() {
 								<p className="text-slate-600 leading-relaxed">
 									{card.description}
 								</p>
+							</div>
+						))}
+					</div>
+				</div>
+			</section>
+
+			{/* ============================================================ */}
+			{/*  3b. SCREENSHOT GALLERY — "SEE THE PLATFORM"                  */}
+			{/* ============================================================ */}
+			<section className="py-20 lg:py-28 bg-white">
+				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+					{/* Section header */}
+					<div className="max-w-3xl mx-auto text-center mb-14">
+						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-[#1E3A5F]">
+							See the platform
+						</h2>
+						<p className="text-lg text-slate-500">
+							Built for parents, teachers, and school admins. Here&apos;s what it looks like.
+						</p>
+					</div>
+
+					{/* Main 2x2 grid */}
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+						{([
+							{ src: "dashboard", alt: "Parent Dashboard", label: "Parent Dashboard" },
+							{ src: "homework", alt: "Homework Tracker", label: "Homework Tracker" },
+							{ src: "progress", alt: "AI Progress Summaries", label: "AI Progress Summaries" },
+							{ src: "achievements", alt: "Achievement Wall", label: "Achievement Wall" },
+						] as const).map((shot) => (
+							<div key={shot.src} className="flex flex-col gap-3">
+								{/* Browser-window frame */}
+								<div className="rounded-xl overflow-hidden shadow-lg border border-slate-200">
+									{/* macOS-style title bar */}
+									<div className="bg-slate-100 border-b border-slate-200 px-4 py-2.5 flex items-center gap-1.5">
+										<span className="w-3 h-3 rounded-full bg-red-400 block" />
+										<span className="w-3 h-3 rounded-full bg-yellow-400 block" />
+										<span className="w-3 h-3 rounded-full bg-green-400 block" />
+									</div>
+									<img
+										src={`/screenshots/${shot.src}.png`}
+										alt={shot.alt}
+										className="w-full block"
+									/>
+								</div>
+								<p className="text-sm font-medium text-slate-600 text-center">{shot.label}</p>
+							</div>
+						))}
+					</div>
+
+					{/* "See more" row — 4 smaller thumbnails */}
+					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+						{([
+							{ src: "reading", alt: "Reading Diary", label: "Reading Diary" },
+							{ src: "calendar", alt: "School Calendar", label: "School Calendar" },
+							{ src: "messages", alt: "Messages", label: "Messages" },
+							{ src: "attendance", alt: "Attendance", label: "Attendance" },
+						] as const).map((shot) => (
+							<div key={shot.src} className="flex flex-col gap-2">
+								<div className="rounded-lg overflow-hidden shadow-md border border-slate-200">
+									<div className="bg-slate-100 border-b border-slate-200 px-3 py-2 flex items-center gap-1">
+										<span className="w-2 h-2 rounded-full bg-red-400 block" />
+										<span className="w-2 h-2 rounded-full bg-yellow-400 block" />
+										<span className="w-2 h-2 rounded-full bg-green-400 block" />
+									</div>
+									<img
+										src={`/screenshots/${shot.src}.png`}
+										alt={shot.alt}
+										className="w-full block"
+									/>
+								</div>
+								<p className="text-xs font-medium text-slate-500 text-center">{shot.label}</p>
 							</div>
 						))}
 					</div>
