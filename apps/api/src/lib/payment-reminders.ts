@@ -9,10 +9,7 @@ import { logger } from "./logger";
  * - Parents with >2 late payments get reminders 3 days before due date.
  * - All other parents get reminders 1 day before due date.
  */
-async function getLatePaymentCount(
-	prisma: PrismaClient,
-	userId: string,
-): Promise<number> {
+async function getLatePaymentCount(prisma: PrismaClient, userId: string): Promise<number> {
 	// A "late" payment is one completed after the payment item's due date
 	const latePayments = await prisma.payment.findMany({
 		where: {
@@ -137,15 +134,11 @@ export async function sendPaymentReminders(prisma: PrismaClient): Promise<{
 			const lateCount = await getLatePaymentCount(prisma, parentLink.userId);
 			const isFrequentlyLate = lateCount > 2;
 
-			const daysUntilDue = Math.ceil(
-				(dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
-			);
+			const daysUntilDue = Math.ceil((dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
 			// Early reminder (3 days) for frequently late parents
 			// Standard reminder (1 day) for on-time parents
-			const shouldRemind = isFrequentlyLate
-				? daysUntilDue <= 3
-				: daysUntilDue <= 1;
+			const shouldRemind = isFrequentlyLate ? daysUntilDue <= 3 : daysUntilDue <= 1;
 
 			if (!shouldRemind) {
 				skipped++;

@@ -1,13 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import {
-	ActivityIndicator,
-	Alert,
-	Pressable,
-	ScrollView,
-	Text,
-	View,
-} from "react-native";
+import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ChildSelector } from "../components/ChildSelector";
 import { trpc } from "../lib/trpc";
@@ -172,9 +165,7 @@ export function HomeworkScreen() {
 							{assignments.map((item) => {
 								const status = getDueStatus(item.dueDate, item.completions);
 								const isExpanded = expandedId === item.id;
-								const isCompleted = item.completions.some(
-									(c) => c.status === "COMPLETED",
-								);
+								const isCompleted = item.completions.some((c) => c.status === "COMPLETED");
 
 								return (
 									<Pressable
@@ -196,11 +187,7 @@ export function HomeworkScreen() {
 												className="w-10 h-10 rounded-full items-center justify-center"
 												style={{ backgroundColor: status.bg }}
 											>
-												<MaterialIcons
-													name={status.icon}
-													size={20}
-													color={status.text}
-												/>
+												<MaterialIcons name={status.icon} size={20} color={status.text} />
 											</View>
 											<View className="flex-1">
 												<Text className="text-base font-sans-bold text-foreground dark:text-white">
@@ -219,10 +206,7 @@ export function HomeworkScreen() {
 												className="rounded-full px-2.5 py-1"
 												style={{ backgroundColor: status.bg }}
 											>
-												<Text
-													className="text-xs font-sans-semibold"
-													style={{ color: status.text }}
-												>
+												<Text className="text-xs font-sans-semibold" style={{ color: status.text }}>
 													{status.label}
 												</Text>
 											</View>
@@ -262,18 +246,9 @@ export function HomeworkScreen() {
 														className="h-12 rounded-full flex-row items-center justify-center gap-2"
 														style={{ backgroundColor: "#DCFCE7" }}
 													>
-														<MaterialIcons
-															name="check-circle"
-															size={20}
-															color="#16A34A"
-														/>
-														<Text
-															className="text-sm font-sans-bold"
-															style={{ color: "#16A34A" }}
-														>
-															{markCompleteMutation.isPending
-																? "Saving..."
-																: "Mark Done"}
+														<MaterialIcons name="check-circle" size={20} color="#16A34A" />
+														<Text className="text-sm font-sans-bold" style={{ color: "#16A34A" }}>
+															{markCompleteMutation.isPending ? "Saving..." : "Mark Done"}
 														</Text>
 													</Pressable>
 												)}

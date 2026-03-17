@@ -95,9 +95,7 @@ export async function generateDraft(
 	try {
 		const result = await Promise.race([
 			callAIProvider(provider, systemPrompt, userMessage),
-			new Promise<never>((_, reject) =>
-				setTimeout(() => reject(new Error("AI timeout")), 5000),
-			),
+			new Promise<never>((_, reject) => setTimeout(() => reject(new Error("AI timeout")), 5000)),
 		]);
 		return result;
 	} catch (err) {

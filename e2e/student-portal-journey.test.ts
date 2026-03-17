@@ -130,8 +130,10 @@ test.describe("Student Portal", () => {
 
 		// The page loads but student sees no payment data (they have no parentChild link)
 		// Outstanding Payments heading should appear but with no items
-		await expect(page.getByRole("heading", { name: /Outstanding Payments|Payments/i })).toBeVisible({
-			timeout: 10000,
-		});
+		await expect(page.getByRole("heading", { name: /Outstanding Payments|Payments/i })).toBeVisible(
+			{
+				timeout: 10000,
+			},
+		);
 	});
 });

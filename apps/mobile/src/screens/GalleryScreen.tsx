@@ -20,11 +20,13 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const ALBUM_GAP = 12;
 const ALBUM_PADDING = 24;
 const ALBUM_COLUMNS = 2;
-const ALBUM_WIDTH = (SCREEN_WIDTH - ALBUM_PADDING * 2 - ALBUM_GAP * (ALBUM_COLUMNS - 1)) / ALBUM_COLUMNS;
+const ALBUM_WIDTH =
+	(SCREEN_WIDTH - ALBUM_PADDING * 2 - ALBUM_GAP * (ALBUM_COLUMNS - 1)) / ALBUM_COLUMNS;
 
 const PHOTO_GAP = 4;
 const PHOTO_COLUMNS = 3;
-const PHOTO_WIDTH = (SCREEN_WIDTH - ALBUM_PADDING * 2 - PHOTO_GAP * (PHOTO_COLUMNS - 1)) / PHOTO_COLUMNS;
+const PHOTO_WIDTH =
+	(SCREEN_WIDTH - ALBUM_PADDING * 2 - PHOTO_GAP * (PHOTO_COLUMNS - 1)) / PHOTO_COLUMNS;
 
 interface Photo {
 	id: string;
@@ -45,10 +47,7 @@ export function GalleryScreen() {
 		isRefetching: isRefetchingAlbums,
 	} = trpc.gallery.listAlbums.useQuery({});
 
-	const {
-		data: albumDetail,
-		isLoading: isLoadingAlbum,
-	} = trpc.gallery.getAlbum.useQuery(
+	const { data: albumDetail, isLoading: isLoadingAlbum } = trpc.gallery.getAlbum.useQuery(
 		{ albumId: selectedAlbumId ?? "" },
 		{ enabled: !!selectedAlbumId },
 	);
@@ -120,9 +119,7 @@ export function GalleryScreen() {
 										className="absolute bottom-0 left-0 right-0 bg-black/50 px-4 py-3"
 										style={{ paddingBottom: insets.bottom + 8 }}
 									>
-										<Text className="text-white font-sans text-sm text-center">
-											{item.caption}
-										</Text>
+										<Text className="text-white font-sans text-sm text-center">{item.caption}</Text>
 									</View>
 								)}
 							</View>
@@ -158,7 +155,10 @@ export function GalleryScreen() {
 		return (
 			<View className="flex-1 bg-background">
 				{/* Header with back button */}
-				<View className="px-6 pb-4 flex-row items-center gap-3" style={{ paddingTop: insets.top + 8 }}>
+				<View
+					className="px-6 pb-4 flex-row items-center gap-3"
+					style={{ paddingTop: insets.top + 8 }}
+				>
 					<Pressable
 						onPress={() => setSelectedAlbumId(null)}
 						testID="back-to-albums"
@@ -182,9 +182,7 @@ export function GalleryScreen() {
 					</View>
 					{albumDetail && (
 						<View className="bg-primary/10 rounded-full px-3 py-1.5">
-							<Text className="text-primary font-sans-bold text-sm">
-								{photos.length} photos
-							</Text>
+							<Text className="text-primary font-sans-bold text-sm">{photos.length} photos</Text>
 						</View>
 					)}
 				</View>
@@ -193,7 +191,11 @@ export function GalleryScreen() {
 					<View className="px-6">
 						<View className="flex-row flex-wrap gap-1">
 							{[1, 2, 3, 4, 5, 6].map((i) => (
-								<Skeleton key={i} style={{ width: PHOTO_WIDTH, height: PHOTO_WIDTH }} className="rounded-lg" />
+								<Skeleton
+									key={i}
+									style={{ width: PHOTO_WIDTH, height: PHOTO_WIDTH }}
+									className="rounded-lg"
+								/>
 							))}
 						</View>
 					</View>
@@ -251,9 +253,7 @@ export function GalleryScreen() {
 							<Text className="text-3xl font-sans-extrabold text-foreground dark:text-white tracking-tight">
 								Gallery
 							</Text>
-							<Text className="text-sm font-sans text-text-muted mt-1">
-								School photo albums
-							</Text>
+							<Text className="text-sm font-sans text-text-muted mt-1">School photo albums</Text>
 						</View>
 						<View className="bg-blue-100 rounded-full px-3 py-1.5">
 							<MaterialIcons name="photo-library" size={18} color="#3B82F6" />

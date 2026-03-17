@@ -115,9 +115,7 @@ describe("sendPaymentReminders", () => {
 				lineItems: [
 					{
 						paymentItem: {
-							dueDate: new Date(
-								twoMonthsAgo.getTime() - 86400000 * 14,
-							),
+							dueDate: new Date(twoMonthsAgo.getTime() - 86400000 * 14),
 						},
 					},
 				],

@@ -347,8 +347,7 @@ export const homeworkRouter = router({
 			if (completion.hintCount >= 3) {
 				throw new TRPCError({
 					code: "TOO_MANY_REQUESTS",
-					message:
-						"Maximum hints reached for this assignment (3 of 3 used)",
+					message: "Maximum hints reached for this assignment (3 of 3 used)",
 				});
 			}
 

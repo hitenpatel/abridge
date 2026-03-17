@@ -9,7 +9,13 @@ function createDate(daysAgo: number): Date {
 }
 
 function makeRecord(daysAgo: number, mark: string) {
-	return { date: createDate(daysAgo), mark, session: "AM", childId: "child-1", schoolId: "school-1" };
+	return {
+		date: createDate(daysAgo),
+		mark,
+		session: "AM",
+		childId: "child-1",
+		schoolId: "school-1",
+	};
 }
 
 function createMockPrisma(children: any[], records: any[], existingAlerts: any[] = []) {
@@ -22,9 +28,9 @@ function createMockPrisma(children: any[], records: any[], existingAlerts: any[]
 		},
 		attendanceAlert: {
 			findFirst: vi.fn().mockImplementation(async ({ where }: any) => {
-				return existingAlerts.find(
-					(a) => a.childId === where.childId && a.type === where.type,
-				) ?? null;
+				return (
+					existingAlerts.find((a) => a.childId === where.childId && a.type === where.type) ?? null
+				);
 			}),
 			create: vi.fn().mockImplementation(async ({ data }: any) => ({
 				id: `alert-${Date.now()}`,
@@ -55,9 +61,7 @@ describe("attendance-alerts", () => {
 
 		expect(result.alertsCreated).toBeGreaterThanOrEqual(1);
 		const createCalls = prisma.attendanceAlert.create.mock.calls;
-		const consecutiveAlert = createCalls.find(
-			(c: any) => c[0].data.type === "CONSECUTIVE_ABSENCE",
-		);
+		const consecutiveAlert = createCalls.find((c: any) => c[0].data.type === "CONSECUTIVE_ABSENCE");
 		expect(consecutiveAlert).toBeDefined();
 		expect(consecutiveAlert[0].data.description).toContain("5 consecutive days");
 	});
@@ -71,23 +75,63 @@ describe("attendance-alerts", () => {
 		const dayOfWeek = now.getDay(); // 0=Sun, 1=Mon...
 		const daysToLastMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 		const records = [
-			{ date: createDate(daysToLastMonday), mark: "ABSENT_UNAUTHORISED", session: "AM", childId: "child-1", schoolId: "school-1" },
-			{ date: createDate(daysToLastMonday + 7), mark: "ABSENT_UNAUTHORISED", session: "AM", childId: "child-1", schoolId: "school-1" },
-			{ date: createDate(daysToLastMonday + 14), mark: "ABSENT_UNAUTHORISED", session: "AM", childId: "child-1", schoolId: "school-1" },
+			{
+				date: createDate(daysToLastMonday),
+				mark: "ABSENT_UNAUTHORISED",
+				session: "AM",
+				childId: "child-1",
+				schoolId: "school-1",
+			},
+			{
+				date: createDate(daysToLastMonday + 7),
+				mark: "ABSENT_UNAUTHORISED",
+				session: "AM",
+				childId: "child-1",
+				schoolId: "school-1",
+			},
+			{
+				date: createDate(daysToLastMonday + 14),
+				mark: "ABSENT_UNAUTHORISED",
+				session: "AM",
+				childId: "child-1",
+				schoolId: "school-1",
+			},
 			// Some present days
-			{ date: createDate(daysToLastMonday + 1), mark: "PRESENT", session: "AM", childId: "child-1", schoolId: "school-1" },
-			{ date: createDate(daysToLastMonday + 2), mark: "PRESENT", session: "AM", childId: "child-1", schoolId: "school-1" },
-			{ date: createDate(daysToLastMonday + 8), mark: "PRESENT", session: "AM", childId: "child-1", schoolId: "school-1" },
-			{ date: createDate(daysToLastMonday + 9), mark: "PRESENT", session: "AM", childId: "child-1", schoolId: "school-1" },
+			{
+				date: createDate(daysToLastMonday + 1),
+				mark: "PRESENT",
+				session: "AM",
+				childId: "child-1",
+				schoolId: "school-1",
+			},
+			{
+				date: createDate(daysToLastMonday + 2),
+				mark: "PRESENT",
+				session: "AM",
+				childId: "child-1",
+				schoolId: "school-1",
+			},
+			{
+				date: createDate(daysToLastMonday + 8),
+				mark: "PRESENT",
+				session: "AM",
+				childId: "child-1",
+				schoolId: "school-1",
+			},
+			{
+				date: createDate(daysToLastMonday + 9),
+				mark: "PRESENT",
+				session: "AM",
+				childId: "child-1",
+				schoolId: "school-1",
+			},
 		];
 		const prisma = createMockPrisma(children, records);
 
 		await detectPatterns(prisma, "school-1");
 
 		const createCalls = prisma.attendanceAlert.create.mock.calls;
-		const dayAlert = createCalls.find(
-			(c: any) => c[0].data.type === "DAY_PATTERN",
-		);
+		const dayAlert = createCalls.find((c: any) => c[0].data.type === "DAY_PATTERN");
 		expect(dayAlert).toBeDefined();
 		expect(dayAlert[0].data.description).toContain("Monday");
 	});
@@ -112,9 +156,7 @@ describe("attendance-alerts", () => {
 		await detectPatterns(prisma, "school-1");
 
 		const createCalls = prisma.attendanceAlert.create.mock.calls;
-		const thresholdAlert = createCalls.find(
-			(c: any) => c[0].data.type === "BELOW_THRESHOLD",
-		);
+		const thresholdAlert = createCalls.find((c: any) => c[0].data.type === "BELOW_THRESHOLD");
 		expect(thresholdAlert).toBeDefined();
 		expect(thresholdAlert[0].data.description).toContain("80%");
 	});
@@ -142,9 +184,7 @@ describe("attendance-alerts", () => {
 
 		const createCalls = prisma.attendanceAlert.create.mock.calls;
 		// Should NOT have consecutive absence alert (only 1 at a time, not 3+)
-		const consecutiveAlert = createCalls.find(
-			(c: any) => c[0].data.type === "CONSECUTIVE_ABSENCE",
-		);
+		const consecutiveAlert = createCalls.find((c: any) => c[0].data.type === "CONSECUTIVE_ABSENCE");
 		expect(consecutiveAlert).toBeUndefined();
 
 		// Should NOT have below threshold (10/12 = 83% would trigger, but let's check)

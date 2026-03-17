@@ -58,10 +58,7 @@ test.describe("Parent-Teacher Chat", () => {
 
 		// === STEP 4: Navigate to chat ===
 		await page.reload();
-		await page
-			.getByRole("link", { name: /Chat/i })
-			.first()
-			.click();
+		await page.getByRole("link", { name: /Chat/i }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/chat/);
 
 		// === STEP 5: Verify chat page loaded ===
@@ -149,10 +146,7 @@ test.describe("Parent-Teacher Chat", () => {
 
 		// === STEP 4: Navigate to chat ===
 		await page.reload();
-		await page
-			.getByRole("link", { name: /Chat/i })
-			.first()
-			.click();
+		await page.getByRole("link", { name: /Chat/i }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/chat/);
 
 		// === STEP 5: Verify conversations list shows the conversation ===
@@ -163,12 +157,10 @@ test.describe("Parent-Teacher Chat", () => {
 		await page.getByText("Mrs Teacher").click();
 
 		// === STEP 7: Verify messages are visible ===
-		await expect(
-			page.getByText("Could you help with the maths worksheet?"),
-		).toBeVisible({ timeout: 10000 });
-		await expect(
-			page.getByText("Of course! Please see the attachment."),
-		).toBeVisible();
+		await expect(page.getByText("Could you help with the maths worksheet?")).toBeVisible({
+			timeout: 10000,
+		});
+		await expect(page.getByText("Of course! Please see the attachment.")).toBeVisible();
 	});
 
 	test("chat page should show disabled state", async ({ page }) => {
@@ -205,8 +197,8 @@ test.describe("Parent-Teacher Chat", () => {
 		await page.goto("http://localhost:3000/dashboard/chat");
 
 		// === STEP 4: Should show disabled message ===
-		await expect(
-			page.getByRole("heading", { name: /Live Chat is not enabled/i }),
-		).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: /Live Chat is not enabled/i })).toBeVisible({
+			timeout: 10000,
+		});
 	});
 });

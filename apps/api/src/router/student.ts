@@ -1,5 +1,5 @@
+import { randomBytes } from "node:crypto";
 import { TRPCError } from "@trpc/server";
-import { randomBytes } from "crypto";
 import { z } from "zod";
 import { protectedProcedure, router, schoolStaffProcedure } from "../trpc";
 

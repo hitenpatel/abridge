@@ -139,9 +139,7 @@ describe("student portal", () => {
 			const caller = appRouter.createCaller(ctx);
 
 			// chat.getConversations requires the user to have a parentChild link or staff role
-			await expect(
-				caller.chat.getConversations(),
-			).rejects.toThrow();
+			await expect(caller.chat.getConversations()).rejects.toThrow();
 		});
 	});
 });

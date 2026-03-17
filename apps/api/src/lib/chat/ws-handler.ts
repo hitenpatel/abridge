@@ -84,9 +84,7 @@ export function registerChatWebSocket(app: FastifyInstance, prisma: PrismaClient
 							!conversation ||
 							(conversation.parentId !== userId && conversation.staffId !== userId)
 						) {
-							socket.send(
-								JSON.stringify({ type: "error", message: "Not a participant" }),
-							);
+							socket.send(JSON.stringify({ type: "error", message: "Not a participant" }));
 							break;
 						}
 
@@ -110,9 +108,7 @@ export function registerChatWebSocket(app: FastifyInstance, prisma: PrismaClient
 
 						// Broadcast to recipient
 						const recipientId =
-							conversation.parentId === userId
-								? conversation.staffId
-								: conversation.parentId;
+							conversation.parentId === userId ? conversation.staffId : conversation.parentId;
 
 						const outgoing = {
 							type: "chat:message",
@@ -141,8 +137,7 @@ export function registerChatWebSocket(app: FastifyInstance, prisma: PrismaClient
 
 						if (!conv || (conv.parentId !== userId && conv.staffId !== userId)) break;
 
-						const recipientId =
-							conv.parentId === userId ? conv.staffId : conv.parentId;
+						const recipientId = conv.parentId === userId ? conv.staffId : conv.parentId;
 
 						connectionManager.broadcast(recipientId, {
 							type: "chat:typing",
@@ -171,8 +166,7 @@ export function registerChatWebSocket(app: FastifyInstance, prisma: PrismaClient
 						});
 
 						if (conv) {
-							const recipientId =
-								conv.parentId === userId ? conv.staffId : conv.parentId;
+							const recipientId = conv.parentId === userId ? conv.staffId : conv.parentId;
 							connectionManager.broadcast(recipientId, {
 								type: "chat:read",
 								conversationId: msg.conversationId,

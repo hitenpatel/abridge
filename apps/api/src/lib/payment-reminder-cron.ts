@@ -7,14 +7,8 @@ import { sendPaymentReminders } from "./payment-reminders";
  * Runs every hour, but only executes at the configured hour (default: 9).
  */
 export function startPaymentReminderCron(prisma: PrismaClient): void {
-	const cronHour = Number.parseInt(
-		process.env.PAYMENT_REMINDER_HOUR || "9",
-		10,
-	);
-	logger.info(
-		{ cronHour },
-		"Starting payment reminder cron (checks every hour, runs daily)",
-	);
+	const cronHour = Number.parseInt(process.env.PAYMENT_REMINDER_HOUR || "9", 10);
+	logger.info({ cronHour }, "Starting payment reminder cron (checks every hour, runs daily)");
 
 	setInterval(
 		() => {

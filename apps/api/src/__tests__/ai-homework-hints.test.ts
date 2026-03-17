@@ -7,7 +7,11 @@ vi.mock("../lib/redis", () => ({
 }));
 
 vi.mock("../lib/ai-homework-hints", () => ({
-	generateHint: vi.fn().mockResolvedValue("Try breaking this into smaller steps. What do you get if you multiply 6 by 3 first?"),
+	generateHint: vi
+		.fn()
+		.mockResolvedValue(
+			"Try breaking this into smaller steps. What do you get if you multiply 6 by 3 first?",
+		),
 }));
 
 function createTestContext(overrides?: Record<string, any>): any {

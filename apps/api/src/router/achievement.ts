@@ -129,7 +129,10 @@ export const achievementRouter = router({
 			// Verify parent-child or student link
 			const hasAccess = await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId);
 			if (!hasAccess) {
-				throw new TRPCError({ code: "FORBIDDEN", message: "Not authorised to view this child's achievements" });
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "Not authorised to view this child's achievements",
+				});
 			}
 
 			const [awards, totalPointsResult] = await Promise.all([

@@ -1,13 +1,10 @@
-import type { PrismaClient, Child } from "@schoolconnect/db";
+import type { Child, PrismaClient } from "@schoolconnect/db";
 
 /**
  * Get the child record linked to a user via Child.userId.
  * Returns the child if the user is a student, null otherwise.
  */
-export async function getStudentChild(
-	prisma: PrismaClient,
-	userId: string,
-): Promise<Child | null> {
+export async function getStudentChild(prisma: PrismaClient, userId: string): Promise<Child | null> {
 	return prisma.child.findUnique({
 		where: { userId },
 	});

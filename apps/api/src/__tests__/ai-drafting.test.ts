@@ -14,7 +14,7 @@ vi.mock("../lib/redis", () => ({
 	setCachedStaffMembership: vi.fn().mockResolvedValue(undefined),
 }));
 
-import { generateDraft, checkRateLimit } from "../lib/ai-drafting";
+import { checkRateLimit, generateDraft } from "../lib/ai-drafting";
 import { appRouter } from "../router";
 
 const allFeatureToggles = {

@@ -29,9 +29,7 @@ export async function generateHint(
 	try {
 		const result = await Promise.race([
 			callHintProvider(provider, userMessage),
-			new Promise<never>((_, reject) =>
-				setTimeout(() => reject(new Error("AI timeout")), 5000),
-			),
+			new Promise<never>((_, reject) => setTimeout(() => reject(new Error("AI timeout")), 5000)),
 		]);
 
 		// Enforce 200 character limit
@@ -46,10 +44,7 @@ export async function generateHint(
 	}
 }
 
-async function callHintProvider(
-	provider: string,
-	userMessage: string,
-): Promise<string | null> {
+async function callHintProvider(provider: string, userMessage: string): Promise<string | null> {
 	if (provider === "claude") {
 		const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 		const model = process.env.AI_MODEL || "claude-haiku-4-5-20251001";
@@ -59,9 +54,7 @@ async function callHintProvider(
 			system: HINT_SYSTEM_PROMPT,
 			messages: [{ role: "user", content: userMessage }],
 		});
-		return response.content[0]?.type === "text"
-			? response.content[0].text
-			: null;
+		return response.content[0]?.type === "text" ? response.content[0].text : null;
 	}
 
 	if (provider === "openai") {
@@ -86,9 +79,7 @@ async function callHintProvider(
 		});
 
 		if (!response.ok) {
-			throw new Error(
-				`AI API error: ${response.status} ${response.statusText}`,
-			);
+			throw new Error(`AI API error: ${response.status} ${response.statusText}`);
 		}
 
 		const data = (await response.json()) as {
