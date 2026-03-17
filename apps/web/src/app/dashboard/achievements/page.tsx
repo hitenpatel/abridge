@@ -459,7 +459,7 @@ export default function AchievementsPage() {
 			<div className="space-y-6 p-6">
 				<PageHeader
 					icon={Award}
-					title="Achievements"
+					title={isStaff ? "Awards" : "Achievements"}
 					description={
 						isStaff
 							? "Award achievements and manage categories"

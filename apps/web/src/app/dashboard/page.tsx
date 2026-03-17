@@ -201,7 +201,7 @@ export default function DashboardPage() {
 				<EmptyState
 					icon={Users}
 					title="No children linked"
-					description="No children linked to your account yet."
+					description="Link your children to see their school updates here."
 				/>
 			</PageShell>
 		);

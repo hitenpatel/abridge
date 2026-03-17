@@ -575,7 +575,7 @@ export default function GalleryPage() {
 			<div data-testid="gallery-view" className="p-6">
 				<PageHeader
 					icon={Image}
-					title="Gallery"
+					title={isStaff ? "Manage Gallery" : "Photo Gallery"}
 					description={
 						isStaff ? "Create albums and share photos with parents" : "View photos from your school"
 					}

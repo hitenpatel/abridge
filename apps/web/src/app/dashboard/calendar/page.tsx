@@ -85,7 +85,7 @@ export default function CalendarPage() {
 
 	return (
 		<PageShell maxWidth="4xl">
-			<PageHeader icon={CalendarDays} title="Calendar" description="Upcoming events">
+			<PageHeader icon={CalendarDays} title="School Calendar" description="Upcoming events">
 				{session?.staffRole && (
 					<Button data-testid="create-event-button" onClick={() => setShowCreate(true)}>
 						<Plus className="h-4 w-4 mr-1" aria-hidden="true" />

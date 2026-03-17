@@ -89,7 +89,11 @@ function ParentPaymentsView() {
 
 	return (
 		<PageShell maxWidth="5xl">
-			<PageHeader icon={CreditCard} title="Payments" description="Manage school payments">
+			<PageHeader
+				icon={CreditCard}
+				title="Outstanding Payments"
+				description="Manage school payments"
+			>
 				<Link href="/dashboard/payments/history">
 					<Button variant="outline">
 						<History className="h-4 w-4 mr-1" aria-hidden="true" />

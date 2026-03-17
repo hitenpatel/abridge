@@ -249,7 +249,7 @@ export default function StaffManagementPage() {
 								<EmptyState
 									icon={Users}
 									title="No staff members"
-									description="No staff members found."
+									description="Invite staff members to get started."
 								/>
 							) : (
 								<div className="divide-y divide-border" data-testid="staff-list">

@@ -923,7 +923,11 @@ export default function ReportsPage() {
 
 	return (
 		<PageShell maxWidth="4xl">
-			<PageHeader icon={FileText} title="Reports" description="Student report cards" />
+			<PageHeader
+				icon={FileText}
+				title="Reports"
+				description={isStaff ? "Manage report cards and cycles" : "Student report cards"}
+			/>
 			{isStaff && session.schoolId ? <StaffView schoolId={session.schoolId} /> : <ParentView />}
 		</PageShell>
 	);

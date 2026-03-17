@@ -359,7 +359,11 @@ export default function FormsPage() {
 	if (isStaff && session.schoolId) {
 		return (
 			<PageShell maxWidth="4xl">
-				<PageHeader icon={FileText} title="Forms" description="School forms and submissions">
+				<PageHeader
+					icon={FileText}
+					title="Forms & Consent"
+					description="Review and sign important documents"
+				>
 					<Button data-testid="create-form-button" onClick={() => setStaffCreateOpen(true)}>
 						<Plus className="h-4 w-4 mr-1" />
 						Create Form
@@ -377,7 +381,11 @@ export default function FormsPage() {
 	if (isLoading) {
 		return (
 			<PageShell maxWidth="4xl">
-				<PageHeader icon={FileText} title="Forms" description="School forms and submissions" />
+				<PageHeader
+					icon={FileText}
+					title="Forms & Consent"
+					description="Review and sign important documents"
+				/>
 				<div className="space-y-8">
 					<Skeleton className="h-10 w-1/4" />
 					<div className="space-y-4">
@@ -392,7 +400,11 @@ export default function FormsPage() {
 	if (error) {
 		return (
 			<PageShell maxWidth="4xl">
-				<PageHeader icon={FileText} title="Forms" description="School forms and submissions" />
+				<PageHeader
+					icon={FileText}
+					title="Forms & Consent"
+					description="Review and sign important documents"
+				/>
 				<div className="text-center text-destructive">Error loading forms: {error.message}</div>
 			</PageShell>
 		);
@@ -402,7 +414,11 @@ export default function FormsPage() {
 
 	return (
 		<PageShell maxWidth="4xl">
-			<PageHeader icon={FileText} title="Forms" description="School forms and submissions" />
+			<PageHeader
+				icon={FileText}
+				title="Forms & Consent"
+				description="Review and sign important documents"
+			/>
 			<div data-testid="forms-list">
 				{children.length > 0 ? (
 					children.map((child) => (
@@ -416,7 +432,7 @@ export default function FormsPage() {
 					<EmptyState
 						icon={FileText}
 						title="No forms available"
-						description="No forms available at this time."
+						description="There are no forms to complete at this time."
 					/>
 				)}
 			</div>

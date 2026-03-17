@@ -800,7 +800,11 @@ export default function MealsPage() {
 
 	return (
 		<PageShell maxWidth="4xl">
-			<PageHeader icon={UtensilsCrossed} title="Meals" description="Manage meal bookings" />
+			<PageHeader
+				icon={UtensilsCrossed}
+				title="Meals"
+				description={isStaff ? "Manage school meal menus" : "Book meals and manage dietary needs"}
+			/>
 			{isStaff && session.schoolId ? <StaffView schoolId={session.schoolId} /> : <ParentView />}
 		</PageShell>
 	);
