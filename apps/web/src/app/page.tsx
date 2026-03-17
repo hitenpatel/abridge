@@ -687,7 +687,7 @@ export default function Home() {
 											{feature}
 										</td>
 										<td className="py-4 px-6 text-center bg-[#1E3A5F]/5">
-											{COMPETITOR_DATA.Abridge[i] ? (
+											{COMPETITOR_DATA.Abridge?.[i] ? (
 												<Check className="w-5 h-5 text-[#FF7D45] mx-auto" />
 											) : (
 												<span className="text-slate-300">&mdash;</span>
