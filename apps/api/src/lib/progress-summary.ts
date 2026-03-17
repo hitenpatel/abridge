@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { PrismaClient } from "@schoolconnect/db";
+import { type PrismaClient, Prisma } from "@schoolconnect/db";
 import { logger } from "./logger";
 
 export interface ChildWeeklyMetrics {
@@ -387,12 +387,12 @@ export async function generateWeeklySummary(
 
 	const result = await prisma.progressSummary.upsert({
 		where: { childId_weekStart: { childId, weekStart } },
-		update: { templateData: metrics as unknown as Record<string, unknown>, insight, summary },
+		update: { templateData: metrics as unknown as Prisma.InputJsonValue, insight, summary },
 		create: {
 			childId,
 			schoolId: child.schoolId,
 			weekStart,
-			templateData: metrics as unknown as Record<string, unknown>,
+			templateData: metrics as unknown as Prisma.InputJsonValue,
 			insight,
 			summary,
 		},

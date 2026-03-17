@@ -70,9 +70,10 @@ jobs:
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Apply database migrations and seed
+      - name: Push database schema and seed
         run: |
-          pnpm --filter @schoolconnect/db db:migrate
+          pnpm --filter @schoolconnect/db db:generate
+          pnpm --filter @schoolconnect/db db:push
           pnpm --filter @schoolconnect/db db:seed
 
       - name: Create API .env
@@ -241,9 +242,10 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Apply database migrations and seed
+      - name: Push database schema and seed
         run: |
-          pnpm --filter @schoolconnect/db db:migrate
+          pnpm --filter @schoolconnect/db db:generate
+          pnpm --filter @schoolconnect/db db:push
           pnpm --filter @schoolconnect/db db:seed
 
       - name: Create API .env
@@ -386,11 +388,12 @@ jobs:
             -not -path "apps/mobile/node_modules/react/index.js" \
             | while read f; do rm -rf "$(dirname "$f")"; done
 
-      - name: Apply database migrations and seed
+      - name: Push database schema and seed
         env:
           DATABASE_URL: postgresql://runner:postgres@localhost:5432/schoolconnect_test
         run: |
-          pnpm --filter @schoolconnect/db db:migrate
+          pnpm --filter @schoolconnect/db db:generate
+          pnpm --filter @schoolconnect/db db:push
           pnpm --filter @schoolconnect/db db:seed
 
       - name: Create API .env

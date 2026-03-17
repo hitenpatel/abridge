@@ -1,4 +1,4 @@
-import type { PrismaClient } from "@schoolconnect/db";
+import { type PrismaClient, Prisma } from "@schoolconnect/db";
 import { logger } from "./logger";
 
 interface AlertData {
@@ -57,7 +57,7 @@ export async function detectPatterns(
 					schoolId,
 					type: alert.type,
 					description: alert.description,
-					data: alert.data as Record<string, unknown>,
+					data: alert.data as unknown as Prisma.InputJsonValue,
 				},
 			});
 			created++;
@@ -134,7 +134,7 @@ function detectConsecutiveAbsences(
 	const sorted = [...records].sort((a, b) => a.date.getTime() - b.date.getTime());
 
 	for (let i = 0; i < sorted.length; i++) {
-		if (isAnyAbsence(sorted[i]?.mark)) {
+		if (isAnyAbsence(sorted[i]?.mark ?? "")) {
 			consecutive++;
 			maxConsecutive = Math.max(maxConsecutive, consecutive);
 		} else {
@@ -150,7 +150,7 @@ function detectConsecutiveAbsences(
 	// Use sorted (ascending) and check from end
 	currentStreak = 0;
 	for (let i = sorted.length - 1; i >= 0; i--) {
-		if (isAnyAbsence(sorted[i]?.mark)) {
+		if (isAnyAbsence(sorted[i]?.mark ?? "")) {
 			currentStreak++;
 		} else {
 			break;
