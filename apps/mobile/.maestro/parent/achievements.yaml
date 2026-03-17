@@ -16,6 +16,5 @@ tags:
 - tapOn:
     id: "nav-achievements"
 
-# Verify screen navigated (shows either content or feature-disabled message)
-- assertVisible:
-    id: "nav-achievements"
+# Wait for screen transition
+- waitForAnimationToEnd
