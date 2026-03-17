@@ -112,9 +112,7 @@ export async function gatherChildMetrics(
 		include: { assignment: true },
 	});
 
-	const completedCount = homeworkCompletions.filter(
-		(c) => c.status === "COMPLETED",
-	).length;
+	const completedCount = homeworkCompletions.filter((c) => c.status === "COMPLETED").length;
 	const overdueCount = homeworkAssignments.filter((a) => {
 		const completion = homeworkCompletions.find((c) => c.assignmentId === a.id);
 		return !completion || completion.status !== "COMPLETED";
@@ -389,12 +387,12 @@ export async function generateWeeklySummary(
 
 	const result = await prisma.progressSummary.upsert({
 		where: { childId_weekStart: { childId, weekStart } },
-		update: { templateData: metrics as any, insight, summary },
+		update: { templateData: metrics as unknown as Record<string, unknown>, insight, summary },
 		create: {
 			childId,
 			schoolId: child.schoolId,
 			weekStart,
-			templateData: metrics as any,
+			templateData: metrics as unknown as Record<string, unknown>,
 			insight,
 			summary,
 		},

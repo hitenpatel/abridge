@@ -1,6 +1,14 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
+import {
+	ActivityIndicator,
+	FlatList,
+	Pressable,
+	RefreshControl,
+	ScrollView,
+	Text,
+	View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ChildSelector } from "../components/ChildSelector";
 import { Skeleton } from "../components/ui";
@@ -28,7 +36,7 @@ const BADGE_COLORS = [
 ];
 
 function getBadgeColor(index: number): string {
-	return BADGE_COLORS[index % BADGE_COLORS.length]!;
+	return BADGE_COLORS[index % BADGE_COLORS.length] ?? "#F59E0B";
 }
 
 export function AchievementsScreen() {
@@ -74,9 +82,7 @@ export function AchievementsScreen() {
 
 	// Extract unique badges (BADGE type achievements)
 	const badges = awards.filter((a) => a.category?.type === "BADGE");
-	const uniqueBadges = Array.from(
-		new Map(badges.map((b) => [b.category?.name, b])).values(),
-	);
+	const uniqueBadges = Array.from(new Map(badges.map((b) => [b.category?.name, b])).values());
 
 	const selectedChild = children?.find((c) => c.id === selectedChildId);
 
@@ -109,9 +115,7 @@ export function AchievementsScreen() {
 							<Text className="text-3xl font-sans-extrabold text-foreground dark:text-white tracking-tight">
 								Achievements
 							</Text>
-							<Text className="text-sm font-sans text-text-muted mt-1">
-								Awards & recognition
-							</Text>
+							<Text className="text-sm font-sans text-text-muted mt-1">Awards & recognition</Text>
 						</View>
 						<View className="bg-amber-100 rounded-full px-3 py-1.5">
 							<MaterialIcons name="emoji-events" size={18} color="#F59E0B" />
@@ -241,7 +245,8 @@ export function AchievementsScreen() {
 											<MaterialIcons
 												name={
 													isBadge
-														? ((award.category?.icon as keyof typeof MaterialIcons.glyphMap) || "military-tech")
+														? (award.category?.icon as keyof typeof MaterialIcons.glyphMap) ||
+															"military-tech"
 														: "star"
 												}
 												size={20}
@@ -277,9 +282,7 @@ export function AchievementsScreen() {
 											</View>
 										</View>
 										<View className="bg-amber-100 rounded-full px-2.5 py-1">
-											<Text className="text-xs font-sans-bold text-amber-700">
-												+{award.points}
-											</Text>
+											<Text className="text-xs font-sans-bold text-amber-700">+{award.points}</Text>
 										</View>
 									</View>
 								);
@@ -288,9 +291,7 @@ export function AchievementsScreen() {
 					) : (
 						<View className="items-center py-10">
 							<MaterialIcons name="emoji-events" size={48} color="#9CA3AF" />
-							<Text className="text-text-muted font-sans-medium text-base mt-4">
-								No awards yet
-							</Text>
+							<Text className="text-text-muted font-sans-medium text-base mt-4">No awards yet</Text>
 						</View>
 					)}
 				</View>

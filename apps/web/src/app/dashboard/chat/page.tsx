@@ -128,8 +128,7 @@ function ConversationList({
 		<div className="space-y-1">
 			{conversations.map((conv) => {
 				const isSelected = conv.id === selectedId;
-				const otherPerson =
-					conv.parentId === currentUserId ? conv.staff : conv.parent;
+				const otherPerson = conv.parentId === currentUserId ? conv.staff : conv.parent;
 				const lastMsg = conv.lastMessage;
 
 				return (
@@ -142,19 +141,13 @@ function ConversationList({
 						}`}
 					>
 						<div className="flex items-center justify-between">
-							<span className="font-medium text-sm truncate">
-								{otherPerson.name ?? "Unknown"}
-							</span>
+							<span className="font-medium text-sm truncate">{otherPerson.name ?? "Unknown"}</span>
 							{(conv.unreadCount ?? 0) > 0 && (
-								<Badge className="bg-red-500 text-white text-xs ml-2">
-									{conv.unreadCount}
-								</Badge>
+								<Badge className="bg-red-500 text-white text-xs ml-2">{conv.unreadCount}</Badge>
 							)}
 						</div>
 						{conv.subject && (
-							<p className="text-xs text-muted-foreground truncate mt-0.5">
-								{conv.subject}
-							</p>
+							<p className="text-xs text-muted-foreground truncate mt-0.5">{conv.subject}</p>
 						)}
 						{lastMsg && (
 							<p className="text-xs text-gray-400 truncate mt-0.5">
@@ -195,6 +188,7 @@ function MessageThread({
 }) {
 	const bottomRef = useRef<HTMLDivElement>(null);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: scroll on message count change only
 	useEffect(() => {
 		bottomRef.current?.scrollIntoView({ behavior: "smooth" });
 	}, [messages.length]);
@@ -219,10 +213,7 @@ function MessageThread({
 			{messages.map((msg) => {
 				const isMine = msg.senderId === currentUserId;
 				return (
-					<div
-						key={msg.id}
-						className={`flex ${isMine ? "justify-end" : "justify-start"}`}
-					>
+					<div key={msg.id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
 						<div
 							className={`max-w-[75%] rounded-2xl px-4 py-2 ${
 								isMine
@@ -231,9 +222,7 @@ function MessageThread({
 							}`}
 						>
 							{!isMine && (
-								<p className="text-xs font-medium mb-0.5 opacity-70">
-									{msg.sender.name}
-								</p>
+								<p className="text-xs font-medium mb-0.5 opacity-70">{msg.sender.name}</p>
 							)}
 							<p className="text-sm whitespace-pre-wrap">{msg.body}</p>
 							<p
@@ -409,8 +398,7 @@ function ParentView({ userId, sessionToken }: { userId: string; sessionToken?: s
 
 	const utils = trpc.useUtils();
 
-	const { data: conversations, isLoading: convsLoading } =
-		trpc.chat.getConversations.useQuery();
+	const { data: conversations, isLoading: convsLoading } = trpc.chat.getConversations.useQuery();
 
 	const { data: messagesData, isLoading: msgsLoading } = trpc.chat.getMessages.useQuery(
 		{ conversationId: selectedConversationId ?? "" },
@@ -456,7 +444,10 @@ function ParentView({ userId, sessionToken }: { userId: string; sessionToken?: s
 			utils.chat.getConversations.invalidate();
 		}
 
-		if (lastMessage.type === "chat:typing" && lastMessage.conversationId === selectedConversationId) {
+		if (
+			lastMessage.type === "chat:typing" &&
+			lastMessage.conversationId === selectedConversationId
+		) {
 			const name = lastMessage.userId ?? "Someone";
 			setTypingUser(name);
 			setTimeout(() => setTypingUser(null), 3000);
@@ -469,16 +460,14 @@ function ParentView({ userId, sessionToken }: { userId: string; sessionToken?: s
 		}
 	}, [lastMessage, selectedConversationId, utils]);
 
-	// Mark as read when selecting a conversation
+	// biome-ignore lint/correctness/useExhaustiveDependencies: mark read only when conversation changes
 	useEffect(() => {
 		if (selectedConversationId) {
 			markReadMutation.mutate({ conversationId: selectedConversationId });
 		}
 	}, [selectedConversationId]);
 
-	const selectedConv = conversations?.find(
-		(c: Conversation) => c.id === selectedConversationId,
-	);
+	const selectedConv = conversations?.find((c: Conversation) => c.id === selectedConversationId);
 
 	const handleSend = (body: string) => {
 		if (!selectedConversationId) return;
@@ -520,9 +509,7 @@ function ParentView({ userId, sessionToken }: { userId: string; sessionToken?: s
 							<Skeleton className="h-16 w-full" />
 						</div>
 					) : !conversations?.length ? (
-						<p className="text-sm text-muted-foreground text-center py-8">
-							No conversations yet
-						</p>
+						<p className="text-sm text-muted-foreground text-center py-8">No conversations yet</p>
 					) : (
 						<ConversationList
 							conversations={conversations as Conversation[]}
@@ -549,9 +536,7 @@ function ParentView({ userId, sessionToken }: { userId: string; sessionToken?: s
 										: "Chat"}
 								</p>
 								{selectedConv?.subject && (
-									<p className="text-xs text-muted-foreground">
-										{selectedConv.subject}
-									</p>
+									<p className="text-xs text-muted-foreground">{selectedConv.subject}</p>
 								)}
 							</div>
 						</div>
@@ -601,8 +586,7 @@ function StaffView({
 
 	const utils = trpc.useUtils();
 
-	const { data: conversations, isLoading: convsLoading } =
-		trpc.chat.getConversations.useQuery();
+	const { data: conversations, isLoading: convsLoading } = trpc.chat.getConversations.useQuery();
 
 	const { data: messagesData, isLoading: msgsLoading } = trpc.chat.getMessages.useQuery(
 		{ conversationId: selectedConversationId ?? "" },
@@ -649,22 +633,24 @@ function StaffView({
 			utils.chat.getConversations.invalidate();
 		}
 
-		if (lastMessage.type === "chat:typing" && lastMessage.conversationId === selectedConversationId) {
+		if (
+			lastMessage.type === "chat:typing" &&
+			lastMessage.conversationId === selectedConversationId
+		) {
 			const name = lastMessage.userId ?? "Someone";
 			setTypingUser(name);
 			setTimeout(() => setTypingUser(null), 3000);
 		}
 	}, [lastMessage, selectedConversationId, utils]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: mark read only when conversation changes
 	useEffect(() => {
 		if (selectedConversationId) {
 			markReadMutation.mutate({ conversationId: selectedConversationId });
 		}
 	}, [selectedConversationId]);
 
-	const selectedConv = conversations?.find(
-		(c: Conversation) => c.id === selectedConversationId,
-	);
+	const selectedConv = conversations?.find((c: Conversation) => c.id === selectedConversationId);
 
 	const handleSend = (body: string) => {
 		if (!selectedConversationId) return;
@@ -698,9 +684,7 @@ function StaffView({
 							<Skeleton className="h-16 w-full" />
 						</div>
 					) : !conversations?.length ? (
-						<p className="text-sm text-muted-foreground text-center py-8">
-							No conversations yet
-						</p>
+						<p className="text-sm text-muted-foreground text-center py-8">No conversations yet</p>
 					) : (
 						<ConversationList
 							conversations={conversations as Conversation[]}
@@ -721,14 +705,10 @@ function StaffView({
 								<MessageCircle className="h-5 w-5 text-primary" />
 								<div>
 									<p className="font-medium text-sm">
-										{selectedConv
-											? (selectedConv as Conversation).parent.name
-											: "Chat"}
+										{selectedConv ? (selectedConv as Conversation).parent.name : "Chat"}
 									</p>
 									{selectedConv?.subject && (
-										<p className="text-xs text-muted-foreground">
-											{selectedConv.subject}
-										</p>
+										<p className="text-xs text-muted-foreground">{selectedConv.subject}</p>
 									)}
 								</div>
 							</div>
@@ -779,14 +759,10 @@ function AdminView({ userId, schoolId }: { userId: string; schoolId: string }) {
 	const [viewAll, setViewAll] = useState(false);
 	const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
 
-	const { data: myConversations, isLoading: myLoading } =
-		trpc.chat.getConversations.useQuery();
+	const { data: myConversations, isLoading: myLoading } = trpc.chat.getConversations.useQuery();
 
 	const { data: allConversations, isLoading: allLoading } =
-		trpc.chat.adminGetConversations.useQuery(
-			{ schoolId },
-			{ enabled: viewAll },
-		);
+		trpc.chat.adminGetConversations.useQuery({ schoolId }, { enabled: viewAll });
 
 	const conversations = viewAll ? allConversations : myConversations;
 	const isLoading = viewAll ? allLoading : myLoading;
@@ -837,9 +813,7 @@ function AdminView({ userId, schoolId }: { userId: string; schoolId: string }) {
 								<Skeleton className="h-16 w-full" />
 							</div>
 						) : !conversations?.length ? (
-							<p className="text-sm text-muted-foreground text-center py-8">
-								No conversations
-							</p>
+							<p className="text-sm text-muted-foreground text-center py-8">No conversations</p>
 						) : (
 							<ConversationList
 								conversations={conversations as Conversation[]}
@@ -856,9 +830,7 @@ function AdminView({ userId, schoolId }: { userId: string; schoolId: string }) {
 						<>
 							<div className="p-3 border-b flex items-center gap-3">
 								<MessageCircle className="h-5 w-5 text-primary" />
-								<span className="font-medium text-sm">
-									{viewAll ? "Read-only view" : "Chat"}
-								</span>
+								<span className="font-medium text-sm">{viewAll ? "Read-only view" : "Chat"}</span>
 							</div>
 							<MessageThread
 								messages={displayMessages as Message[]}
@@ -866,13 +838,7 @@ function AdminView({ userId, schoolId }: { userId: string; schoolId: string }) {
 								isLoading={viewAll ? adminMsgsLoading : msgsLoading}
 								typingUser={null}
 							/>
-							{!viewAll && (
-								<MessageInput
-									onSend={() => {}}
-									onTyping={() => {}}
-									disabled
-								/>
-							)}
+							{!viewAll && <MessageInput onSend={() => {}} onTyping={() => {}} disabled />}
 						</>
 					) : (
 						<div className="flex-1 flex items-center justify-center text-muted-foreground">
@@ -927,11 +893,7 @@ export default function ChatPage() {
 			{isAdmin && session.schoolId ? (
 				<AdminView userId={userId} schoolId={session.schoolId} />
 			) : isStaff && session.schoolId ? (
-				<StaffView
-					userId={userId}
-					schoolId={session.schoolId}
-					sessionToken={sessionToken}
-				/>
+				<StaffView userId={userId} schoolId={session.schoolId} sessionToken={sessionToken} />
 			) : (
 				<ParentView userId={userId} sessionToken={sessionToken} />
 			)}

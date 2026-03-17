@@ -53,7 +53,9 @@ export function ReadingDiaryScreen() {
 	// Form state
 	const [bookTitle, setBookTitle] = useState("");
 	const [minutes, setMinutes] = useState("");
-	const [readWith, setReadWith] = useState<"ALONE" | "PARENT" | "TEACHER" | "SIBLING" | "OTHER">("PARENT");
+	const [readWith, setReadWith] = useState<"ALONE" | "PARENT" | "TEACHER" | "SIBLING" | "OTHER">(
+		"PARENT",
+	);
 	const [comment, setComment] = useState("");
 
 	const { data: childrenWrappers, isLoading: isLoadingChildren } =
@@ -118,7 +120,7 @@ export function ReadingDiaryScreen() {
 			return;
 		}
 		const parsedMinutes = minutes ? Number.parseInt(minutes, 10) : undefined;
-		if (minutes && (Number.isNaN(parsedMinutes!) || parsedMinutes! < 0)) {
+		if (minutes && (Number.isNaN(parsedMinutes ?? Number.NaN) || (parsedMinutes ?? 0) < 0)) {
 			Alert.alert("Error", "Minutes must be a valid number");
 			return;
 		}
@@ -156,9 +158,7 @@ export function ReadingDiaryScreen() {
 							<Text className="text-3xl font-sans-extrabold text-foreground dark:text-white tracking-tight">
 								Reading Diary
 							</Text>
-							<Text className="text-sm font-sans text-text-muted mt-1">
-								Track reading progress
-							</Text>
+							<Text className="text-sm font-sans text-text-muted mt-1">Track reading progress</Text>
 						</View>
 						{stats && stats.currentStreak > 0 && (
 							<View className="bg-amber-100 rounded-full px-3 py-1.5 flex-row items-center gap-1">
@@ -205,9 +205,7 @@ export function ReadingDiaryScreen() {
 									<Text className="text-base font-sans-bold text-foreground dark:text-white">
 										{diary.currentBook ?? "No book set"}
 									</Text>
-									<Text className="text-xs font-sans text-text-muted">
-										Current Book
-									</Text>
+									<Text className="text-xs font-sans text-text-muted">Current Book</Text>
 								</View>
 								{diary.readingLevel && (
 									<View className="bg-purple-100 rounded-full px-3 py-1">
@@ -334,9 +332,7 @@ export function ReadingDiaryScreen() {
 										/>
 										<Text
 											className={`text-xs font-sans-semibold ${
-												readWith === opt.key
-													? "text-foreground dark:text-white"
-													: "text-text-muted"
+												readWith === opt.key ? "text-foreground dark:text-white" : "text-text-muted"
 											}`}
 										>
 											{opt.label}

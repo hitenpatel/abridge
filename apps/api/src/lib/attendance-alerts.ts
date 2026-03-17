@@ -3,7 +3,12 @@ import { logger } from "./logger";
 
 interface AlertData {
 	childId: string;
-	type: "CONSECUTIVE_ABSENCE" | "DECLINING_TREND" | "DAY_PATTERN" | "POST_HOLIDAY" | "BELOW_THRESHOLD";
+	type:
+		| "CONSECUTIVE_ABSENCE"
+		| "DECLINING_TREND"
+		| "DAY_PATTERN"
+		| "POST_HOLIDAY"
+		| "BELOW_THRESHOLD";
 	description: string;
 	data: Record<string, unknown>;
 }
@@ -24,7 +29,12 @@ export async function detectPatterns(
 	const alerts: AlertData[] = [];
 
 	for (const child of children) {
-		const childAlerts = await detectChildPatterns(prisma, child.id, child.firstName, child.lastName);
+		const childAlerts = await detectChildPatterns(
+			prisma,
+			child.id,
+			child.firstName,
+			child.lastName,
+		);
 		alerts.push(...childAlerts);
 	}
 
@@ -47,14 +57,17 @@ export async function detectPatterns(
 					schoolId,
 					type: alert.type,
 					description: alert.description,
-					data: alert.data as any,
+					data: alert.data as Record<string, unknown>,
 				},
 			});
 			created++;
 		}
 	}
 
-	logger.info({ schoolId, alertsCreated: created, totalDetected: alerts.length }, "Attendance pattern detection complete");
+	logger.info(
+		{ schoolId, alertsCreated: created, totalDetected: alerts.length },
+		"Attendance pattern detection complete",
+	);
 	return { alertsCreated: created };
 }
 
@@ -121,7 +134,7 @@ function detectConsecutiveAbsences(
 	const sorted = [...records].sort((a, b) => a.date.getTime() - b.date.getTime());
 
 	for (let i = 0; i < sorted.length; i++) {
-		if (isAnyAbsence(sorted[i]!.mark)) {
+		if (isAnyAbsence(sorted[i]?.mark)) {
 			consecutive++;
 			maxConsecutive = Math.max(maxConsecutive, consecutive);
 		} else {
@@ -137,7 +150,7 @@ function detectConsecutiveAbsences(
 	// Use sorted (ascending) and check from end
 	currentStreak = 0;
 	for (let i = sorted.length - 1; i >= 0; i--) {
-		if (isAnyAbsence(sorted[i]!.mark)) {
+		if (isAnyAbsence(sorted[i]?.mark)) {
 			currentStreak++;
 		} else {
 			break;
@@ -185,7 +198,11 @@ function detectDecliningTrend(
 			childId,
 			type: "DECLINING_TREND",
 			description: `${firstName} ${lastName}'s attendance has declined by ${Math.round(drop)}% over the last 4 weeks (${Math.round(prevPct)}% to ${Math.round(recentPct)}%).`,
-			data: { previousPct: Math.round(prevPct), recentPct: Math.round(recentPct), dropPct: Math.round(drop) },
+			data: {
+				previousPct: Math.round(prevPct),
+				recentPct: Math.round(recentPct),
+				dropPct: Math.round(drop),
+			},
 		};
 	}
 
@@ -200,12 +217,19 @@ function detectDayPattern(
 ): AlertData | null {
 	// Count absences by day of week (0=Sunday, 1=Monday, ... 5=Friday)
 	const dayAbsences: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-	const dayNames: Record<number, string> = { 1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday" };
+	const dayNames: Record<number, string> = {
+		1: "Monday",
+		2: "Tuesday",
+		3: "Wednesday",
+		4: "Thursday",
+		5: "Friday",
+	};
 
 	for (const r of records) {
 		const day = r.date.getDay();
 		if (day >= 1 && day <= 5 && isAnyAbsence(r.mark)) {
-			dayAbsences[day]!++;
+			const current = dayAbsences[day] ?? 0;
+			dayAbsences[day] = current + 1;
 		}
 	}
 
