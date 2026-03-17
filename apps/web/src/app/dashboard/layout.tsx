@@ -175,6 +175,11 @@ function DashboardLayoutInner({
 			featureKey: "progressSummariesEnabled",
 		},
 		{
+			name: "Timetable",
+			href: "/dashboard/timetable",
+			icon: "schedule",
+		},
+		{
 			name: "Chat",
 			href: "/dashboard/chat",
 			icon: "chat",
@@ -292,6 +297,11 @@ function DashboardLayoutInner({
 			href: "/dashboard/progress",
 			icon: "insights",
 			featureKey: "progressSummariesEnabled",
+		},
+		{
+			name: "Timetable",
+			href: "/dashboard/timetable",
+			icon: "schedule",
 		},
 		{
 			name: "Chat",
