@@ -84,4 +84,4 @@ USER apiuser
 EXPOSE 4000
 
 WORKDIR /app/apps/api
-CMD ["node", "--import", "tsx", "dist/index.js"]
+CMD ["node", "dist/index.js"]

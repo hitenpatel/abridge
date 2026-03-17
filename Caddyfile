@@ -1,0 +1,38 @@
+# Caddyfile — Abridge production reverse proxy
+# Caddy automatically obtains and renews TLS certificates via Let's Encrypt.
+# Ensure both domains have DNS A records pointing to this server's IP.
+
+api.abridge.school {
+    reverse_proxy api:4000
+
+    # Preserve real client IP for rate limiting and logging
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-For {remote_host}
+
+    # Security headers (supplement what Fastify Helmet provides)
+    header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+    log {
+        output file /var/log/caddy/api.log {
+            roll_size 50mb
+            roll_keep 5
+        }
+        format json
+    }
+}
+
+app.abridge.school {
+    reverse_proxy web:3000
+
+    # Preserve real client IP
+    header_up X-Real-IP {remote_host}
+    header_up X-Forwarded-For {remote_host}
+
+    log {
+        output file /var/log/caddy/web.log {
+            roll_size 50mb
+            roll_keep 5
+        }
+        format json
+    }
+}
