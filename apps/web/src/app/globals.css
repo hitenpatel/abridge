@@ -17,8 +17,8 @@
 		--popover: 30 100% 99%;
 		--popover-foreground: 213 53% 24%;
 
-		/* Primary: Coral Orange #FF7D45 */
-		--primary: 17 100% 63%;
+		/* Primary: Coral Orange #C73800 (darkened for WCAG AA: white text 5.26:1) */
+		--primary: 17 100% 39%;
 		--primary-foreground: 0 0% 100%;
 
 		/* Secondary: Sunshine Yellow #FFD54F */
@@ -27,7 +27,7 @@
 
 		/* Muted: Warm Gray */
 		--muted: 20 20% 96%;
-		--muted-foreground: 220 9% 46%;
+		--muted-foreground: 220 9% 44%;
 
 		/* Accent: Soft Teal #4DB6AC */
 		--accent: 174 36% 49%;
@@ -40,7 +40,7 @@
 		/* Border: Warm Gray 200 */
 		--border: 20 13% 91%;
 		--input: 20 13% 91%;
-		--ring: 17 100% 63%;
+		--ring: 17 100% 39%;
 
 		/* Semantic colors */
 		--success: 142 71% 45%;
@@ -65,8 +65,8 @@
 		--popover: 20 10% 13%;
 		--popover-foreground: 20 20% 91%;
 
-		/* Primary: Coral Orange (same in dark) */
-		--primary: 17 100% 63%;
+		/* Primary: Coral Orange (darkened for WCAG AA: white text 5.26:1) */
+		--primary: 17 100% 39%;
 		--primary-foreground: 0 0% 100%;
 
 		/* Secondary: Sunshine Yellow */
@@ -84,7 +84,7 @@
 
 		--border: 20 8% 18%;
 		--input: 20 8% 18%;
-		--ring: 17 100% 63%;
+		--ring: 17 100% 39%;
 
 		/* Semantic colors */
 		--success: 142 71% 45%;
@@ -150,12 +150,12 @@
 	background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-	background: #cbd5e0;
+	background: hsl(20 13% 80%);
 	border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-	background: #a0aec0;
+	background: hsl(20 13% 68%);
 }
 .dark ::-webkit-scrollbar-thumb {
-	background: #4a5568;
+	background: hsl(20 8% 28%);
 }

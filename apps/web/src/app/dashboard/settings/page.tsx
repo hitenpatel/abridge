@@ -6,6 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SUPPORTED_LANGUAGES } from "@/hooks/use-translation";
 import { trpc } from "@/lib/trpc";
@@ -29,7 +36,7 @@ function Toggle({
 }: { checked: boolean; onChange: (v: boolean) => void; label: string; "data-testid"?: string }) {
 	return (
 		<div className="flex items-center justify-between py-2">
-			<span className="text-sm font-medium text-gray-700">{label}</span>
+			<span className="text-sm font-medium text-foreground">{label}</span>
 			<button
 				type="button"
 				role="switch"
@@ -38,7 +45,7 @@ function Toggle({
 				data-testid={dataTestId}
 				onClick={() => onChange(!checked)}
 				className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
-					checked ? "bg-primary" : "bg-gray-200"
+					checked ? "bg-primary" : "bg-muted"
 				}`}
 			>
 				<span
@@ -117,9 +124,9 @@ function ProfileCard() {
 							id="settings-email"
 							value={data?.email ?? ""}
 							disabled
-							className="bg-orange-50/30 text-gray-500"
+							className="bg-orange-50/30 text-muted-foreground"
 						/>
-						<p className="text-xs text-gray-400">Contact admin to change your email</p>
+						<p className="text-xs text-muted-foreground">Contact admin to change your email</p>
 					</div>
 					<div className="space-y-1">
 						<Label htmlFor="settings-phone">Phone</Label>
@@ -132,23 +139,22 @@ function ProfileCard() {
 					</div>
 					<div className="space-y-1">
 						<Label htmlFor="settings-language">Preferred Language</Label>
-						<select
-							id="settings-language"
-							data-testid="language-select"
-							value={language}
-							onChange={(e) => setLanguage(e.target.value)}
-							className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-						>
-							{SUPPORTED_LANGUAGES.map((lang) => (
-								<option
-									key={lang.code}
-									value={lang.code}
-									data-testid={`language-option-${lang.code}`}
-								>
-									{lang.name}
-								</option>
-							))}
-						</select>
+						<Select value={language} onValueChange={(v) => setLanguage(v)}>
+							<SelectTrigger id="settings-language" data-testid="language-select">
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								{SUPPORTED_LANGUAGES.map((lang) => (
+									<SelectItem
+										key={lang.code}
+										value={lang.code}
+										data-testid={`language-option-${lang.code}`}
+									>
+										{lang.name}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
 					</div>
 					<Button
 						type="submit"
@@ -277,7 +283,7 @@ function NotificationsCard() {
 								</div>
 							</div>
 						)}
-						<p className="text-xs text-gray-400 mt-2">
+						<p className="text-xs text-muted-foreground mt-2">
 							Urgent messages will still be delivered during quiet hours
 						</p>
 					</div>
@@ -365,7 +371,7 @@ function SchoolSettingsCard({ schoolId }: { schoolId: string }) {
 					</div>
 
 					<div className="border-t pt-4">
-						<p className="text-sm font-medium text-gray-700 mb-2">
+						<p className="text-sm font-medium text-foreground mb-2">
 							Default notification preferences for new members
 						</p>
 						<Toggle checked={defPush} onChange={setDefPush} label="Push notifications" />
@@ -522,7 +528,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 						});
 					}}
 				>
-					<p className="text-sm text-gray-500 mb-4">
+					<p className="text-sm text-muted-foreground mb-4">
 						Enable or disable features for your school. Disabled features will be hidden from
 						navigation and blocked at the API level.
 					</p>
@@ -593,7 +599,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 						/>
 						{payments && (
 							<div className="pl-6 border-l-2 border-orange-100/50 ml-2 space-y-1">
-								<p className="text-xs text-gray-400 pt-1 pb-1">Payment categories</p>
+								<p className="text-xs text-muted-foreground pt-1 pb-1">Payment categories</p>
 								<Toggle
 									checked={dinnerMoney}
 									onChange={setDinnerMoney}
@@ -778,7 +784,9 @@ function StripeCard({ schoolId }: { schoolId: string }) {
 			</CardHeader>
 			<CardContent className="space-y-4">
 				<div className="flex items-center gap-2" data-testid="stripe-status">
-					<div className={`w-3 h-3 rounded-full ${isConnected ? "bg-green-500" : "bg-gray-300"}`} />
+					<div
+						className={`w-3 h-3 rounded-full ${isConnected ? "bg-green-500" : "bg-muted-foreground/40"}`}
+					/>
 					<span className="text-sm font-medium">
 						{isLoading ? "Loading..." : isConnected ? "Connected" : "Not connected"}
 					</span>
@@ -875,7 +883,7 @@ function BrandingCard({ schoolId }: { schoolId: string }) {
 					}}
 					className="space-y-4"
 				>
-					<p className="text-sm text-gray-500">
+					<p className="text-sm text-muted-foreground">
 						Customise your school's branding. These settings affect how your school appears to
 						parents and staff.
 					</p>
@@ -935,24 +943,23 @@ function BrandingCard({ schoolId }: { schoolId: string }) {
 							placeholder="Enter your school's motto"
 							maxLength={200}
 						/>
-						<p className="text-xs text-gray-400">{schoolMotto.length}/200 characters</p>
+						<p className="text-xs text-muted-foreground">{schoolMotto.length}/200 characters</p>
 					</div>
 
 					<div className="space-y-1">
 						<Label htmlFor="brand-font">Font</Label>
-						<select
-							id="brand-font"
-							data-testid="brand-font-select"
-							value={brandFont}
-							onChange={(e) => setBrandFont(e.target.value)}
-							className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-						>
-							{FONT_OPTIONS.map((font) => (
-								<option key={font.value} value={font.value}>
-									{font.label}
-								</option>
-							))}
-						</select>
+						<Select value={brandFont} onValueChange={(v) => setBrandFont(v)}>
+							<SelectTrigger id="brand-font" data-testid="brand-font-select">
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								{FONT_OPTIONS.map((font) => (
+									<SelectItem key={font.value} value={font.value}>
+										{font.label}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
 					</div>
 
 					<Button

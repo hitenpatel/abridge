@@ -41,7 +41,7 @@ function getDueDateColor(dueDate: Date, completed: boolean): string {
 	const diffDays = (due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
 	if (diffDays < 0) return "bg-red-100 text-red-800";
 	if (diffDays <= 2) return "bg-amber-100 text-amber-800";
-	return "bg-orange-100/40 text-gray-600";
+	return "bg-orange-100/40 text-foreground";
 }
 
 function getDueDateLabel(dueDate: Date, completed: boolean): string {

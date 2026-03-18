@@ -8,6 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
@@ -229,20 +236,21 @@ function StaffView({ schoolId }: { schoolId: string }) {
 							</div>
 							<div className="space-y-1">
 								<Label htmlFor="award-category">Category</Label>
-								<select
-									id="award-category"
-									data-testid="award-category-select"
-									value={awardCategoryId}
-									onChange={(e) => setAwardCategoryId(e.target.value)}
-									className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+								<Select
+									value={awardCategoryId || undefined}
+									onValueChange={(v) => setAwardCategoryId(v)}
 								>
-									<option value="">Select category</option>
-									{categories?.map((cat) => (
-										<option key={cat.id} value={cat.id}>
-											{cat.icon || ""} {cat.name} (+{cat.pointValue})
-										</option>
-									))}
-								</select>
+									<SelectTrigger id="award-category" data-testid="award-category-select">
+										<SelectValue placeholder="Select category" />
+									</SelectTrigger>
+									<SelectContent>
+										{categories?.map((cat) => (
+											<SelectItem key={cat.id} value={cat.id}>
+												{cat.icon || ""} {cat.name} (+{cat.pointValue})
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
 							</div>
 							<div className="space-y-1">
 								<Label htmlFor="award-reason">Reason</Label>
@@ -301,7 +309,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 											entry.rank === 1
 												? "bg-yellow-100 text-yellow-800"
 												: entry.rank === 2
-													? "bg-orange-100/40 text-gray-800"
+													? "bg-orange-100/40 text-foreground"
 													: entry.rank === 3
 														? "bg-orange-100 text-orange-800"
 														: "bg-muted text-muted-foreground"
@@ -362,16 +370,18 @@ function StaffView({ schoolId }: { schoolId: string }) {
 								</div>
 								<div className="space-y-1">
 									<Label htmlFor="cat-type">Type</Label>
-									<select
-										id="cat-type"
-										data-testid="cat-type-select"
+									<Select
 										value={catType}
-										onChange={(e) => setCatType(e.target.value as "POINTS" | "BADGE")}
-										className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+										onValueChange={(v) => setCatType(v as "POINTS" | "BADGE")}
 									>
-										<option value="POINTS">Points</option>
-										<option value="BADGE">Badge</option>
-									</select>
+										<SelectTrigger id="cat-type" data-testid="cat-type-select">
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="POINTS">Points</SelectItem>
+											<SelectItem value="BADGE">Badge</SelectItem>
+										</SelectContent>
+									</Select>
 								</div>
 								<div className="space-y-1">
 									<Label htmlFor="cat-points">Point Value</Label>

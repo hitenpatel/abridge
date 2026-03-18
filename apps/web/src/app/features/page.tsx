@@ -165,7 +165,7 @@ export default function FeaturesPage() {
 	}, []);
 
 	return (
-		<div className="min-h-screen bg-[#F8FAFC] text-[#1E293B]">
+		<div className="min-h-screen bg-orange-50/20 text-[#1E293B]">
 			{/* ============================================================ */}
 			{/*  NAVIGATION                                                   */}
 			{/* ============================================================ */}
@@ -256,7 +256,7 @@ export default function FeaturesPage() {
 			{/*  HERO                                                         */}
 			{/* ============================================================ */}
 			<section className="relative pt-28 pb-16 lg:pt-40 lg:pb-24 overflow-hidden">
-				<div className="absolute inset-0 bg-gradient-to-b from-[#1E3A5F]/8 via-[#1E3A5F]/3 to-white pointer-events-none" />
+				<div className="absolute inset-0 bg-gradient-to-b from-[#1E3A5F]/8 via-[#1E3A5F]/3 to-transparent pointer-events-none" />
 				<div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 					<h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] mb-6 text-[#1E3A5F]">
 						Features built for
@@ -276,7 +276,7 @@ export default function FeaturesPage() {
 			{FEATURES.map((feature, i) => {
 				const Icon = feature.icon;
 				const isReversed = i % 2 === 1;
-				const sectionBg = i % 2 === 0 ? "bg-white" : "bg-[#F8FAFC]";
+				const sectionBg = i % 2 === 0 ? "bg-card" : "bg-orange-50/30";
 
 				return (
 					<section key={feature.title} className={`py-16 lg:py-24 ${sectionBg}`}>
@@ -315,7 +315,7 @@ export default function FeaturesPage() {
 
 									<div className="space-y-4 mb-8">
 										{feature.paragraphs.map((p) => (
-											<p key={p.slice(0, 40)} className="text-slate-600 leading-relaxed">
+											<p key={p.slice(0, 40)} className="text-muted-foreground leading-relaxed">
 												{p}
 											</p>
 										))}
@@ -325,7 +325,7 @@ export default function FeaturesPage() {
 										{feature.highlights.map((h) => (
 											<li key={h} className="flex items-center gap-2.5 text-sm">
 												<Check className="w-4 h-4 text-[#FF7D45] shrink-0" />
-												<span className="text-slate-700">{h}</span>
+												<span className="text-muted-foreground">{h}</span>
 											</li>
 										))}
 									</ul>

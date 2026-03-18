@@ -239,7 +239,7 @@ function AlertHistory({ schoolId }: { schoolId: string }) {
 	const statusColors: Record<string, string> = {
 		ACTIVE: "bg-red-100 text-red-800",
 		ALL_CLEAR: "bg-green-100 text-green-800",
-		CANCELLED: "bg-orange-100/40 text-gray-800",
+		CANCELLED: "bg-orange-100/40 text-foreground",
 	};
 
 	return (

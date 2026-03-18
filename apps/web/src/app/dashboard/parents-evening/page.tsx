@@ -248,7 +248,7 @@ function AdminView({ schoolId }: { schoolId: string }) {
 						</div>
 					</CardHeader>
 					<CardContent>
-						<div className="flex gap-4 text-sm text-gray-500">
+						<div className="flex gap-4 text-sm text-muted-foreground">
 							<span>
 								{new Date(evening.date).toLocaleDateString("en-GB", {
 									weekday: "long",
@@ -382,7 +382,7 @@ function ParentView() {
 							<CardTitle className="text-lg">{evening.title}</CardTitle>
 						</CardHeader>
 						<CardContent>
-							<div className="flex flex-wrap gap-4 text-sm text-gray-500">
+							<div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
 								<span>
 									{new Date(evening.date).toLocaleDateString("en-GB", {
 										weekday: "long",
@@ -403,7 +403,7 @@ function ParentView() {
 								{bookingOpen ? (
 									<span className="text-green-600 font-medium">Booking open</span>
 								) : (
-									<span className="text-gray-400">
+									<span className="text-muted-foreground">
 										Booking opens {new Date(evening.bookingOpensAt).toLocaleDateString("en-GB")}
 									</span>
 								)}
@@ -469,7 +469,7 @@ function SlotBookingView({
 		<div className="space-y-6">
 			{Array.from(grouped.entries()).map(([staffId, { staffName, slots }]) => (
 				<div key={staffId}>
-					<h3 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+					<h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
 						<User className="h-4 w-4 text-primary" aria-hidden="true" />
 						{staffName}
 					</h3>
@@ -525,7 +525,7 @@ function SlotBookingView({
 										)}
 									</div>
 								) : slot.isBooked ? (
-									<p className="text-xs text-gray-400 mt-1">Taken</p>
+									<p className="text-xs text-muted-foreground mt-1">Taken</p>
 								) : bookingOpen && firstChildId ? (
 									<Button
 										size="sm"
@@ -541,7 +541,7 @@ function SlotBookingView({
 										Book
 									</Button>
 								) : (
-									<p className="text-xs text-gray-400 mt-1">Available</p>
+									<p className="text-xs text-muted-foreground mt-1">Available</p>
 								)}
 							</div>
 						))}
@@ -607,7 +607,7 @@ function StaffSlotView({
 		>
 			{Array.from(grouped.entries()).map(([staffId, { staffName, slots }]) => (
 				<div key={staffId}>
-					<h3 className="font-semibold text-gray-900 mb-2">{staffName}</h3>
+					<h3 className="font-semibold text-foreground mb-2">{staffName}</h3>
 					<div className="space-y-1">
 						{slots.map((slot) => (
 							<div
@@ -629,10 +629,10 @@ function StaffSlotView({
 											Booked
 										</span>
 									) : (
-										<span className="ml-2 text-gray-400 text-xs">Available</span>
+										<span className="ml-2 text-muted-foreground text-xs">Available</span>
 									)}
 									{slot.staffNotes && (
-										<p className="text-xs text-gray-500 mt-0.5">Notes: {slot.staffNotes}</p>
+										<p className="text-xs text-muted-foreground mt-0.5">Notes: {slot.staffNotes}</p>
 									)}
 								</div>
 								{staffId === session?.id && (

@@ -6,6 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { useFeatureToggles } from "@/lib/feature-toggles";
@@ -329,20 +336,21 @@ function ParentView() {
 								<label className="text-sm font-medium" htmlFor="log-readwith">
 									Read With
 								</label>
-								<select
-									id="log-readwith"
+								<Select
 									value={logReadWith}
-									onChange={(e) =>
-										setLogReadWith(e.target.value as (typeof READ_WITH_OPTIONS)[number])
-									}
-									className="mt-1 block w-full rounded-md border p-2 text-sm"
+									onValueChange={(v) => setLogReadWith(v as (typeof READ_WITH_OPTIONS)[number])}
 								>
-									{READ_WITH_OPTIONS.map((opt) => (
-										<option key={opt} value={opt}>
-											{READ_WITH_LABELS[opt]}
-										</option>
-									))}
-								</select>
+									<SelectTrigger id="log-readwith" className="mt-1">
+										<SelectValue />
+									</SelectTrigger>
+									<SelectContent>
+										{READ_WITH_OPTIONS.map((opt) => (
+											<SelectItem key={opt} value={opt}>
+												{READ_WITH_LABELS[opt]}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
 							</div>
 
 							<div>
@@ -683,7 +691,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 											<Badge className="bg-blue-100 text-blue-800">
 												{READ_WITH_LABELS[entry.readWith] ?? entry.readWith}
 											</Badge>
-											<Badge className="bg-orange-100/40 text-gray-600">
+											<Badge className="bg-orange-100/40 text-foreground">
 												{entry.entryBy === "TEACHER" ? "Teacher" : "Parent"}
 											</Badge>
 											{entry.minutesRead && (
@@ -869,19 +877,21 @@ function StaffView({ schoolId }: { schoolId: string }) {
 									<label className="text-sm font-medium" htmlFor="teacher-child">
 										Child
 									</label>
-									<select
-										id="teacher-child"
-										value={teacherEntryChildId}
-										onChange={(e) => setTeacherEntryChildId(e.target.value)}
-										className="mt-1 block w-full rounded-md border p-2 text-sm"
+									<Select
+										value={teacherEntryChildId || undefined}
+										onValueChange={(v) => setTeacherEntryChildId(v)}
 									>
-										<option value="">Select child...</option>
-										{overview?.map((child) => (
-											<option key={child.childId} value={child.childId}>
-												{child.childName}
-											</option>
-										))}
-									</select>
+										<SelectTrigger id="teacher-child" className="mt-1">
+											<SelectValue placeholder="Select child..." />
+										</SelectTrigger>
+										<SelectContent>
+											{overview?.map((child) => (
+												<SelectItem key={child.childId} value={child.childId}>
+													{child.childName}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
 								</div>
 								<div>
 									<label className="text-sm font-medium" htmlFor="teacher-date">
@@ -928,20 +938,23 @@ function StaffView({ schoolId }: { schoolId: string }) {
 								<label className="text-sm font-medium" htmlFor="teacher-readwith">
 									Read With
 								</label>
-								<select
-									id="teacher-readwith"
+								<Select
 									value={teacherEntryReadWith}
-									onChange={(e) =>
-										setTeacherEntryReadWith(e.target.value as (typeof READ_WITH_OPTIONS)[number])
+									onValueChange={(v) =>
+										setTeacherEntryReadWith(v as (typeof READ_WITH_OPTIONS)[number])
 									}
-									className="mt-1 block w-full rounded-md border p-2 text-sm"
 								>
-									{READ_WITH_OPTIONS.map((opt) => (
-										<option key={opt} value={opt}>
-											{READ_WITH_LABELS[opt]}
-										</option>
-									))}
-								</select>
+									<SelectTrigger id="teacher-readwith" className="mt-1">
+										<SelectValue />
+									</SelectTrigger>
+									<SelectContent>
+										{READ_WITH_OPTIONS.map((opt) => (
+											<SelectItem key={opt} value={opt}>
+												{READ_WITH_LABELS[opt]}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
 							</div>
 
 							<div>

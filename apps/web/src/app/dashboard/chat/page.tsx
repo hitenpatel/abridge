@@ -5,6 +5,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageShell } from "@/components/ui/page-shell";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
@@ -152,7 +159,7 @@ function ConversationList({
 						{conv.subject && (
 							<p className="text-xs text-muted-foreground truncate mt-0.5">{conv.subject}</p>
 						)}
-						<p className="text-xs text-gray-300 mt-1">
+						<p className="text-xs text-muted-foreground mt-1">
 							{new Date(conv.lastMessageAt).toLocaleDateString("en-GB", {
 								day: "numeric",
 								month: "short",
@@ -161,7 +168,7 @@ function ConversationList({
 							})}
 						</p>
 						{conv.closedAt && (
-							<Badge className="bg-orange-100/40 text-gray-500 text-xs mt-1">Closed</Badge>
+							<Badge className="bg-orange-100/40 text-muted-foreground text-xs mt-1">Closed</Badge>
 						)}
 					</button>
 				);
@@ -215,7 +222,7 @@ function MessageThread({
 							className={`max-w-[75%] rounded-2xl px-4 py-2 ${
 								isMine
 									? "bg-primary text-primary-foreground rounded-br-sm"
-									: "bg-orange-100/40 text-gray-900 rounded-bl-sm"
+									: "bg-orange-100/40 text-foreground rounded-bl-sm"
 							}`}
 						>
 							{!isMine && (
@@ -224,7 +231,7 @@ function MessageThread({
 							<p className="text-sm whitespace-pre-wrap">{msg.body}</p>
 							<p
 								className={`text-xs mt-1 ${
-									isMine ? "text-primary-foreground/60" : "text-gray-400"
+									isMine ? "text-primary-foreground/60" : "text-muted-foreground"
 								}`}
 							>
 								{new Date(msg.createdAt).toLocaleTimeString("en-GB", {
@@ -240,7 +247,7 @@ function MessageThread({
 			{typingUser && (
 				<div className="flex justify-start">
 					<div className="bg-orange-100/40 rounded-2xl px-4 py-2 rounded-bl-sm">
-						<p className="text-xs text-gray-500 italic">{typingUser} is typing...</p>
+						<p className="text-xs text-muted-foreground italic">{typingUser} is typing...</p>
 					</div>
 				</div>
 			)}
@@ -325,7 +332,7 @@ function NewChatDialog({
 					<button
 						type="button"
 						onClick={onClose}
-						className="text-gray-400 hover:text-gray-600"
+						className="text-muted-foreground hover:text-foreground"
 						aria-label="Close"
 					>
 						<X className="h-5 w-5" />
@@ -339,19 +346,18 @@ function NewChatDialog({
 							<label htmlFor="staff-select" className="text-sm font-medium mb-1 block">
 								Select Staff Member
 							</label>
-							<select
-								id="staff-select"
-								value={selectedStaff}
-								onChange={(e) => setSelectedStaff(e.target.value)}
-								className="w-full rounded-md border p-2 text-sm"
-							>
-								<option value="">Choose a staff member...</option>
-								{staffData?.staff?.map((s) => (
-									<option key={s.userId} value={s.userId}>
-										{s.name ?? "Unknown"} ({s.role})
-									</option>
-								))}
-							</select>
+							<Select value={selectedStaff || undefined} onValueChange={(v) => setSelectedStaff(v)}>
+								<SelectTrigger id="staff-select">
+									<SelectValue placeholder="Choose a staff member..." />
+								</SelectTrigger>
+								<SelectContent>
+									{staffData?.staff?.map((s) => (
+										<SelectItem key={s.userId} value={s.userId}>
+											{s.name ?? "Unknown"} ({s.role})
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
 						</div>
 					)}
 					<div>

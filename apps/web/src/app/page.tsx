@@ -313,7 +313,7 @@ export default function Home() {
 							<img
 								src="/screenshots/dashboard.png"
 								alt="Abridge dashboard"
-								className="rounded-xl shadow-2xl border border-slate-200 w-full [transform:rotateX(2deg)] block"
+								className="rounded-xl shadow-2xl border border-orange-100/60 w-full [transform:rotateX(2deg)] block"
 							/>
 						</div>
 					</div>
@@ -323,7 +323,7 @@ export default function Home() {
 			{/* ============================================================ */}
 			{/*  2. TRUST BADGES                                              */}
 			{/* ============================================================ */}
-			<section className="py-14 bg-white border-y border-slate-100">
+			<section className="py-14 bg-orange-50/30 border-y border-orange-100/60">
 				<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="grid grid-cols-2 md:grid-cols-4 gap-6">
 						{[
@@ -359,12 +359,12 @@ export default function Home() {
 									className={`flex flex-col items-center text-center gap-3 ${badge.bg} rounded-xl py-5 px-4`}
 								>
 									<Icon className={`w-7 h-7 ${badge.color}`} />
-									<span className="text-sm font-semibold text-slate-700">{badge.label}</span>
+									<span className="text-sm font-semibold text-muted-foreground">{badge.label}</span>
 								</div>
 							);
 						})}
 					</div>
-					<p className="text-center text-sm text-slate-400 mt-8">
+					<p className="text-center text-sm text-muted-foreground mt-8">
 						Currently onboarding pilot schools — apply for early access
 					</p>
 				</div>
@@ -404,7 +404,7 @@ export default function Home() {
 						].map((card) => (
 							<div
 								key={card.key}
-								className="bg-white rounded-2xl p-8 border border-slate-100 text-center shadow-sm"
+								className="bg-card rounded-2xl p-8 border border-orange-100/60 text-center shadow-sm"
 							>
 								<p className="text-slate-600 leading-relaxed">{card.description}</p>
 							</div>
@@ -416,7 +416,7 @@ export default function Home() {
 			{/* ============================================================ */}
 			{/*  3b. SCREENSHOT GALLERY — "SEE THE PLATFORM"                  */}
 			{/* ============================================================ */}
-			<section className="py-20 lg:py-28 bg-white">
+			<section className="py-20 lg:py-28 bg-orange-50/30">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					{/* Section header */}
 					<div className="max-w-3xl mx-auto text-center mb-14">
@@ -440,9 +440,9 @@ export default function Home() {
 						).map((shot) => (
 							<div key={shot.src} className="flex flex-col gap-3">
 								{/* Browser-window frame */}
-								<div className="rounded-xl overflow-hidden shadow-lg border border-slate-200">
+								<div className="rounded-xl overflow-hidden shadow-lg border border-orange-100/60">
 									{/* macOS-style title bar */}
-									<div className="bg-slate-100 border-b border-slate-200 px-4 py-2.5 flex items-center gap-1.5">
+									<div className="bg-orange-50/60 border-b border-orange-100/60 px-4 py-2.5 flex items-center gap-1.5">
 										<span className="w-3 h-3 rounded-full bg-red-400 block" />
 										<span className="w-3 h-3 rounded-full bg-yellow-400 block" />
 										<span className="w-3 h-3 rounded-full bg-green-400 block" />
@@ -469,8 +469,8 @@ export default function Home() {
 							] as const
 						).map((shot) => (
 							<div key={shot.src} className="flex flex-col gap-2">
-								<div className="rounded-lg overflow-hidden shadow-md border border-slate-200">
-									<div className="bg-slate-100 border-b border-slate-200 px-3 py-2 flex items-center gap-1">
+								<div className="rounded-lg overflow-hidden shadow-md border border-orange-100/60">
+									<div className="bg-orange-50/60 border-b border-orange-100/60 px-3 py-2 flex items-center gap-1">
 										<span className="w-2 h-2 rounded-full bg-red-400 block" />
 										<span className="w-2 h-2 rounded-full bg-yellow-400 block" />
 										<span className="w-2 h-2 rounded-full bg-green-400 block" />
@@ -491,7 +491,10 @@ export default function Home() {
 			{/* ============================================================ */}
 			{/*  4. FEATURES — ALTERNATING LAYOUT                             */}
 			{/* ============================================================ */}
-			<section id="features" className="py-20 lg:py-28 bg-gradient-to-b from-white to-slate-50">
+			<section
+				id="features"
+				className="py-20 lg:py-28 bg-gradient-to-b from-orange-50/20 to-amber-50/10"
+			>
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="text-center max-w-3xl mx-auto mb-16">
 						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-[#1E3A5F]">
@@ -557,7 +560,10 @@ export default function Home() {
 			{/* ============================================================ */}
 			{/*  5. AI SHOWCASE                                               */}
 			{/* ============================================================ */}
-			<section id="ai-showcase" className="py-20 lg:py-28 bg-gradient-to-b from-slate-50 to-white">
+			<section
+				id="ai-showcase"
+				className="py-20 lg:py-28 bg-gradient-to-b from-amber-50/20 to-orange-50/10"
+			>
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="max-w-3xl mx-auto text-center mb-16">
 						<div className="inline-flex items-center gap-2 bg-violet-100 text-violet-700 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
@@ -575,7 +581,7 @@ export default function Home() {
 
 					<div className="max-w-2xl mx-auto">
 						{/* Provider selection card */}
-						<div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
+						<div className="bg-card rounded-2xl p-8 border border-orange-100/60 shadow-sm">
 							<h3 className="text-lg font-semibold mb-2 text-[#1E3A5F]">Choose your AI provider</h3>
 							<p className="text-sm text-slate-500 mb-6">
 								Your data, your rules. Run AI locally with Ollama for complete data sovereignty.
@@ -589,7 +595,7 @@ export default function Home() {
 								].map((provider) => (
 									<div
 										key={provider.name}
-										className="flex flex-col items-center gap-2 bg-slate-50 rounded-xl p-4 border border-slate-100 hover:border-[#1E3A5F]/20 transition-colors"
+										className="flex flex-col items-center gap-2 bg-orange-50/40 rounded-xl p-4 border border-orange-100/50 hover:border-[#1E3A5F]/20 transition-colors"
 									>
 										<div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#1E3A5F]/10 to-violet-500/10 flex items-center justify-center">
 											<Brain className="w-5 h-5 text-[#1E3A5F]" />
@@ -626,10 +632,10 @@ export default function Home() {
 					</div>
 
 					{/* Desktop table */}
-					<div className="hidden lg:block overflow-hidden rounded-2xl border border-slate-200 bg-white">
+					<div className="hidden lg:block overflow-hidden rounded-2xl border border-orange-100/60 bg-card">
 						<table className="w-full">
 							<thead>
-								<tr className="border-b border-slate-200">
+								<tr className="border-b border-orange-100/60">
 									<th className="text-left py-4 px-6 text-sm font-medium text-slate-500">
 										Feature
 									</th>
@@ -650,7 +656,7 @@ export default function Home() {
 								{COMPARISON_FEATURES.map((feature, i) => (
 									<tr
 										key={feature}
-										className={`border-b border-slate-100 ${i % 2 === 0 ? "bg-white" : "bg-slate-50/50"}`}
+										className={`border-b border-orange-100/40 ${i % 2 === 0 ? "bg-card" : "bg-orange-50/20"}`}
 									>
 										<td className="py-4 px-6 text-sm font-medium">{feature}</td>
 										<td className="py-4 px-6 text-center bg-[#1E3A5F]/5">
@@ -678,7 +684,7 @@ export default function Home() {
 					{/* Mobile comparison cards */}
 					<div className="lg:hidden space-y-4">
 						{COMPARISON_FEATURES.map((feature, i) => (
-							<div key={feature} className="bg-white rounded-xl border border-slate-200 p-4">
+							<div key={feature} className="bg-card rounded-xl border border-orange-100/60 p-4">
 								<div className="text-sm font-medium mb-3">{feature}</div>
 								<div className="grid grid-cols-5 gap-2 text-center">
 									{["Abridge", ...COMPETITORS].map((name) => (
@@ -707,7 +713,10 @@ export default function Home() {
 			{/* ============================================================ */}
 			{/*  7. PRICING                                                   */}
 			{/* ============================================================ */}
-			<section id="pricing" className="py-20 lg:py-28 bg-gradient-to-b from-slate-50 to-white">
+			<section
+				id="pricing"
+				className="py-20 lg:py-28 bg-gradient-to-b from-amber-50/20 to-orange-50/10"
+			>
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="text-center max-w-3xl mx-auto mb-16">
 						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-[#1E3A5F]">
@@ -720,7 +729,7 @@ export default function Home() {
 
 					<div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
 						{/* Free tier */}
-						<div className="relative bg-white rounded-2xl p-8 border-2 border-slate-200 hover:shadow-lg transition-shadow">
+						<div className="relative bg-card rounded-2xl p-8 border-2 border-orange-100/60 hover:shadow-lg transition-shadow">
 							<div className="mb-6">
 								<h3 className="text-lg font-semibold mb-1 text-[#1E3A5F]">Free</h3>
 								<p className="text-sm text-slate-500">For pilot programme schools</p>
@@ -746,14 +755,14 @@ export default function Home() {
 							</ul>
 							<Link
 								href="/setup"
-								className="block text-center font-semibold py-3 px-6 rounded-xl transition-all duration-200 text-sm bg-slate-100 hover:bg-slate-200 text-slate-700"
+								className="block text-center font-semibold py-3 px-6 rounded-xl transition-all duration-200 text-sm bg-orange-100/50 hover:bg-orange-100 text-[#1E3A5F]"
 							>
 								Apply for Pilot
 							</Link>
 						</div>
 
 						{/* Pro tier */}
-						<div className="relative bg-white rounded-2xl p-8 border-2 border-[#FF7D45] shadow-xl shadow-orange-500/10">
+						<div className="relative bg-card rounded-2xl p-8 border-2 border-[#FF7D45] shadow-xl shadow-orange-500/10">
 							<div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#FF7D45] text-white text-xs font-semibold px-4 py-1 rounded-full">
 								After Pilot
 							</div>
@@ -808,7 +817,7 @@ export default function Home() {
 						{FAQS.map((faq, i) => (
 							<div
 								key={faq.question}
-								className="bg-white rounded-xl border border-slate-200 overflow-hidden transition-shadow hover:shadow-sm"
+								className="bg-card rounded-xl border border-orange-100/60 overflow-hidden transition-shadow hover:shadow-sm"
 							>
 								<button
 									type="button"

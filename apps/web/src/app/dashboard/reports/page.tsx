@@ -47,7 +47,7 @@ const EFFORT_LABELS: Record<string, string> = {
 const STATUS_COLORS: Record<string, string> = {
 	DRAFT: "bg-yellow-100 text-yellow-800",
 	PUBLISHED: "bg-green-100 text-green-800",
-	ARCHIVED: "bg-orange-100/40 text-gray-800",
+	ARCHIVED: "bg-orange-100/40 text-foreground",
 };
 
 const CYCLE_TYPE_LABELS: Record<string, string> = {
@@ -301,7 +301,7 @@ function ParentView() {
 										Published {new Date(report.cycle.publishDate).toLocaleDateString("en-GB")}
 									</p>
 								</div>
-								<Badge className="bg-orange-100/40 text-gray-800">
+								<Badge className="bg-orange-100/40 text-foreground">
 									{CYCLE_TYPE_LABELS[report.cycle.type] ?? report.cycle.type}
 								</Badge>
 							</button>
@@ -475,25 +475,27 @@ function StaffView({ schoolId }: { schoolId: string }) {
 												>
 													Level
 												</label>
-												<select
-													id={`level-${index}`}
-													value={grade.level ?? ""}
-													onChange={(e) => {
+												<Select
+													value={grade.level ?? undefined}
+													onValueChange={(v) => {
 														const updated = [...grades];
 														updated[index] = {
 															...updated[index]!,
-															level: (e.target.value || undefined) as PrimaryLevel | undefined,
+															level: (v || undefined) as PrimaryLevel | undefined,
 														};
 														setGrades(updated);
 													}}
-													className="w-full rounded-md border px-3 py-1.5 text-sm"
 												>
-													<option value="">Select level</option>
-													<option value="EMERGING">Emerging</option>
-													<option value="DEVELOPING">Developing</option>
-													<option value="EXPECTED">Expected</option>
-													<option value="EXCEEDING">Exceeding</option>
-												</select>
+													<SelectTrigger id={`level-${index}`} className="mt-1">
+														<SelectValue placeholder="Select level" />
+													</SelectTrigger>
+													<SelectContent>
+														<SelectItem value="EMERGING">Emerging</SelectItem>
+														<SelectItem value="DEVELOPING">Developing</SelectItem>
+														<SelectItem value="EXPECTED">Expected</SelectItem>
+														<SelectItem value="EXCEEDING">Exceeding</SelectItem>
+													</SelectContent>
+												</Select>
 											</div>
 											<div>
 												<label
@@ -502,25 +504,27 @@ function StaffView({ schoolId }: { schoolId: string }) {
 												>
 													Effort
 												</label>
-												<select
-													id={`effort-${index}`}
-													value={grade.effort ?? ""}
-													onChange={(e) => {
+												<Select
+													value={grade.effort ?? undefined}
+													onValueChange={(v) => {
 														const updated = [...grades];
 														updated[index] = {
 															...updated[index]!,
-															effort: (e.target.value || undefined) as Effort | undefined,
+															effort: (v || undefined) as Effort | undefined,
 														};
 														setGrades(updated);
 													}}
-													className="w-full rounded-md border px-3 py-1.5 text-sm"
 												>
-													<option value="">Select effort</option>
-													<option value="OUTSTANDING">Outstanding</option>
-													<option value="GOOD">Good</option>
-													<option value="SATISFACTORY">Satisfactory</option>
-													<option value="NEEDS_IMPROVEMENT">Needs Improvement</option>
-												</select>
+													<SelectTrigger id={`effort-${index}`} className="mt-1">
+														<SelectValue placeholder="Select effort" />
+													</SelectTrigger>
+													<SelectContent>
+														<SelectItem value="OUTSTANDING">Outstanding</SelectItem>
+														<SelectItem value="GOOD">Good</SelectItem>
+														<SelectItem value="SATISFACTORY">Satisfactory</SelectItem>
+														<SelectItem value="NEEDS_IMPROVEMENT">Needs Improvement</SelectItem>
+													</SelectContent>
+												</Select>
 											</div>
 										</div>
 									) : (
@@ -752,7 +756,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 												{child.gradeCount} subject{child.gradeCount !== 1 ? "s" : ""}
 											</Badge>
 										) : (
-											<Badge className="bg-orange-100/40 text-gray-800">No report</Badge>
+											<Badge className="bg-orange-100/40 text-foreground">No report</Badge>
 										)}
 									</div>
 								</button>
@@ -805,32 +809,35 @@ function StaffView({ schoolId }: { schoolId: string }) {
 									<label htmlFor="cycleType" className="text-sm font-medium">
 										Type
 									</label>
-									<select
-										id="cycleType"
-										value={cycleType}
-										onChange={(e) => setCycleType(e.target.value as CycleType)}
-										className="w-full rounded-md border px-3 py-1.5 text-sm mt-1"
-									>
-										<option value="TERMLY">Termly</option>
-										<option value="HALF_TERMLY">Half-Termly</option>
-										<option value="END_OF_YEAR">End of Year</option>
-										<option value="MOCK">Mock</option>
-										<option value="CUSTOM">Custom</option>
-									</select>
+									<Select value={cycleType} onValueChange={(v) => setCycleType(v as CycleType)}>
+										<SelectTrigger id="cycleType" className="mt-1">
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="TERMLY">Termly</SelectItem>
+											<SelectItem value="HALF_TERMLY">Half-Termly</SelectItem>
+											<SelectItem value="END_OF_YEAR">End of Year</SelectItem>
+											<SelectItem value="MOCK">Mock</SelectItem>
+											<SelectItem value="CUSTOM">Custom</SelectItem>
+										</SelectContent>
+									</Select>
 								</div>
 								<div>
 									<label htmlFor="assessmentModel" className="text-sm font-medium">
 										Assessment Model
 									</label>
-									<select
-										id="assessmentModel"
+									<Select
 										value={assessmentModel}
-										onChange={(e) => setAssessmentModel(e.target.value as AssessmentModel)}
-										className="w-full rounded-md border px-3 py-1.5 text-sm mt-1"
+										onValueChange={(v) => setAssessmentModel(v as AssessmentModel)}
 									>
-										<option value="PRIMARY_DESCRIPTIVE">Primary Descriptive</option>
-										<option value="SECONDARY_GRADES">Secondary Grades</option>
-									</select>
+										<SelectTrigger id="assessmentModel" className="mt-1">
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="PRIMARY_DESCRIPTIVE">Primary Descriptive</SelectItem>
+											<SelectItem value="SECONDARY_GRADES">Secondary Grades</SelectItem>
+										</SelectContent>
+									</Select>
 								</div>
 							</div>
 							<div>

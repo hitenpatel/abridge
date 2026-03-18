@@ -13,7 +13,7 @@ export default function GlobalError({
 				<div className="flex min-h-screen items-center justify-center">
 					<div className="text-center">
 						<h2 className="text-2xl font-bold mb-4">Something went wrong</h2>
-						<p className="text-gray-600 mb-4">An unexpected error occurred.</p>
+						<p className="text-muted-foreground mb-4">An unexpected error occurred.</p>
 						<button
 							type="button"
 							onClick={reset}

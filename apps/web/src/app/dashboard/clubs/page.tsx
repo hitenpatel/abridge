@@ -17,6 +17,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
 import { Clock, Plus, Trophy, Users, X } from "lucide-react";
@@ -290,18 +297,18 @@ export default function ClubsPage() {
 						<div className="grid grid-cols-2 gap-4">
 							<div className="space-y-2">
 								<Label htmlFor="club-day">Day</Label>
-								<select
-									id="club-day"
-									value={clubDay}
-									onChange={(e) => setClubDay(e.target.value)}
-									className="w-full border border-border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-ring bg-card"
-								>
-									{DAY_OPTIONS.map((opt) => (
-										<option key={opt.value} value={opt.value}>
-											{opt.label}
-										</option>
-									))}
-								</select>
+								<Select value={clubDay} onValueChange={(v) => setClubDay(v)}>
+									<SelectTrigger id="club-day">
+										<SelectValue />
+									</SelectTrigger>
+									<SelectContent>
+										{DAY_OPTIONS.map((opt) => (
+											<SelectItem key={opt.value} value={opt.value}>
+												{opt.label}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
 							</div>
 							<div className="space-y-2">
 								<Label htmlFor="club-capacity">Max Capacity</Label>

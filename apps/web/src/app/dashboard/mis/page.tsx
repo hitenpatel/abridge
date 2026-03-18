@@ -6,6 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
@@ -48,7 +55,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 const CONNECTION_STATUS_COLORS: Record<string, string> = {
 	CONNECTED: "bg-green-100 text-green-800",
-	DISCONNECTED: "bg-orange-100/40 text-gray-800",
+	DISCONNECTED: "bg-orange-100/40 text-foreground",
 	ERROR: "bg-red-100 text-red-800",
 };
 
@@ -106,21 +113,24 @@ function ConnectionSetup({ schoolId }: { schoolId: string }) {
 						<label className="text-sm font-medium" htmlFor="mis-provider">
 							MIS Provider
 						</label>
-						<select
-							id="mis-provider"
+						<Select
 							value={provider}
-							onChange={(e) => {
-								setProvider(e.target.value as Provider);
+							onValueChange={(v) => {
+								setProvider(v as Provider);
 								setTestResult(null);
 							}}
-							className="mt-1 block w-full rounded-md border p-2 text-sm"
 						>
-							{PROVIDERS.map((p) => (
-								<option key={p.value} value={p.value}>
-									{p.label}
-								</option>
-							))}
-						</select>
+							<SelectTrigger id="mis-provider" className="mt-1">
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								{PROVIDERS.map((p) => (
+									<SelectItem key={p.value} value={p.value}>
+										{p.label}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
 					</div>
 
 					{isApiProvider && (
@@ -195,18 +205,21 @@ function ConnectionSetup({ schoolId }: { schoolId: string }) {
 						<label className="text-sm font-medium" htmlFor="mis-sync-frequency">
 							Sync Frequency
 						</label>
-						<select
-							id="mis-sync-frequency"
+						<Select
 							value={syncFrequency}
-							onChange={(e) => setSyncFrequency(e.target.value as SyncFrequency)}
-							className="mt-1 block w-full rounded-md border p-2 text-sm"
+							onValueChange={(v) => setSyncFrequency(v as SyncFrequency)}
 						>
-							{SYNC_FREQUENCIES.map((f) => (
-								<option key={f.value} value={f.value}>
-									{f.label}
-								</option>
-							))}
-						</select>
+							<SelectTrigger id="mis-sync-frequency" className="mt-1">
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								{SYNC_FREQUENCIES.map((f) => (
+									<SelectItem key={f.value} value={f.value}>
+										{f.label}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
 					</div>
 
 					<Button
@@ -285,7 +298,7 @@ function CsvUpload({ schoolId }: { schoolId: string }) {
 			<div className="flex flex-wrap gap-3 text-sm">
 				<span className="text-green-600">{result.created} created</span>
 				<span className="text-blue-600">{result.updated} updated</span>
-				<span className="text-gray-500">{result.skipped} skipped</span>
+				<span className="text-muted-foreground">{result.skipped} skipped</span>
 				{result.errors.length > 0 && (
 					<span className="text-red-600">{result.errors.length} errors</span>
 				)}
@@ -336,7 +349,7 @@ function CsvUpload({ schoolId }: { schoolId: string }) {
 								ref={studentFileRef}
 								type="file"
 								accept=".csv"
-								className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-orange-100/60 file:text-sm file:font-medium file:bg-white hover:file:bg-orange-50/40"
+								className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-orange-100/60 file:text-sm file:font-medium file:bg-white hover:file:bg-orange-50/40"
 							/>
 							<Button
 								type="button"
@@ -371,7 +384,7 @@ function CsvUpload({ schoolId }: { schoolId: string }) {
 								ref={attendanceFileRef}
 								type="file"
 								accept=".csv"
-								className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-orange-100/60 file:text-sm file:font-medium file:bg-white hover:file:bg-orange-50/40"
+								className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-orange-100/60 file:text-sm file:font-medium file:bg-white hover:file:bg-orange-50/40"
 							/>
 							<Button
 								type="button"
@@ -424,7 +437,7 @@ function ConnectionStatus({ schoolId }: { schoolId: string }) {
 						<div className="flex items-center gap-3">
 							<Badge
 								className={
-									CONNECTION_STATUS_COLORS[status.status] ?? "bg-orange-100/40 text-gray-800"
+									CONNECTION_STATUS_COLORS[status.status] ?? "bg-orange-100/40 text-foreground"
 								}
 							>
 								{status.status === "CONNECTED" && <CheckCircle2 className="h-3 w-3 mr-1" />}
@@ -513,7 +526,9 @@ function SyncHistory({ schoolId }: { schoolId: string }) {
 											<td className="px-3 py-2">{item.syncType}</td>
 											<td className="px-3 py-2">
 												<Badge
-													className={STATUS_COLORS[item.status] ?? "bg-orange-100/40 text-gray-800"}
+													className={
+														STATUS_COLORS[item.status] ?? "bg-orange-100/40 text-foreground"
+													}
 												>
 													{item.status}
 												</Badge>
@@ -557,8 +572,8 @@ export default function MisPage() {
 	if (!isAdmin || !session?.schoolId) {
 		return (
 			<div className="flex flex-col items-center justify-center py-24 px-6 text-center">
-				<h2 className="text-xl font-semibold text-gray-700 mb-2">Admin Access Required</h2>
-				<p className="text-gray-500 max-w-md">
+				<h2 className="text-xl font-semibold text-foreground mb-2">Admin Access Required</h2>
+				<p className="text-muted-foreground max-w-md">
 					MIS Integration is only available to school administrators.
 				</p>
 			</div>

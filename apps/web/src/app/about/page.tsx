@@ -44,7 +44,7 @@ export default function AboutPage() {
 	}, []);
 
 	return (
-		<div className="min-h-screen bg-[#F8FAFC] text-[#1E293B]">
+		<div className="min-h-screen bg-orange-50/20 text-[#1E293B]">
 			{/* ============================================================ */}
 			{/*  NAVIGATION                                                   */}
 			{/* ============================================================ */}
@@ -135,7 +135,7 @@ export default function AboutPage() {
 			{/*  HERO                                                         */}
 			{/* ============================================================ */}
 			<section className="relative pt-28 pb-16 lg:pt-40 lg:pb-24 overflow-hidden">
-				<div className="absolute inset-0 bg-gradient-to-b from-[#1E3A5F]/8 via-[#1E3A5F]/3 to-white pointer-events-none" />
+				<div className="absolute inset-0 bg-gradient-to-b from-[#1E3A5F]/8 via-[#1E3A5F]/3 to-transparent pointer-events-none" />
 				<div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 					<h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] mb-6 text-[#1E3A5F]">
 						Schools deserve
@@ -152,12 +152,12 @@ export default function AboutPage() {
 			{/* ============================================================ */}
 			{/*  THE PROBLEM                                                  */}
 			{/* ============================================================ */}
-			<section className="py-16 lg:py-24 bg-white">
+			<section className="py-16 lg:py-24 bg-orange-50/30">
 				<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 					<h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-8 text-[#1E3A5F]">
 						The problem
 					</h2>
-					<div className="space-y-6 text-lg text-slate-600 leading-relaxed">
+					<div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
 						<p>
 							School staff spend hours every week on communication admin that adds no educational
 							value. Writing individual messages to parents. Chasing absent students. Compiling
@@ -187,7 +187,7 @@ export default function AboutPage() {
 					<h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-8 text-[#1E3A5F]">
 						Our approach
 					</h2>
-					<div className="space-y-6 text-lg text-slate-600 leading-relaxed mb-12">
+					<div className="space-y-6 text-lg text-muted-foreground leading-relaxed mb-12">
 						<p>
 							Abridge is an AI-first school communication platform. That means AI is not bolted on
 							as an afterthought &mdash; it is woven into every feature. Weekly progress summaries
@@ -245,7 +245,7 @@ export default function AboutPage() {
 							return (
 								<div
 									key={value.title}
-									className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm"
+									className="bg-card rounded-2xl p-6 border border-orange-100/60 shadow-sm"
 								>
 									<div className="w-10 h-10 rounded-xl bg-[#1E3A5F]/5 flex items-center justify-center mb-4">
 										<Icon className="w-5 h-5 text-[#1E3A5F]" />
@@ -262,7 +262,7 @@ export default function AboutPage() {
 			{/* ============================================================ */}
 			{/*  TEAM                                                         */}
 			{/* ============================================================ */}
-			<section className="py-16 lg:py-24 bg-white">
+			<section className="py-16 lg:py-24 bg-orange-50/30">
 				<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 					<h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 text-[#1E3A5F]">
 						The team
@@ -273,7 +273,7 @@ export default function AboutPage() {
 						help.
 					</p>
 
-					<div className="bg-[#F8FAFC] rounded-2xl p-8 border border-slate-100">
+					<div className="bg-orange-50/40 rounded-2xl p-8 border border-orange-100/60">
 						<div className="flex items-start gap-6">
 							<div className="w-16 h-16 rounded-xl bg-[#1E3A5F]/10 flex items-center justify-center shrink-0">
 								<span className="text-2xl font-bold text-[#1E3A5F]">HP</span>
@@ -281,7 +281,7 @@ export default function AboutPage() {
 							<div>
 								<h3 className="text-lg font-semibold text-[#1E3A5F]">Hiten Patel</h3>
 								<p className="text-sm text-[#FF7D45] font-medium mb-3">Founder & Developer</p>
-								<p className="text-slate-600 leading-relaxed">
+								<p className="text-muted-foreground leading-relaxed">
 									Software engineer passionate about making school communication better for parents
 									and teachers. Building Abridge to replace WhatsApp groups with something that
 									actually works for schools.
@@ -308,7 +308,7 @@ export default function AboutPage() {
 					<div className="grid sm:grid-cols-2 gap-6">
 						<a
 							href="mailto:hello@abridge.school"
-							className="flex items-center gap-4 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-shadow group"
+							className="flex items-center gap-4 bg-card rounded-2xl p-6 border border-orange-100/60 shadow-sm hover:shadow-md transition-shadow group"
 						>
 							<div className="w-12 h-12 rounded-xl bg-[#FF7D45]/10 flex items-center justify-center shrink-0">
 								<Mail className="w-6 h-6 text-[#FF7D45]" />
@@ -324,7 +324,7 @@ export default function AboutPage() {
 							href="https://github.com/hitenpatel/abridge"
 							target="_blank"
 							rel="noopener noreferrer"
-							className="flex items-center gap-4 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-shadow group"
+							className="flex items-center gap-4 bg-card rounded-2xl p-6 border border-orange-100/60 shadow-sm hover:shadow-md transition-shadow group"
 						>
 							<div className="w-12 h-12 rounded-xl bg-[#1E3A5F]/10 flex items-center justify-center shrink-0">
 								<Sparkles className="w-6 h-6 text-[#1E3A5F]" />

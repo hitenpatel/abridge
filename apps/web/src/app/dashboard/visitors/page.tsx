@@ -6,6 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
@@ -277,18 +284,21 @@ function SignInTab({ schoolId }: { schoolId: string }) {
 						<label className="text-sm font-medium" htmlFor="visitor-purpose">
 							Purpose of Visit
 						</label>
-						<select
-							id="visitor-purpose"
+						<Select
 							value={purpose}
-							onChange={(e) => setPurpose(e.target.value as (typeof PURPOSES)[number])}
-							className="mt-1 block w-full rounded-md border p-2 text-sm"
+							onValueChange={(v) => setPurpose(v as (typeof PURPOSES)[number])}
 						>
-							{PURPOSES.map((p) => (
-								<option key={p} value={p}>
-									{PURPOSE_LABELS[p]}
-								</option>
-							))}
-						</select>
+							<SelectTrigger id="visitor-purpose" className="mt-1">
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								{PURPOSES.map((p) => (
+									<SelectItem key={p} value={p}>
+										{PURPOSE_LABELS[p]}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
 					</div>
 
 					{/* DBS warning for volunteering */}
@@ -390,7 +400,7 @@ function OnSiteTab({ schoolId }: { schoolId: string }) {
 								<div className="flex-1">
 									<div className="flex items-center gap-2 mb-1">
 										<span className="font-medium text-sm">{log.visitor.name}</span>
-										<Badge className="bg-orange-100/40 text-gray-600">
+										<Badge className="bg-orange-100/40 text-foreground">
 											{PURPOSE_LABELS[log.purpose] ?? log.purpose}
 										</Badge>
 										{log.badgeNumber && (
@@ -506,18 +516,21 @@ function DbsRegisterTab({ schoolId }: { schoolId: string }) {
 								<label className="text-xs text-muted-foreground" htmlFor="dbs-type">
 									DBS Type
 								</label>
-								<select
-									id="dbs-type"
+								<Select
 									value={dbsType}
-									onChange={(e) => setDbsType(e.target.value as (typeof DBS_TYPES)[number])}
-									className="mt-1 block w-full rounded-md border p-2 text-sm"
+									onValueChange={(v) => setDbsType(v as (typeof DBS_TYPES)[number])}
 								>
-									{DBS_TYPES.map((t) => (
-										<option key={t} value={t}>
-											{DBS_TYPE_LABELS[t]}
-										</option>
-									))}
-								</select>
+									<SelectTrigger id="dbs-type" className="mt-1">
+										<SelectValue />
+									</SelectTrigger>
+									<SelectContent>
+										{DBS_TYPES.map((t) => (
+											<SelectItem key={t} value={t}>
+												{DBS_TYPE_LABELS[t]}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
 							</div>
 							<div>
 								<label className="text-xs text-muted-foreground" htmlFor="dbs-issue">
@@ -752,22 +765,24 @@ function HistoryTab({ schoolId }: { schoolId: string }) {
 						<label className="text-xs text-muted-foreground" htmlFor="history-purpose">
 							Purpose
 						</label>
-						<select
-							id="history-purpose"
-							value={purposeFilter}
-							onChange={(e) => {
-								setPurposeFilter(e.target.value);
+						<Select
+							value={purposeFilter || undefined}
+							onValueChange={(v) => {
+								setPurposeFilter(v);
 								setCursor(undefined);
 							}}
-							className="mt-1 block w-full rounded-md border p-2 text-sm"
 						>
-							<option value="">All Purposes</option>
-							{PURPOSES.map((p) => (
-								<option key={p} value={p}>
-									{PURPOSE_LABELS[p]}
-								</option>
-							))}
-						</select>
+							<SelectTrigger id="history-purpose" className="mt-1">
+								<SelectValue placeholder="All Purposes" />
+							</SelectTrigger>
+							<SelectContent>
+								{PURPOSES.map((p) => (
+									<SelectItem key={p} value={p}>
+										{PURPOSE_LABELS[p]}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
 					</div>
 				</div>
 

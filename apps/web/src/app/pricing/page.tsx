@@ -74,7 +74,7 @@ export default function PricingPage() {
 	}, []);
 
 	return (
-		<div className="min-h-screen bg-[#F8FAFC] text-[#1E293B]">
+		<div className="min-h-screen bg-orange-50/20 text-[#1E293B]">
 			{/* ============================================================ */}
 			{/*  NAVIGATION                                                   */}
 			{/* ============================================================ */}
@@ -165,7 +165,7 @@ export default function PricingPage() {
 			{/*  HERO                                                         */}
 			{/* ============================================================ */}
 			<section className="relative pt-28 pb-16 lg:pt-40 lg:pb-24 overflow-hidden">
-				<div className="absolute inset-0 bg-gradient-to-b from-[#1E3A5F]/8 via-[#1E3A5F]/3 to-white pointer-events-none" />
+				<div className="absolute inset-0 bg-gradient-to-b from-[#1E3A5F]/8 via-[#1E3A5F]/3 to-transparent pointer-events-none" />
 				<div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 					<h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] mb-6 text-[#1E3A5F]">
 						Simple, transparent pricing
@@ -183,7 +183,7 @@ export default function PricingPage() {
 				<div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="grid md:grid-cols-2 gap-8">
 						{/* Free tier */}
-						<div className="relative bg-white rounded-2xl p-8 border-2 border-slate-200 hover:shadow-lg transition-shadow">
+						<div className="relative bg-card rounded-2xl p-8 border-2 border-orange-100/60 hover:shadow-lg transition-shadow">
 							<div className="mb-6">
 								<h2 className="text-xl font-bold mb-1 text-[#1E3A5F]">Free</h2>
 								<p className="text-sm text-slate-500">For pilot programme schools</p>
@@ -216,14 +216,14 @@ export default function PricingPage() {
 							</ul>
 							<Link
 								href="/setup"
-								className="block text-center font-semibold py-3 px-6 rounded-xl transition-all duration-200 text-sm bg-slate-100 hover:bg-slate-200 text-slate-700"
+								className="block text-center font-semibold py-3 px-6 rounded-xl transition-all duration-200 text-sm bg-orange-100/50 hover:bg-orange-100 text-[#1E3A5F]"
 							>
 								Apply for Pilot
 							</Link>
 						</div>
 
 						{/* Pro tier */}
-						<div className="relative bg-white rounded-2xl p-8 border-2 border-[#FF7D45] shadow-xl shadow-orange-500/10">
+						<div className="relative bg-card rounded-2xl p-8 border-2 border-[#FF7D45] shadow-xl shadow-orange-500/10">
 							<div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#FF7D45] text-white text-xs font-semibold px-4 py-1 rounded-full">
 								After Pilot
 							</div>
@@ -266,7 +266,7 @@ export default function PricingPage() {
 			{/* ============================================================ */}
 			{/*  FAQ                                                          */}
 			{/* ============================================================ */}
-			<section className="py-20 lg:py-28 bg-white">
+			<section className="py-20 lg:py-28 bg-orange-50/30">
 				<div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="text-center mb-16">
 						<h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 text-[#1E3A5F]">
@@ -281,7 +281,7 @@ export default function PricingPage() {
 						{FAQS.map((faq, i) => (
 							<div
 								key={faq.question}
-								className="bg-[#F8FAFC] rounded-xl border border-slate-200 overflow-hidden transition-shadow hover:shadow-sm"
+								className="bg-orange-50/40 rounded-xl border border-orange-100/60 overflow-hidden transition-shadow hover:shadow-sm"
 							>
 								<button
 									type="button"

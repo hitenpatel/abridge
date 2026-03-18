@@ -329,17 +329,17 @@ export default function MessagesPage() {
 										</div>
 										<div className="flex-1 min-w-0">
 											<div className="flex justify-between items-baseline mb-1">
-												<h3 className="font-semibold text-gray-900 truncate text-sm">
+												<h3 className="font-semibold text-foreground truncate text-sm">
 													{message.schoolName || message.subject}
 												</h3>
-												<span className="text-xs text-gray-400">
+												<span className="text-xs text-muted-foreground">
 													{new Date(message.createdAt).toLocaleDateString(undefined, {
 														month: "short",
 														day: "numeric",
 													})}
 												</span>
 											</div>
-											<p className="text-sm text-gray-500 truncate">{message.subject}</p>
+											<p className="text-sm text-muted-foreground truncate">{message.subject}</p>
 										</div>
 										<div className="flex items-center gap-1">
 											{message.replyCount > 0 && (
@@ -390,17 +390,17 @@ export default function MessagesPage() {
 									</div>
 									<div className="flex-1 min-w-0">
 										<div className="flex justify-between items-baseline mb-1">
-											<h3 className="font-semibold text-gray-900 truncate text-sm">
+											<h3 className="font-semibold text-foreground truncate text-sm">
 												{isStaff ? convo.parent.name : convo.staff.name}
 											</h3>
-											<span className="text-xs text-gray-400">
+											<span className="text-xs text-muted-foreground">
 												{new Date(convo.lastMessageAt).toLocaleDateString(undefined, {
 													month: "short",
 													day: "numeric",
 												})}
 											</span>
 										</div>
-										<p className="text-sm text-gray-500 truncate">
+										<p className="text-sm text-muted-foreground truncate">
 											{convo.lastMessage?.body || convo.subject || "No messages"}
 										</p>
 									</div>
@@ -452,10 +452,10 @@ export default function MessagesPage() {
 										<div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
 									</div>
 									<div>
-										<h2 className="text-lg font-bold text-gray-900 leading-tight">
+										<h2 className="text-lg font-bold text-foreground leading-tight">
 											{selectedMessage.schoolName || "Sent Message"}
 										</h2>
-										<p className="text-xs text-gray-500 font-medium">
+										<p className="text-xs text-muted-foreground font-medium">
 											{selectedMessage.category} • School Message
 										</p>
 									</div>
@@ -483,7 +483,7 @@ export default function MessagesPage() {
 									<div className="flex flex-col gap-1">
 										<Card className="bg-white p-4 rounded-2xl rounded-bl-sm shadow-sm border border-orange-100/60">
 											<div className="mb-2">
-												<h3 className="font-semibold text-gray-900 mb-1">
+												<h3 className="font-semibold text-foreground mb-1">
 													{showOriginal || !translatedSubject
 														? selectedMessage.subject
 														: translatedSubject}
@@ -492,7 +492,7 @@ export default function MessagesPage() {
 													{selectedMessage.category}
 												</Badge>
 											</div>
-											<div className="text-gray-800 text-sm leading-relaxed whitespace-pre-wrap">
+											<div className="text-foreground text-sm leading-relaxed whitespace-pre-wrap">
 												{showOriginal || !translatedBody ? selectedMessage.body : translatedBody}
 											</div>
 											{translatedBody && (
@@ -506,7 +506,7 @@ export default function MessagesPage() {
 													<button
 														type="button"
 														onClick={() => setShowOriginal(!showOriginal)}
-														className="text-xs text-orange-500 underline hover:text-orange-700"
+														className="text-xs text-orange-700 underline hover:text-orange-900"
 														data-testid="show-original-toggle"
 													>
 														{showOriginal ? "Show translation" : "Show original"}
@@ -514,7 +514,7 @@ export default function MessagesPage() {
 												</div>
 											)}
 										</Card>
-										<span className="text-[10px] text-gray-400 ml-1">
+										<span className="text-[10px] text-muted-foreground ml-1">
 											{new Date(selectedMessage.createdAt).toLocaleTimeString(undefined, {
 												hour: "numeric",
 												minute: "2-digit",
@@ -526,7 +526,7 @@ export default function MessagesPage() {
 								{/* Reply Thread */}
 								{repliesData?.items && repliesData.items.length > 0 && (
 									<div className="space-y-4 ml-11" data-testid="reply-thread">
-										<div className="flex items-center gap-2 text-xs text-orange-400">
+										<div className="flex items-center gap-2 text-xs text-muted-foreground">
 											<div className="h-px flex-1 bg-orange-200/60" />
 											<span>
 												{repliesData.items.length}{" "}
@@ -561,7 +561,7 @@ export default function MessagesPage() {
 														</div>
 														<span
 															className={cn(
-																"text-[10px] text-gray-400",
+																"text-[10px] text-muted-foreground",
 																isOwnReply ? "text-right mr-1" : "ml-1",
 															)}
 														>
@@ -595,7 +595,7 @@ export default function MessagesPage() {
 											placeholder="Write a reply..."
 											rows={1}
 											data-testid="reply-input"
-											className="flex-1 bg-transparent px-5 py-3.5 text-sm resize-none focus:outline-none placeholder:text-gray-400"
+											className="flex-1 bg-transparent px-5 py-3.5 text-sm resize-none focus:outline-none placeholder:text-muted-foreground"
 										/>
 									</div>
 									<button
@@ -633,12 +633,12 @@ export default function MessagesPage() {
 											: convoData.conversation.staff.name?.[0]) || "?"}
 									</div>
 									<div>
-										<h2 className="text-lg font-bold text-gray-900 leading-tight">
+										<h2 className="text-lg font-bold text-foreground leading-tight">
 											{isStaff
 												? convoData.conversation.parent.name
 												: convoData.conversation.staff.name}
 										</h2>
-										<p className="text-xs text-gray-500 font-medium">
+										<p className="text-xs text-muted-foreground font-medium">
 											{convoData.conversation.subject || "Direct Message"}
 											{convoData.conversation.closedAt && " • Closed"}
 										</p>
@@ -695,7 +695,7 @@ export default function MessagesPage() {
 												</div>
 												<span
 													className={cn(
-														"text-[10px] text-gray-400",
+														"text-[10px] text-muted-foreground",
 														isOwn ? "text-right mr-1" : "ml-1",
 													)}
 												>
@@ -734,7 +734,7 @@ export default function MessagesPage() {
 												placeholder="Type a message..."
 												rows={1}
 												data-testid="dm-input"
-												className="flex-1 bg-transparent px-5 py-3.5 text-sm resize-none focus:outline-none placeholder:text-gray-400"
+												className="flex-1 bg-transparent px-5 py-3.5 text-sm resize-none focus:outline-none placeholder:text-muted-foreground"
 											/>
 										</div>
 										<button
@@ -750,7 +750,7 @@ export default function MessagesPage() {
 									</div>
 								</div>
 							) : (
-								<div className="bg-orange-50/20 border-t border-orange-100 p-4 text-center text-sm text-orange-500">
+								<div className="bg-orange-50/20 border-t border-orange-100 p-4 text-center text-sm text-orange-700">
 									This conversation is closed
 								</div>
 							)}
@@ -822,7 +822,7 @@ export default function MessagesPage() {
 											</div>
 											<div>
 												<p className="text-sm font-medium">{s.name}</p>
-												<p className="text-xs text-orange-500">{s.role}</p>
+												<p className="text-xs text-muted-foreground">{s.role}</p>
 											</div>
 										</button>
 									))}

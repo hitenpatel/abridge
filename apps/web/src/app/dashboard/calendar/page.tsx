@@ -14,6 +14,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
 import { CalendarDays, Plus } from "lucide-react";
@@ -123,35 +130,36 @@ export default function CalendarPage() {
 						</div>
 						<div className="space-y-2">
 							<Label htmlFor="event-category">Category</Label>
-							<select
-								id="event-category"
-								data-testid="event-category-select"
-								value={category}
-								onChange={(e) => setCategory(e.target.value)}
-								className="w-full border border-border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-ring bg-card"
-							>
-								{CATEGORY_OPTIONS.map((opt) => (
-									<option key={opt.value} value={opt.value}>
-										{opt.label}
-									</option>
-								))}
-							</select>
+							<Select value={category} onValueChange={(v) => setCategory(v)}>
+								<SelectTrigger id="event-category" data-testid="event-category-select">
+									<SelectValue />
+								</SelectTrigger>
+								<SelectContent>
+									{CATEGORY_OPTIONS.map((opt) => (
+										<SelectItem key={opt.value} value={opt.value}>
+											{opt.label}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
 						</div>
 						<div className="space-y-2">
 							<Label htmlFor="event-recurrence">Repeat</Label>
-							<select
-								id="event-recurrence"
-								data-testid="event-recurrence-select"
-								value={recurrencePattern}
-								onChange={(e) => setRecurrencePattern(e.target.value)}
-								className="w-full border border-border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-ring bg-card"
+							<Select
+								value={recurrencePattern || undefined}
+								onValueChange={(v) => setRecurrencePattern(v)}
 							>
-								{RECURRENCE_OPTIONS.map((opt) => (
-									<option key={opt.value} value={opt.value}>
-										{opt.label}
-									</option>
-								))}
-							</select>
+								<SelectTrigger id="event-recurrence" data-testid="event-recurrence-select">
+									<SelectValue placeholder="No repeat" />
+								</SelectTrigger>
+								<SelectContent>
+									{RECURRENCE_OPTIONS.filter((opt) => opt.value !== "").map((opt) => (
+										<SelectItem key={opt.value} value={opt.value}>
+											{opt.label}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
 						</div>
 						{recurrencePattern && (
 							<div className="space-y-2">

@@ -363,8 +363,8 @@ function DashboardLayoutInner({
 						className={cn(
 							"flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
 							isActive
-								? "bg-primary/10 text-primary font-semibold border-l-[3px] border-primary"
-								: "text-gray-500 hover:bg-orange-50/40 hover:text-slate-800",
+								? "bg-primary/10 text-foreground font-semibold border-l-[3px] border-primary"
+								: "text-muted-foreground hover:bg-orange-50/40 hover:text-foreground",
 						)}
 					>
 						{(() => {
@@ -402,7 +402,7 @@ function DashboardLayoutInner({
 					<div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-glow">
 						<GraduationCap className="w-6 h-6" aria-hidden="true" />
 					</div>
-					<h1 className="text-2xl font-bold tracking-tight text-slate-800">Abridge</h1>
+					<h1 className="text-2xl font-bold tracking-tight text-foreground">Abridge</h1>
 				</div>
 				<NavContent />
 				<div className="mt-auto pt-6 border-t border-orange-100/50">
@@ -420,11 +420,11 @@ function DashboardLayoutInner({
 								</Avatar>
 								<div className="flex-1 min-w-0">
 									<p className="text-sm font-semibold truncate">{session?.name || "User"}</p>
-									<p className="text-xs text-gray-500 truncate">
+									<p className="text-xs text-muted-foreground truncate">
 										{userRole?.staffRole ? `Staff (${userRole.staffRole})` : "Parent Account"}
 									</p>
 								</div>
-								<span className="ml-auto text-gray-400 text-sm" aria-hidden="true">
+								<span className="ml-auto text-muted-foreground text-sm" aria-hidden="true">
 									&#9662;
 								</span>
 							</button>
@@ -499,7 +499,7 @@ function DashboardLayoutInner({
 						<div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
 							<GraduationCap className="w-5 h-5" aria-hidden="true" />
 						</div>
-						<h1 className="text-xl font-bold text-slate-800">Abridge</h1>
+						<h1 className="text-xl font-bold text-foreground">Abridge</h1>
 					</div>
 					<button
 						type="button"
@@ -507,7 +507,7 @@ function DashboardLayoutInner({
 						className="p-2 rounded-lg bg-white shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
 						aria-label="Open navigation menu"
 					>
-						<Menu className="w-5 h-5 text-slate-800" aria-hidden="true" />
+						<Menu className="w-5 h-5 text-foreground" aria-hidden="true" />
 					</button>
 				</div>
 
