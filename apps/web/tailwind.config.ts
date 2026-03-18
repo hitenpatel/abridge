@@ -64,9 +64,10 @@ const config: Config = {
 				"3xl": "32px",
 			},
 			boxShadow: {
-				soft: "0 4px 20px -2px rgba(0, 0, 0, 0.05)",
+				soft: "0 4px 24px -4px rgba(0, 0, 0, 0.04), 0 1px 4px rgba(0, 0, 0, 0.02)",
 				glow: "0 0 15px rgba(255, 125, 69, 0.3)",
-				glass: "0 8px 32px rgba(0, 0, 0, 0.08)",
+				glass: "0 8px 32px rgba(0, 0, 0, 0.06)",
+				sanctuary: "0 8px 40px -8px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.02)",
 			},
 			keyframes: {
 				fadeInUp: {

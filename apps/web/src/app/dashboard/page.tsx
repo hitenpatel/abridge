@@ -213,55 +213,75 @@ export default function DashboardPage() {
 		<PageShell maxWidth="5xl" data-testid="dashboard-view">
 			<div className="space-y-6">
 				<PageHeader icon={Home} title="Dashboard" description="Welcome back" />
-				{/* Child Switcher */}
-				{children.length > 1 && (
-					<ChildSwitcher
-						items={children.map((c) => ({
-							id: c.id,
-							firstName: c.firstName,
-							lastName: c.lastName,
-							yearGroup: (c as Record<string, unknown>).yearGroup as string | undefined,
-							className: (c as Record<string, unknown>).className as string | undefined,
-						}))}
-						selectedChildId={selectedChildId ?? ""}
-						onSelect={(id) => setSelectedChildId(id)}
-					/>
-				)}
 
-				{/* Action Items Row */}
-				{!isActionItemsLoading && actionItems && actionItems.length > 0 && (
-					<ActionItemsRow
-						items={actionItems.map((item) => ({
-							type: item.type,
-							title: (item as Record<string, unknown>).title as string | undefined,
-							subject: (item as Record<string, unknown>).subject as string | undefined,
-							amountDuePence: (item as Record<string, unknown>).amountDuePence as
-								| number
-								| undefined,
-							dueDate: (item as Record<string, unknown>).dueDate as string | undefined,
-							paymentItemId: (item as Record<string, unknown>).paymentItemId as string | undefined,
-							templateId: (item as Record<string, unknown>).templateId as string | undefined,
-							messageId: (item as Record<string, unknown>).messageId as string | undefined,
-						}))}
-						onPayment={() => router.push("/dashboard/payments")}
-						onForm={(templateId) => router.push(`/dashboard/forms/${templateId}`)}
-						onMessage={() => router.push("/dashboard/messages")}
-					/>
-				)}
+				<div className="grid lg:grid-cols-3 gap-6">
+					{/* Left column: Activity Feed */}
+					<div className="lg:col-span-2 space-y-6">
+						<ActivityFeed
+							items={feedItems as unknown as Parameters<typeof ActivityFeed>[0]["items"]}
+							isLoading={isFeedLoading}
+							hasMore={!!hasNextPage}
+							onLoadMore={handleLoadMore}
+							onReact={handleReact}
+							onRemoveReaction={handleRemoveReaction}
+							onPostPress={(postId) => router.push(`/dashboard/posts/${postId}`)}
+						/>
+					</div>
 
-				{/* Activity Feed */}
-				<ActivityFeed
-					items={feedItems as unknown as Parameters<typeof ActivityFeed>[0]["items"]}
-					isLoading={isFeedLoading}
-					hasMore={!!hasNextPage}
-					onLoadMore={handleLoadMore}
-					onReact={handleReact}
-					onRemoveReaction={handleRemoveReaction}
-					onPostPress={(postId) => router.push(`/dashboard/posts/${postId}`)}
-				/>
+					{/* Right sidebar: Child Switcher, Action Items, Report Absence */}
+					<div className="space-y-6">
+						{/* Child Switcher */}
+						{children.length > 1 && (
+							<ChildSwitcher
+								items={children.map((c) => ({
+									id: c.id,
+									firstName: c.firstName,
+									lastName: c.lastName,
+									yearGroup: (c as Record<string, unknown>).yearGroup as string | undefined,
+									className: (c as Record<string, unknown>).className as string | undefined,
+								}))}
+								selectedChildId={selectedChildId ?? ""}
+								onSelect={(id) => setSelectedChildId(id)}
+							/>
+						)}
 
-				{/* Report Absence FAB */}
-				<div className="fixed bottom-6 right-6 z-40">
+						{/* Action Items Row */}
+						{!isActionItemsLoading && actionItems && actionItems.length > 0 && (
+							<ActionItemsRow
+								items={actionItems.map((item) => ({
+									type: item.type,
+									title: (item as Record<string, unknown>).title as string | undefined,
+									subject: (item as Record<string, unknown>).subject as string | undefined,
+									amountDuePence: (item as Record<string, unknown>).amountDuePence as
+										| number
+										| undefined,
+									dueDate: (item as Record<string, unknown>).dueDate as string | undefined,
+									paymentItemId: (item as Record<string, unknown>).paymentItemId as
+										| string
+										| undefined,
+									templateId: (item as Record<string, unknown>).templateId as string | undefined,
+									messageId: (item as Record<string, unknown>).messageId as string | undefined,
+								}))}
+								onPayment={() => router.push("/dashboard/payments")}
+								onForm={(templateId) => router.push(`/dashboard/forms/${templateId}`)}
+								onMessage={() => router.push("/dashboard/messages")}
+							/>
+						)}
+
+						{/* Report Absence — card CTA on desktop */}
+						<div className="hidden lg:block">
+							<Link href="/dashboard/attendance">
+								<Button size="lg" className="w-full gap-2">
+									<AlertTriangle className="h-4 w-4" />
+									Report Absence
+								</Button>
+							</Link>
+						</div>
+					</div>
+				</div>
+
+				{/* Report Absence FAB — mobile only */}
+				<div className="fixed bottom-6 right-6 z-40 lg:hidden">
 					<Link href="/dashboard/attendance">
 						<Button size="lg" className="rounded-full shadow-lg gap-2">
 							<AlertTriangle className="h-4 w-4" />

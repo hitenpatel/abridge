@@ -186,17 +186,24 @@ function StaffView({ schoolId }: { schoolId: string }) {
 
 	return (
 		<div className="space-y-6">
-			{alerts && alerts.length > 0 && (
+			<div className="grid lg:grid-cols-2 gap-6">
+				{/* Left: Alerts / Flagged students */}
 				<Card className="border-red-200 hover-lift">
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2 text-red-700">
 							<AlertTriangle className="h-5 w-5" />
-							Open Alerts ({alerts.length})
+							Open Alerts {alerts && alerts.length > 0 ? `(${alerts.length})` : ""}
 						</CardTitle>
 					</CardHeader>
 					<CardContent>
+						{(!alerts || alerts.length === 0) && (
+							<div className="flex items-center gap-2 text-sm text-muted-foreground">
+								<CheckCircle className="h-4 w-4 text-green-500" />
+								No open alerts.
+							</div>
+						)}
 						<div className="space-y-3">
-							{alerts.map((alert) => (
+							{alerts?.map((alert) => (
 								<div
 									key={alert.id}
 									className="flex items-center gap-3 rounded-md border border-red-100 p-3"
@@ -248,34 +255,35 @@ function StaffView({ schoolId }: { schoolId: string }) {
 						</div>
 					</CardContent>
 				</Card>
-			)}
 
-			<Card className="hover-lift">
-				<CardHeader>
-					<CardTitle className="flex items-center gap-2">
-						<Heart className="h-5 w-5" />
-						Today's Check-ins
-					</CardTitle>
-				</CardHeader>
-				<CardContent>
-					{overview?.length === 0 && (
-						<p className="text-sm text-muted-foreground">No check-ins submitted today.</p>
-					)}
-					<div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-						{overview?.map((ci) => (
-							<div
-								key={ci.id}
-								className={`flex flex-col items-center rounded-md border p-2 ${MOOD_COLORS[ci.mood]}`}
-							>
-								<span className="text-2xl">{MOOD_EMOJI[ci.mood]}</span>
-								<span className="text-xs font-medium mt-1 truncate w-full text-center">
-									{ci.child.firstName} {ci.child.lastName.charAt(0)}
-								</span>
-							</div>
-						))}
-					</div>
-				</CardContent>
-			</Card>
+				{/* Right: Today's Check-ins */}
+				<Card className="hover-lift">
+					<CardHeader>
+						<CardTitle className="flex items-center gap-2">
+							<Heart className="h-5 w-5" />
+							Today's Check-ins
+						</CardTitle>
+					</CardHeader>
+					<CardContent>
+						{overview?.length === 0 && (
+							<p className="text-sm text-muted-foreground">No check-ins submitted today.</p>
+						)}
+						<div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3">
+							{overview?.map((ci) => (
+								<div
+									key={ci.id}
+									className={`flex flex-col items-center rounded-md border p-2 ${MOOD_COLORS[ci.mood]}`}
+								>
+									<span className="text-2xl">{MOOD_EMOJI[ci.mood]}</span>
+									<span className="text-xs font-medium mt-1 truncate w-full text-center">
+										{ci.child.firstName} {ci.child.lastName.charAt(0)}
+									</span>
+								</div>
+							))}
+						</div>
+					</CardContent>
+				</Card>
+			</div>
 		</div>
 	);
 }

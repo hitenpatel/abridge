@@ -392,10 +392,10 @@ function DashboardLayoutInner({
 	);
 
 	return (
-		<div className="min-h-screen bg-background flex">
+		<div className="min-h-screen bg-background sanctuary-gradient flex">
 			{/* Desktop Sidebar */}
 			<aside
-				className="w-64 h-screen bg-white/80 backdrop-blur-xl border-r shadow-soft fixed left-0 top-0 z-30 hidden lg:flex flex-col p-6 dark:bg-card/80"
+				className="w-64 h-screen bg-white/85 backdrop-blur-xl border-r border-white/40 shadow-sanctuary fixed left-0 top-0 z-30 hidden lg:flex flex-col p-6 dark:bg-card/85 dark:border-white/10"
 				aria-label="Sidebar"
 			>
 				<div className="flex items-center gap-3 mb-10 px-2">

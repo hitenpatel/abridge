@@ -4,18 +4,18 @@
 
 @layer base {
 	:root {
-		/* Background: #F7F8FA */
-		--background: 220 14% 97%;
-		/* Foreground: Slate 800 #2D3748 */
-		--foreground: 220 26% 23%;
+		/* Background: Warm Peach #FFF5F0 */
+		--background: 20 100% 97%;
+		/* Foreground: Navy #1E3A5F */
+		--foreground: 213 53% 24%;
 
-		/* Card: White */
-		--card: 0 0% 100%;
-		--card-foreground: 220 26% 23%;
+		/* Card: Warm White */
+		--card: 30 100% 99%;
+		--card-foreground: 213 53% 24%;
 
-		/* Popover: White */
-		--popover: 0 0% 100%;
-		--popover-foreground: 220 26% 23%;
+		/* Popover: Warm White */
+		--popover: 30 100% 99%;
+		--popover-foreground: 213 53% 24%;
 
 		/* Primary: Coral Orange #FF7D45 */
 		--primary: 17 100% 63%;
@@ -25,8 +25,8 @@
 		--secondary: 45 100% 65%;
 		--secondary-foreground: 220 26% 23%;
 
-		/* Muted: Gray 100 */
-		--muted: 220 14% 96%;
+		/* Muted: Warm Gray */
+		--muted: 20 20% 96%;
 		--muted-foreground: 220 9% 46%;
 
 		/* Accent: Soft Teal #4DB6AC */
@@ -37,9 +37,9 @@
 		--destructive: 0 94% 71%;
 		--destructive-foreground: 0 0% 100%;
 
-		/* Border: Gray 200 */
-		--border: 220 13% 91%;
-		--input: 220 13% 91%;
+		/* Border: Warm Gray 200 */
+		--border: 20 13% 91%;
+		--input: 20 13% 91%;
 		--ring: 17 100% 63%;
 
 		/* Semantic colors */
@@ -50,20 +50,20 @@
 		--info: 199 89% 48%;
 		--info-foreground: 0 0% 100%;
 
-		--radius: 0.75rem;
+		--radius: 1rem;
 	}
 
 	.dark {
-		/* Background: #121212 */
-		--background: 0 0% 7%;
-		--foreground: 214 32% 91%;
+		/* Background: Warm Dark #1A1614 */
+		--background: 20 10% 9%;
+		--foreground: 20 20% 91%;
 
-		/* Card: #1E1E1E */
-		--card: 0 0% 12%;
-		--card-foreground: 214 32% 91%;
+		/* Card: Warm Dark Surface #241F1C */
+		--card: 20 10% 13%;
+		--card-foreground: 20 20% 91%;
 
-		--popover: 0 0% 12%;
-		--popover-foreground: 214 32% 91%;
+		--popover: 20 10% 13%;
+		--popover-foreground: 20 20% 91%;
 
 		/* Primary: Coral Orange (same in dark) */
 		--primary: 17 100% 63%;
@@ -73,8 +73,8 @@
 		--secondary: 45 100% 65%;
 		--secondary-foreground: 0 0% 100%;
 
-		--muted: 0 0% 15%;
-		--muted-foreground: 218 11% 65%;
+		--muted: 20 8% 16%;
+		--muted-foreground: 20 10% 65%;
 
 		--accent: 174 36% 49%;
 		--accent-foreground: 0 0% 100%;
@@ -82,8 +82,8 @@
 		--destructive: 0 63% 31%;
 		--destructive-foreground: 214 32% 91%;
 
-		--border: 0 0% 15%;
-		--input: 0 0% 15%;
+		--border: 20 8% 18%;
+		--input: 20 8% 18%;
 		--ring: 17 100% 63%;
 
 		/* Semantic colors */
@@ -122,6 +122,12 @@
 	}
 	.hover-lift {
 		@apply transition-transform duration-200 hover:-translate-y-0.5;
+	}
+	.sanctuary-gradient {
+		background: linear-gradient(180deg, hsl(20 100% 97%) 0%, hsl(20 60% 95%) 100%);
+	}
+	.dark .sanctuary-gradient {
+		background: linear-gradient(180deg, hsl(20 10% 9%) 0%, hsl(20 8% 7%) 100%);
 	}
 }
 

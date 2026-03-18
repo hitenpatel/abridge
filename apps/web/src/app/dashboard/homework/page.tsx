@@ -6,6 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { useFeatureToggles } from "@/lib/feature-toggles";
@@ -115,18 +122,19 @@ function ParentView() {
 			{subjects.length > 0 && (
 				<div className="flex items-center gap-2">
 					<Filter className="h-4 w-4 text-muted-foreground" />
-					<select
-						value={subjectFilter}
-						onChange={(e) => setSubjectFilter(e.target.value)}
-						className="rounded-md border p-2 text-sm"
-					>
-						<option value="all">All Subjects</option>
-						{subjects.map((subject) => (
-							<option key={subject} value={subject}>
-								{subject}
-							</option>
-						))}
-					</select>
+					<Select value={subjectFilter} onValueChange={(v) => setSubjectFilter(v)}>
+						<SelectTrigger className="w-48">
+							<SelectValue placeholder="All Subjects" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="all">All Subjects</SelectItem>
+							{subjects.map((subject) => (
+								<SelectItem key={subject} value={subject}>
+									{subject}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
 				</div>
 			)}
 

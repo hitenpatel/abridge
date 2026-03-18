@@ -6,6 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { useFeatureToggles } from "@/lib/feature-toggles";
@@ -533,18 +540,21 @@ function StaffView({ schoolId }: { schoolId: string }) {
 									<label className="text-xs text-muted-foreground" htmlFor="opt-day">
 										Day
 									</label>
-									<select
-										id="opt-day"
+									<Select
 										value={newOptionDay}
-										onChange={(e) => setNewOptionDay(e.target.value as (typeof DAYS)[number])}
-										className="mt-1 block w-full rounded-md border p-2 text-sm"
+										onValueChange={(v) => setNewOptionDay(v as (typeof DAYS)[number])}
 									>
-										{DAYS.map((day) => (
-											<option key={day} value={day}>
-												{DAY_LABELS[day]}
-											</option>
-										))}
-									</select>
+										<SelectTrigger id="opt-day" className="mt-1">
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent>
+											{DAYS.map((day) => (
+												<SelectItem key={day} value={day}>
+													{DAY_LABELS[day]}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
 								</div>
 								<div>
 									<label className="text-xs text-muted-foreground" htmlFor="opt-name">
@@ -563,18 +573,21 @@ function StaffView({ schoolId }: { schoolId: string }) {
 									<label className="text-xs text-muted-foreground" htmlFor="opt-category">
 										Category
 									</label>
-									<select
-										id="opt-category"
+									<Select
 										value={newOptionCategory}
-										onChange={(e) => setNewOptionCategory(e.target.value as MenuOption["category"])}
-										className="mt-1 block w-full rounded-md border p-2 text-sm"
+										onValueChange={(v) => setNewOptionCategory(v as MenuOption["category"])}
 									>
-										{Object.entries(CATEGORY_LABELS).map(([val, label]) => (
-											<option key={val} value={val}>
-												{label}
-											</option>
-										))}
-									</select>
+										<SelectTrigger id="opt-category" className="mt-1">
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent>
+											{Object.entries(CATEGORY_LABELS).map(([val, label]) => (
+												<SelectItem key={val} value={val}>
+													{label}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
 								</div>
 								<div>
 									<label className="text-xs text-muted-foreground" htmlFor="opt-price">
