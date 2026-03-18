@@ -22,7 +22,7 @@ function StaffPaymentsView({ schoolId }: { schoolId: string }) {
 
 	return (
 		<PageShell maxWidth="5xl">
-			<PageHeader icon={CreditCard} title="Payments" description="Manage school payments">
+			<PageHeader icon={CreditCard} title="Payment Items" description="Manage school payments">
 				<Link href="/dashboard/payments/new">
 					<Button data-testid="create-payment-button">
 						<Plus className="h-4 w-4 mr-1" aria-hidden="true" />
@@ -134,7 +134,6 @@ function ParentPaymentsView() {
 					<EmptyState
 						icon={CreditCard}
 						title="No outstanding payments"
-						description="You're all paid up!"
 					/>
 				)}
 			</div>
