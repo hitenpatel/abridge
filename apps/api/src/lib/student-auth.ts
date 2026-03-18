@@ -1,6 +1,26 @@
 import type { Child, PrismaClient } from "@schoolconnect/db";
 
 /**
+ * Check if a user is staff at the same school as a given child.
+ */
+export async function isStaffOfChildSchool(
+	prisma: PrismaClient,
+	userId: string,
+	childId: string,
+): Promise<boolean> {
+	const child = await prisma.child.findUnique({
+		where: { id: childId },
+		select: { schoolId: true },
+	});
+	if (!child) return false;
+
+	const staffMember = await prisma.staffMember.findFirst({
+		where: { userId, schoolId: child.schoolId },
+	});
+	return staffMember !== null;
+}
+
+/**
  * Get the child record linked to a user via Child.userId.
  * Returns the child if the user is a student, null otherwise.
  */

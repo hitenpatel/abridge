@@ -3,15 +3,23 @@ import { z } from "zod";
 import { assertFeatureEnabled } from "../lib/feature-guards";
 import { logger } from "../lib/logger";
 import { generateWeeklySummary } from "../lib/progress-summary";
-import { isParentOrStudentOfChild } from "../lib/student-auth";
-import { protectedProcedure, router, schoolAdminProcedure, schoolFeatureProcedure } from "../trpc";
+import { isParentOrStudentOfChild, isStaffOfChildSchool } from "../lib/student-auth";
+import {
+	protectedProcedure,
+	router,
+	schoolAdminProcedure,
+	schoolFeatureProcedure,
+	schoolStaffProcedure,
+} from "../trpc";
 
 export const progressSummaryRouter = router({
 	getLatestSummary: protectedProcedure
 		.input(z.object({ childId: z.string().min(1) }))
 		.query(async ({ ctx, input }) => {
-			// Verify parent-child or student relationship
-			const hasAccess = await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId);
+			// Verify parent-child, student, or staff relationship
+			const hasAccess =
+				(await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId)) ||
+				(await isStaffOfChildSchool(ctx.prisma, ctx.user.id, input.childId));
 			if (!hasAccess) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
@@ -36,8 +44,10 @@ export const progressSummaryRouter = router({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
-			// Verify parent-child or student relationship
-			const hasAccess = await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId);
+			// Verify parent-child, student, or staff relationship
+			const hasAccess =
+				(await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId)) ||
+				(await isStaffOfChildSchool(ctx.prisma, ctx.user.id, input.childId));
 			if (!hasAccess) {
 				throw new TRPCError({
 					code: "FORBIDDEN",
@@ -59,6 +69,38 @@ export const progressSummaryRouter = router({
 			}
 
 			return { items, nextCursor };
+		}),
+
+	listChildrenWithSummaryStatus: schoolStaffProcedure
+		.input(z.object({ schoolId: z.string().min(1) }))
+		.query(async ({ ctx }) => {
+			const weekStart = getWeekStart(new Date());
+
+			const children = await ctx.prisma.child.findMany({
+				where: { schoolId: ctx.schoolId },
+				select: {
+					id: true,
+					firstName: true,
+					lastName: true,
+					yearGroup: true,
+					className: true,
+					progressSummaries: {
+						where: { weekStart },
+						select: { id: true, weekStart: true, summary: true },
+						take: 1,
+					},
+				},
+				orderBy: [{ yearGroup: "asc" }, { lastName: "asc" }],
+			});
+
+			return children.map((child) => ({
+				id: child.id,
+				firstName: child.firstName,
+				lastName: child.lastName,
+				yearGroup: child.yearGroup,
+				className: child.className,
+				hasSummaryThisWeek: child.progressSummaries.length > 0,
+			}));
 		}),
 
 	generateNow: schoolFeatureProcedure

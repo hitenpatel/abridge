@@ -292,25 +292,106 @@ function ParentView() {
 function StaffView({ schoolId }: { schoolId: string }) {
 	const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
 	const [generating, setGenerating] = useState(false);
+	const [yearFilter, setYearFilter] = useState<string>("all");
+	const utils = trpc.useUtils();
 
-	const { data: children } = trpc.user.listChildren.useQuery();
+	const { data: schoolChildren, isLoading: childrenLoading } =
+		trpc.progressSummary.listChildrenWithSummaryStatus.useQuery({ schoolId });
 
-	// For staff, we use a simple approach: list children from school
-	// The router will handle authorization
 	const { data: childSummary, isLoading: summaryLoading } =
 		trpc.progressSummary.getLatestSummary.useQuery(
 			{ childId: selectedChildId ?? "" },
 			{ enabled: !!selectedChildId },
 		);
 
+	const { data: historyData } = trpc.progressSummary.getSummaryHistory.useQuery(
+		{ childId: selectedChildId ?? "", limit: 10 },
+		{ enabled: !!selectedChildId },
+	);
+
 	const generateBatch = trpc.progressSummary.generateWeeklyBatch.useMutation({
 		onMutate: () => setGenerating(true),
-		onSettled: () => setGenerating(false),
+		onSettled: () => {
+			setGenerating(false);
+			utils.progressSummary.listChildrenWithSummaryStatus.invalidate({ schoolId });
+		},
 	});
 
+	// Get unique year groups for filtering
+	const yearGroups = schoolChildren
+		? [...new Set(schoolChildren.map((c) => c.yearGroup).filter(Boolean))].sort()
+		: [];
+
+	const filteredChildren =
+		yearFilter === "all"
+			? schoolChildren
+			: schoolChildren?.filter((c) => c.yearGroup === yearFilter);
+
+	const summaryCount = schoolChildren?.filter((c) => c.hasSummaryThisWeek).length ?? 0;
+	const totalCount = schoolChildren?.length ?? 0;
+
+	// Child detail view
+	if (selectedChildId) {
+		const selectedChild = schoolChildren?.find((c) => c.id === selectedChildId);
+		const history = historyData?.items ?? [];
+		const pastSummaries = childSummary ? history.filter((s) => s.id !== childSummary.id) : history;
+
+		return (
+			<div className="space-y-6">
+				<button
+					type="button"
+					onClick={() => setSelectedChildId(null)}
+					className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+				>
+					<ChevronRight className="h-4 w-4 rotate-180" />
+					Back to class overview
+				</button>
+
+				{selectedChild && (
+					<h2 className="text-lg font-semibold">
+						{selectedChild.firstName} {selectedChild.lastName}
+						{selectedChild.yearGroup && (
+							<span className="text-sm font-normal text-muted-foreground ml-2">
+								{selectedChild.yearGroup}
+								{selectedChild.className && ` - ${selectedChild.className}`}
+							</span>
+						)}
+					</h2>
+				)}
+
+				{summaryLoading ? (
+					<Skeleton className="h-64 w-full" />
+				) : childSummary ? (
+					<SummaryCard summary={childSummary} defaultExpanded />
+				) : (
+					<Card>
+						<CardContent className="py-8 text-center">
+							<TrendingUp className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+							<p className="text-muted-foreground">
+								No summary available for this child yet. Try generating summaries first.
+							</p>
+						</CardContent>
+					</Card>
+				)}
+
+				{pastSummaries.length > 0 && (
+					<div>
+						<h3 className="text-base font-semibold mb-3">Previous Weeks</h3>
+						<div className="space-y-3">
+							{pastSummaries.map((summary) => (
+								<SummaryCard key={summary.id} summary={summary} />
+							))}
+						</div>
+					</div>
+				)}
+			</div>
+		);
+	}
+
+	// Class overview
 	return (
 		<div className="space-y-6">
-			{/* Generate Button */}
+			{/* Generate + Stats */}
 			<Card>
 				<CardHeader>
 					<div className="flex items-center justify-between">
@@ -342,38 +423,94 @@ function StaffView({ schoolId }: { schoolId: string }) {
 							<p className="text-sm text-red-700">Failed to start generation. Please try again.</p>
 						</div>
 					)}
-					<p className="text-sm text-muted-foreground">
-						Click "Generate Summaries" to create weekly progress summaries for all children in your
-						school. This runs in the background.
-					</p>
+					<div className="flex items-center gap-4 text-sm text-muted-foreground">
+						<span>
+							{summaryCount}/{totalCount} children have summaries this week
+						</span>
+						{totalCount > 0 && (
+							<div className="flex-1 max-w-xs h-2 bg-muted rounded-full overflow-hidden">
+								<div
+									className="h-full bg-primary rounded-full transition-all"
+									style={{ width: `${(summaryCount / totalCount) * 100}%` }}
+								/>
+							</div>
+						)}
+					</div>
 				</CardContent>
 			</Card>
 
-			{/* Selected Child Detail */}
-			{selectedChildId && (
-				<div>
-					<div className="flex items-center gap-2 mb-3">
-						<button
-							type="button"
-							onClick={() => setSelectedChildId(null)}
-							className="text-sm text-primary hover:underline"
+			{/* Year Group Filter */}
+			{yearGroups.length > 1 && (
+				<div className="flex gap-2 flex-wrap">
+					<Button
+						size="sm"
+						variant={yearFilter === "all" ? "default" : "outline"}
+						onClick={() => setYearFilter("all")}
+					>
+						All
+					</Button>
+					{yearGroups.map((yg) => (
+						<Button
+							key={yg}
+							size="sm"
+							variant={yearFilter === yg ? "default" : "outline"}
+							onClick={() => setYearFilter(yg ?? "all")}
 						>
-							Back to overview
-						</button>
-					</div>
-					{summaryLoading ? (
-						<Skeleton className="h-64 w-full" />
-					) : childSummary ? (
-						<SummaryCard summary={childSummary} defaultExpanded />
-					) : (
-						<Card>
-							<CardContent className="py-8 text-center">
-								<p className="text-muted-foreground">No summary available for this child yet.</p>
-							</CardContent>
-						</Card>
-					)}
+							{yg}
+						</Button>
+					))}
 				</div>
 			)}
+
+			{/* Children List */}
+			<Card>
+				<CardContent className="pt-6">
+					{childrenLoading && <Skeleton className="h-48 w-full" />}
+					{!childrenLoading && (!filteredChildren || filteredChildren.length === 0) && (
+						<p className="text-sm text-muted-foreground text-center py-4">
+							No children found in this school.
+						</p>
+					)}
+					<div className="space-y-2">
+						{filteredChildren?.map((child) => (
+							<button
+								key={child.id}
+								type="button"
+								onClick={() => setSelectedChildId(child.id)}
+								className="flex w-full items-center justify-between rounded-md border p-3 text-left hover:bg-orange-50/40 transition-colors"
+							>
+								<div className="flex items-center gap-3">
+									<div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+										{child.firstName[0]}
+										{child.lastName[0]}
+									</div>
+									<div>
+										<p className="font-medium">
+											{child.firstName} {child.lastName}
+										</p>
+										<p className="text-xs text-muted-foreground">
+											{child.yearGroup}
+											{child.className && ` - ${child.className}`}
+										</p>
+									</div>
+								</div>
+								<div className="flex items-center gap-2">
+									{child.hasSummaryThisWeek ? (
+										<span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+											Summary ready
+										</span>
+									) : (
+										<span className="inline-flex items-center rounded-full bg-orange-100/40 px-2.5 py-0.5 text-xs font-medium text-foreground">
+											No summary
+										</span>
+									)}
+									<ChevronRight className="h-4 w-4 text-muted-foreground" />
+								</div>
+							</button>
+						))}
+					</div>
+				</CardContent>
+			</Card>
 		</div>
 	);
 }
