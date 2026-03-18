@@ -150,7 +150,7 @@ function ParentView() {
 									{reportCard.child.firstName} {reportCard.child.lastName}
 								</CardTitle>
 								<p className="text-sm text-muted-foreground">
-									{reportCard.child.yearGroup && `Year ${reportCard.child.yearGroup}`}
+									{reportCard.child.yearGroup}
 									{reportCard.child.className && ` - ${reportCard.child.className}`}
 								</p>
 								<p className="text-sm text-muted-foreground mt-1">{reportCard.cycle.name}</p>
@@ -746,7 +746,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 											{child.firstName} {child.lastName}
 										</p>
 										<p className="text-xs text-muted-foreground">
-											{child.yearGroup && `Year ${child.yearGroup}`}
+											{child.yearGroup}
 										</p>
 									</div>
 									<div className="flex items-center gap-2">
