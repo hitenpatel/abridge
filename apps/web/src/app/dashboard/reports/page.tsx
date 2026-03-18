@@ -333,6 +333,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 	const [showCreateForm, setShowCreateForm] = useState(false);
 	const [selectedCycleId, setSelectedCycleId] = useState<string | null>(null);
 	const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
+	const [showArchived, setShowArchived] = useState(false);
 
 	// Create cycle form state
 	const [cycleName, setCycleName] = useState("");
@@ -354,6 +355,13 @@ function StaffView({ schoolId }: { schoolId: string }) {
 	const publishCycleMutation = trpc.reportCard.publishCycle.useMutation({
 		onSuccess: () => {
 			utils.reportCard.listCycles.invalidate({ schoolId });
+		},
+	});
+
+	const archiveCycleMutation = trpc.reportCard.archiveCycle.useMutation({
+		onSuccess: () => {
+			utils.reportCard.listCycles.invalidate({ schoolId });
+			setSelectedCycleId(null);
 		},
 	});
 
@@ -758,21 +766,44 @@ function StaffView({ schoolId }: { schoolId: string }) {
 										: "Secondary Grades"}
 								</p>
 							</div>
-							{selectedCycle.status === "DRAFT" && (
-								<Button
-									onClick={() =>
-										publishCycleMutation.mutate({
-											schoolId,
-											cycleId: selectedCycleId,
-										})
-									}
-									disabled={publishCycleMutation.isPending}
-									className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white"
-								>
-									<Send className="h-4 w-4" />
-									{publishCycleMutation.isPending ? "Publishing..." : "Publish"}
-								</Button>
-							)}
+							<div className="flex items-center gap-2">
+								{selectedCycle.status === "DRAFT" && (
+									<Button
+										onClick={() =>
+											publishCycleMutation.mutate({
+												schoolId,
+												cycleId: selectedCycleId,
+											})
+										}
+										disabled={publishCycleMutation.isPending}
+										className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white"
+									>
+										<Send className="h-4 w-4" />
+										{publishCycleMutation.isPending ? "Publishing..." : "Publish"}
+									</Button>
+								)}
+								{selectedCycle.status === "PUBLISHED" && (
+									<Button
+										variant="outline"
+										onClick={() => {
+											if (
+												confirm(
+													"Archive this cycle? Archived cycles are read-only and hidden from the default list.",
+												)
+											) {
+												archiveCycleMutation.mutate({
+													schoolId,
+													cycleId: selectedCycleId,
+												});
+											}
+										}}
+										disabled={archiveCycleMutation.isPending}
+										className="flex items-center gap-2"
+									>
+										{archiveCycleMutation.isPending ? "Archiving..." : "Archive"}
+									</Button>
+								)}
+							</div>
 						</div>
 					</CardHeader>
 					<CardContent>
@@ -936,32 +967,46 @@ function StaffView({ schoolId }: { schoolId: string }) {
 						/>
 					)}
 
+					{(cycles?.some((c) => c.status === "ARCHIVED") ?? false) && (
+						<label className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+							<input
+								type="checkbox"
+								checked={showArchived}
+								onChange={(e) => setShowArchived(e.target.checked)}
+								className="rounded"
+							/>
+							Show archived
+						</label>
+					)}
+
 					<div className="space-y-2">
-						{cycles?.map((cycle) => (
-							<button
-								key={cycle.id}
-								type="button"
-								onClick={() => setSelectedCycleId(cycle.id)}
-								className="flex w-full items-center justify-between rounded-md border p-3 text-left hover:bg-muted transition-colors"
-							>
-								<div>
-									<p className="font-medium">{cycle.name}</p>
-									<p className="text-xs text-muted-foreground">
-										{CYCLE_TYPE_LABELS[cycle.type]} - Published{" "}
-										{new Date(cycle.publishDate).toLocaleDateString("en-GB")}
-									</p>
-								</div>
-								<div className="flex items-center gap-2">
-									<Badge className={STATUS_COLORS[cycle.status]}>
-										{cycle.status.toLowerCase()}
-									</Badge>
-									<span className="text-xs text-muted-foreground">
-										{cycle._count.reportCards} report
-										{cycle._count.reportCards !== 1 ? "s" : ""}
-									</span>
-								</div>
-							</button>
-						))}
+						{cycles
+							?.filter((cycle) => showArchived || cycle.status !== "ARCHIVED")
+							.map((cycle) => (
+								<button
+									key={cycle.id}
+									type="button"
+									onClick={() => setSelectedCycleId(cycle.id)}
+									className={`flex w-full items-center justify-between rounded-md border p-3 text-left transition-colors ${cycle.status === "ARCHIVED" ? "opacity-60" : "hover:bg-muted"}`}
+								>
+									<div>
+										<p className="font-medium">{cycle.name}</p>
+										<p className="text-xs text-muted-foreground">
+											{CYCLE_TYPE_LABELS[cycle.type]} - Published{" "}
+											{new Date(cycle.publishDate).toLocaleDateString("en-GB")}
+										</p>
+									</div>
+									<div className="flex items-center gap-2">
+										<Badge className={STATUS_COLORS[cycle.status]}>
+											{cycle.status.toLowerCase()}
+										</Badge>
+										<span className="text-xs text-muted-foreground">
+											{cycle._count.reportCards} report
+											{cycle._count.reportCards !== 1 ? "s" : ""}
+										</span>
+									</div>
+								</button>
+							))}
 					</div>
 				</CardContent>
 			</Card>

@@ -77,6 +77,40 @@ export const reportCardRouter = router({
 			});
 		}),
 
+	archiveCycle: schoolFeatureProcedure
+		.input(
+			z.object({
+				schoolId: z.string(),
+				cycleId: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "reportCards");
+
+			const cycle = await ctx.prisma.reportCycle.findUnique({
+				where: { id: input.cycleId },
+			});
+
+			if (!cycle || cycle.schoolId !== input.schoolId) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Report cycle not found",
+				});
+			}
+
+			if (cycle.status !== "PUBLISHED") {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "Only published cycles can be archived",
+				});
+			}
+
+			return ctx.prisma.reportCycle.update({
+				where: { id: input.cycleId },
+				data: { status: "ARCHIVED" },
+			});
+		}),
+
 	saveGrades: schoolFeatureProcedure
 		.input(
 			z.object({
