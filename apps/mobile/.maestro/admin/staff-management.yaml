@@ -19,3 +19,4 @@ tags:
 - extendedWaitUntil:
     visible: "Send Invite"
     timeout: 60000
+- takeScreenshot: native-admin-staff-management

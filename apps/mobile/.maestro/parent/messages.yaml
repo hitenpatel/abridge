@@ -17,3 +17,4 @@ tags:
 - extendedWaitUntil:
     visible: "Inbox"
     timeout: 60000
+- takeScreenshot: native-parent-messages

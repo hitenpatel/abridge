@@ -20,6 +20,7 @@ tags:
 - extendedWaitUntil:
     visible: "How are they feeling today?"
     timeout: 60000
+- takeScreenshot: native-parent-wellbeing
 
 # Use Test Fill to select mood and note
 - tapOn:

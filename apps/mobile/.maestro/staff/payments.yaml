@@ -12,3 +12,4 @@ tags:
 - extendedWaitUntil:
     visible: "Manage payment items"
     timeout: 60000
+- takeScreenshot: native-staff-payments

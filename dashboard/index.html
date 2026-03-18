@@ -570,7 +570,32 @@ async function loadScreenshots() {
       html += '</div>';
     }
 
-    if ((!data.desktop || data.desktop.length === 0) && (!data.mobile || data.mobile.length === 0)) {
+    if (data.nativeAndroid && data.nativeAndroid.length > 0) {
+      html += '<h3>Native Android</h3>';
+      html += '<div class="screenshots-grid mobile">';
+      for (const s of data.nativeAndroid) {
+        html += `<div class="screenshot-card" onclick="showModal('screenshots/${s.file}')">
+          <img src="screenshots/${s.file}" alt="${escHtml(s.label)}" loading="lazy">
+          <div class="screenshot-label">${escHtml(s.label)}</div>
+        </div>`;
+      }
+      html += '</div>';
+    }
+
+    if (data.nativeIos && data.nativeIos.length > 0) {
+      html += '<h3>Native iOS</h3>';
+      html += '<div class="screenshots-grid mobile">';
+      for (const s of data.nativeIos) {
+        html += `<div class="screenshot-card" onclick="showModal('screenshots/${s.file}')">
+          <img src="screenshots/${s.file}" alt="${escHtml(s.label)}" loading="lazy">
+          <div class="screenshot-label">${escHtml(s.label)}</div>
+        </div>`;
+      }
+      html += '</div>';
+    }
+
+    const hasAny = [data.desktop, data.mobile, data.nativeAndroid, data.nativeIos].some(a => a && a.length > 0);
+    if (!hasAny) {
       throw new Error('empty');
     }
 

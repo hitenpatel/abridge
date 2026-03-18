@@ -21,6 +21,7 @@ tags:
     visible:
       id: "compose-post-screen"
     timeout: 60000
+- takeScreenshot: native-staff-compose-post
 
 # Use Test Fill to populate class + body
 - tapOn:

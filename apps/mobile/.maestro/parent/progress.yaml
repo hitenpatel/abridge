@@ -25,3 +25,4 @@ tags:
 - extendedWaitUntil:
     visible: "Weekly progress summary"
     timeout: 60000
+- takeScreenshot: native-parent-progress

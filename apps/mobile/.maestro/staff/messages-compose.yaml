@@ -13,3 +13,4 @@ tags:
     visible:
       id: "messages-screen"
     timeout: 120000
+- takeScreenshot: native-staff-compose-message

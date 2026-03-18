@@ -13,3 +13,4 @@ tags:
 - extendedWaitUntil:
     visible: "Report Absence"
     timeout: 60000
+- takeScreenshot: native-parent-home

@@ -14,3 +14,4 @@ tags:
 - extendedWaitUntil:
     visible: "Visitors"
     timeout: 60000
+- takeScreenshot: native-staff-visitors

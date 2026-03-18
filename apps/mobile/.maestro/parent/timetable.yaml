@@ -17,6 +17,7 @@ tags:
 - extendedWaitUntil:
     visible: "Weekly class schedule"
     timeout: 60000
+- takeScreenshot: native-parent-timetable
 
 # Either timetable grid or empty state should be visible
 - scrollUntilVisible:

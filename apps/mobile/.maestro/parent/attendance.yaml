@@ -12,6 +12,7 @@ tags:
 - extendedWaitUntil:
     visible: "Attendance Hub"
     timeout: 60000
+- takeScreenshot: native-parent-attendance
 
 # Verify absence reporting section
 - extendedWaitUntil:

@@ -12,3 +12,4 @@ tags:
 - extendedWaitUntil:
     visible: "Today's attendance overview"
     timeout: 120000
+- takeScreenshot: native-staff-attendance

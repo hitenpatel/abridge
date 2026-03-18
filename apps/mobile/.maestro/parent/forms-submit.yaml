@@ -15,6 +15,7 @@ tags:
     visible:
       id: "forms-screen"
     timeout: 120000
+- takeScreenshot: native-parent-forms
 
 # Tap first pending form to open form detail
 - tapOn:

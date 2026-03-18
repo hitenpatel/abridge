@@ -22,3 +22,4 @@ tags:
     visible:
       id: "payment-history-screen"
     timeout: 120000
+- takeScreenshot: native-parent-payment-history

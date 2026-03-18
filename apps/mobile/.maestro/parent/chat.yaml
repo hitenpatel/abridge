@@ -20,3 +20,4 @@ tags:
 - extendedWaitUntil:
     visible: "Chat"
     timeout: 60000
+- takeScreenshot: native-parent-chat

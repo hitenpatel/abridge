@@ -17,3 +17,4 @@ tags:
 - extendedWaitUntil:
     visible: "Wallet"
     timeout: 60000
+- takeScreenshot: native-parent-payments

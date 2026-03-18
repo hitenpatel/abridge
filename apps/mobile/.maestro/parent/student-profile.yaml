@@ -21,3 +21,4 @@ tags:
     visible:
       id: "student-profile-screen"
     timeout: 60000
+- takeScreenshot: native-parent-student-profile

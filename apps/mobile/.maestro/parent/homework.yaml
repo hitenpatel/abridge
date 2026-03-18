@@ -22,3 +22,4 @@ tags:
 - extendedWaitUntil:
     visible: "No homework assigned|Upcoming|Due Soon|Overdue|Done"
     timeout: 60000
+- takeScreenshot: native-parent-homework

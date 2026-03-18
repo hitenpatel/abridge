@@ -15,3 +15,4 @@ tags:
     visible:
       id: "settings-screen"
     timeout: 120000
+- takeScreenshot: native-parent-settings

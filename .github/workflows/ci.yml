@@ -569,14 +569,23 @@ jobs:
 
       - name: Copy screenshots into dashboard
         run: |
+          mkdir -p dashboard/screenshots
           if [ -d "artifacts/app-screenshots" ]; then
-            mkdir -p dashboard/screenshots
             cp -r artifacts/app-screenshots/*.png dashboard/screenshots/ 2>/dev/null || true
             cp artifacts/app-screenshots/screenshots-data.json dashboard/screenshots-data.json 2>/dev/null || true
-            echo "Copied $(ls dashboard/screenshots/*.png 2>/dev/null | wc -l) screenshots to dashboard"
+            echo "Copied $(ls dashboard/screenshots/*.png 2>/dev/null | wc -l) web screenshots to dashboard"
           else
-            echo "No screenshots artifact found — skipping"
+            echo "No web screenshots artifact found — skipping"
           fi
+
+      - name: Collect native mobile screenshots
+        run: |
+          node scripts/collect-native-screenshots.js \
+            --android-debug "artifacts/maestro-report-android/maestro-debug" \
+            --ios-debug "artifacts/maestro-report-ios/maestro-debug" \
+            --screenshots-dir "dashboard/screenshots" \
+            --data-file "dashboard/screenshots-data.json"
+          echo "Total screenshots: $(ls dashboard/screenshots/*.png 2>/dev/null | wc -l)"
 
       - name: Parse results and update history
         env:
