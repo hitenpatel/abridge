@@ -25,8 +25,11 @@ export function StaffPaymentsScreen() {
 	if (isLoading) {
 		return (
 			<View className="flex-1 bg-background">
+				<View className="px-6 pt-4 pb-2">
+					<Text className="text-2xl font-sans-bold text-foreground dark:text-white">Payments</Text>
+					<Text className="text-sm font-sans text-text-muted mt-0.5">Manage payment items</Text>
+				</View>
 				<View className="p-6 gap-4">
-					<Skeleton className="h-8 w-48" />
 					<Skeleton className="h-24 rounded-2xl" />
 					<Skeleton className="h-24 rounded-2xl" />
 					<Skeleton className="h-24 rounded-2xl" />
