@@ -26,6 +26,7 @@ import {
 	FileText,
 	Plus,
 	Send,
+	Sparkles,
 	XCircle,
 } from "lucide-react";
 import { useState } from "react";
@@ -370,6 +371,23 @@ function StaffView({ schoolId }: { schoolId: string }) {
 	const [generalComment, setGeneralComment] = useState("");
 	const [attendancePct, setAttendancePct] = useState("");
 
+	const [generatingCommentIdx, setGeneratingCommentIdx] = useState<number | null>(null);
+
+	const generateCommentMutation = trpc.reportCard.generateComment.useMutation({
+		onSuccess: (data) => {
+			if (data.comment && generatingCommentIdx != null) {
+				const existing = grades[generatingCommentIdx];
+				if (existing) {
+					const updated = [...grades];
+					updated[generatingCommentIdx] = { ...existing, comment: data.comment };
+					setGrades(updated);
+				}
+			}
+			setGeneratingCommentIdx(null);
+		},
+		onError: () => setGeneratingCommentIdx(null),
+	});
+
 	const saveGradesMutation = trpc.reportCard.saveGrades.useMutation({
 		onSuccess: () => {
 			utils.reportCard.getChildrenForCycle.invalidate({
@@ -589,12 +607,37 @@ function StaffView({ schoolId }: { schoolId: string }) {
 									)}
 
 									<div>
-										<label
-											htmlFor={`comment-${index}`}
-											className="text-xs font-medium text-muted-foreground"
-										>
-											Comment
-										</label>
+										<div className="flex items-center justify-between">
+											<label
+												htmlFor={`comment-${index}`}
+												className="text-xs font-medium text-muted-foreground"
+											>
+												Comment
+											</label>
+											{selectedChildId && grade.subject.trim() && (
+												<button
+													type="button"
+													disabled={generatingCommentIdx != null}
+													onClick={() => {
+														setGeneratingCommentIdx(index);
+														generateCommentMutation.mutate({
+															schoolId,
+															childId: selectedChildId,
+															subject: grade.subject,
+															currentGrade: isPrimary
+																? grade.level?.toLowerCase()
+																: grade.currentGrade,
+														});
+													}}
+													className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 disabled:opacity-50"
+												>
+													<Sparkles
+														className={`h-3 w-3 ${generatingCommentIdx === index ? "animate-spin" : ""}`}
+													/>
+													{generatingCommentIdx === index ? "Generating..." : "AI Suggest"}
+												</button>
+											)}
+										</div>
 										<Textarea
 											id={`comment-${index}`}
 											placeholder="Subject comment (max 500 characters)"
