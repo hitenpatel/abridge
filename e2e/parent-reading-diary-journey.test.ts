@@ -83,7 +83,8 @@ test.describe("Parent Reading Diary", () => {
 
 		await page.getByLabel(/Book Title/i).fill("The BFG");
 		await page.getByLabel(/Minutes/i).fill("20");
-		await page.getByLabel(/Read With/i).selectOption("PARENT");
+		await page.getByLabel(/Read With/i).click();
+		await page.getByRole("option", { name: "With Parent" }).click();
 
 		// === STEP 6: Submit ===
 		await page.getByRole("button", { name: /Save Entry/i }).click();

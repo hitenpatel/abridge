@@ -133,7 +133,8 @@ test.describe("Achievements", () => {
 		});
 
 		await page.getByTestId("award-child-input").fill(child.id);
-		await page.getByTestId("award-category-select").selectOption(category.id);
+		await page.getByTestId("award-category-select").click();
+		await page.getByRole("option", { name: "Brilliant Work" }).click();
 		await page.getByTestId("award-reason-input").fill("Outstanding effort in maths");
 
 		// === STEP 6: Submit the award ===

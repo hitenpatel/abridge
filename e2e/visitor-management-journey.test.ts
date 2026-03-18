@@ -76,7 +76,8 @@ test.describe("Visitor Management", () => {
 		}
 
 		// Select purpose
-		await page.locator("#visitor-purpose").selectOption("MEETING");
+		await page.locator("#visitor-purpose").click();
+		await page.getByRole("option", { name: "Meeting" }).click();
 
 		// Fill badge number
 		await page.getByPlaceholder("e.g. V001").fill("V042");
@@ -249,7 +250,8 @@ test.describe("Visitor Management", () => {
 		// === STEP 6: Fill in DBS form ===
 		await page.locator("#dbs-name").fill("Sarah Volunteer");
 		await page.locator("#dbs-number").fill("DBS-001234567");
-		await page.locator("#dbs-type").selectOption("ENHANCED");
+		await page.locator("#dbs-type").click();
+		await page.getByRole("option", { name: "Enhanced" }).click();
 		await page.locator("#dbs-issue").fill("2025-06-15");
 		await page.locator("#dbs-expiry").fill("2028-06-15");
 
