@@ -251,7 +251,7 @@ test.describe("Visitor Management", () => {
 		await page.locator("#dbs-name").fill("Sarah Volunteer");
 		await page.locator("#dbs-number").fill("DBS-001234567");
 		await page.locator("#dbs-type").click();
-		await page.getByRole("option", { name: "Enhanced" }).click();
+		await page.getByRole("option", { name: "Enhanced", exact: true }).click();
 		await page.locator("#dbs-issue").fill("2025-06-15");
 		await page.locator("#dbs-expiry").fill("2028-06-15");
 
