@@ -14,16 +14,16 @@ module.exports = {
 					dark: "#d65021",
 				},
 				background: {
-					DEFAULT: "#f8f6f5",
-					dark: "#221510",
+					DEFAULT: "#FFF5F0",
+					dark: "#1A1614",
 				},
 				surface: {
-					DEFAULT: "#ffffff",
-					dark: "#33221b",
+					DEFAULT: "#FFFCFA",
+					dark: "#241F1C",
 				},
 				"neutral-surface": {
-					DEFAULT: "#fffbf9",
-					dark: "#33221b",
+					DEFAULT: "#FFF8F5",
+					dark: "#241F1C",
 				},
 				"text-main": {
 					DEFAULT: "#5c4d47",
@@ -40,11 +40,11 @@ module.exports = {
 				foreground: "#2D3748",
 				card: "#ffffff",
 				muted: {
-					DEFAULT: "#F1F2F5",
+					DEFAULT: "#F5F0ED",
 					foreground: "#6B7280",
 				},
-				border: "#E5E7EB",
-				input: "#E5E7EB",
+				border: "#F0E6DF",
+				input: "#F0E6DF",
 				success: {
 					DEFAULT: "#22C55E",
 					foreground: "#FFFFFF",
@@ -81,9 +81,10 @@ module.exports = {
 				full: "9999px",
 			},
 			boxShadow: {
-				soft: "0 8px 24px -6px rgba(245,110,61,0.08), 0 4px 8px -4px rgba(0,0,0,0.04)",
+				soft: "0 8px 24px -6px rgba(245,110,61,0.06), 0 4px 8px -4px rgba(0,0,0,0.03)",
 				glow: "0 0 20px -5px rgba(245,110,61,0.4)",
-				card: "0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02)",
+				card: "0 4px 12px -2px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.01)",
+				sanctuary: "0 8px 40px -8px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.02)",
 			},
 		},
 	},

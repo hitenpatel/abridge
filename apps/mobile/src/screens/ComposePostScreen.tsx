@@ -115,7 +115,7 @@ export function ComposePostScreen() {
 		>
 			{/* Header */}
 			<View
-				className="flex-row items-center justify-between px-6 pb-4 border-b border-gray-100"
+				className="flex-row items-center justify-between px-6 pb-4 border-b border-orange-100"
 				style={{ paddingTop: insets.top + 8 }}
 			>
 				<Pressable onPress={() => navigation.goBack()} className="flex-row items-center gap-1">
@@ -128,7 +128,7 @@ export function ComposePostScreen() {
 					onPress={handlePost}
 					disabled={!canPost || isPosting}
 					className={`rounded-full px-4 py-2 ${
-						canPost && !isPosting ? "bg-primary" : "bg-gray-200"
+						canPost && !isPosting ? "bg-primary" : "bg-orange-200"
 					}`}
 				>
 					{isPosting ? (

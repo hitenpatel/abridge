@@ -172,7 +172,7 @@ export function HomeworkScreen() {
 										key={item.id}
 										onPress={() => setExpandedId(isExpanded ? null : item.id)}
 										accessibilityLabel={item.title}
-										className="bg-white dark:bg-surface-dark rounded-3xl p-5"
+										className="bg-neutral-surface dark:bg-surface-dark rounded-3xl p-5"
 										style={{
 											shadowColor: "#000",
 											shadowOffset: { width: 0, height: 2 },
@@ -214,7 +214,7 @@ export function HomeworkScreen() {
 
 										{/* Expanded content */}
 										{isExpanded && (
-											<View className="mt-4 pt-4 border-t border-gray-100 dark:border-white/10">
+											<View className="mt-4 pt-4 border-t border-orange-100 dark:border-white/10">
 												{item.description ? (
 													<Text className="text-sm font-sans text-foreground dark:text-white mb-4">
 														{item.description}

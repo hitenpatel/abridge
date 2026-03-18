@@ -100,7 +100,7 @@ export function ComposeMessageScreen() {
 								category === "STANDARD" ? "border-2 border-green-500" : ""
 							}`}
 							style={{
-								backgroundColor: category === "STANDARD" ? "#DCFCE7" : "#f3f4f6",
+								backgroundColor: category === "STANDARD" ? "#DCFCE7" : "#FFF7ED",
 							}}
 						>
 							<MaterialIcons
@@ -110,7 +110,7 @@ export function ComposeMessageScreen() {
 							/>
 							<Text
 								className={`text-sm font-sans-bold ${
-									category === "STANDARD" ? "text-green-700" : "text-gray-500"
+									category === "STANDARD" ? "text-green-700" : "text-text-muted"
 								}`}
 							>
 								Normal
@@ -123,7 +123,7 @@ export function ComposeMessageScreen() {
 								category === "URGENT" ? "border-2 border-red-500" : ""
 							}`}
 							style={{
-								backgroundColor: category === "URGENT" ? "#FEE2E2" : "#f3f4f6",
+								backgroundColor: category === "URGENT" ? "#FEE2E2" : "#FFF7ED",
 							}}
 						>
 							<MaterialIcons
@@ -133,7 +133,7 @@ export function ComposeMessageScreen() {
 							/>
 							<Text
 								className={`text-sm font-sans-bold ${
-									category === "URGENT" ? "text-red-700" : "text-gray-500"
+									category === "URGENT" ? "text-red-700" : "text-text-muted"
 								}`}
 							>
 								Urgent
@@ -165,7 +165,7 @@ export function ComposeMessageScreen() {
 							onChangeText={setSubject}
 							placeholder="Subject"
 							placeholderTextColor="#96867f"
-							className="text-lg font-sans-semibold text-foreground dark:text-white pb-3 border-b border-gray-200"
+							className="text-lg font-sans-semibold text-foreground dark:text-white pb-3 border-b border-orange-200"
 						/>
 						<TextInput
 							value={body}
@@ -183,15 +183,15 @@ export function ComposeMessageScreen() {
 				<View className="mx-6 mb-4">
 					<ScrollView horizontal showsHorizontalScrollIndicator={false}>
 						<View className="flex-row gap-3">
-							<Pressable className="border-2 border-dashed border-gray-300 rounded-2xl px-5 py-3 flex-row items-center gap-2">
+							<Pressable className="border-2 border-dashed border-orange-200 rounded-2xl px-5 py-3 flex-row items-center gap-2">
 								<MaterialIcons name="add-a-photo" size={20} color="#96867f" />
 								<Text className="text-sm font-sans-medium text-text-muted">Photo</Text>
 							</Pressable>
-							<Pressable className="border-2 border-dashed border-gray-300 rounded-2xl px-5 py-3 flex-row items-center gap-2">
+							<Pressable className="border-2 border-dashed border-orange-200 rounded-2xl px-5 py-3 flex-row items-center gap-2">
 								<MaterialIcons name="note-add" size={20} color="#96867f" />
 								<Text className="text-sm font-sans-medium text-text-muted">Document</Text>
 							</Pressable>
-							<Pressable className="border-2 border-dashed border-gray-300 rounded-2xl px-5 py-3 flex-row items-center gap-2">
+							<Pressable className="border-2 border-dashed border-orange-200 rounded-2xl px-5 py-3 flex-row items-center gap-2">
 								<MaterialIcons name="event" size={20} color="#96867f" />
 								<Text className="text-sm font-sans-medium text-text-muted">Event</Text>
 							</Pressable>
@@ -212,7 +212,7 @@ export function ComposeMessageScreen() {
 			</ScrollView>
 
 			{/* Sticky Bottom CTA */}
-			<View className="absolute bottom-0 left-0 right-0 p-6 bg-background border-t border-gray-100">
+			<View className="absolute bottom-0 left-0 right-0 p-6 bg-background border-t border-orange-100">
 				<Pressable
 					testID="send-message-button"
 					onPress={handleSend}

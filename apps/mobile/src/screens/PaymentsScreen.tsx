@@ -232,7 +232,7 @@ export function PaymentsScreen() {
 				{/* Empty state */}
 				{(!payments || payments.length === 0) && (
 					<View className="items-center py-20">
-						<MaterialIcons name="account-balance-wallet" size={48} color="#9CA3AF" />
+						<MaterialIcons name="account-balance-wallet" size={48} color="#96867f" />
 						<Text className="text-text-muted font-sans-medium text-base mt-4">
 							No outstanding payments
 						</Text>

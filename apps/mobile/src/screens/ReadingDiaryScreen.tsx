@@ -188,7 +188,7 @@ export function ReadingDiaryScreen() {
 				) : diary ? (
 					<View className="px-6 mb-6">
 						<View
-							className="bg-white dark:bg-surface-dark rounded-3xl p-5"
+							className="bg-neutral-surface dark:bg-surface-dark rounded-3xl p-5"
 							style={{
 								shadowColor: "#000",
 								shadowOffset: { width: 0, height: 2 },
@@ -227,25 +227,25 @@ export function ReadingDiaryScreen() {
 							showsHorizontalScrollIndicator={false}
 							contentContainerStyle={{ gap: 12 }}
 						>
-							<View className="bg-white dark:bg-surface-dark rounded-2xl p-4 items-center min-w-[90px]">
+							<View className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 items-center min-w-[90px]">
 								<Text className="text-2xl font-sans-extrabold text-primary">
 									{stats.totalEntriesThisTerm}
 								</Text>
 								<Text className="text-xs font-sans text-text-muted mt-1">This Term</Text>
 							</View>
-							<View className="bg-white dark:bg-surface-dark rounded-2xl p-4 items-center min-w-[90px]">
+							<View className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 items-center min-w-[90px]">
 								<Text className="text-2xl font-sans-extrabold text-blue-500">
 									{stats.avgMinutes}
 								</Text>
 								<Text className="text-xs font-sans text-text-muted mt-1">Avg Mins</Text>
 							</View>
-							<View className="bg-white dark:bg-surface-dark rounded-2xl p-4 items-center min-w-[90px]">
+							<View className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 items-center min-w-[90px]">
 								<Text className="text-2xl font-sans-extrabold text-green-500">
 									{stats.daysReadThisWeek}
 								</Text>
 								<Text className="text-xs font-sans text-text-muted mt-1">This Week</Text>
 							</View>
-							<View className="bg-white dark:bg-surface-dark rounded-2xl p-4 items-center min-w-[90px]">
+							<View className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 items-center min-w-[90px]">
 								<Text className="text-2xl font-sans-extrabold text-amber-500">
 									{stats.currentStreak}
 								</Text>
@@ -272,7 +272,7 @@ export function ReadingDiaryScreen() {
 						</Pressable>
 					) : (
 						<View
-							className="bg-white dark:bg-surface-dark rounded-3xl p-5"
+							className="bg-neutral-surface dark:bg-surface-dark rounded-3xl p-5"
 							accessibilityLabel="Log Reading Form"
 						>
 							<Text className="text-sm font-sans-bold uppercase tracking-wider text-text-muted mb-4">
@@ -314,7 +314,7 @@ export function ReadingDiaryScreen() {
 										accessibilityLabel={opt.label}
 										className={`flex-row items-center gap-1.5 px-4 py-3 min-h-[44px] rounded-full ${
 											readWith === opt.key
-												? "bg-white dark:bg-neutral-surface-dark border border-gray-200 dark:border-white/10"
+												? "bg-neutral-surface dark:bg-neutral-surface-dark border border-orange-200 dark:border-white/10"
 												: "bg-background dark:bg-white/5"
 										}`}
 										style={{

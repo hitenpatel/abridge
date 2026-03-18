@@ -193,7 +193,7 @@ export function AttendanceScreen() {
 								accessibilityLabel={r.key}
 								className={`flex-1 flex-row items-center justify-center gap-1.5 py-3 min-h-[44px] rounded-full ${
 									selectedReason === r.key
-										? "bg-white dark:bg-neutral-surface-dark border border-gray-200 dark:border-white/10"
+										? "bg-white dark:bg-neutral-surface-dark border border-orange-200 dark:border-white/10"
 										: "bg-background dark:bg-white/5"
 								}`}
 								style={{

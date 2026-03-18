@@ -194,10 +194,7 @@ function ConversationList({
 								</View>
 
 								<View className="flex-row items-center justify-between">
-									<Text
-										className="text-sm font-sans text-text-muted dark:text-gray-400 flex-1 mr-2"
-										numberOfLines={1}
-									>
+									<Text className="text-sm font-sans text-text-muted flex-1 mr-2" numberOfLines={1}>
 										{item.subject ?? "No subject"}
 									</Text>
 									{item.unreadCount > 0 && (
@@ -333,7 +330,7 @@ function MessageThread({
 		>
 			{/* Header */}
 			<View
-				className="flex-row items-center px-4 pb-3 bg-background border-b border-gray-100 dark:border-white/10"
+				className="flex-row items-center px-4 pb-3 bg-background border-b border-orange-100 dark:border-white/10"
 				style={{ paddingTop: insets.top + 8 }}
 			>
 				<Pressable
@@ -420,7 +417,7 @@ function MessageThread({
 
 			{/* Input Bar */}
 			<View
-				className="flex-row items-end px-4 py-3 bg-background border-t border-gray-100 dark:border-white/10"
+				className="flex-row items-end px-4 py-3 bg-background border-t border-orange-100 dark:border-white/10"
 				style={{ paddingBottom: Math.max(insets.bottom, 12) }}
 			>
 				<TextInput

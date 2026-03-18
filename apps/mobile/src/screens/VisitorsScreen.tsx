@@ -178,7 +178,7 @@ export function VisitorsScreen() {
 
 				{/* Sign-In Form */}
 				<View
-					className="mx-6 bg-white dark:bg-surface-dark rounded-3xl p-5 mb-6"
+					className="mx-6 bg-neutral-surface dark:bg-surface-dark rounded-3xl p-5 mb-6"
 					accessibilityLabel="Sign In Visitor"
 				>
 					<Text className="text-sm font-sans-bold uppercase tracking-wider text-text-muted mb-4">
@@ -201,12 +201,12 @@ export function VisitorsScreen() {
 						/>
 						{/* Search Results Dropdown */}
 						{searchResults && searchResults.length > 0 && searchQuery.length >= 2 && (
-							<View className="bg-white dark:bg-surface-dark rounded-xl mt-1 border border-gray-200 dark:border-white/10 overflow-hidden">
+							<View className="bg-neutral-surface dark:bg-surface-dark rounded-xl mt-1 border border-orange-200 dark:border-white/10 overflow-hidden">
 								{searchResults.slice(0, 5).map((visitor) => (
 									<Pressable
 										key={visitor.id}
 										onPress={() => handleSelectSearchResult(visitor.name)}
-										className="px-4 py-3 border-b border-gray-100 dark:border-white/5 flex-row items-center gap-2"
+										className="px-4 py-3 border-b border-orange-100 dark:border-white/5 flex-row items-center gap-2"
 									>
 										<MaterialIcons name="person" size={16} color="#9CA3AF" />
 										<View className="flex-1">
@@ -241,7 +241,7 @@ export function VisitorsScreen() {
 									accessibilityLabel={p.label}
 									className={`flex-row items-center gap-1.5 px-3 py-2 rounded-full ${
 										purpose === p.key
-											? "bg-white dark:bg-neutral-surface-dark border border-gray-200 dark:border-white/10"
+											? "bg-neutral-surface dark:bg-neutral-surface-dark border border-orange-200 dark:border-white/10"
 											: "bg-background dark:bg-white/5"
 									}`}
 									style={{
@@ -287,7 +287,7 @@ export function VisitorsScreen() {
 						accessibilityLabel="Sign In"
 						testID="sign-in-visitor"
 						className="h-14 rounded-[40px] flex-row items-center justify-center gap-3"
-						style={{ backgroundColor: name.trim() ? "#ccfbf1" : "#F3F4F6" }}
+						style={{ backgroundColor: name.trim() ? "#ccfbf1" : "#FFF7ED" }}
 					>
 						<MaterialIcons name="login" size={20} color={name.trim() ? "#0D9488" : "#9CA3AF"} />
 						<Text

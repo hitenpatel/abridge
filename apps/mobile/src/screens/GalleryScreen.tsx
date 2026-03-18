@@ -301,7 +301,7 @@ export function GalleryScreen() {
 											) : (
 												<View
 													style={{ width: ALBUM_WIDTH, height: ALBUM_WIDTH }}
-													className="bg-gray-200 dark:bg-gray-700 items-center justify-center"
+													className="bg-orange-200 dark:bg-gray-700 items-center justify-center"
 												>
 													<MaterialIcons name="photo" size={32} color="#9CA3AF" />
 												</View>

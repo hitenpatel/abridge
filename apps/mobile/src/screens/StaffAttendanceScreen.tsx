@@ -158,7 +158,7 @@ export function StaffAttendanceScreen() {
 											{child ? `${child.firstName} ${child.lastName}` : "Unknown"}
 										</Text>
 										<View className="flex-row items-center gap-2 mt-1">
-											<View className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+											<View className="flex-1 h-2 bg-orange-200 rounded-full overflow-hidden">
 												<View
 													className="h-full rounded-full"
 													style={{

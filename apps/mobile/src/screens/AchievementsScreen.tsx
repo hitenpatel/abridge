@@ -137,7 +137,7 @@ export function AchievementsScreen() {
 				{/* Total Points Card */}
 				<View className="mx-6 mb-6" accessibilityLabel="Total Points">
 					<View
-						className="bg-white dark:bg-surface-dark rounded-3xl p-6 items-center"
+						className="bg-neutral-surface dark:bg-surface-dark rounded-3xl p-6 items-center"
 						style={{
 							shadowColor: "#F59E0B",
 							shadowOffset: { width: 0, height: 4 },

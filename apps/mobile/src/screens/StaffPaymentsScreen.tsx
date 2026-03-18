@@ -133,11 +133,11 @@ export function StaffPaymentsScreen() {
 												£{(item.amount / 100).toFixed(2)}
 											</Text>
 										</View>
-										<View className="flex-row items-center justify-between mt-3 pt-3 border-t border-gray-100">
+										<View className="flex-row items-center justify-between mt-3 pt-3 border-t border-orange-100">
 											<Text className="text-xs font-sans text-text-muted">
 												{item.paymentCount}/{item.recipientCount} paid
 											</Text>
-											<View className="flex-1 mx-3 h-2 bg-gray-200 rounded-full overflow-hidden">
+											<View className="flex-1 mx-3 h-2 bg-orange-200 rounded-full overflow-hidden">
 												<View
 													className="h-full bg-green-500 rounded-full"
 													style={{

@@ -210,7 +210,7 @@ function NotificationsSection() {
 				accessibilityLabel="Email"
 			/>
 
-			<View className="border-t border-gray-200 dark:border-white/10 mt-2 pt-3">
+			<View className="border-t border-orange-200 dark:border-white/10 mt-2 pt-3">
 				<ToggleRow label="Quiet hours" value={quietEnabled} onValueChange={setQuietEnabled} />
 				{quietEnabled && (
 					<View className="flex-row gap-3 mt-2">
@@ -312,7 +312,7 @@ function SchoolSettingsSection({ schoolId }: { schoolId: string }) {
 				/>
 			</View>
 
-			<View className="border-t border-gray-200 dark:border-white/10 mt-2 pt-3">
+			<View className="border-t border-orange-200 dark:border-white/10 mt-2 pt-3">
 				<Text className="text-xs font-sans-medium text-text-muted mb-2">
 					Default notification preferences for new members
 				</Text>

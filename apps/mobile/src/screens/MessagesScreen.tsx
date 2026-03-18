@@ -99,10 +99,7 @@ function MessageRow({ message, onPress }: { message: MessageItemData; onPress: (
 						</Text>
 					</View>
 
-					<Text
-						className="text-sm font-sans text-text-muted dark:text-gray-400 mb-2"
-						numberOfLines={1}
-					>
+					<Text className="text-sm font-sans text-text-muted mb-2" numberOfLines={1}>
 						{message.body}
 					</Text>
 
