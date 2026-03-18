@@ -161,7 +161,7 @@ export function HomeworkScreen() {
 					{isLoadingHomework ? (
 						<ActivityIndicator size="small" color="#f56e3d" />
 					) : assignments.length > 0 ? (
-						<View className="gap-3">
+						<View className="gap-4">
 							{assignments.map((item) => {
 								const status = getDueStatus(item.dueDate, item.completions);
 								const isExpanded = expandedId === item.id;

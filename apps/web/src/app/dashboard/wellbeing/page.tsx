@@ -2,10 +2,12 @@
 
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
 import { AlertTriangle, CheckCircle, Heart, SmilePlus } from "lucide-react";
@@ -71,16 +73,14 @@ function ParentCheckIn() {
 			{children.length > 1 && (
 				<div className="flex gap-2">
 					{children.map((pc) => (
-						<button
+						<Button
 							key={pc.child.id}
-							type="button"
+							size="sm"
+							variant={childId === pc.child.id ? "default" : "outline"}
 							onClick={() => setSelectedChild(pc.child.id)}
-							className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
-								childId === pc.child.id ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-							}`}
 						>
 							{pc.child.firstName}
-						</button>
+						</Button>
 					))}
 				</div>
 			)}
@@ -112,16 +112,14 @@ function ParentCheckIn() {
 					</div>
 					{selectedMood && (
 						<div className="space-y-3">
-							<textarea
+							<Textarea
 								placeholder="Optional note (max 200 characters)"
 								maxLength={200}
 								value={note}
 								onChange={(e) => setNote(e.target.value)}
-								className="w-full rounded-md border p-2 text-sm resize-none"
 								rows={2}
 							/>
-							<button
-								type="button"
+							<Button
 								onClick={() => {
 									if (childId && selectedMood) {
 										submitMutation.mutate({
@@ -132,10 +130,10 @@ function ParentCheckIn() {
 									}
 								}}
 								disabled={submitMutation.isPending}
-								className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+								size="sm"
 							>
 								{submitMutation.isPending ? "Submitting..." : "Submit"}
-							</button>
+							</Button>
 						</div>
 					)}
 				</CardContent>
@@ -217,32 +215,32 @@ function StaffView({ schoolId }: { schoolId: string }) {
 									</Badge>
 									<div className="flex gap-2">
 										{alert.status === "OPEN" && (
-											<button
-												type="button"
+											<Button
+												variant="outline"
+												size="sm"
 												onClick={() =>
 													acknowledgeMutation.mutate({
 														schoolId,
 														alertId: alert.id,
 													})
 												}
-												className="rounded-md border px-2 py-1 text-xs hover:bg-muted"
 											>
 												Acknowledge
-											</button>
+											</Button>
 										)}
 										{(alert.status === "OPEN" || alert.status === "ACKNOWLEDGED") && (
-											<button
-												type="button"
+											<Button
+												variant="outline"
+												size="sm"
 												onClick={() =>
 													resolveMutation.mutate({
 														schoolId,
 														alertId: alert.id,
 													})
 												}
-												className="rounded-md border px-2 py-1 text-xs hover:bg-muted"
 											>
 												Resolve
-											</button>
+											</Button>
 										)}
 									</div>
 								</div>
@@ -292,7 +290,7 @@ export default function WellbeingPage() {
 	}
 
 	return (
-		<PageShell maxWidth="4xl">
+		<PageShell>
 			<PageHeader
 				icon={Heart}
 				title="Wellbeing"

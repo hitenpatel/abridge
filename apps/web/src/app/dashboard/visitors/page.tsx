@@ -2,6 +2,7 @@
 
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
@@ -331,7 +332,7 @@ function SignInTab({ schoolId }: { schoolId: string }) {
 						/>
 					</div>
 
-					<button
+					<Button
 						type="button"
 						onClick={() => {
 							signInMutation.mutate({
@@ -346,10 +347,9 @@ function SignInTab({ schoolId }: { schoolId: string }) {
 							});
 						}}
 						disabled={!name.trim() || signInMutation.isPending}
-						className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
 					>
 						{signInMutation.isPending ? "Signing In..." : "Sign In"}
-					</button>
+					</Button>
 				</div>
 			</CardContent>
 		</Card>
@@ -402,15 +402,17 @@ function OnSiteTab({ schoolId }: { schoolId: string }) {
 										{log.visitingStaff && <> &middot; Visiting: {log.visitingStaff}</>}
 									</p>
 								</div>
-								<button
+								<Button
 									type="button"
+									variant="outline"
+									size="sm"
 									onClick={() => signOutMutation.mutate({ schoolId, logId: log.id })}
 									disabled={signOutMutation.isPending}
-									className="flex items-center gap-1.5 rounded-md border border-red-200 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50"
+									className="flex items-center gap-1.5 border-red-200 text-red-600 hover:bg-red-50"
 								>
 									<LogOut className="h-3.5 w-3.5" />
 									Sign Out
-								</button>
+								</Button>
 							</div>
 						))}
 					</div>
@@ -458,14 +460,15 @@ function DbsRegisterTab({ schoolId }: { schoolId: string }) {
 						<ShieldCheck className="h-5 w-5" />
 						DBS Register
 					</span>
-					<button
+					<Button
 						type="button"
+						size="sm"
 						onClick={() => setShowAddForm(!showAddForm)}
-						className="flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground hover:bg-primary/90"
+						className="flex items-center gap-1.5"
 					>
 						<Plus className="h-3.5 w-3.5" />
 						Add DBS
-					</button>
+					</Button>
 				</CardTitle>
 			</CardHeader>
 			<CardContent>
@@ -542,8 +545,9 @@ function DbsRegisterTab({ schoolId }: { schoolId: string }) {
 							</div>
 						</div>
 						<div className="flex gap-2">
-							<button
+							<Button
 								type="button"
+								size="sm"
 								onClick={() => {
 									addDbsMutation.mutate({
 										schoolId,
@@ -557,17 +561,17 @@ function DbsRegisterTab({ schoolId }: { schoolId: string }) {
 								disabled={
 									!dbsName.trim() || !dbsNumber.trim() || !issueDate || addDbsMutation.isPending
 								}
-								className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
 							>
 								{addDbsMutation.isPending ? "Saving..." : "Save DBS Record"}
-							</button>
-							<button
+							</Button>
+							<Button
 								type="button"
+								variant="outline"
+								size="sm"
 								onClick={() => setShowAddForm(false)}
-								className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
 							>
 								Cancel
-							</button>
+							</Button>
 						</div>
 					</div>
 				)}
@@ -575,16 +579,15 @@ function DbsRegisterTab({ schoolId }: { schoolId: string }) {
 				{/* Filter */}
 				<div className="mb-4 flex gap-2">
 					{["ALL", "VALID", "EXPIRING_SOON", "EXPIRED"].map((status) => (
-						<button
+						<Button
 							key={status}
 							type="button"
+							size="sm"
+							variant={statusFilter === status ? "default" : "outline"}
 							onClick={() => setStatusFilter(status)}
-							className={`rounded-md border px-3 py-1.5 text-xs transition-colors ${
-								statusFilter === status ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-							}`}
 						>
 							{status === "ALL" ? "All" : DBS_STATUS_LABELS[status]}
-						</button>
+						</Button>
 					))}
 				</div>
 
@@ -683,15 +686,17 @@ function HistoryTab({ schoolId }: { schoolId: string }) {
 						<ClipboardList className="h-5 w-5" />
 						Visitor History
 					</span>
-					<button
+					<Button
 						type="button"
+						variant="outline"
+						size="sm"
 						onClick={exportCsv}
 						disabled={!data?.logs?.length}
-						className="flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs hover:bg-muted disabled:opacity-50"
+						className="flex items-center gap-1.5"
 					>
 						<Download className="h-3.5 w-3.5" />
 						Export CSV
-					</button>
+					</Button>
 				</CardTitle>
 			</CardHeader>
 			<CardContent>
@@ -814,22 +819,24 @@ function HistoryTab({ schoolId }: { schoolId: string }) {
 						{/* Pagination */}
 						<div className="mt-4 flex gap-2">
 							{cursor && (
-								<button
+								<Button
 									type="button"
+									variant="outline"
+									size="sm"
 									onClick={() => setCursor(undefined)}
-									className="rounded-md border px-3 py-1.5 text-xs hover:bg-muted"
 								>
 									First Page
-								</button>
+								</Button>
 							)}
 							{data.nextCursor && (
-								<button
+								<Button
 									type="button"
+									variant="outline"
+									size="sm"
 									onClick={() => setCursor(data.nextCursor)}
-									className="rounded-md border px-3 py-1.5 text-xs hover:bg-muted"
 								>
 									Next Page
-								</button>
+								</Button>
 							)}
 						</div>
 					</>
@@ -868,7 +875,7 @@ export default function VisitorsPage() {
 	];
 
 	return (
-		<PageShell maxWidth="5xl">
+		<PageShell>
 			<div className="space-y-6 p-6">
 				<PageHeader
 					icon={BadgeCheck}
@@ -879,16 +886,15 @@ export default function VisitorsPage() {
 				{/* Tabs */}
 				<div className="flex gap-2 border-b pb-2">
 					{tabs.map((tab) => (
-						<button
+						<Button
 							key={tab.key}
 							type="button"
+							variant={activeTab === tab.key ? "default" : "outline"}
+							size="sm"
 							onClick={() => setActiveTab(tab.key)}
-							className={`rounded-t-md px-4 py-2 text-sm transition-colors ${
-								activeTab === tab.key ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-							}`}
 						>
 							{tab.label}
-						</button>
+						</Button>
 					))}
 				</div>
 

@@ -138,7 +138,7 @@ export default function StaffManagementPage() {
 	}
 
 	return (
-		<PageShell maxWidth="4xl">
+		<PageShell>
 			<PageHeader
 				icon={ShieldCheck}
 				title="Staff Management"

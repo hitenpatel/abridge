@@ -251,7 +251,7 @@ export function WellbeingScreen({ route }: Props) {
 						return (
 							<View
 								key={checkIn.id}
-								className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 mb-2 flex-row items-center gap-3"
+								className="bg-neutral-surface dark:bg-surface-dark rounded-2xl p-4 mb-3 flex-row items-center gap-3"
 							>
 								<Text className="text-xl">{config.emoji}</Text>
 								<View className="flex-1">

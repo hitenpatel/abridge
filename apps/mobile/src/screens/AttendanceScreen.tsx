@@ -151,7 +151,7 @@ export function AttendanceScreen() {
 				<View className="px-6 pb-4" style={{ paddingTop: insets.top + 8 }}>
 					<View className="flex-row items-center justify-between">
 						<View>
-							<Text className="text-3xl font-sans-extrabold text-foreground dark:text-white tracking-tight">
+							<Text className="text-2xl font-sans-extrabold text-foreground dark:text-white tracking-tight">
 								Attendance Hub
 							</Text>
 							<Text className="text-sm font-sans text-text-muted mt-1">
@@ -191,7 +191,7 @@ export function AttendanceScreen() {
 								key={r.key}
 								onPress={() => setSelectedReason(r.key)}
 								accessibilityLabel={r.key}
-								className={`flex-1 flex-row items-center justify-center gap-1.5 py-2.5 rounded-full ${
+								className={`flex-1 flex-row items-center justify-center gap-1.5 py-3 min-h-[44px] rounded-full ${
 									selectedReason === r.key
 										? "bg-white dark:bg-neutral-surface-dark border border-gray-200 dark:border-white/10"
 										: "bg-background dark:bg-white/5"

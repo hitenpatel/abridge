@@ -455,7 +455,7 @@ export default function AchievementsPage() {
 	}
 
 	return (
-		<PageShell maxWidth="4xl">
+		<PageShell>
 			<div className="space-y-6 p-6">
 				<PageHeader
 					icon={Award}

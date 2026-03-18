@@ -31,7 +31,7 @@ function StaffDashboard({ schoolId, userId }: { schoolId: string; userId: string
 
 	if (isLoading) {
 		return (
-			<div className="max-w-2xl mx-auto space-y-4 p-4">
+			<div className="max-w-5xl mx-auto space-y-4 p-4">
 				<Skeleton className="h-10 w-full rounded-full" />
 				<Skeleton className="h-64 w-full rounded-xl" />
 				<Skeleton className="h-48 w-full rounded-xl" />
@@ -40,7 +40,7 @@ function StaffDashboard({ schoolId, userId }: { schoolId: string; userId: string
 	}
 
 	return (
-		<div data-testid="dashboard-view" className="max-w-2xl mx-auto space-y-6">
+		<div data-testid="dashboard-view" className="max-w-5xl mx-auto space-y-6">
 			<div className="flex items-center justify-between">
 				<h1 className="text-xl font-semibold">Recent Posts</h1>
 				<Link href="/dashboard/compose">
@@ -173,7 +173,7 @@ export default function DashboardPage() {
 
 	if (isAuthPending || (session && isSummaryLoading)) {
 		return (
-			<PageShell maxWidth="2xl">
+			<PageShell maxWidth="5xl">
 				<div className="space-y-4 p-4">
 					<Skeleton className="h-10 w-full rounded-full" />
 					<Skeleton className="h-24 w-full rounded-xl" />
@@ -189,7 +189,7 @@ export default function DashboardPage() {
 	// Staff with no children: show staff dashboard
 	if (isStaff && children.length === 0 && sessionInfo?.schoolId) {
 		return (
-			<PageShell maxWidth="2xl">
+			<PageShell maxWidth="5xl">
 				<StaffDashboard schoolId={sessionInfo.schoolId} userId={sessionInfo.id} />
 			</PageShell>
 		);
@@ -197,7 +197,7 @@ export default function DashboardPage() {
 
 	if (children.length === 0) {
 		return (
-			<PageShell maxWidth="2xl" data-testid="empty-dashboard">
+			<PageShell maxWidth="5xl" data-testid="empty-dashboard">
 				<EmptyState
 					icon={Users}
 					title="No children linked"
@@ -210,7 +210,7 @@ export default function DashboardPage() {
 	const feedItems = feedData?.pages.flatMap((page) => page.items) ?? [];
 
 	return (
-		<PageShell maxWidth="2xl" data-testid="dashboard-view">
+		<PageShell maxWidth="5xl" data-testid="dashboard-view">
 			<div className="space-y-6">
 				<PageHeader icon={Home} title="Dashboard" description="Welcome back" />
 				{/* Child Switcher */}

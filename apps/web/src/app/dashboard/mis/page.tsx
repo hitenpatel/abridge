@@ -2,6 +2,7 @@
 
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
@@ -165,14 +166,15 @@ function ConnectionSetup({ schoolId }: { schoolId: string }) {
 							</div>
 
 							<div className="flex items-center gap-3">
-								<button
+								<Button
 									type="button"
+									variant="outline"
+									size="sm"
 									onClick={handleTestConnection}
 									disabled={testPending || !apiUrl || !apiKey}
-									className="rounded-md border px-4 py-2 text-sm hover:bg-muted disabled:opacity-50"
 								>
 									{testPending ? "Testing..." : "Test Connection"}
-								</button>
+								</Button>
 								{testResult === "success" && (
 									<span className="flex items-center gap-1 text-sm text-green-600">
 										<CheckCircle2 className="h-4 w-4" />
@@ -207,8 +209,9 @@ function ConnectionSetup({ schoolId }: { schoolId: string }) {
 						</select>
 					</div>
 
-					<button
+					<Button
 						type="button"
+						size="sm"
 						onClick={() => {
 							setupConnectionMutation.mutate({
 								schoolId,
@@ -219,10 +222,9 @@ function ConnectionSetup({ schoolId }: { schoolId: string }) {
 							});
 						}}
 						disabled={setupConnectionMutation.isPending || (isApiProvider && (!apiUrl || !apiKey))}
-						className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
 					>
 						{setupConnectionMutation.isPending ? "Saving..." : "Save"}
-					</button>
+					</Button>
 
 					{setupConnectionMutation.isSuccess && (
 						<p className="text-sm text-green-600">Connection saved successfully.</p>
@@ -336,14 +338,15 @@ function CsvUpload({ schoolId }: { schoolId: string }) {
 								accept=".csv"
 								className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-gray-200 file:text-sm file:font-medium file:bg-white hover:file:bg-gray-50"
 							/>
-							<button
+							<Button
 								type="button"
+								size="sm"
 								onClick={handleStudentUpload}
 								disabled={uploadStudentsMutation.isPending}
-								className="shrink-0 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+								className="shrink-0"
 							>
 								{uploadStudentsMutation.isPending ? "Uploading..." : "Upload"}
-							</button>
+							</Button>
 						</div>
 						{uploadStudentsMutation.isError && (
 							<p className="text-sm text-red-600">
@@ -370,14 +373,15 @@ function CsvUpload({ schoolId }: { schoolId: string }) {
 								accept=".csv"
 								className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-gray-200 file:text-sm file:font-medium file:bg-white hover:file:bg-gray-50"
 							/>
-							<button
+							<Button
 								type="button"
+								size="sm"
 								onClick={handleAttendanceUpload}
 								disabled={uploadAttendanceMutation.isPending}
-								className="shrink-0 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+								className="shrink-0"
 							>
 								{uploadAttendanceMutation.isPending ? "Uploading..." : "Upload"}
-							</button>
+							</Button>
 						</div>
 						{uploadAttendanceMutation.isError && (
 							<p className="text-sm text-red-600">
@@ -448,14 +452,16 @@ function ConnectionStatus({ schoolId }: { schoolId: string }) {
 						)}
 
 						{status.status === "CONNECTED" && (
-							<button
+							<Button
 								type="button"
+								variant="outline"
+								size="sm"
 								onClick={() => disconnectMutation.mutate({ schoolId })}
 								disabled={disconnectMutation.isPending}
-								className="rounded-md border border-red-200 px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
+								className="border-red-200 text-red-600 hover:bg-red-50"
 							>
 								{disconnectMutation.isPending ? "Disconnecting..." : "Disconnect"}
-							</button>
+							</Button>
 						)}
 					</div>
 				)}
@@ -560,7 +566,7 @@ export default function MisPage() {
 	const schoolId = session.schoolId;
 
 	return (
-		<PageShell maxWidth="4xl">
+		<PageShell>
 			<div className="space-y-6 p-6">
 				<PageHeader
 					icon={Database}

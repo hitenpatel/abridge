@@ -2,10 +2,12 @@
 
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
 import { BookOpen, ChevronLeft, Flame, MessageSquare, PenLine, Plus, Users } from "lucide-react";
@@ -148,16 +150,14 @@ function ParentView() {
 			{children.length > 1 && (
 				<div className="flex gap-2">
 					{children.map((pc) => (
-						<button
+						<Button
 							key={pc.child.id}
-							type="button"
+							size="sm"
+							variant={childId === pc.child.id ? "default" : "outline"}
 							onClick={() => setSelectedChild(pc.child.id)}
-							className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
-								childId === pc.child.id ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-							}`}
 						>
 							{pc.child.firstName}
-						</button>
+						</Button>
 					))}
 				</div>
 			)}
@@ -258,17 +258,16 @@ function ParentView() {
 				</CardHeader>
 				<CardContent>
 					{!showLogForm ? (
-						<button
-							type="button"
+						<Button
 							onClick={() => {
 								setLogBookTitle(diary?.currentBook ?? "");
 								setShowLogForm(true);
 							}}
-							className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90"
+							className="flex items-center gap-2"
 						>
 							<Plus className="h-4 w-4" />
 							Log Reading Session
-						</button>
+						</Button>
 					) : (
 						<div className="space-y-4">
 							<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -350,33 +349,28 @@ function ParentView() {
 								<label className="text-sm font-medium" htmlFor="log-comment">
 									Comment
 								</label>
-								<textarea
+								<Textarea
 									id="log-comment"
 									value={logComment}
 									onChange={(e) => setLogComment(e.target.value)}
 									placeholder="How did the reading go?"
 									maxLength={500}
-									className="mt-1 w-full rounded-md border p-2 text-sm resize-none"
+									className="mt-1"
 									rows={3}
 								/>
 							</div>
 
 							<div className="flex gap-2">
-								<button
-									type="button"
+								<Button
 									onClick={handleSubmitLog}
 									disabled={!logBookTitle.trim() || logReadingMutation.isPending}
-									className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+									size="sm"
 								>
 									{logReadingMutation.isPending ? "Saving..." : "Save Entry"}
-								</button>
-								<button
-									type="button"
-									onClick={() => setShowLogForm(false)}
-									className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
-								>
+								</Button>
+								<Button variant="outline" size="sm" onClick={() => setShowLogForm(false)}>
 									Cancel
-								</button>
+								</Button>
 							</div>
 						</div>
 					)}
@@ -647,8 +641,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 									/>
 								</div>
 							</div>
-							<button
-								type="button"
+							<Button
 								onClick={() => {
 									if (selectedChildId) {
 										updateDiaryMutation.mutate({
@@ -663,10 +656,10 @@ function StaffView({ schoolId }: { schoolId: string }) {
 									}
 								}}
 								disabled={updateDiaryMutation.isPending}
-								className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+								size="sm"
 							>
 								{updateDiaryMutation.isPending ? "Saving..." : "Update Diary"}
-							</button>
+							</Button>
 						</div>
 					</CardContent>
 				</Card>
@@ -736,8 +729,8 @@ function StaffView({ schoolId }: { schoolId: string }) {
 													maxLength={500}
 													className="flex-1 rounded-md border p-2 text-sm"
 												/>
-												<button
-													type="button"
+												<Button
+													size="sm"
 													onClick={() => {
 														if (commentText.trim()) {
 															addCommentMutation.mutate({
@@ -748,20 +741,19 @@ function StaffView({ schoolId }: { schoolId: string }) {
 														}
 													}}
 													disabled={!commentText.trim() || addCommentMutation.isPending}
-													className="rounded-md bg-primary px-3 py-2 text-xs text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
 												>
 													{addCommentMutation.isPending ? "..." : "Save"}
-												</button>
-												<button
-													type="button"
+												</Button>
+												<Button
+													variant="outline"
+													size="sm"
 													onClick={() => {
 														setCommentEntryId(null);
 														setCommentText("");
 													}}
-													className="rounded-md border px-3 py-2 text-xs hover:bg-muted"
 												>
 													Cancel
-												</button>
+												</Button>
 											</div>
 										)}
 									</div>
@@ -787,15 +779,16 @@ function StaffView({ schoolId }: { schoolId: string }) {
 				</CardHeader>
 				<CardContent>
 					<div className="space-y-4">
-						<button
-							type="button"
+						<Button
+							size="sm"
+							variant={filterNotRead ? "default" : "outline"}
 							onClick={() => setFilterNotRead(!filterNotRead)}
-							className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
-								filterNotRead ? "bg-red-100 text-red-800 border-red-300" : "hover:bg-muted"
-							}`}
+							className={
+								filterNotRead ? "bg-red-100 text-red-800 border-red-300 hover:bg-red-200" : ""
+							}
 						>
 							{filterNotRead ? "Show All" : "Who hasn't read this week?"}
-						</button>
+						</Button>
 
 						{overviewLoading ? (
 							<Skeleton className="h-48 w-full" />
@@ -862,14 +855,13 @@ function StaffView({ schoolId }: { schoolId: string }) {
 				</CardHeader>
 				<CardContent>
 					{!showTeacherEntryForm ? (
-						<button
-							type="button"
+						<Button
 							onClick={() => setShowTeacherEntryForm(true)}
-							className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90"
+							className="flex items-center gap-2"
 						>
 							<Plus className="h-4 w-4" />
 							Add Reading Session
-						</button>
+						</Button>
 					) : (
 						<div className="space-y-4">
 							<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -956,20 +948,19 @@ function StaffView({ schoolId }: { schoolId: string }) {
 								<label className="text-sm font-medium" htmlFor="teacher-comment">
 									Comment
 								</label>
-								<textarea
+								<Textarea
 									id="teacher-comment"
 									value={teacherEntryComment}
 									onChange={(e) => setTeacherEntryComment(e.target.value)}
 									placeholder="Notes from the session..."
 									maxLength={500}
-									className="mt-1 w-full rounded-md border p-2 text-sm resize-none"
+									className="mt-1"
 									rows={3}
 								/>
 							</div>
 
 							<div className="flex gap-2">
-								<button
-									type="button"
+								<Button
 									onClick={() => {
 										if (teacherEntryChildId && teacherEntryBook.trim()) {
 											createTeacherEntryMutation.mutate({
@@ -990,17 +981,13 @@ function StaffView({ schoolId }: { schoolId: string }) {
 										!teacherEntryBook.trim() ||
 										createTeacherEntryMutation.isPending
 									}
-									className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+									size="sm"
 								>
 									{createTeacherEntryMutation.isPending ? "Saving..." : "Save Entry"}
-								</button>
-								<button
-									type="button"
-									onClick={() => setShowTeacherEntryForm(false)}
-									className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
-								>
+								</Button>
+								<Button variant="outline" size="sm" onClick={() => setShowTeacherEntryForm(false)}>
 									Cancel
-								</button>
+								</Button>
 							</div>
 						</div>
 					)}
@@ -1020,7 +1007,7 @@ export default function ReadingPage() {
 	}
 
 	return (
-		<PageShell maxWidth="4xl">
+		<PageShell>
 			<div className="space-y-6 p-6">
 				<PageHeader
 					icon={BookOpen}

@@ -2,11 +2,13 @@
 
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
 import {
@@ -219,8 +221,7 @@ function ParentView() {
 						)}
 
 						<div className="mt-4">
-							<button
-								type="button"
+							<Button
 								onClick={() => {
 									if (childId && selectedCycleId) {
 										generatePdf.mutate({
@@ -230,11 +231,11 @@ function ParentView() {
 									}
 								}}
 								disabled={generatePdf.isPending}
-								className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+								className="flex items-center gap-2"
 							>
 								<Download className="h-4 w-4" />
 								{generatePdf.isPending ? "Generating..." : "Download Report"}
-							</button>
+							</Button>
 						</div>
 					</CardContent>
 				</Card>
@@ -248,19 +249,17 @@ function ParentView() {
 			{children.length > 1 && (
 				<div className="flex gap-2">
 					{children.map((pc) => (
-						<button
+						<Button
 							key={pc.child.id}
-							type="button"
+							size="sm"
+							variant={childId === pc.child.id ? "default" : "outline"}
 							onClick={() => {
 								setSelectedChild(pc.child.id);
 								setSelectedCycleId(null);
 							}}
-							className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
-								childId === pc.child.id ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-							}`}
 						>
 							{pc.child.firstName}
-						</button>
+						</Button>
 					))}
 				</div>
 			)}
@@ -575,7 +574,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 										>
 											Comment
 										</label>
-										<textarea
+										<Textarea
 											id={`comment-${index}`}
 											placeholder="Subject comment (max 500 characters)"
 											maxLength={500}
@@ -588,34 +587,34 @@ function StaffView({ schoolId }: { schoolId: string }) {
 												};
 												setGrades(updated);
 											}}
-											className="w-full rounded-md border p-2 text-sm resize-none"
 											rows={2}
 										/>
 									</div>
 								</div>
 							))}
 
-							<button
-								type="button"
+							<Button
+								variant="outline"
+								size="sm"
 								onClick={() => setGrades([...grades, { subject: "" }])}
-								className="flex items-center gap-1 rounded-md border px-3 py-1.5 text-sm hover:bg-muted transition-colors"
+								className="flex items-center gap-1"
 							>
 								<Plus className="h-4 w-4" />
 								Add Subject
-							</button>
+							</Button>
 
 							<div className="border-t pt-4 space-y-3">
 								<div>
 									<label htmlFor="generalComment" className="text-sm font-medium">
 										General Comment
 									</label>
-									<textarea
+									<Textarea
 										id="generalComment"
 										placeholder="Overall comment (max 1000 characters)"
 										maxLength={1000}
 										value={generalComment}
 										onChange={(e) => setGeneralComment(e.target.value)}
-										className="w-full rounded-md border p-2 text-sm resize-none mt-1"
+										className="mt-1"
 										rows={3}
 									/>
 								</div>
@@ -637,8 +636,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 								</div>
 							</div>
 
-							<button
-								type="button"
+							<Button
 								onClick={() => {
 									saveGradesMutation.mutate({
 										schoolId,
@@ -660,10 +658,10 @@ function StaffView({ schoolId }: { schoolId: string }) {
 									});
 								}}
 								disabled={saveGradesMutation.isPending}
-								className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+								size="sm"
 							>
 								{saveGradesMutation.isPending ? "Saving..." : "Save"}
-							</button>
+							</Button>
 						</div>
 					</CardContent>
 				</Card>
@@ -697,8 +695,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 								</p>
 							</div>
 							{selectedCycle.status === "DRAFT" && (
-								<button
-									type="button"
+								<Button
 									onClick={() =>
 										publishCycleMutation.mutate({
 											schoolId,
@@ -706,11 +703,11 @@ function StaffView({ schoolId }: { schoolId: string }) {
 										})
 									}
 									disabled={publishCycleMutation.isPending}
-									className="flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-700 disabled:opacity-50"
+									className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white"
 								>
 									<Send className="h-4 w-4" />
 									{publishCycleMutation.isPending ? "Publishing..." : "Publish"}
-								</button>
+								</Button>
 							)}
 						</div>
 					</CardHeader>
@@ -770,14 +767,14 @@ function StaffView({ schoolId }: { schoolId: string }) {
 							<FileText className="h-5 w-5" />
 							Report Cycles
 						</CardTitle>
-						<button
-							type="button"
+						<Button
+							size="sm"
 							onClick={() => setShowCreateForm(!showCreateForm)}
-							className="flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:bg-primary/90"
+							className="flex items-center gap-1"
 						>
 							<Plus className="h-4 w-4" />
 							Create Cycle
-						</button>
+						</Button>
 					</div>
 				</CardHeader>
 				<CardContent>
@@ -842,8 +839,8 @@ function StaffView({ schoolId }: { schoolId: string }) {
 								/>
 							</div>
 							<div className="flex gap-2">
-								<button
-									type="button"
+								<Button
+									size="sm"
 									onClick={() => {
 										if (cycleName && publishDate) {
 											createCycleMutation.mutate({
@@ -856,17 +853,12 @@ function StaffView({ schoolId }: { schoolId: string }) {
 										}
 									}}
 									disabled={createCycleMutation.isPending || !cycleName || !publishDate}
-									className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
 								>
 									{createCycleMutation.isPending ? "Creating..." : "Save"}
-								</button>
-								<button
-									type="button"
-									onClick={() => setShowCreateForm(false)}
-									className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
-								>
+								</Button>
+								<Button variant="outline" size="sm" onClick={() => setShowCreateForm(false)}>
 									Cancel
-								</button>
+								</Button>
 							</div>
 						</div>
 					)}
@@ -922,7 +914,7 @@ export default function ReportsPage() {
 	}
 
 	return (
-		<PageShell maxWidth="4xl">
+		<PageShell>
 			<PageHeader
 				icon={FileText}
 				title="Reports"

@@ -571,7 +571,7 @@ export default function GalleryPage() {
 	const schoolId = session?.schoolId ?? "";
 
 	return (
-		<PageShell maxWidth="5xl">
+		<PageShell>
 			<div data-testid="gallery-view" className="p-6">
 				<PageHeader
 					icon={Image}

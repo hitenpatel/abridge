@@ -7,7 +7,7 @@ import { Receipt } from "lucide-react";
 
 export default function PaymentHistoryPage() {
 	return (
-		<PageShell maxWidth="4xl">
+		<PageShell>
 			<PageHeader icon={Receipt} title="Payment History" description="View past transactions" />
 			<PaymentHistory />
 		</PageShell>

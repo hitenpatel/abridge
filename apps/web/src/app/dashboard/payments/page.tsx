@@ -21,7 +21,7 @@ function StaffPaymentsView({ schoolId }: { schoolId: string }) {
 	});
 
 	return (
-		<PageShell maxWidth="5xl">
+		<PageShell>
 			<PageHeader icon={CreditCard} title="Payment Items" description="Manage school payments">
 				<Link href="/dashboard/payments/new">
 					<Button data-testid="create-payment-button">
@@ -77,7 +77,7 @@ function ParentPaymentsView() {
 
 	if (isLoading) {
 		return (
-			<PageShell maxWidth="5xl">
+			<PageShell>
 				<div className="space-y-4">
 					<Skeleton className="h-10 w-64" />
 					<Skeleton className="h-20 w-full" />
@@ -88,7 +88,7 @@ function ParentPaymentsView() {
 	}
 
 	return (
-		<PageShell maxWidth="5xl">
+		<PageShell>
 			<PageHeader
 				icon={CreditCard}
 				title="Outstanding Payments"
@@ -131,10 +131,7 @@ function ParentPaymentsView() {
 						))}
 					</div>
 				) : (
-					<EmptyState
-						icon={CreditCard}
-						title="No outstanding payments"
-					/>
+					<EmptyState icon={CreditCard} title="No outstanding payments" />
 				)}
 			</div>
 		</PageShell>

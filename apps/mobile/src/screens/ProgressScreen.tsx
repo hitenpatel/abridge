@@ -120,7 +120,7 @@ export function ProgressScreen() {
 			>
 				{/* Header */}
 				<View className="px-6 pb-4" style={{ paddingTop: insets.top + 8 }}>
-					<Text className="text-3xl font-sans-extrabold text-foreground dark:text-white tracking-tight">
+					<Text className="text-2xl font-sans-extrabold text-foreground dark:text-white tracking-tight">
 						Progress
 					</Text>
 					<Text className="text-sm font-sans text-text-muted mt-1">Weekly progress summary</Text>
@@ -251,7 +251,7 @@ export function ProgressScreen() {
 								{/* Wellbeing Mood */}
 								<View
 									className="bg-pink-50 dark:bg-pink-900/20 rounded-2xl p-4"
-									style={{ minWidth: "45%", flexGrow: 1 }}
+									style={{ minWidth: "100%", flexGrow: 1 }}
 									accessibilityLabel="Wellbeing"
 								>
 									<View className="flex-row items-center gap-2 mb-2">

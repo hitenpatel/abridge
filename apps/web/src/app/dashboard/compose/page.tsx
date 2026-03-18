@@ -102,7 +102,7 @@ export default function ComposePostPage() {
 	};
 
 	return (
-		<PageShell maxWidth="2xl">
+		<PageShell maxWidth="4xl">
 			<div className="space-y-6 p-6">
 				<div className="flex items-center gap-3">
 					<Link href="/dashboard">

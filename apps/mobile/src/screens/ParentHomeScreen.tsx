@@ -173,7 +173,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 							onPress={() => navigation.navigate("Search")}
 							testID="search-button"
 							accessibilityLabel="Search"
-							className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center"
+							className="w-11 h-11 rounded-full bg-neutral-surface items-center justify-center"
 						>
 							<MaterialIcons name="search" size={20} color="#96867f" />
 						</Pressable>
@@ -181,7 +181,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 							onPress={() => navigation.navigate("Settings")}
 							testID="settings-button"
 							accessibilityLabel="Settings"
-							className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center"
+							className="w-11 h-11 rounded-full bg-neutral-surface items-center justify-center"
 						>
 							<MaterialIcons name="settings" size={20} color="#96867f" />
 						</Pressable>
@@ -189,7 +189,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 							onPress={logout}
 							testID="logout-button"
 							accessibilityLabel="Log Out"
-							className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center"
+							className="w-11 h-11 rounded-full bg-neutral-surface items-center justify-center"
 						>
 							<MaterialIcons name="logout" size={18} color="#96867f" />
 						</Pressable>
@@ -312,7 +312,7 @@ export function ParentHomeScreen({ navigation }: ParentHomeScreenProps) {
 						}
 						showsVerticalScrollIndicator={false}
 						onScroll={handleScroll}
-						scrollEventThrottle={400}
+						scrollEventThrottle={16}
 					>
 						{/* Child Switcher */}
 						{children.length > 1 && (

@@ -610,7 +610,7 @@ export default function AttendancePage() {
 
 	if (isStaff && session.schoolId) {
 		return (
-			<PageShell maxWidth="5xl">
+			<PageShell>
 				<PageHeader
 					icon={ClipboardCheck}
 					title="Attendance"
@@ -622,7 +622,7 @@ export default function AttendancePage() {
 	}
 
 	return (
-		<PageShell maxWidth="5xl">
+		<PageShell>
 			<PageHeader icon={ClipboardCheck} title="Attendance" description="Track student attendance" />
 			<ParentAttendanceView />
 		</PageShell>

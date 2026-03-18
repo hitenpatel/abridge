@@ -280,7 +280,7 @@ export default function TimetablePage() {
 	const isStaff = !!session?.staffRole && !!session?.schoolId;
 
 	return (
-		<PageShell maxWidth="5xl">
+		<PageShell>
 			<div className="space-y-6 p-6">
 				<PageHeader
 					icon={Clock}

@@ -117,7 +117,7 @@ export default function SingleFormPage() {
 	}
 
 	return (
-		<PageShell maxWidth="2xl">
+		<PageShell maxWidth="4xl">
 			<div className="p-8">
 				<div className="mb-6">
 					<Link

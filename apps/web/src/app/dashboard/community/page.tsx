@@ -2,10 +2,12 @@
 
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
 import {
@@ -139,19 +141,17 @@ function CreatePostForm({ onClose, schoolId }: { onClose: () => void; schoolId: 
 				<div className="space-y-4">
 					<div className="flex gap-2">
 						{POST_TYPES.map((t) => (
-							<button
+							<Button
 								key={t}
-								type="button"
+								size="sm"
+								variant={type === t ? "default" : "outline"}
 								onClick={() => {
 									setType(t);
 									if (t !== "VOLUNTEER_REQUEST") setSlots([]);
 								}}
-								className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
-									type === t ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-								}`}
 							>
 								{TYPE_LABELS[t]}
-							</button>
+							</Button>
 						))}
 					</div>
 
@@ -164,12 +164,11 @@ function CreatePostForm({ onClose, schoolId }: { onClose: () => void; schoolId: 
 						className="w-full rounded-md border p-2 text-sm"
 					/>
 
-					<textarea
+					<Textarea
 						placeholder="What would you like to share?"
 						maxLength={2000}
 						value={body}
 						onChange={(e) => setBody(e.target.value)}
-						className="w-full rounded-md border p-2 text-sm resize-none"
 						rows={4}
 					/>
 
@@ -185,14 +184,15 @@ function CreatePostForm({ onClose, schoolId }: { onClose: () => void; schoolId: 
 						<div className="space-y-3">
 							<div className="flex items-center justify-between">
 								<span className="text-sm font-medium">Volunteer Slots</span>
-								<button
-									type="button"
+								<Button
+									variant="outline"
+									size="sm"
 									onClick={addSlot}
-									className="flex items-center gap-1 rounded-md border px-2 py-1 text-xs hover:bg-muted"
+									className="flex items-center gap-1"
 								>
 									<Plus className="h-3 w-3" />
 									Add Slot
-								</button>
+								</Button>
 							</div>
 							{slots.map((slot, i) => (
 								<div key={`slot-${i}`} className="space-y-2 rounded-md border p-3">
@@ -246,14 +246,13 @@ function CreatePostForm({ onClose, schoolId }: { onClose: () => void; schoolId: 
 						</div>
 					)}
 
-					<button
-						type="button"
+					<Button
 						onClick={handleSubmit}
 						disabled={!title.trim() || !body.trim() || createPost.isPending}
-						className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+						size="sm"
 					>
 						{createPost.isPending ? "Posting..." : "Post"}
-					</button>
+					</Button>
 
 					{createPost.isError && <p className="text-sm text-red-600">{createPost.error.message}</p>}
 				</div>
@@ -357,8 +356,9 @@ function PostDetail({
 						</div>
 						{isStaff && (
 							<div className="flex gap-2">
-								<button
-									type="button"
+								<Button
+									variant="outline"
+									size="sm"
 									onClick={() =>
 										pinPost.mutate({
 											schoolId,
@@ -367,7 +367,7 @@ function PostDetail({
 										})
 									}
 									disabled={pinPost.isPending}
-									className="flex items-center gap-1 rounded-md border px-2 py-1 text-xs hover:bg-muted disabled:opacity-50"
+									className="flex items-center gap-1"
 								>
 									{post.isPinned ? (
 										<>
@@ -380,15 +380,16 @@ function PostDetail({
 											Pin
 										</>
 									)}
-								</button>
-								<button
-									type="button"
+								</Button>
+								<Button
+									variant="outline"
+									size="sm"
 									onClick={() => setShowRemovePrompt(true)}
-									className="flex items-center gap-1 rounded-md border border-red-200 px-2 py-1 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50"
+									className="flex items-center gap-1 border-red-200 text-red-600 hover:bg-red-50"
 								>
 									<Trash2 className="h-3 w-3" />
 									Remove
-								</button>
+								</Button>
 							</div>
 						)}
 					</div>
@@ -412,17 +413,16 @@ function PostDetail({
 					<CardContent className="pt-6">
 						<div className="space-y-3">
 							<p className="text-sm font-medium text-red-700">Reason for removal</p>
-							<textarea
+							<Textarea
 								value={removeReason}
 								onChange={(e) => setRemoveReason(e.target.value)}
 								placeholder="Explain why this post is being removed..."
 								maxLength={500}
-								className="w-full rounded-md border border-red-200 p-2 text-sm resize-none"
+								className="border-red-200"
 								rows={2}
 							/>
 							<div className="flex gap-2">
-								<button
-									type="button"
+								<Button
 									onClick={() => {
 										if (removeReason.trim()) {
 											removePost.mutate({
@@ -433,20 +433,21 @@ function PostDetail({
 										}
 									}}
 									disabled={!removeReason.trim() || removePost.isPending}
-									className="rounded-md bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700 disabled:opacity-50"
+									size="sm"
+									className="bg-red-600 hover:bg-red-700 text-white"
 								>
 									{removePost.isPending ? "Removing..." : "Confirm Remove"}
-								</button>
-								<button
-									type="button"
+								</Button>
+								<Button
+									variant="outline"
+									size="sm"
 									onClick={() => {
 										setShowRemovePrompt(false);
 										setRemoveReason("");
 									}}
-									className="rounded-md border px-3 py-1.5 text-sm hover:bg-muted"
 								>
 									Cancel
-								</button>
+								</Button>
 							</div>
 						</div>
 					</CardContent>
@@ -485,23 +486,23 @@ function PostDetail({
 											</p>
 										</div>
 										{isSignedUp ? (
-											<button
-												type="button"
+											<Button
+												variant="outline"
+												size="sm"
 												onClick={() => cancelSignup.mutate({ slotId: slot.id })}
 												disabled={cancelSignup.isPending}
-												className="rounded-md border border-red-200 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
+												className="border-red-200 text-red-600 hover:bg-red-50"
 											>
 												Cancel
-											</button>
+											</Button>
 										) : (
-											<button
-												type="button"
+											<Button
+												size="sm"
 												onClick={() => signUp.mutate({ slotId: slot.id })}
 												disabled={spotsRemaining <= 0 || signUp.isPending}
-												className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
 											>
 												Sign Up
-											</button>
+											</Button>
 										)}
 									</div>
 								);
@@ -554,8 +555,8 @@ function PostDetail({
 								}}
 								className="flex-1 rounded-md border p-2 text-sm"
 							/>
-							<button
-								type="button"
+							<Button
+								size="sm"
 								onClick={() => {
 									if (commentBody.trim()) {
 										addComment.mutate({
@@ -565,10 +566,9 @@ function PostDetail({
 									}
 								}}
 								disabled={!commentBody.trim() || addComment.isPending}
-								className="rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
 							>
 								{addComment.isPending ? "..." : "Reply"}
-							</button>
+							</Button>
 						</div>
 					</div>
 				</CardContent>
@@ -608,26 +608,24 @@ function PostList({
 			<div className="flex items-center justify-between">
 				<div className="flex gap-2">
 					{FILTER_OPTIONS.map((opt) => (
-						<button
+						<Button
 							key={opt.label}
-							type="button"
+							size="sm"
+							variant={typeFilter === opt.value ? "default" : "outline"}
 							onClick={() => setTypeFilter(opt.value)}
-							className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
-								typeFilter === opt.value ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-							}`}
 						>
 							{opt.label}
-						</button>
+						</Button>
 					))}
 				</div>
-				<button
-					type="button"
+				<Button
+					size="sm"
 					onClick={() => setShowCreateForm(!showCreateForm)}
-					className="flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:bg-primary/90"
+					className="flex items-center gap-1"
 				>
 					<Plus className="h-4 w-4" />
 					New Post
-				</button>
+				</Button>
 			</div>
 
 			{showCreateForm && (
@@ -711,7 +709,7 @@ export default function CommunityPage() {
 
 	if (!schoolId) {
 		return (
-			<PageShell maxWidth="4xl">
+			<PageShell>
 				<PageHeader icon={Users} title="Community" description="Community hub and discussions" />
 				<p className="text-muted-foreground">Loading...</p>
 			</PageShell>
@@ -719,7 +717,7 @@ export default function CommunityPage() {
 	}
 
 	return (
-		<PageShell maxWidth="4xl">
+		<PageShell>
 			<PageHeader icon={Users} title="Community" description="Community hub and discussions" />
 			<PostList schoolId={schoolId} isStaff={isStaff} userId={session?.id} />
 		</PageShell>

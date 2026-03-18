@@ -358,7 +358,7 @@ export default function FormsPage() {
 
 	if (isStaff && session.schoolId) {
 		return (
-			<PageShell maxWidth="4xl">
+			<PageShell>
 				<PageHeader
 					icon={FileText}
 					title="Forms & Consent"
@@ -380,7 +380,7 @@ export default function FormsPage() {
 
 	if (isLoading) {
 		return (
-			<PageShell maxWidth="4xl">
+			<PageShell>
 				<PageHeader
 					icon={FileText}
 					title="Forms & Consent"
@@ -399,7 +399,7 @@ export default function FormsPage() {
 
 	if (error) {
 		return (
-			<PageShell maxWidth="4xl">
+			<PageShell>
 				<PageHeader
 					icon={FileText}
 					title="Forms & Consent"
@@ -413,7 +413,7 @@ export default function FormsPage() {
 	const children = summaryData?.children || [];
 
 	return (
-		<PageShell maxWidth="4xl">
+		<PageShell>
 			<PageHeader
 				icon={FileText}
 				title="Forms & Consent"

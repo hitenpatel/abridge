@@ -521,20 +521,70 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							studentPortalEnabled: studentPortal,
 						});
 					}}
-					className="space-y-4"
 				>
-					<p className="text-sm text-gray-500">
+					<p className="text-sm text-gray-500 mb-4">
 						Enable or disable features for your school. Disabled features will be hidden from
 						navigation and blocked at the API level.
 					</p>
 
-					<div className="space-y-1">
+					<div className="pt-4 first:pt-0">
+						<h4 className="text-sm font-medium text-muted-foreground pb-2 mb-2 border-b">
+							Communication
+						</h4>
 						<Toggle
 							checked={messaging}
 							onChange={setMessaging}
 							label="Messaging"
 							data-testid="toggle-messaging"
 						/>
+						<Toggle
+							checked={emergencyComms}
+							onChange={setEmergencyComms}
+							label="Emergency Communications"
+							data-testid="toggle-emergency-comms"
+						/>
+						<Toggle
+							checked={liveChat}
+							onChange={setLiveChat}
+							label="Live Chat"
+							data-testid="toggle-live-chat"
+						/>
+					</div>
+
+					<div className="pt-4 first:pt-0">
+						<h4 className="text-sm font-medium text-muted-foreground pb-2 mb-2 border-b">
+							Academics
+						</h4>
+						<Toggle
+							checked={homework}
+							onChange={setHomework}
+							label="Homework Tracker"
+							data-testid="toggle-homework"
+						/>
+						<Toggle
+							checked={readingDiary}
+							onChange={setReadingDiary}
+							label="Reading Diary"
+							data-testid="toggle-reading-diary"
+						/>
+						<Toggle
+							checked={reportCards}
+							onChange={setReportCards}
+							label="Report Cards"
+							data-testid="toggle-report-cards"
+						/>
+						<Toggle
+							checked={progressSummaries}
+							onChange={setProgressSummaries}
+							label="Progress Summaries"
+							data-testid="toggle-progress-summaries"
+						/>
+					</div>
+
+					<div className="pt-4 first:pt-0">
+						<h4 className="text-sm font-medium text-muted-foreground pb-2 mb-2 border-b">
+							Finance &amp; Logistics
+						</h4>
 						<Toggle
 							checked={payments}
 							onChange={setPayments}
@@ -577,6 +627,18 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							</div>
 						)}
 						<Toggle
+							checked={mealBooking}
+							onChange={setMealBooking}
+							label="Meal Booking"
+							data-testid="toggle-meal-booking"
+						/>
+					</div>
+
+					<div className="pt-4 first:pt-0">
+						<h4 className="text-sm font-medium text-muted-foreground pb-2 mb-2 border-b">
+							School Life
+						</h4>
+						<Toggle
 							checked={attendance}
 							onChange={setAttendance}
 							label="Attendance"
@@ -585,51 +647,14 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 						<Toggle
 							checked={calendar}
 							onChange={setCalendar}
-							label="Calendar"
+							label="Calendar & Events"
 							data-testid="toggle-calendar"
 						/>
-						<Toggle checked={forms} onChange={setForms} label="Forms" data-testid="toggle-forms" />
 						<Toggle
-							checked={translation}
-							onChange={setTranslation}
-							label="Translation"
-							data-testid="toggle-translation"
-						/>
-						<Toggle
-							checked={parentsEvening}
-							onChange={setParentsEvening}
-							label="Parents' Evening"
-							data-testid="toggle-parents-evening"
-						/>
-						<Toggle
-							checked={wellbeing}
-							onChange={setWellbeing}
-							label="Wellbeing Check-ins"
-							data-testid="toggle-wellbeing"
-						/>
-						<Toggle
-							checked={emergencyComms}
-							onChange={setEmergencyComms}
-							label="Emergency Communications"
-							data-testid="toggle-emergency-comms"
-						/>
-						<Toggle
-							checked={analytics}
-							onChange={setAnalytics}
-							label="Admin Analytics"
-							data-testid="toggle-analytics"
-						/>
-						<Toggle
-							checked={mealBooking}
-							onChange={setMealBooking}
-							label="Meal Booking"
-							data-testid="toggle-meal-booking"
-						/>
-						<Toggle
-							checked={reportCards}
-							onChange={setReportCards}
-							label="Report Cards"
-							data-testid="toggle-report-cards"
+							checked={forms}
+							onChange={setForms}
+							label="Forms & Consent"
+							data-testid="toggle-forms"
 						/>
 						<Toggle
 							checked={communityHub}
@@ -638,17 +663,23 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							data-testid="toggle-community-hub"
 						/>
 						<Toggle
-							checked={homework}
-							onChange={setHomework}
-							label="Homework Tracker"
-							data-testid="toggle-homework"
+							checked={achievements}
+							onChange={setAchievements}
+							label="Achievements"
+							data-testid="toggle-achievements"
 						/>
 						<Toggle
-							checked={readingDiary}
-							onChange={setReadingDiary}
-							label="Reading Diary"
-							data-testid="toggle-reading-diary"
+							checked={wellbeing}
+							onChange={setWellbeing}
+							label="Wellbeing Check-ins"
+							data-testid="toggle-wellbeing"
 						/>
+					</div>
+
+					<div className="pt-4 first:pt-0">
+						<h4 className="text-sm font-medium text-muted-foreground pb-2 mb-2 border-b">
+							Operations
+						</h4>
 						<Toggle
 							checked={visitorManagement}
 							onChange={setVisitorManagement}
@@ -656,46 +687,22 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							data-testid="toggle-visitor-management"
 						/>
 						<Toggle
-							checked={misIntegration}
-							onChange={setMisIntegration}
-							label="MIS Integration"
-							data-testid="toggle-mis-integration"
-						/>
-						<Toggle
-							checked={achievements}
-							onChange={setAchievements}
-							label="Achievements"
-							data-testid="toggle-achievements"
+							checked={parentsEvening}
+							onChange={setParentsEvening}
+							label="Parents' Evening"
+							data-testid="toggle-parents-evening"
 						/>
 						<Toggle
 							checked={gallery}
 							onChange={setGallery}
-							label="Gallery"
+							label="Photo Gallery"
 							data-testid="toggle-gallery"
 						/>
 						<Toggle
-							checked={progressSummaries}
-							onChange={setProgressSummaries}
-							label="Progress Summaries"
-							data-testid="toggle-progress-summaries"
-						/>
-						<Toggle
-							checked={liveChat}
-							onChange={setLiveChat}
-							label="Live Chat"
-							data-testid="toggle-live-chat"
-						/>
-						<Toggle
-							checked={aiDrafting}
-							onChange={setAiDrafting}
-							label="AI Drafting"
-							data-testid="toggle-ai-drafting"
-						/>
-						<Toggle
-							checked={attendanceAlerts}
-							onChange={setAttendanceAlerts}
-							label="Attendance Alerts"
-							data-testid="toggle-attendance-alerts"
+							checked={misIntegration}
+							onChange={setMisIntegration}
+							label="MIS Integration"
+							data-testid="toggle-mis-integration"
 						/>
 						<Toggle
 							checked={studentPortal}
@@ -705,13 +712,45 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 						/>
 					</div>
 
-					<Button
-						type="submit"
-						data-testid="feature-toggles-save"
-						disabled={updateToggles.isPending}
-					>
-						{updateToggles.isPending ? "Saving..." : "Save Features"}
-					</Button>
+					<div className="pt-4 first:pt-0">
+						<h4 className="text-sm font-medium text-muted-foreground pb-2 mb-2 border-b">
+							Intelligence
+						</h4>
+						<Toggle
+							checked={analytics}
+							onChange={setAnalytics}
+							label="Analytics Dashboard"
+							data-testid="toggle-analytics"
+						/>
+						<Toggle
+							checked={aiDrafting}
+							onChange={setAiDrafting}
+							label="AI Draft Replies"
+							data-testid="toggle-ai-drafting"
+						/>
+						<Toggle
+							checked={attendanceAlerts}
+							onChange={setAttendanceAlerts}
+							label="Attendance Alerts"
+							data-testid="toggle-attendance-alerts"
+						/>
+						<Toggle
+							checked={translation}
+							onChange={setTranslation}
+							label="Auto-Translation"
+							data-testid="toggle-translation"
+						/>
+					</div>
+
+					<div className="sticky bottom-0 bg-card pt-4 pb-2 border-t mt-4">
+						<Button
+							type="submit"
+							data-testid="feature-toggles-save"
+							disabled={updateToggles.isPending}
+						>
+							{updateToggles.isPending ? "Saving..." : "Save Feature Settings"}
+						</Button>
+					</div>
 				</form>
 			</CardContent>
 		</Card>
@@ -938,7 +977,7 @@ export default function SettingsPage() {
 
 	if (isLoading) {
 		return (
-			<PageShell maxWidth="2xl">
+			<PageShell maxWidth="5xl">
 				<div className="space-y-6">
 					<Skeleton className="h-8 w-32" />
 					<Skeleton className="h-64 w-full rounded-2xl" />
@@ -952,16 +991,20 @@ export default function SettingsPage() {
 	const schoolId = session?.schoolId;
 
 	return (
-		<PageShell maxWidth="2xl" data-testid="settings-view">
+		<PageShell maxWidth="5xl" data-testid="settings-view">
 			<PageHeader icon={Settings} title="Settings" description="Manage your account" />
 
-			<div className="space-y-6">
-				<ProfileCard />
-				<NotificationsCard />
-				{isAdmin && schoolId && <SchoolSettingsCard schoolId={schoolId} />}
-				{isAdmin && schoolId && <FeatureTogglesCard schoolId={schoolId} />}
-				{isAdmin && schoolId && <StripeCard schoolId={schoolId} />}
-				{isAdmin && schoolId && <BrandingCard schoolId={schoolId} />}
+			<div className="grid lg:grid-cols-2 gap-6 items-start">
+				<div className="space-y-6">
+					<ProfileCard />
+					<NotificationsCard />
+				</div>
+				<div className="space-y-6">
+					{isAdmin && schoolId && <SchoolSettingsCard schoolId={schoolId} />}
+					{isAdmin && schoolId && <FeatureTogglesCard schoolId={schoolId} />}
+					{isAdmin && schoolId && <StripeCard schoolId={schoolId} />}
+					{isAdmin && schoolId && <BrandingCard schoolId={schoolId} />}
+				</div>
 			</div>
 		</PageShell>
 	);

@@ -60,7 +60,7 @@ export function StaffHomeScreen() {
 						<Text className="text-sm font-sans-semibold uppercase tracking-wider text-text-muted mb-1">
 							{dateString}
 						</Text>
-						<Text className="text-3xl font-sans-extrabold text-foreground dark:text-white">
+						<Text className="text-2xl font-sans-extrabold text-foreground dark:text-white">
 							{greeting}, <Text className="text-primary">{firstName}!</Text>
 						</Text>
 					</View>
@@ -68,14 +68,14 @@ export function StaffHomeScreen() {
 						<Pressable
 							onPress={() => navigation.navigate("Settings")}
 							accessibilityLabel="Settings"
-							className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center mt-1"
+							className="w-11 h-11 rounded-full bg-neutral-surface items-center justify-center mt-1"
 						>
 							<MaterialIcons name="settings" size={20} color="#96867f" />
 						</Pressable>
 						<Pressable
 							onPress={logout}
 							accessibilityLabel="Log Out"
-							className="w-10 h-10 rounded-full bg-neutral-surface items-center justify-center mt-1"
+							className="w-11 h-11 rounded-full bg-neutral-surface items-center justify-center mt-1"
 						>
 							<MaterialIcons name="logout" size={18} color="#96867f" />
 						</Pressable>
@@ -156,22 +156,22 @@ export function StaffHomeScreen() {
 							icon="email"
 							value={unreadMessages}
 							label="Unread"
-							color="#3B82F6"
-							bgColor="#DBEAFE"
+							iconColor="#3B82F6"
+							iconBg="#DBEAFE"
 						/>
 						<StatCard
 							icon="warning"
 							value={attendanceAlerts}
 							label="Absent"
-							color="#F59E0B"
-							bgColor="#FEF3C7"
+							iconColor="#F59E0B"
+							iconBg="#FEF3C7"
 						/>
 						<StatCard
 							icon="event"
 							value={upcomingEventsCount}
 							label="Events"
-							color="#8B5CF6"
-							bgColor="#EDE9FE"
+							iconColor="#8B5CF6"
+							iconBg="#EDE9FE"
 						/>
 					</ScrollView>
 

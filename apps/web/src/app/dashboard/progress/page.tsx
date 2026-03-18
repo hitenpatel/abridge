@@ -1,6 +1,7 @@
 "use client";
 
 import { FeatureDisabled } from "@/components/feature-disabled";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
@@ -239,16 +240,15 @@ function ParentView() {
 			{children.length > 1 && (
 				<div className="flex gap-2">
 					{children.map((pc) => (
-						<button
+						<Button
 							key={pc.child.id}
 							type="button"
+							size="sm"
+							variant={childId === pc.child.id ? "default" : "outline"}
 							onClick={() => setSelectedChild(pc.child.id)}
-							className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
-								childId === pc.child.id ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-							}`}
 						>
 							{pc.child.firstName}
-						</button>
+						</Button>
 					))}
 				</div>
 			)}
@@ -318,15 +318,15 @@ function StaffView({ schoolId }: { schoolId: string }) {
 							<Users className="h-5 w-5" />
 							Class Overview
 						</CardTitle>
-						<button
+						<Button
 							type="button"
 							onClick={() => generateBatch.mutate({ schoolId })}
 							disabled={generating}
-							className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+							className="flex items-center gap-2"
 						>
 							<RefreshCw className={`h-4 w-4 ${generating ? "animate-spin" : ""}`} />
 							{generating ? "Generating..." : "Generate Summaries"}
-						</button>
+						</Button>
 					</div>
 				</CardHeader>
 				<CardContent>
@@ -388,7 +388,7 @@ export default function ProgressPage() {
 	}
 
 	return (
-		<PageShell maxWidth="4xl">
+		<PageShell>
 			<div className="space-y-6 p-6">
 				<PageHeader
 					icon={TrendingUp}

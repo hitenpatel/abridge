@@ -32,7 +32,7 @@ export default function NewMessagePage() {
 	const schoolId = session.schoolId || "school-1";
 
 	return (
-		<PageShell maxWidth="4xl">
+		<PageShell>
 			<div className="py-8 px-4">
 				<div className="mb-8">
 					<h1 className="text-2xl font-bold text-foreground">Compose Message</h1>

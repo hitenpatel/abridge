@@ -2,10 +2,12 @@
 
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
 import {
@@ -97,16 +99,14 @@ function ParentView() {
 			{children.length > 1 && (
 				<div className="flex gap-2">
 					{children.map((pc) => (
-						<button
+						<Button
 							key={pc.child.id}
-							type="button"
+							size="sm"
+							variant={childId === pc.child.id ? "default" : "outline"}
 							onClick={() => setSelectedChild(pc.child.id)}
-							className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
-								childId === pc.child.id ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-							}`}
 						>
 							{pc.child.firstName}
-						</button>
+						</Button>
 					))}
 				</div>
 			)}
@@ -205,8 +205,8 @@ function ParentView() {
 												)}
 
 												{!isCompleted && (
-													<button
-														type="button"
+													<Button
+														size="sm"
 														onClick={() => {
 															markCompleteMutation.mutate({
 																assignmentId: item.id,
@@ -214,11 +214,11 @@ function ParentView() {
 															});
 														}}
 														disabled={markCompleteMutation.isPending}
-														className="flex items-center gap-1.5 rounded-md bg-green-600 px-3 py-1.5 text-xs text-white hover:bg-green-700 disabled:opacity-50"
+														className="flex items-center gap-1.5 bg-green-600 hover:bg-green-700 text-white"
 													>
 														<CheckCircle2 className="h-3.5 w-3.5" />
 														{markCompleteMutation.isPending ? "Marking..." : "Mark as Done"}
-													</button>
+													</Button>
 												)}
 											</div>
 										)}
@@ -377,12 +377,12 @@ function StaffView({ schoolId }: { schoolId: string }) {
 							<label className="text-sm font-medium" htmlFor="hw-description">
 								Description
 							</label>
-							<textarea
+							<Textarea
 								id="hw-description"
 								value={description}
 								onChange={(e) => setDescription(e.target.value)}
 								placeholder="Describe the homework task..."
-								className="mt-1 w-full rounded-md border p-2 text-sm resize-none"
+								className="mt-1"
 								rows={3}
 							/>
 						</div>
@@ -438,8 +438,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 							This is a reading task
 						</label>
 
-						<button
-							type="button"
+						<Button
 							onClick={handleSetHomework}
 							disabled={
 								!subject.trim() ||
@@ -448,10 +447,10 @@ function StaffView({ schoolId }: { schoolId: string }) {
 								!dueDate ||
 								setHomeworkMutation.isPending
 							}
-							className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+							size="sm"
 						>
 							{setHomeworkMutation.isPending ? "Setting..." : "Set Homework"}
-						</button>
+						</Button>
 					</div>
 				</CardContent>
 			</Card>
@@ -532,24 +531,25 @@ function StaffView({ schoolId }: { schoolId: string }) {
 												)}
 
 												<div className="flex items-center gap-2">
-													<button
-														type="button"
+													<Button
+														size="sm"
 														onClick={() => handleSaveGrades(assignment.id)}
 														disabled={gradeHomeworkMutation.isPending}
-														className="flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+														className="flex items-center gap-1.5"
 													>
 														<Save className="h-3.5 w-3.5" />
 														{gradeHomeworkMutation.isPending ? "Saving..." : "Save All"}
-													</button>
-													<button
-														type="button"
+													</Button>
+													<Button
+														variant="outline"
+														size="sm"
 														onClick={() => handleCancel(assignment.id)}
 														disabled={cancelHomeworkMutation.isPending}
-														className="flex items-center gap-1.5 rounded-md border border-red-200 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50"
+														className="flex items-center gap-1.5 border-red-200 text-red-600 hover:bg-red-50"
 													>
 														<Trash2 className="h-3.5 w-3.5" />
 														{cancelHomeworkMutation.isPending ? "Cancelling..." : "Cancel"}
-													</button>
+													</Button>
 												</div>
 											</div>
 										)}
@@ -574,7 +574,7 @@ export default function HomeworkPage() {
 	}
 
 	return (
-		<PageShell maxWidth="4xl">
+		<PageShell>
 			<div className="space-y-6 p-6">
 				<PageHeader
 					icon={BookOpen}

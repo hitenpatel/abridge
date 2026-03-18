@@ -230,7 +230,7 @@ export function MessagesScreen() {
 						handleLoadMore();
 					}
 				}}
-				scrollEventThrottle={400}
+				scrollEventThrottle={16}
 				showsVerticalScrollIndicator={false}
 			>
 				{messages.length === 0 ? (

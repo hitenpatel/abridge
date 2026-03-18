@@ -22,7 +22,7 @@ export default function ParentsEveningPage() {
 
 	if (sessionLoading) {
 		return (
-			<PageShell maxWidth="4xl">
+			<PageShell>
 				<div className="space-y-6">
 					<Skeleton className="h-8 w-64" />
 					<Skeleton className="h-48 w-full rounded-2xl" />
@@ -33,7 +33,7 @@ export default function ParentsEveningPage() {
 	}
 
 	return (
-		<PageShell maxWidth="4xl">
+		<PageShell>
 			<PageHeader
 				icon={Users}
 				title="Parents' Evening"

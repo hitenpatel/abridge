@@ -9,6 +9,7 @@ const maxWidthMap = {
 	"2xl": "max-w-2xl",
 	"4xl": "max-w-4xl",
 	"5xl": "max-w-5xl",
+	"6xl": "max-w-6xl",
 	"7xl": "max-w-7xl",
 	full: "max-w-full",
 } as const;
@@ -21,7 +22,7 @@ interface PageShellProps {
 }
 
 export function PageShell({
-	maxWidth = "4xl",
+	maxWidth = "6xl",
 	animate = true,
 	"data-testid": testId,
 	children,

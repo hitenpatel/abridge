@@ -2,10 +2,12 @@
 
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
 import { CalendarDays, ChefHat, ClipboardList, Plus, UtensilsCrossed, X } from "lucide-react";
@@ -185,16 +187,14 @@ function ParentView() {
 			{children.length > 1 && (
 				<div className="flex gap-2">
 					{children.map((pc) => (
-						<button
+						<Button
 							key={pc.child.id}
-							type="button"
+							size="sm"
+							variant={childId === pc.child.id ? "default" : "outline"}
 							onClick={() => setSelectedChild(pc.child.id)}
-							className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
-								childId === pc.child.id ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-							}`}
 						>
 							{pc.child.firstName}
-						</button>
+						</Button>
 					))}
 				</div>
 			)}
@@ -248,18 +248,16 @@ function ParentView() {
 
 							<div>
 								<p className="text-sm font-medium mb-2">Additional Notes</p>
-								<textarea
+								<Textarea
 									placeholder="Any other dietary requirements or notes..."
 									maxLength={300}
 									value={otherNotes}
 									onChange={(e) => setOtherNotes(e.target.value)}
-									className="w-full rounded-md border p-2 text-sm resize-none"
 									rows={2}
 								/>
 							</div>
 
-							<button
-								type="button"
+							<Button
 								onClick={() => {
 									if (childId) {
 										updateProfileMutation.mutate({
@@ -279,10 +277,10 @@ function ParentView() {
 									}
 								}}
 								disabled={updateProfileMutation.isPending}
-								className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+								size="sm"
 							>
 								{updateProfileMutation.isPending ? "Saving..." : "Save Profile"}
-							</button>
+							</Button>
 						</div>
 					)}
 				</CardContent>
@@ -349,8 +347,8 @@ function ParentView() {
 														{isBooked ? (
 															<Badge className="bg-green-100 text-green-800">Booked</Badge>
 														) : (
-															<button
-																type="button"
+															<Button
+																size="sm"
 																onClick={() => {
 																	if (childId) {
 																		bookMealMutation.mutate({
@@ -361,10 +359,9 @@ function ParentView() {
 																	}
 																}}
 																disabled={bookMealMutation.isPending}
-																className="rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
 															>
 																Book
-															</button>
+															</Button>
 														)}
 													</div>
 												);
@@ -402,18 +399,19 @@ function ParentView() {
 											})}
 										</p>
 									</div>
-									<button
-										type="button"
+									<Button
+										variant="outline"
+										size="sm"
 										onClick={() =>
 											cancelBookingMutation.mutate({
 												bookingId: booking.id,
 											})
 										}
 										disabled={cancelBookingMutation.isPending}
-										className="rounded-md border border-red-200 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50"
+										className="border-red-200 text-red-600 hover:bg-red-50"
 									>
 										Cancel
-									</button>
+									</Button>
 								</div>
 							))}
 						</div>
@@ -612,14 +610,14 @@ function StaffView({ schoolId }: { schoolId: string }) {
 								</div>
 							</div>
 
-							<button
-								type="button"
+							<Button
+								variant="outline"
+								size="sm"
 								onClick={addOption}
 								disabled={!newOptionName.trim()}
-								className="rounded-md border px-3 py-1.5 text-sm hover:bg-muted disabled:opacity-50"
 							>
 								Add Option
-							</button>
+							</Button>
 						</div>
 
 						{menuOptions.length > 0 && (
@@ -670,8 +668,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 							</div>
 						)}
 
-						<button
-							type="button"
+						<Button
 							onClick={() => {
 								if (menuWeek && menuOptions.length > 0) {
 									createMenuMutation.mutate({
@@ -682,10 +679,10 @@ function StaffView({ schoolId }: { schoolId: string }) {
 								}
 							}}
 							disabled={!menuWeek || menuOptions.length === 0 || createMenuMutation.isPending}
-							className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+							size="sm"
 						>
 							{createMenuMutation.isPending ? "Creating..." : "Create Menu"}
-						</button>
+						</Button>
 					</div>
 				</CardContent>
 			</Card>
@@ -765,8 +762,8 @@ function StaffView({ schoolId }: { schoolId: string }) {
 									{menu.publishedAt ? (
 										<Badge className="bg-green-100 text-green-800">Published</Badge>
 									) : (
-										<button
-											type="button"
+										<Button
+											size="sm"
 											onClick={() =>
 												publishMenuMutation.mutate({
 													schoolId,
@@ -774,10 +771,9 @@ function StaffView({ schoolId }: { schoolId: string }) {
 												})
 											}
 											disabled={publishMenuMutation.isPending}
-											className="rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
 										>
 											Publish
-										</button>
+										</Button>
 									)}
 								</div>
 							))}
@@ -799,7 +795,7 @@ export default function MealsPage() {
 	}
 
 	return (
-		<PageShell maxWidth="4xl">
+		<PageShell>
 			<PageHeader
 				icon={UtensilsCrossed}
 				title="Meals"

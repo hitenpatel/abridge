@@ -155,7 +155,7 @@ export function ReadingDiaryScreen() {
 				<View className="px-6 pb-4" style={{ paddingTop: insets.top + 8 }}>
 					<View className="flex-row items-center justify-between">
 						<View>
-							<Text className="text-3xl font-sans-extrabold text-foreground dark:text-white tracking-tight">
+							<Text className="text-2xl font-sans-extrabold text-foreground dark:text-white tracking-tight">
 								Reading Diary
 							</Text>
 							<Text className="text-sm font-sans text-text-muted mt-1">Track reading progress</Text>
@@ -312,7 +312,7 @@ export function ReadingDiaryScreen() {
 										key={opt.key}
 										onPress={() => setReadWith(opt.key)}
 										accessibilityLabel={opt.label}
-										className={`flex-row items-center gap-1.5 px-3 py-2 rounded-full ${
+										className={`flex-row items-center gap-1.5 px-4 py-3 min-h-[44px] rounded-full ${
 											readWith === opt.key
 												? "bg-white dark:bg-neutral-surface-dark border border-gray-200 dark:border-white/10"
 												: "bg-background dark:bg-white/5"
@@ -416,12 +416,12 @@ export function ReadingDiaryScreen() {
 										</View>
 									</View>
 									{entry.parentComment && (
-										<Text className="text-xs font-sans text-text-muted mt-2 ml-13">
+										<Text className="text-xs font-sans text-text-muted mt-2 ml-14">
 											{entry.parentComment}
 										</Text>
 									)}
 									{entry.teacherComment && (
-										<View className="mt-2 ml-13 bg-purple-50 dark:bg-purple-900/20 rounded-xl px-3 py-2">
+										<View className="mt-2 ml-14 bg-purple-50 dark:bg-purple-900/20 rounded-xl px-3 py-2">
 											<Text className="text-xs font-sans text-purple-700 dark:text-purple-300">
 												Teacher: {entry.teacherComment}
 											</Text>

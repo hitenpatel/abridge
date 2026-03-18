@@ -2,10 +2,12 @@
 
 import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
 import { AlertTriangle, CheckCircle, Clock, Shield } from "lucide-react";
@@ -74,7 +76,7 @@ function ActiveAlert({ schoolId }: { schoolId: string }) {
 						onChange={(e) => setUpdateMessage(e.target.value)}
 						className="flex-1 rounded-md border p-2 text-sm"
 					/>
-					<button
+					<Button
 						type="button"
 						onClick={() =>
 							postUpdateMutation.mutate({
@@ -84,14 +86,14 @@ function ActiveAlert({ schoolId }: { schoolId: string }) {
 							})
 						}
 						disabled={!updateMessage.trim() || postUpdateMutation.isPending}
-						className="rounded-md bg-red-600 px-3 py-2 text-sm text-white hover:bg-red-700 disabled:opacity-50"
+						className="bg-red-600 hover:bg-red-700 text-white"
 					>
 						Post
-					</button>
+					</Button>
 				</div>
 
 				<div className="flex gap-2 pt-2 border-t">
-					<button
+					<Button
 						type="button"
 						onClick={() =>
 							resolveMutation.mutate({
@@ -101,13 +103,14 @@ function ActiveAlert({ schoolId }: { schoolId: string }) {
 							})
 						}
 						disabled={resolveMutation.isPending}
-						className="rounded-md bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-700 disabled:opacity-50"
+						className="bg-green-600 hover:bg-green-700 text-white"
 					>
 						<CheckCircle className="inline h-4 w-4 mr-1" />
 						All Clear
-					</button>
-					<button
+					</Button>
+					<Button
 						type="button"
+						variant="outline"
 						onClick={() => {
 							const reason = prompt("Reason for cancellation:");
 							if (reason) {
@@ -120,10 +123,9 @@ function ActiveAlert({ schoolId }: { schoolId: string }) {
 							}
 						}}
 						disabled={resolveMutation.isPending}
-						className="rounded-md border px-4 py-2 text-sm hover:bg-muted disabled:opacity-50"
 					>
 						Cancel Alert
-					</button>
+					</Button>
 				</div>
 			</CardContent>
 		</Card>
@@ -171,23 +173,22 @@ function InitiateAlert({ schoolId }: { schoolId: string }) {
 
 				{type && (
 					<>
-						<textarea
+						<Textarea
 							placeholder="Optional message to parents (max 500 characters)"
 							maxLength={500}
 							value={message}
 							onChange={(e) => setMessage(e.target.value)}
-							className="w-full rounded-md border p-2 text-sm resize-none"
 							rows={2}
 						/>
 
 						{!confirming ? (
-							<button
+							<Button
 								type="button"
 								onClick={() => setConfirming(true)}
-								className="rounded-md bg-red-600 px-6 py-3 text-sm font-bold text-white hover:bg-red-700"
+								className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3"
 							>
 								Send Alert
-							</button>
+							</Button>
 						) : (
 							<div className="rounded-md border-2 border-red-500 bg-red-50 p-4">
 								<p className="text-sm font-bold text-red-700 mb-3">
@@ -195,7 +196,7 @@ function InitiateAlert({ schoolId }: { schoolId: string }) {
 									Are you sure?
 								</p>
 								<div className="flex gap-2">
-									<button
+									<Button
 										type="button"
 										onClick={() =>
 											initiateMutation.mutate({
@@ -210,17 +211,13 @@ function InitiateAlert({ schoolId }: { schoolId: string }) {
 											})
 										}
 										disabled={initiateMutation.isPending}
-										className="rounded-md bg-red-600 px-6 py-2 text-sm font-bold text-white hover:bg-red-700 disabled:opacity-50"
+										className="bg-red-600 hover:bg-red-700 text-white font-bold px-6"
 									>
 										{initiateMutation.isPending ? "Sending..." : "CONFIRM \u2014 Send Alert Now"}
-									</button>
-									<button
-										type="button"
-										onClick={() => setConfirming(false)}
-										className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
-									>
+									</Button>
+									<Button type="button" variant="outline" onClick={() => setConfirming(false)}>
 										Go Back
-									</button>
+									</Button>
 								</div>
 							</div>
 						)}
@@ -299,7 +296,7 @@ export default function EmergencyPage() {
 	}
 
 	return (
-		<PageShell maxWidth="4xl">
+		<PageShell>
 			<div className="space-y-6 p-6">
 				<PageHeader
 					icon={Shield}

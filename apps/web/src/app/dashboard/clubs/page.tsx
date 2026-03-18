@@ -157,7 +157,7 @@ export default function ClubsPage() {
 	}
 
 	return (
-		<PageShell maxWidth="4xl">
+		<PageShell>
 			<PageHeader icon={Trophy} title="Clubs" description="After-school clubs and activities">
 				{isStaff && (
 					<Button onClick={() => setShowCreate(true)}>

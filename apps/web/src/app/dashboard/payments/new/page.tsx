@@ -13,7 +13,7 @@ export default function NewPaymentItemPage() {
 
 	if (isLoading) {
 		return (
-			<PageShell maxWidth="2xl">
+			<PageShell maxWidth="4xl">
 				<div className="space-y-4">
 					<Skeleton className="h-8 w-1/3" />
 					<Skeleton className="h-64 w-full" />
@@ -24,7 +24,7 @@ export default function NewPaymentItemPage() {
 
 	if (!schoolId) {
 		return (
-			<PageShell maxWidth="2xl">
+			<PageShell maxWidth="4xl">
 				<div className="text-center text-muted-foreground py-8">
 					You must be a staff member to create payment items.
 				</div>
@@ -33,7 +33,7 @@ export default function NewPaymentItemPage() {
 	}
 
 	return (
-		<PageShell maxWidth="2xl">
+		<PageShell maxWidth="4xl">
 			<PageHeader icon={CreditCard} title="New Payment Request" />
 			<PaymentItemForm schoolId={schoolId} />
 		</PageShell>
