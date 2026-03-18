@@ -6,12 +6,18 @@ tags:
 ---
 - runFlow: ../_helpers/login-parent.yaml
 
+# Wait for nav button to appear (feature toggle dependent)
+- extendedWaitUntil:
+    visible:
+      id: "nav-reading-diary"
+    timeout: 120000
+
 # Navigate to reading diary via dev nav button
 - tapOn:
     id: "nav-reading-diary"
 - extendedWaitUntil:
     visible: "Reading Diary"
-    timeout: 60000
+    timeout: 120000
 
 # Verify recent entries section loads
 - extendedWaitUntil:

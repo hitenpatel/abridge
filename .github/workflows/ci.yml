@@ -317,6 +317,10 @@ jobs:
             echo "=== Running all Maestro tests ==="
             $HOME/.maestro/bin/maestro test apps/mobile/.maestro/ --format junit --output maestro-report.xml --debug-output $GITHUB_WORKSPACE/maestro-debug; echo $? > /tmp/maestro-exit
             echo "=== Maestro exit code: $(cat /tmp/maestro-exit) ==="
+            # Collect takeScreenshot PNGs into maestro-debug for artifact upload
+            mkdir -p $GITHUB_WORKSPACE/maestro-debug/screenshots
+            mv $GITHUB_WORKSPACE/native-*.png $GITHUB_WORKSPACE/maestro-debug/screenshots/ 2>/dev/null || true
+            echo "Native screenshots collected: $(ls $GITHUB_WORKSPACE/maestro-debug/screenshots/*.png 2>/dev/null | wc -l)"
             exit $(cat /tmp/maestro-exit)
 
       - uses: actions/upload-artifact@v4
@@ -519,6 +523,13 @@ jobs:
           echo "=== Maestro debug output ==="
           ls -la $GITHUB_WORKSPACE/maestro-debug/ 2>/dev/null || echo "No maestro-debug directory"
           find $GITHUB_WORKSPACE/maestro-debug -name "*.png" 2>/dev/null | head -20 || true
+
+          # Collect takeScreenshot PNGs into maestro-debug for artifact upload
+          mkdir -p $GITHUB_WORKSPACE/maestro-debug/screenshots
+          mv $GITHUB_WORKSPACE/native-*.png $GITHUB_WORKSPACE/maestro-debug/screenshots/ 2>/dev/null || true
+          ls $HOME/native-*.png 2>/dev/null && mv $HOME/native-*.png $GITHUB_WORKSPACE/maestro-debug/screenshots/ 2>/dev/null || true
+          find $GITHUB_WORKSPACE -maxdepth 1 -name "native-*.png" -exec mv {} $GITHUB_WORKSPACE/maestro-debug/screenshots/ \; 2>/dev/null || true
+          echo "Native screenshots collected: $(ls $GITHUB_WORKSPACE/maestro-debug/screenshots/*.png 2>/dev/null | wc -l)"
 
           echo "=== Simulator logs (all app output) ==="
           xcrun simctl spawn "$DEVICE" log show --predicate 'processImagePath CONTAINS "Abridge"' --last 30m --style compact 2>/dev/null | tail -50 || true

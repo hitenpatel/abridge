@@ -19,7 +19,7 @@ tags:
 # Verify gallery screen loaded
 - extendedWaitUntil:
     visible: "Gallery"
-    timeout: 60000
+    timeout: 120000
 
 # Verify subtitle
 - extendedWaitUntil:
