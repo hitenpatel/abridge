@@ -8,9 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 jobs:
   # ── Type-check + unit tests (no DB needed) ──
@@ -553,89 +551,67 @@ jobs:
     runs-on: ubuntu-latest
     needs: [e2e-web, e2e-android, e2e-mobile-ios]
     if: always() && github.ref == 'refs/heads/main'
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     permissions:
-      pages: write
-      id-token: write
-      contents: read
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      contents: write
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
 
       - uses: actions/setup-node@v4
         with:
           node-version: 24
 
-      - name: Download all test artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts/
+      - name: Install e2e-dashboard
+        run: npm install e2e-dashboard
 
-      - name: Fetch existing history
+      - name: Checkout gh-pages
         run: |
-          mkdir -p dashboard/data
-          curl -sSf "https://hitenpatel.github.io/abridge/data/history.json" \
-            -o dashboard/data/history.json 2>/dev/null || echo "[]" > dashboard/data/history.json
-
-      - name: Copy screenshots into dashboard
-        run: |
-          mkdir -p dashboard/screenshots
-          if [ -d "artifacts/app-screenshots" ]; then
-            cp -r artifacts/app-screenshots/*.png dashboard/screenshots/ 2>/dev/null || true
-            cp artifacts/app-screenshots/screenshots-data.json dashboard/screenshots-data.json 2>/dev/null || true
-            echo "Copied $(ls dashboard/screenshots/*.png 2>/dev/null | wc -l) web screenshots to dashboard"
+          git fetch origin gh-pages:gh-pages 2>/dev/null || true
+          if git rev-parse --verify gh-pages >/dev/null 2>&1; then
+            git worktree add dashboard-deploy gh-pages
           else
-            echo "No web screenshots artifact found — skipping"
+            mkdir dashboard-deploy
+            cd dashboard-deploy && git init && git checkout --orphan gh-pages
           fi
 
-      - name: Collect native mobile screenshots
+      - name: Copy dashboard SPA
         run: |
-          node scripts/collect-native-screenshots.js \
-            --android-debug "artifacts/maestro-report-android/maestro-debug" \
-            --ios-debug "artifacts/maestro-report-ios/maestro-debug" \
-            --screenshots-dir "dashboard/screenshots" \
-            --data-file "dashboard/screenshots-data.json"
-          echo "Total screenshots: $(ls dashboard/screenshots/*.png 2>/dev/null | wc -l)"
+          cp node_modules/e2e-dashboard/dashboard/index.html dashboard-deploy/index.html
+          mkdir -p dashboard-deploy/data
 
-      - name: Parse results and update history
-        env:
-          RUN_ID: ${{ github.run_id }}
-          SHA: ${{ github.sha }}
-          BRANCH: ${{ github.ref_name }}
-          MESSAGE: ${{ github.event.head_commit.message }}
+      - name: Parse results
         run: |
-          node dashboard/parse-results.js \
-            --run-id "$RUN_ID" \
-            --sha "$SHA" \
-            --branch "$BRANCH" \
-            --message "${MESSAGE%%$'\n'*}" \
-            --timestamp "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-            --playwright "artifacts/playwright-report/playwright-report.json" \
-            --maestro-android "artifacts/maestro-report-android/maestro-report.xml" \
-            --maestro-android-screenshots "artifacts/maestro-report-android/maestro-debug" \
-            --maestro-ios "artifacts/maestro-report-ios/maestro-report.xml" \
-            --maestro-ios-screenshots "artifacts/maestro-report-ios/maestro-debug" \
-            > /tmp/current-run.json
+          npx e2e-dashboard parse \
+            --run-id "${{ github.run_id }}" \
+            --sha "${GITHUB_SHA::7}" \
+            --message "$(git log -1 --format=%s | head -c 120)" \
+            --branch "${{ github.ref_name }}" \
+            --playwright artifacts/playwright-report/playwright-report.json \
+            --maestro-android artifacts/maestro-report-android/maestro-report.xml \
+            --maestro-ios artifacts/maestro-report-ios/maestro-report.xml \
+            --screenshots-dir artifacts/ \
+            --output-dir dashboard-deploy/screenshots/run-${{ github.run_id }}/ \
+            > new-run.json
 
-          node -e "
-            const fs = require('fs');
-            const current = JSON.parse(fs.readFileSync('/tmp/current-run.json', 'utf8'));
-            let history = [];
-            try { history = JSON.parse(fs.readFileSync('dashboard/data/history.json', 'utf8')); } catch(e) {}
-            history.unshift(current);
-            history = history.slice(0, 50);
-            fs.writeFileSync('dashboard/data/history.json', JSON.stringify(history, null, 2));
-          "
+      - name: Merge history
+        run: |
+          npx e2e-dashboard merge \
+            --history dashboard-deploy/data/history.json \
+            --new new-run.json \
+            --output dashboard-deploy/data/history.json \
+            --max-runs 50 \
+            --screenshots-base dashboard-deploy/screenshots/
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dashboard/
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Deploy to gh-pages
+        run: |
+          cd dashboard-deploy
+          git add -A
+          git -c user.name="github-actions" -c user.email="actions@github.com" \
+            commit -m "update dashboard: run ${{ github.run_id }}" --allow-empty
+          git push origin gh-pages --force
