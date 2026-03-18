@@ -208,6 +208,155 @@ function SummaryCard({
 	);
 }
 
+function Sparkline({
+	data,
+	color,
+	height = 40,
+	width = 120,
+}: { data: number[]; color: string; height?: number; width?: number }) {
+	if (data.length < 2) return null;
+	const max = Math.max(...data);
+	const min = Math.min(...data);
+	const range = max - min || 1;
+	const padding = 2;
+	const stepX = (width - padding * 2) / (data.length - 1);
+
+	const points = data
+		.map((v, i) => {
+			const x = padding + i * stepX;
+			const y = height - padding - ((v - min) / range) * (height - padding * 2);
+			return `${x},${y}`;
+		})
+		.join(" ");
+
+	return (
+		<svg
+			width={width}
+			height={height}
+			className="inline-block"
+			role="img"
+			aria-label="Trend sparkline"
+		>
+			<title>Trend sparkline</title>
+			<polyline
+				points={points}
+				fill="none"
+				stroke={color}
+				strokeWidth={2}
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+			{data.length > 0 &&
+				(() => {
+					const lastVal = data[data.length - 1] ?? 0;
+					const lastX = padding + (data.length - 1) * stepX;
+					const lastY = height - padding - ((lastVal - min) / range) * (height - padding * 2);
+					return <circle cx={lastX} cy={lastY} r={3} fill={color} />;
+				})()}
+		</svg>
+	);
+}
+
+function TrendSection({
+	summaries,
+}: { summaries: Array<{ templateData: unknown; weekStart: string | Date }> }) {
+	const sorted = [...summaries].reverse(); // oldest first
+	if (sorted.length < 2) return null;
+
+	const metrics = sorted
+		.map((s) => s.templateData as TemplateMetrics | null)
+		.filter((m): m is TemplateMetrics => m !== null);
+
+	if (metrics.length < 2) return null;
+
+	const attendanceData = metrics.map((m) => m.attendance.percentage);
+	const homeworkData = metrics.map((m) =>
+		m.homework.total > 0 ? Math.round((m.homework.completed / m.homework.total) * 100) : 0,
+	);
+	const readingData = metrics.map((m) => m.reading.currentStreak);
+
+	const latest = metrics.at(-1);
+	const prev = metrics.at(-2);
+
+	if (!latest || !prev) return null;
+
+	const delta = (curr: number, previous: number) => {
+		const diff = curr - previous;
+		if (diff === 0) return null;
+		return diff > 0 ? `+${diff}` : `${diff}`;
+	};
+
+	const attDelta = delta(latest.attendance.percentage, prev.attendance.percentage);
+	const hwCurr =
+		latest.homework.total > 0
+			? Math.round((latest.homework.completed / latest.homework.total) * 100)
+			: 0;
+	const hwPrev =
+		prev.homework.total > 0 ? Math.round((prev.homework.completed / prev.homework.total) * 100) : 0;
+	const hwDelta = delta(hwCurr, hwPrev);
+	const readDelta = delta(latest.reading.currentStreak, prev.reading.currentStreak);
+
+	return (
+		<Card>
+			<CardHeader>
+				<CardTitle className="text-base flex items-center gap-2">
+					<TrendingUp className="h-4 w-4" />
+					Trends ({metrics.length} weeks)
+				</CardTitle>
+			</CardHeader>
+			<CardContent>
+				<div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+					<div className="flex items-center gap-3">
+						<div>
+							<p className="text-xs text-muted-foreground mb-1">Attendance</p>
+							<div className="flex items-center gap-2">
+								<Sparkline data={attendanceData} color="#2563eb" />
+								{attDelta && (
+									<span
+										className={`text-xs font-medium ${Number(attDelta) > 0 ? "text-green-600" : "text-red-600"}`}
+									>
+										{attDelta}%
+									</span>
+								)}
+							</div>
+						</div>
+					</div>
+					<div className="flex items-center gap-3">
+						<div>
+							<p className="text-xs text-muted-foreground mb-1">Homework</p>
+							<div className="flex items-center gap-2">
+								<Sparkline data={homeworkData} color="#16a34a" />
+								{hwDelta && (
+									<span
+										className={`text-xs font-medium ${Number(hwDelta) > 0 ? "text-green-600" : "text-red-600"}`}
+									>
+										{hwDelta}%
+									</span>
+								)}
+							</div>
+						</div>
+					</div>
+					<div className="flex items-center gap-3">
+						<div>
+							<p className="text-xs text-muted-foreground mb-1">Reading Streak</p>
+							<div className="flex items-center gap-2">
+								<Sparkline data={readingData} color="#d97706" />
+								{readDelta && (
+									<span
+										className={`text-xs font-medium ${Number(readDelta) > 0 ? "text-green-600" : "text-red-600"}`}
+									>
+										{readDelta} days
+									</span>
+								)}
+							</div>
+						</div>
+					</div>
+				</div>
+			</CardContent>
+		</Card>
+	);
+}
+
 function ParentView() {
 	const { data: children } = trpc.user.listChildren.useQuery();
 	const [selectedChild, setSelectedChild] = useState<string | null>(null);
@@ -271,6 +420,9 @@ function ParentView() {
 					</CardContent>
 				</Card>
 			)}
+
+			{/* Trends */}
+			{history.length >= 2 && <TrendSection summaries={history} />}
 
 			{/* History */}
 			{pastSummaries.length > 0 && (
