@@ -15,7 +15,7 @@ import { FeatureToggleProvider, useFeatureToggles } from "@/lib/feature-toggles"
 import { navIcons } from "@/lib/nav-icons";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import { ChevronDown, GraduationCap, LogOut, Menu, X } from "lucide-react";
+import { GraduationCap, LogOut, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -424,7 +424,9 @@ function DashboardLayoutInner({
 										{userRole?.staffRole ? `Staff (${userRole.staffRole})` : "Parent Account"}
 									</p>
 								</div>
-								<ChevronDown className="w-5 h-5 ml-auto text-gray-400" aria-hidden="true" />
+								<span className="ml-auto text-gray-400 text-sm" aria-hidden="true">
+									&#9662;
+								</span>
 							</button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end" className="w-56">
