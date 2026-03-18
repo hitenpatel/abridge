@@ -207,7 +207,7 @@ function ParentView() {
 			)}
 
 			{/* Dietary Profile */}
-			<Card>
+			<Card className="bg-amber-50/20 border-orange-100/50">
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
 						<ClipboardList className="h-5 w-5" />
@@ -228,7 +228,7 @@ function ParentView() {
 												type="checkbox"
 												checked={allergies.includes(allergen)}
 												onChange={() => toggleAllergy(allergen)}
-												className="rounded border-gray-300"
+												className="rounded border-orange-200"
 											/>
 											{allergen}
 										</label>
@@ -245,7 +245,7 @@ function ParentView() {
 												type="checkbox"
 												checked={dietaryNeeds.includes(need)}
 												onChange={() => toggleDietaryNeed(need)}
-												className="rounded border-gray-300"
+												className="rounded border-orange-200"
 											/>
 											{DIETARY_LABELS[need]}
 										</label>
@@ -294,7 +294,7 @@ function ParentView() {
 			</Card>
 
 			{/* This Week's Menu */}
-			<Card>
+			<Card className="bg-amber-50/20 border-orange-100/50">
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
 						<UtensilsCrossed className="h-5 w-5" />
@@ -322,7 +322,7 @@ function ParentView() {
 												return (
 													<div
 														key={opt.id}
-														className="flex items-center gap-3 rounded-md border p-3"
+														className="flex items-center gap-3 rounded-md border border-orange-100/50 bg-amber-50/20 p-3 hover:bg-orange-50/40 transition-colors"
 													>
 														<div className="flex-1">
 															<div className="flex items-center gap-2 mb-1">
@@ -342,7 +342,7 @@ function ParentView() {
 																			className={
 																				allergies.includes(allergen)
 																					? "bg-red-100 text-red-800"
-																					: "bg-gray-100 text-gray-600"
+																					: "bg-orange-100/40 text-foreground"
 																			}
 																		>
 																			{allergen}
@@ -383,7 +383,7 @@ function ParentView() {
 			</Card>
 
 			{/* Your Bookings */}
-			<Card>
+			<Card className="bg-amber-50/20 border-orange-100/50">
 				<CardHeader>
 					<CardTitle>Your Bookings</CardTitle>
 				</CardHeader>
@@ -395,7 +395,10 @@ function ParentView() {
 					) : (
 						<div className="space-y-2">
 							{bookings.map((booking) => (
-								<div key={booking.id} className="flex items-center gap-3 rounded-md border p-3">
+								<div
+									key={booking.id}
+									className="flex items-center gap-3 rounded-md border border-orange-100/50 bg-amber-50/20 p-3 hover:bg-orange-50/40 transition-colors"
+								>
 									<div className="flex-1">
 										<p className="text-sm font-medium">{booking.mealOption.name}</p>
 										<p className="text-xs text-muted-foreground">
@@ -615,7 +618,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 												type="checkbox"
 												checked={newOptionAllergens.includes(allergen)}
 												onChange={() => toggleNewOptionAllergen(allergen)}
-												className="rounded border-gray-300"
+												className="rounded border-orange-200"
 											/>
 											{allergen}
 										</label>
@@ -649,7 +652,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 												return (
 													<div
 														key={`${day}-${idx}`}
-														className="flex items-center gap-2 rounded-md border p-2 mb-1"
+														className="flex items-center gap-2 rounded-md border border-orange-100/50 bg-amber-50/20 p-2 mb-1"
 													>
 														<div className="flex-1 flex items-center gap-2">
 															<span className="text-sm">{opt.name}</span>
@@ -660,7 +663,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 																{formatPrice(opt.priceInPence)}
 															</span>
 															{opt.allergens.map((a) => (
-																<Badge key={a} className="bg-gray-100 text-gray-600">
+																<Badge key={a} className="bg-orange-100/40 text-foreground">
 																	{a}
 																</Badge>
 															))}
@@ -732,7 +735,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 								{kitchenSummary.map((item) => (
 									<div
 										key={item.mealOptionId}
-										className="flex items-center justify-between rounded-md border p-3"
+										className="flex items-center justify-between rounded-md border border-orange-100/50 bg-amber-50/20 p-3"
 									>
 										<span className="text-sm">{item.mealOptionId}</span>
 										<Badge className="bg-blue-100 text-blue-800">{item._count.id} booked</Badge>
@@ -760,7 +763,10 @@ function StaffView({ schoolId }: { schoolId: string }) {
 					) : (
 						<div className="space-y-2">
 							{menus.map((menu) => (
-								<div key={menu.id} className="flex items-center gap-3 rounded-md border p-3">
+								<div
+									key={menu.id}
+									className="flex items-center gap-3 rounded-md border border-orange-100/50 bg-amber-50/20 p-3 hover:bg-orange-50/40 transition-colors"
+								>
 									<div className="flex-1">
 										<p className="text-sm font-medium">
 											Week of{" "}

@@ -301,7 +301,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 											entry.rank === 1
 												? "bg-yellow-100 text-yellow-800"
 												: entry.rank === 2
-													? "bg-gray-100 text-gray-800"
+													? "bg-orange-100/40 text-gray-800"
 													: entry.rank === 3
 														? "bg-orange-100 text-orange-800"
 														: "bg-muted text-muted-foreground"

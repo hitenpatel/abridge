@@ -364,7 +364,7 @@ function DashboardLayoutInner({
 							"flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
 							isActive
 								? "bg-primary/10 text-primary font-semibold border-l-[3px] border-primary"
-								: "text-gray-500 hover:bg-gray-50 hover:text-slate-800",
+								: "text-gray-500 hover:bg-orange-50/40 hover:text-slate-800",
 						)}
 					>
 						{(() => {
@@ -405,12 +405,12 @@ function DashboardLayoutInner({
 					<h1 className="text-2xl font-bold tracking-tight text-slate-800">Abridge</h1>
 				</div>
 				<NavContent />
-				<div className="mt-auto pt-6 border-t border-gray-100">
+				<div className="mt-auto pt-6 border-t border-orange-100/50">
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<button
 								type="button"
-								className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 w-full text-left transition-colors"
+								className="flex items-center gap-3 p-2 rounded-xl hover:bg-orange-50/40 w-full text-left transition-colors"
 								data-testid="user-menu-trigger"
 							>
 								<Avatar className="h-10 w-10">

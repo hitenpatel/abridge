@@ -22,21 +22,24 @@ interface ActionItemCardProps {
 
 const CONFIG: Record<
 	ActionItemType,
-	{ borderColor: string; bgColor: string; icon: typeof AlertTriangle }
+	{ borderColor: string; bgColor: string; cardBg: string; icon: typeof AlertTriangle }
 > = {
 	urgentMessage: {
-		borderColor: "border-l-red-500",
+		borderColor: "border-l-red-400",
 		bgColor: "bg-red-50",
+		cardBg: "bg-orange-50/50",
 		icon: AlertTriangle,
 	},
 	payment: {
-		borderColor: "border-l-amber-500",
+		borderColor: "border-l-amber-400",
 		bgColor: "bg-amber-50",
+		cardBg: "bg-amber-50/50",
 		icon: CreditCard,
 	},
 	form: {
-		borderColor: "border-l-blue-500",
-		bgColor: "bg-blue-50",
+		borderColor: "border-l-teal-400",
+		bgColor: "bg-teal-50",
+		cardBg: "bg-teal-50/40",
 		icon: FileText,
 	},
 };
@@ -48,12 +51,12 @@ export function ActionItemCard({
 	actionLabel,
 	onAction,
 }: ActionItemCardProps) {
-	const { borderColor, bgColor, icon: Icon } = CONFIG[type];
+	const { borderColor, bgColor, cardBg, icon: Icon } = CONFIG[type];
 
 	return (
 		<Card
 			data-testid={TEST_ID_MAP[type]}
-			className={cn("border-l-4 min-w-[260px] shrink-0 snap-start", borderColor)}
+			className={cn("border-l-4 min-w-[260px] shrink-0 snap-start", borderColor, cardBg)}
 		>
 			<CardContent className="p-4">
 				<div className="flex items-start gap-3">

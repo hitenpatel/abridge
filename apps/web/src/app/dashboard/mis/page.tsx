@@ -48,7 +48,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 const CONNECTION_STATUS_COLORS: Record<string, string> = {
 	CONNECTED: "bg-green-100 text-green-800",
-	DISCONNECTED: "bg-gray-100 text-gray-800",
+	DISCONNECTED: "bg-orange-100/40 text-gray-800",
 	ERROR: "bg-red-100 text-red-800",
 };
 
@@ -336,7 +336,7 @@ function CsvUpload({ schoolId }: { schoolId: string }) {
 								ref={studentFileRef}
 								type="file"
 								accept=".csv"
-								className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-gray-200 file:text-sm file:font-medium file:bg-white hover:file:bg-gray-50"
+								className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-orange-100/60 file:text-sm file:font-medium file:bg-white hover:file:bg-orange-50/40"
 							/>
 							<Button
 								type="button"
@@ -371,7 +371,7 @@ function CsvUpload({ schoolId }: { schoolId: string }) {
 								ref={attendanceFileRef}
 								type="file"
 								accept=".csv"
-								className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-gray-200 file:text-sm file:font-medium file:bg-white hover:file:bg-gray-50"
+								className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border file:border-orange-100/60 file:text-sm file:font-medium file:bg-white hover:file:bg-orange-50/40"
 							/>
 							<Button
 								type="button"
@@ -423,7 +423,9 @@ function ConnectionStatus({ schoolId }: { schoolId: string }) {
 					<div className="space-y-3">
 						<div className="flex items-center gap-3">
 							<Badge
-								className={CONNECTION_STATUS_COLORS[status.status] ?? "bg-gray-100 text-gray-800"}
+								className={
+									CONNECTION_STATUS_COLORS[status.status] ?? "bg-orange-100/40 text-gray-800"
+								}
 							>
 								{status.status === "CONNECTED" && <CheckCircle2 className="h-3 w-3 mr-1" />}
 								{status.status === "DISCONNECTED" && <CloudOff className="h-3 w-3 mr-1" />}
@@ -511,7 +513,7 @@ function SyncHistory({ schoolId }: { schoolId: string }) {
 											<td className="px-3 py-2">{item.syncType}</td>
 											<td className="px-3 py-2">
 												<Badge
-													className={STATUS_COLORS[item.status] ?? "bg-gray-100 text-gray-800"}
+													className={STATUS_COLORS[item.status] ?? "bg-orange-100/40 text-gray-800"}
 												>
 													{item.status}
 												</Badge>

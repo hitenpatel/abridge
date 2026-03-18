@@ -72,7 +72,7 @@ function ProfileCard() {
 
 	if (isLoading) {
 		return (
-			<Card className="rounded-2xl border border-gray-100">
+			<Card className="rounded-2xl border border-orange-100/50">
 				<CardHeader>
 					<Skeleton className="h-6 w-32" />
 				</CardHeader>
@@ -86,7 +86,7 @@ function ProfileCard() {
 	}
 
 	return (
-		<Card className="rounded-2xl border border-gray-100">
+		<Card className="rounded-2xl border border-orange-100/50">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
 					<User className="w-5 h-5 text-primary" aria-hidden="true" />
@@ -117,7 +117,7 @@ function ProfileCard() {
 							id="settings-email"
 							value={data?.email ?? ""}
 							disabled
-							className="bg-gray-50 text-gray-500"
+							className="bg-orange-50/30 text-gray-500"
 						/>
 						<p className="text-xs text-gray-400">Contact admin to change your email</p>
 					</div>
@@ -190,7 +190,7 @@ function NotificationsCard() {
 
 	if (isLoading) {
 		return (
-			<Card className="rounded-2xl border border-gray-100">
+			<Card className="rounded-2xl border border-orange-100/50">
 				<CardHeader>
 					<Skeleton className="h-6 w-48" />
 				</CardHeader>
@@ -204,7 +204,7 @@ function NotificationsCard() {
 	}
 
 	return (
-		<Card className="rounded-2xl border border-gray-100">
+		<Card className="rounded-2xl border border-orange-100/50">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
 					<Bell className="w-5 h-5 text-primary" aria-hidden="true" />
@@ -318,7 +318,7 @@ function SchoolSettingsCard({ schoolId }: { schoolId: string }) {
 
 	if (isLoading) {
 		return (
-			<Card className="rounded-2xl border border-gray-100">
+			<Card className="rounded-2xl border border-orange-100/50">
 				<CardHeader>
 					<Skeleton className="h-6 w-40" />
 				</CardHeader>
@@ -332,7 +332,7 @@ function SchoolSettingsCard({ schoolId }: { schoolId: string }) {
 	}
 
 	return (
-		<Card className="rounded-2xl border border-gray-100">
+		<Card className="rounded-2xl border border-orange-100/50">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
 					<GraduationCap className="w-5 h-5 text-primary" aria-hidden="true" />
@@ -463,7 +463,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 
 	if (isLoading) {
 		return (
-			<Card className="rounded-2xl border border-gray-100">
+			<Card className="rounded-2xl border border-orange-100/50">
 				<CardHeader>
 					<Skeleton className="h-6 w-40" />
 				</CardHeader>
@@ -477,7 +477,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 	}
 
 	return (
-		<Card className="rounded-2xl border border-gray-100" data-testid="feature-toggles-card">
+		<Card className="rounded-2xl border border-orange-100/50" data-testid="feature-toggles-card">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
 					<ToggleRight className="w-5 h-5 text-primary" aria-hidden="true" />
@@ -592,7 +592,7 @@ function FeatureTogglesCard({ schoolId }: { schoolId: string }) {
 							data-testid="toggle-payments"
 						/>
 						{payments && (
-							<div className="pl-6 border-l-2 border-gray-100 ml-2 space-y-1">
+							<div className="pl-6 border-l-2 border-orange-100/50 ml-2 space-y-1">
 								<p className="text-xs text-gray-400 pt-1 pb-1">Payment categories</p>
 								<Toggle
 									checked={dinnerMoney}
@@ -769,7 +769,7 @@ function StripeCard({ schoolId }: { schoolId: string }) {
 	const isConnected = status?.chargesEnabled;
 
 	return (
-		<Card className="rounded-2xl border border-gray-100 shadow-sm">
+		<Card className="rounded-2xl border border-orange-100/50 shadow-sm">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
 					<CreditCard className="w-5 h-5 text-primary" aria-hidden="true" />
@@ -840,7 +840,7 @@ function BrandingCard({ schoolId }: { schoolId: string }) {
 
 	if (isLoading) {
 		return (
-			<Card className="rounded-2xl border border-gray-100">
+			<Card className="rounded-2xl border border-orange-100/50">
 				<CardHeader>
 					<Skeleton className="h-6 w-40" />
 				</CardHeader>
@@ -854,7 +854,7 @@ function BrandingCard({ schoolId }: { schoolId: string }) {
 	}
 
 	return (
-		<Card className="rounded-2xl border border-gray-100" data-testid="branding-card">
+		<Card className="rounded-2xl border border-orange-100/50" data-testid="branding-card">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
 					<Palette className="w-5 h-5 text-primary" aria-hidden="true" />
@@ -884,7 +884,7 @@ function BrandingCard({ schoolId }: { schoolId: string }) {
 						<Label htmlFor="brand-color">Brand Colour</Label>
 						<div className="flex items-center gap-3">
 							<div
-								className="w-10 h-10 rounded-lg border border-gray-200 shrink-0"
+								className="w-10 h-10 rounded-lg border border-orange-100/60 shrink-0"
 								style={{ backgroundColor: isValidHex(brandColor) ? brandColor : "#cccccc" }}
 							/>
 							<Input
@@ -905,7 +905,7 @@ function BrandingCard({ schoolId }: { schoolId: string }) {
 						<Label htmlFor="secondary-color">Secondary Colour</Label>
 						<div className="flex items-center gap-3">
 							<div
-								className="w-10 h-10 rounded-lg border border-gray-200 shrink-0"
+								className="w-10 h-10 rounded-lg border border-orange-100/60 shrink-0"
 								style={{
 									backgroundColor:
 										secondaryColor && isValidHex(secondaryColor) ? secondaryColor : "#e5e7eb",

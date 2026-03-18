@@ -85,7 +85,7 @@ function ParentCheckIn() {
 				</div>
 			)}
 
-			<Card className="hover-lift">
+			<Card className="hover-lift bg-amber-50/20 border-orange-100/50">
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
 						<SmilePlus className="h-5 w-5" />
@@ -102,7 +102,7 @@ function ParentCheckIn() {
 								className={`flex flex-col items-center gap-1 rounded-lg border-2 p-3 transition-colors ${
 									selectedMood === mood
 										? "border-primary bg-primary/5"
-										: "border-transparent hover:border-muted"
+										: "border-transparent bg-orange-50/30 hover:bg-orange-50/50 hover:border-orange-200"
 								}`}
 							>
 								<span className="text-3xl">{emoji}</span>
@@ -139,7 +139,7 @@ function ParentCheckIn() {
 				</CardContent>
 			</Card>
 
-			<Card className="hover-lift">
+			<Card className="hover-lift bg-amber-50/20 border-orange-100/50">
 				<CardHeader>
 					<CardTitle>Recent Check-ins</CardTitle>
 				</CardHeader>
@@ -149,7 +149,10 @@ function ParentCheckIn() {
 							<p className="text-sm text-muted-foreground">No check-ins yet.</p>
 						)}
 						{checkIns?.map((ci) => (
-							<div key={ci.id} className="flex items-center gap-3 rounded-md border p-2">
+							<div
+								key={ci.id}
+								className="flex items-center gap-3 rounded-md border border-orange-100/50 bg-amber-50/20 p-2"
+							>
 								<span className="text-xl">{MOOD_EMOJI[ci.mood]}</span>
 								<div className="flex-1">
 									<Badge className={MOOD_COLORS[ci.mood]}>{ci.mood.toLowerCase()}</Badge>
@@ -257,7 +260,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 				</Card>
 
 				{/* Right: Today's Check-ins */}
-				<Card className="hover-lift">
+				<Card className="hover-lift bg-amber-50/20 border-orange-100/50">
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
 							<Heart className="h-5 w-5" />

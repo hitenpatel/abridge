@@ -390,7 +390,7 @@ function OnSiteTab({ schoolId }: { schoolId: string }) {
 								<div className="flex-1">
 									<div className="flex items-center gap-2 mb-1">
 										<span className="font-medium text-sm">{log.visitor.name}</span>
-										<Badge className="bg-gray-100 text-gray-600">
+										<Badge className="bg-orange-100/40 text-gray-600">
 											{PURPOSE_LABELS[log.purpose] ?? log.purpose}
 										</Badge>
 										{log.badgeNumber && (

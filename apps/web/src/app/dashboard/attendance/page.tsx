@@ -50,7 +50,7 @@ function StaffAttendanceView({ schoolId }: { schoolId: string }) {
 	const markBadge = (mark: string | null) => {
 		if (!mark)
 			return (
-				<Badge variant="outline" className="text-gray-400">
+				<Badge variant="outline" className="text-muted-foreground">
 					—
 				</Badge>
 			);
@@ -65,7 +65,7 @@ function StaffAttendanceView({ schoolId }: { schoolId: string }) {
 				return <Badge variant="destructive">Absent</Badge>;
 			case "NOT_REQUIRED":
 				return (
-					<Badge variant="outline" className="text-gray-400">
+					<Badge variant="outline" className="text-muted-foreground">
 						N/R
 					</Badge>
 				);
@@ -94,33 +94,33 @@ function StaffAttendanceView({ schoolId }: { schoolId: string }) {
 
 			{/* Summary Cards */}
 			<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-				<Card className="glass-card p-5 text-center">
+				<Card className="glass-card p-5 text-center bg-green-50/30">
 					<div className="flex items-center justify-center gap-2 mb-2">
 						<CheckCircle2 className="h-5 w-5 text-green-600" aria-hidden="true" />
 						<span className="text-sm font-medium text-muted-foreground">Present</span>
 					</div>
 					<p className="text-3xl font-bold text-green-600">{summary.present}</p>
 				</Card>
-				<Card className="glass-card p-5 text-center">
+				<Card className="glass-card p-5 text-center bg-red-50/20">
 					<div className="flex items-center justify-center gap-2 mb-2">
 						<XCircle className="h-5 w-5 text-red-600" aria-hidden="true" />
 						<span className="text-sm font-medium text-muted-foreground">Absent</span>
 					</div>
 					<p className="text-3xl font-bold text-red-600">{summary.absent}</p>
 				</Card>
-				<Card className="glass-card p-5 text-center">
+				<Card className="glass-card p-5 text-center bg-yellow-50/30">
 					<div className="flex items-center justify-center gap-2 mb-2">
 						<Clock className="h-5 w-5 text-yellow-600" aria-hidden="true" />
 						<span className="text-sm font-medium text-muted-foreground">Late</span>
 					</div>
 					<p className="text-3xl font-bold text-yellow-600">{summary.late}</p>
 				</Card>
-				<Card className="glass-card p-5 text-center">
+				<Card className="glass-card p-5 text-center bg-amber-50/30">
 					<div className="flex items-center justify-center gap-2 mb-2">
-						<HelpCircle className="h-5 w-5 text-gray-500" aria-hidden="true" />
+						<HelpCircle className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
 						<span className="text-sm font-medium text-muted-foreground">Unmarked</span>
 					</div>
-					<p className="text-3xl font-bold text-gray-500">{summary.unmarked}</p>
+					<p className="text-3xl font-bold text-muted-foreground">{summary.unmarked}</p>
 				</Card>
 			</div>
 
@@ -134,7 +134,7 @@ function StaffAttendanceView({ schoolId }: { schoolId: string }) {
 						<span className="text-sm font-bold">{attendanceRate}%</span>
 					</div>
 					<div
-						className="w-full bg-gray-100 rounded-full h-3"
+						className="w-full bg-orange-100/40 rounded-full h-3"
 						role="progressbar"
 						aria-valuenow={attendanceRate}
 						aria-valuemin={0}
@@ -183,7 +183,7 @@ function StaffAttendanceView({ schoolId }: { schoolId: string }) {
 							{rows.map((row) => (
 								<tr
 									key={row.childId}
-									className="border-b last:border-b-0 hover:bg-muted/30 transition-colors"
+									className="border-b last:border-b-0 hover:bg-orange-50/40 transition-colors"
 								>
 									<td className="p-4">
 										<span className="font-medium">
@@ -285,7 +285,7 @@ function ParentAttendanceView() {
 			case "absent":
 				return "bg-primary";
 			default:
-				return "bg-gray-300";
+				return "bg-amber-200";
 		}
 	};
 
@@ -296,7 +296,7 @@ function ParentAttendanceView() {
 			case "absent":
 				return "border-red-100 bg-red-50";
 			default:
-				return "border-gray-100 bg-white";
+				return "border-orange-100/50 bg-white";
 		}
 	};
 
@@ -326,7 +326,7 @@ function ParentAttendanceView() {
 										className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
 											activeChildId === link.childId
 												? "bg-primary text-white"
-												: "bg-gray-100 text-gray-700 hover:bg-gray-200"
+												: "bg-orange-100/40 text-foreground hover:bg-orange-50/40"
 										}`}
 									>
 										{link.child.firstName}
@@ -363,7 +363,7 @@ function ParentAttendanceView() {
 											prev.setMonth(prev.getMonth() - 1);
 											setCurrentMonth(prev);
 										}}
-										className="p-2 hover:bg-gray-100 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+										className="p-2 hover:bg-orange-50/40 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
 									>
 										<ChevronLeft className="h-5 w-5" aria-hidden="true" />
 									</button>
@@ -374,7 +374,7 @@ function ParentAttendanceView() {
 											next.setMonth(next.getMonth() + 1);
 											setCurrentMonth(next);
 										}}
-										className="p-2 hover:bg-gray-100 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+										className="p-2 hover:bg-orange-50/40 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
 									>
 										<ChevronRight className="h-5 w-5" aria-hidden="true" />
 									</button>
@@ -386,7 +386,7 @@ function ParentAttendanceView() {
 								{["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
 									<div
 										key={day}
-										className="text-center text-xs font-bold text-gray-500 uppercase tracking-wide"
+										className="text-center text-xs font-bold text-muted-foreground uppercase tracking-wide"
 									>
 										{day}
 									</div>
@@ -396,7 +396,7 @@ function ParentAttendanceView() {
 							<div className="grid grid-cols-7 gap-2">
 								{/* Empty cells for days before month starts */}
 								{Array.from({ length: startingDayOfWeek }).map((_, i) => (
-									<div key={i} className="h-24 p-2 rounded-xl bg-gray-50 opacity-50" />
+									<div key={i} className="h-24 p-2 rounded-xl bg-orange-50/30 opacity-50" />
 								))}
 
 								{/* Calendar days */}
@@ -407,7 +407,10 @@ function ParentAttendanceView() {
 
 									if (isWeekend && !status) {
 										return (
-											<div key={day} className="h-24 p-2 rounded-xl bg-gray-50 text-gray-400">
+											<div
+												key={day}
+												className="h-24 p-2 rounded-xl bg-orange-50/30 text-muted-foreground"
+											>
 												<span className="text-sm font-bold">{day}</span>
 											</div>
 										);
@@ -420,7 +423,7 @@ function ParentAttendanceView() {
 												className="h-24 p-2 rounded-xl ring-2 ring-primary ring-offset-2 border border-primary bg-primary/10 relative group"
 											>
 												<span className="text-sm font-bold text-primary">{day}</span>
-												<div className="absolute bottom-3 right-3 w-3 h-3 bg-gray-300 rounded-full shadow-sm animate-pulse" />
+												<div className="absolute bottom-3 right-3 w-3 h-3 bg-amber-200 rounded-full shadow-sm animate-pulse" />
 												<div className="absolute top-2 right-2 text-[10px] font-bold text-primary uppercase">
 													Today
 												</div>
@@ -433,7 +436,7 @@ function ParentAttendanceView() {
 											key={day}
 											className={`h-24 p-2 rounded-xl border hover:border-secondary transition-colors relative group ${getAttendanceBg(status || "")}`}
 										>
-											<span className="text-sm font-bold text-gray-700">{day}</span>
+											<span className="text-sm font-bold text-foreground">{day}</span>
 											{status && (
 												<div
 													className={`absolute bottom-3 right-3 w-3 h-3 ${getAttendanceColor(status)} rounded-full shadow-sm`}
@@ -458,15 +461,15 @@ function ParentAttendanceView() {
 							<div className="flex flex-wrap gap-4 mt-6 text-sm">
 								<div className="flex items-center gap-2">
 									<div className="w-3 h-3 bg-green-400 rounded-full" />
-									<span className="text-gray-500 font-medium">Present</span>
+									<span className="text-muted-foreground font-medium">Present</span>
 								</div>
 								<div className="flex items-center gap-2">
 									<div className="w-3 h-3 bg-yellow-400 rounded-full" />
-									<span className="text-gray-500 font-medium">Late</span>
+									<span className="text-muted-foreground font-medium">Late</span>
 								</div>
 								<div className="flex items-center gap-2">
 									<div className="w-3 h-3 bg-primary rounded-full" />
-									<span className="text-gray-500 font-medium">Absent</span>
+									<span className="text-muted-foreground font-medium">Absent</span>
 								</div>
 							</div>
 						</Card>
@@ -483,7 +486,7 @@ function ParentAttendanceView() {
 									</div>
 									<div>
 										<h4 className="font-bold text-lg mb-1">{activeChild.firstName} is at School</h4>
-										<p className="text-sm text-gray-500">Checked in at 8:15 AM • On Time</p>
+										<p className="text-sm text-muted-foreground">Checked in at 8:15 AM • On Time</p>
 									</div>
 									<div className="ml-auto">
 										<CheckCircle2
@@ -506,26 +509,26 @@ function ParentAttendanceView() {
 								<div>
 									<label
 										htmlFor="absence-date"
-										className="block text-sm font-bold text-gray-500 mb-2"
+										className="block text-sm font-bold text-muted-foreground mb-2"
 									>
 										Select Date(s)
 									</label>
 									<div className="relative">
 										<CalendarDays
-											className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
+											className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
 											aria-hidden="true"
 										/>
 										<input
 											id="absence-date"
 											type="date"
 											data-testid="absence-date-input"
-											className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-primary focus:border-transparent font-semibold transition-all"
+											className="w-full pl-10 pr-4 py-3 rounded-xl border border-orange-100/50 bg-orange-50/30 focus:ring-2 focus:ring-primary focus:border-transparent font-semibold transition-all"
 										/>
 									</div>
 								</div>
 
 								<fieldset data-testid="absence-reason-input">
-									<legend className="block text-sm font-bold text-gray-500 mb-3">
+									<legend className="block text-sm font-bold text-muted-foreground mb-3">
 										Reason for Absence
 									</legend>
 									<div className="grid grid-cols-2 gap-4">
@@ -551,13 +554,15 @@ function ParentAttendanceView() {
 														onChange={(e) => setSelectedReason(e.target.value)}
 														className="peer sr-only"
 													/>
-													<div className="p-4 rounded-xl border-2 border-gray-100 bg-gray-50 peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-center flex flex-col items-center gap-2 h-32 justify-center hover:bg-gray-100">
+													<div className="p-4 rounded-xl border-2 border-orange-100/50 bg-orange-50/30 peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-center flex flex-col items-center gap-2 h-32 justify-center hover:bg-orange-50/40">
 														<div
 															className={`w-12 h-12 rounded-full bg-${reason.color}-100 text-${reason.color}-500 flex items-center justify-center mb-1`}
 														>
 															<ReasonIcon className="h-6 w-6" aria-hidden="true" />
 														</div>
-														<span className="font-bold text-sm text-gray-700">{reason.label}</span>
+														<span className="font-bold text-sm text-foreground">
+															{reason.label}
+														</span>
 													</div>
 												</label>
 											);
@@ -568,13 +573,13 @@ function ParentAttendanceView() {
 								<div>
 									<label
 										htmlFor="absence-note"
-										className="block text-sm font-bold text-gray-500 mb-2"
+										className="block text-sm font-bold text-muted-foreground mb-2"
 									>
 										Note for Teacher (Optional)
 									</label>
 									<textarea
 										id="absence-note"
-										className="w-full p-4 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+										className="w-full p-4 rounded-xl border border-orange-100/50 bg-orange-50/30 focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
 										placeholder="E.g., Leo has a dentist appointment at 10am..."
 										rows={3}
 									/>
@@ -589,7 +594,7 @@ function ParentAttendanceView() {
 									<Send className="h-4 w-4" aria-hidden="true" />
 								</button>
 
-								<p className="text-center text-xs text-gray-500">
+								<p className="text-center text-xs text-muted-foreground">
 									This will notify the teacher and school office immediately.
 								</p>
 							</form>

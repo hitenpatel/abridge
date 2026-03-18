@@ -47,7 +47,7 @@ const EFFORT_LABELS: Record<string, string> = {
 const STATUS_COLORS: Record<string, string> = {
 	DRAFT: "bg-yellow-100 text-yellow-800",
 	PUBLISHED: "bg-green-100 text-green-800",
-	ARCHIVED: "bg-gray-100 text-gray-800",
+	ARCHIVED: "bg-orange-100/40 text-gray-800",
 };
 
 const CYCLE_TYPE_LABELS: Record<string, string> = {
@@ -293,7 +293,7 @@ function ParentView() {
 								key={report.id}
 								type="button"
 								onClick={() => setSelectedCycleId(report.cycle.id)}
-								className="flex w-full items-center justify-between rounded-md border p-3 text-left hover:bg-muted transition-colors"
+								className="flex w-full items-center justify-between rounded-md border p-3 text-left hover:bg-orange-50/40 transition-colors"
 							>
 								<div>
 									<p className="font-medium">{report.cycle.name}</p>
@@ -301,7 +301,7 @@ function ParentView() {
 										Published {new Date(report.cycle.publishDate).toLocaleDateString("en-GB")}
 									</p>
 								</div>
-								<Badge className="bg-gray-100 text-gray-800">
+								<Badge className="bg-orange-100/40 text-gray-800">
 									{CYCLE_TYPE_LABELS[report.cycle.type] ?? report.cycle.type}
 								</Badge>
 							</button>
@@ -752,7 +752,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 												{child.gradeCount} subject{child.gradeCount !== 1 ? "s" : ""}
 											</Badge>
 										) : (
-											<Badge className="bg-gray-100 text-gray-800">No report</Badge>
+											<Badge className="bg-orange-100/40 text-gray-800">No report</Badge>
 										)}
 									</div>
 								</button>

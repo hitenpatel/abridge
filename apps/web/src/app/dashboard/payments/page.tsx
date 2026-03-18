@@ -41,7 +41,7 @@ function StaffPaymentsView({ schoolId }: { schoolId: string }) {
 					<div className="space-y-3">
 						{/* biome-ignore lint/suspicious/noExplicitAny: UI component */}
 						{data.data.map((item: any) => (
-							<Card key={item.id} className="p-4 hover-lift">
+							<Card key={item.id} className="p-4 hover-lift bg-amber-50/30 border-orange-100/50">
 								<div className="flex items-center justify-between">
 									<div className="flex items-center gap-3">
 										<div className="p-2 bg-primary/10 rounded-xl">
@@ -106,7 +106,10 @@ function ParentPaymentsView() {
 				{outstanding && outstanding.length > 0 ? (
 					<div className="space-y-3">
 						{outstanding.map((item) => (
-							<Card key={`${item.id}-${item.childId}`} className="p-4 hover-lift">
+							<Card
+								key={`${item.id}-${item.childId}`}
+								className="p-4 hover-lift bg-amber-50/30 border-orange-100/50"
+							>
 								<div className="flex items-center justify-between">
 									<div className="flex items-center gap-3">
 										<div className="p-2 bg-primary/10 rounded-xl">

@@ -140,7 +140,7 @@ function ConversationList({
 						type="button"
 						onClick={() => onSelect(conv.id)}
 						className={`w-full text-left px-3 py-3 rounded-lg transition-colors ${
-							isSelected ? "bg-primary/10 border border-primary/20" : "hover:bg-gray-50"
+							isSelected ? "bg-primary/10 border border-primary/20" : "hover:bg-orange-50/40"
 						}`}
 					>
 						<div className="flex items-center justify-between">
@@ -161,7 +161,7 @@ function ConversationList({
 							})}
 						</p>
 						{conv.closedAt && (
-							<Badge className="bg-gray-100 text-gray-500 text-xs mt-1">Closed</Badge>
+							<Badge className="bg-orange-100/40 text-gray-500 text-xs mt-1">Closed</Badge>
 						)}
 					</button>
 				);
@@ -215,7 +215,7 @@ function MessageThread({
 							className={`max-w-[75%] rounded-2xl px-4 py-2 ${
 								isMine
 									? "bg-primary text-primary-foreground rounded-br-sm"
-									: "bg-gray-100 text-gray-900 rounded-bl-sm"
+									: "bg-orange-100/40 text-gray-900 rounded-bl-sm"
 							}`}
 						>
 							{!isMine && (
@@ -239,7 +239,7 @@ function MessageThread({
 			})}
 			{typingUser && (
 				<div className="flex justify-start">
-					<div className="bg-gray-100 rounded-2xl px-4 py-2 rounded-bl-sm">
+					<div className="bg-orange-100/40 rounded-2xl px-4 py-2 rounded-bl-sm">
 						<p className="text-xs text-gray-500 italic">{typingUser} is typing...</p>
 					</div>
 				</div>

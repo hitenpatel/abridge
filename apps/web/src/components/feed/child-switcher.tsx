@@ -39,8 +39,8 @@ export function ChildSwitcher({ items, selectedChildId, onSelect }: ChildSwitche
 						className={cn(
 							"flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors shrink-0",
 							isActive
-								? "bg-primary text-primary-foreground shadow-sm"
-								: "bg-muted text-muted-foreground hover:bg-muted/80",
+								? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+								: "bg-orange-50 text-stone-600 hover:bg-orange-100/70",
 						)}
 					>
 						<Avatar className="h-7 w-7">
@@ -59,7 +59,7 @@ export function ChildSwitcher({ items, selectedChildId, onSelect }: ChildSwitche
 							<span
 								className={cn(
 									"text-xs",
-									isActive ? "text-primary-foreground/70" : "text-muted-foreground/70",
+									isActive ? "text-primary-foreground/70" : "text-stone-400",
 								)}
 							>
 								{classLabel}

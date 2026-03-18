@@ -24,8 +24,8 @@ export function EmptyState({
 			data-testid={testId}
 		>
 			{Icon && (
-				<div className="w-20 h-20 rounded-2xl bg-primary/5 flex items-center justify-center mb-4">
-					<Icon className="w-10 h-10 text-muted-foreground" />
+				<div className="w-20 h-20 rounded-2xl bg-orange-50 flex items-center justify-center mb-4">
+					<Icon className="w-10 h-10 text-orange-300" />
 				</div>
 			)}
 			<p className="text-lg font-semibold mb-1">{title}</p>

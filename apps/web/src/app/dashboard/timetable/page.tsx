@@ -37,7 +37,7 @@ const SUBJECT_COLORS: Record<string, string> = {
 	Drama: "bg-fuchsia-50 border-fuchsia-200 text-fuchsia-800",
 };
 
-const DEFAULT_COLOR = "bg-gray-50 border-gray-200 text-gray-700";
+const DEFAULT_COLOR = "bg-orange-50/30 border-orange-100/60 text-gray-700";
 
 function getSubjectColor(subject: string): string {
 	const key = Object.keys(SUBJECT_COLORS).find((k) =>

@@ -267,7 +267,7 @@ export default function Home() {
 			{/* ============================================================ */}
 			{/*  1. HERO SECTION                                              */}
 			{/* ============================================================ */}
-			<section className="relative pt-28 pb-20 lg:pt-40 lg:pb-32 overflow-hidden bg-gradient-to-b from-orange-50/50 to-background dark:from-orange-950/20">
+			<section className="relative pt-28 pb-20 lg:pt-40 lg:pb-32 overflow-hidden bg-gradient-to-b from-amber-50/60 via-orange-50/40 to-background dark:from-orange-950/30 dark:via-amber-950/20 dark:to-background">
 				{/* Gradient background */}
 				<div className="absolute inset-0 bg-gradient-to-b from-[#1E3A5F]/8 via-[#1E3A5F]/3 to-white pointer-events-none" />
 				<div className="absolute top-20 right-0 w-[600px] h-[600px] bg-[#1E3A5F]/5 rounded-full blur-3xl pointer-events-none" />

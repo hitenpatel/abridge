@@ -228,7 +228,7 @@ function AdminView({ schoolId }: { schoolId: string }) {
 				<Card
 					key={evening.id}
 					data-testid="evening-item"
-					className="rounded-2xl border border-gray-100 cursor-pointer hover:border-primary/30 transition-colors hover-lift"
+					className="rounded-2xl border border-orange-100/50 cursor-pointer hover:border-primary/30 transition-colors hover-lift"
 					onClick={() => setSelectedId(selectedId === evening.id ? null : evening.id)}
 				>
 					<CardHeader className="pb-2">
@@ -375,7 +375,7 @@ function ParentView() {
 					<Card
 						key={evening.id}
 						data-testid="evening-item"
-						className="rounded-2xl border border-gray-100 cursor-pointer hover:border-primary/30 transition-colors hover-lift"
+						className="rounded-2xl border border-orange-100/50 cursor-pointer hover:border-primary/30 transition-colors hover-lift"
 						onClick={() => setSelectedId(selectedId === evening.id ? null : evening.id)}
 					>
 						<CardHeader className="pb-2">
@@ -482,8 +482,8 @@ function SlotBookingView({
 									slot.isOwnBooking
 										? "bg-primary/10 border-primary"
 										: slot.isBooked
-											? "bg-gray-50 border-gray-200 opacity-50"
-											: "bg-white border-gray-200 hover:border-primary/50",
+											? "bg-orange-50/30 border-orange-100/60 opacity-50"
+											: "bg-white border-orange-100/60 hover:border-primary/50",
 								)}
 							>
 								<p className="font-medium">
@@ -614,7 +614,7 @@ function StaffSlotView({
 								key={slot.id}
 								className={cn(
 									"flex items-center justify-between p-2 rounded-lg text-sm",
-									slot.isBooked ? "bg-blue-50" : "bg-gray-50",
+									slot.isBooked ? "bg-blue-50" : "bg-orange-50/30",
 								)}
 							>
 								<div>

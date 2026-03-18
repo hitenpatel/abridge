@@ -227,7 +227,7 @@ function ParentView() {
 													? "bg-green-100 border-green-300"
 													: isToday
 														? "border-primary border-2"
-														: "border-gray-200"
+														: "border-orange-100/60"
 											}`}
 										>
 											<span className="text-[10px] sm:text-xs font-medium truncate">
@@ -683,7 +683,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 											<Badge className="bg-blue-100 text-blue-800">
 												{READ_WITH_LABELS[entry.readWith] ?? entry.readWith}
 											</Badge>
-											<Badge className="bg-gray-100 text-gray-600">
+											<Badge className="bg-orange-100/40 text-gray-600">
 												{entry.entryBy === "TEACHER" ? "Teacher" : "Parent"}
 											</Badge>
 											{entry.minutesRead && (

@@ -271,7 +271,10 @@ export default function DashboardPage() {
 						{/* Report Absence — card CTA on desktop */}
 						<div className="hidden lg:block">
 							<Link href="/dashboard/attendance">
-								<Button size="lg" className="w-full gap-2">
+								<Button
+									size="lg"
+									className="w-full gap-2 bg-gradient-to-r from-orange-400 to-red-400 hover:from-orange-500 hover:to-red-500 text-white shadow-lg shadow-orange-200/60 border-0"
+								>
 									<AlertTriangle className="h-4 w-4" />
 									Report Absence
 								</Button>
@@ -283,7 +286,10 @@ export default function DashboardPage() {
 				{/* Report Absence FAB — mobile only */}
 				<div className="fixed bottom-6 right-6 z-40 lg:hidden">
 					<Link href="/dashboard/attendance">
-						<Button size="lg" className="rounded-full shadow-lg gap-2">
+						<Button
+							size="lg"
+							className="rounded-full gap-2 bg-gradient-to-r from-orange-400 to-red-400 hover:from-orange-500 hover:to-red-500 text-white shadow-lg shadow-orange-300/50 border-0"
+						>
 							<AlertTriangle className="h-4 w-4" />
 							Report Absence
 						</Button>

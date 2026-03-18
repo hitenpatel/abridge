@@ -1,5 +1,6 @@
 "use client";
 
+import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCallback, useEffect, useRef } from "react";
 import { AttendanceCard } from "./attendance-card";
@@ -77,7 +78,7 @@ function FeedSkeleton() {
 	return (
 		<div className="space-y-4">
 			{Array.from({ length: 3 }).map((_, i) => (
-				<div key={i} className="rounded-2xl border bg-card p-4 space-y-3">
+				<Card key={i} className="p-4 space-y-3">
 					<div className="flex items-center gap-2">
 						<Skeleton className="h-8 w-8 rounded-full" />
 						<div className="space-y-1">
@@ -88,7 +89,7 @@ function FeedSkeleton() {
 					<Skeleton className="h-4 w-full" />
 					<Skeleton className="h-4 w-3/4" />
 					<Skeleton className="h-40 w-full rounded-xl" />
-				</div>
+				</Card>
 			))}
 		</div>
 	);
@@ -226,7 +227,7 @@ export function ActivityFeed({
 
 	if (!isLoading && items.length === 0) {
 		return (
-			<div className="text-center py-12 text-muted-foreground">
+			<div className="rounded-3xl bg-amber-50/60 py-12 text-center text-muted-foreground">
 				<p className="text-sm">No activity yet</p>
 			</div>
 		);

@@ -210,14 +210,14 @@ export default function MessagesPage() {
 					<div className="p-4 border-b">
 						<div className="relative">
 							<Search
-								className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
+								className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-orange-300"
 								aria-hidden="true"
 							/>
 							<input
 								type="text"
 								placeholder="Search messages..."
 								aria-label="Search messages"
-								className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+								className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-orange-200 bg-orange-50/50 focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
 								data-testid="search-input"
 							/>
 						</div>
@@ -233,7 +233,7 @@ export default function MessagesPage() {
 									"px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors",
 									activeTab === "messages"
 										? "bg-primary text-white"
-										: "bg-gray-100 text-gray-600 hover:bg-gray-200",
+										: "bg-orange-50 text-orange-700 hover:bg-orange-100",
 								)}
 							>
 								Messages
@@ -246,7 +246,7 @@ export default function MessagesPage() {
 									"px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors",
 									activeTab === "direct"
 										? "bg-primary text-white"
-										: "bg-gray-100 text-gray-600 hover:bg-gray-200",
+										: "bg-orange-50 text-orange-700 hover:bg-orange-100",
 								)}
 							>
 								Direct
@@ -312,8 +312,8 @@ export default function MessagesPage() {
 										className={cn(
 											"group hover-lift flex items-center gap-3 p-3 cursor-pointer transition-colors",
 											selectedMessageId === message.id
-												? "bg-orange-50 border-l-4 border-primary"
-												: "hover:bg-gray-50",
+												? "bg-primary/5 border-l-4 border-primary"
+												: "hover:bg-orange-50/30",
 										)}
 									>
 										<div className="relative">
@@ -381,8 +381,8 @@ export default function MessagesPage() {
 									className={cn(
 										"group hover-lift flex items-center gap-3 p-3 cursor-pointer transition-colors",
 										selectedConversationId === convo.id
-											? "bg-orange-50 border-l-4 border-primary"
-											: "hover:bg-gray-50",
+											? "bg-primary/5 border-l-4 border-primary"
+											: "hover:bg-orange-50/30",
 									)}
 								>
 									<div className="w-12 h-12 rounded-[20px] bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg shadow-sm">
@@ -432,7 +432,7 @@ export default function MessagesPage() {
 					{activeTab === "messages" && selectedMessage ? (
 						<>
 							{/* Message Header */}
-							<div className="bg-white/80 backdrop-blur-sm border-b border-gray-100 p-4 flex justify-between items-center">
+							<div className="bg-white/90 backdrop-blur-sm border-b border-orange-100/60 p-4 flex justify-between items-center">
 								<div className="flex items-center gap-3">
 									<button
 										type="button"
@@ -440,7 +440,7 @@ export default function MessagesPage() {
 											setSelectedMessageId(null);
 											setSelectedConversationId(null);
 										}}
-										className="md:hidden p-1 rounded-lg hover:bg-gray-100"
+										className="md:hidden p-1 rounded-lg hover:bg-orange-50"
 										aria-label="Back to messages"
 									>
 										<ArrowLeft className="w-5 h-5" />
@@ -463,10 +463,10 @@ export default function MessagesPage() {
 							</div>
 
 							{/* Messages Area with Replies */}
-							<div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50">
+							<div className="flex-1 overflow-y-auto p-6 space-y-6 bg-orange-50/20">
 								{/* Date Separator */}
 								<div className="flex justify-center">
-									<span className="bg-gray-200 text-gray-600 text-xs px-3 py-1 rounded-full font-medium">
+									<span className="bg-orange-100/70 text-orange-700 text-xs px-3 py-1 rounded-full font-medium">
 										{new Date(selectedMessage.createdAt).toLocaleDateString(undefined, {
 											weekday: "long",
 											month: "short",
@@ -481,7 +481,7 @@ export default function MessagesPage() {
 										{selectedMessage.schoolName?.[0] || selectedMessage.subject?.[0] || "S"}
 									</div>
 									<div className="flex flex-col gap-1">
-										<Card className="bg-white p-4 rounded-2xl rounded-bl-sm shadow-sm border border-gray-100">
+										<Card className="bg-white p-4 rounded-2xl rounded-bl-sm shadow-sm border border-orange-100/60">
 											<div className="mb-2">
 												<h3 className="font-semibold text-gray-900 mb-1">
 													{showOriginal || !translatedSubject
@@ -506,7 +506,7 @@ export default function MessagesPage() {
 													<button
 														type="button"
 														onClick={() => setShowOriginal(!showOriginal)}
-														className="text-xs text-gray-500 underline hover:text-gray-700"
+														className="text-xs text-orange-500 underline hover:text-orange-700"
 														data-testid="show-original-toggle"
 													>
 														{showOriginal ? "Show translation" : "Show original"}
@@ -526,13 +526,13 @@ export default function MessagesPage() {
 								{/* Reply Thread */}
 								{repliesData?.items && repliesData.items.length > 0 && (
 									<div className="space-y-4 ml-11" data-testid="reply-thread">
-										<div className="flex items-center gap-2 text-xs text-gray-500">
-											<div className="h-px flex-1 bg-gray-200" />
+										<div className="flex items-center gap-2 text-xs text-orange-400">
+											<div className="h-px flex-1 bg-orange-200/60" />
 											<span>
 												{repliesData.items.length}{" "}
 												{repliesData.items.length === 1 ? "reply" : "replies"}
 											</span>
-											<div className="h-px flex-1 bg-gray-200" />
+											<div className="h-px flex-1 bg-orange-200/60" />
 										</div>
 										{repliesData.items.map((reply) => {
 											const isOwnReply = reply.authorId === session?.id;
@@ -554,7 +554,7 @@ export default function MessagesPage() {
 																"px-3 py-2 rounded-2xl text-sm",
 																isOwnReply
 																	? "bg-primary text-white rounded-br-sm"
-																	: "bg-white border border-gray-100 rounded-bl-sm",
+																	: "bg-orange-50/30 border border-orange-100 rounded-bl-sm",
 															)}
 														>
 															{reply.body}
@@ -580,9 +580,9 @@ export default function MessagesPage() {
 							</div>
 
 							{/* Reply Input */}
-							<div className="bg-white border-t border-gray-200 p-4">
+							<div className="bg-orange-50/30 border-t border-orange-100 p-4">
 								<div className="max-w-4xl mx-auto flex items-end gap-3">
-									<div className="flex-1 bg-gray-50 rounded-3xl border border-gray-200 focus-within:ring-2 focus-within:ring-primary/30 focus-within:border-primary transition-all flex items-center shadow-inner">
+									<div className="flex-1 bg-orange-50/40 rounded-3xl border border-orange-200 focus-within:ring-2 focus-within:ring-primary/30 focus-within:border-primary transition-all flex items-center shadow-inner">
 										<textarea
 											value={replyInput}
 											onChange={(e) => setReplyInput(e.target.value)}
@@ -614,7 +614,7 @@ export default function MessagesPage() {
 					) : activeTab === "direct" && convoData ? (
 						<>
 							{/* Conversation Header */}
-							<div className="bg-white/80 backdrop-blur-sm border-b border-gray-100 p-4 flex justify-between items-center">
+							<div className="bg-white/90 backdrop-blur-sm border-b border-orange-100/60 p-4 flex justify-between items-center">
 								<div className="flex items-center gap-3">
 									<button
 										type="button"
@@ -622,7 +622,7 @@ export default function MessagesPage() {
 											setSelectedMessageId(null);
 											setSelectedConversationId(null);
 										}}
-										className="md:hidden p-1 rounded-lg hover:bg-gray-100"
+										className="md:hidden p-1 rounded-lg hover:bg-orange-50"
 										aria-label="Back to messages"
 									>
 										<ArrowLeft className="w-5 h-5" />
@@ -662,7 +662,7 @@ export default function MessagesPage() {
 							</div>
 
 							{/* Conversation Messages */}
-							<div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
+							<div className="flex-1 overflow-y-auto p-6 space-y-4 bg-orange-50/20">
 								{convoData.items.map((msg) => {
 									const isOwn = msg.authorId === session?.id;
 									return (
@@ -688,7 +688,7 @@ export default function MessagesPage() {
 														"px-4 py-2.5 rounded-2xl text-sm leading-relaxed",
 														isOwn
 															? "bg-primary text-white rounded-br-sm"
-															: "bg-white border border-gray-100 rounded-bl-sm shadow-sm",
+															: "bg-orange-50/30 border border-orange-100 rounded-bl-sm shadow-sm",
 													)}
 												>
 													{msg.body}
@@ -710,7 +710,7 @@ export default function MessagesPage() {
 								})}
 								{convoData.conversation.closedAt && (
 									<div className="flex justify-center py-4">
-										<span className="bg-gray-200 text-gray-600 text-xs px-3 py-1 rounded-full font-medium">
+										<span className="bg-orange-100/70 text-orange-700 text-xs px-3 py-1 rounded-full font-medium">
 											Conversation closed
 										</span>
 									</div>
@@ -719,9 +719,9 @@ export default function MessagesPage() {
 
 							{/* DM Input */}
 							{!convoData.conversation.closedAt ? (
-								<div className="bg-white border-t border-gray-200 p-4">
+								<div className="bg-orange-50/30 border-t border-orange-100 p-4">
 									<div className="max-w-4xl mx-auto flex items-end gap-3">
-										<div className="flex-1 bg-gray-50 rounded-3xl border border-gray-200 focus-within:ring-2 focus-within:ring-primary/30 focus-within:border-primary transition-all flex items-center shadow-inner">
+										<div className="flex-1 bg-orange-50/40 rounded-3xl border border-orange-200 focus-within:ring-2 focus-within:ring-primary/30 focus-within:border-primary transition-all flex items-center shadow-inner">
 											<textarea
 												value={dmInput}
 												onChange={(e) => setDmInput(e.target.value)}
@@ -750,22 +750,22 @@ export default function MessagesPage() {
 									</div>
 								</div>
 							) : (
-								<div className="bg-gray-50 border-t border-gray-200 p-4 text-center text-sm text-gray-500">
+								<div className="bg-orange-50/20 border-t border-orange-100 p-4 text-center text-sm text-orange-500">
 									This conversation is closed
 								</div>
 							)}
 						</>
 					) : (
-						<div className="flex-1 flex items-center justify-center text-gray-400">
+						<div className="flex-1 flex items-center justify-center text-orange-300">
 							<div className="text-center">
 								{activeTab === "direct" ? (
 									<MessagesSquare
-										className="h-16 w-16 mb-4 text-gray-300 mx-auto"
+										className="h-16 w-16 mb-4 text-orange-200 mx-auto"
 										aria-hidden="true"
 									/>
 								) : (
 									<MessageCircle
-										className="h-16 w-16 mb-4 text-gray-300 mx-auto"
+										className="h-16 w-16 mb-4 text-orange-200 mx-auto"
 										aria-hidden="true"
 									/>
 								)}
@@ -789,7 +789,7 @@ export default function MessagesPage() {
 							<div>
 								<label
 									htmlFor="new-convo-body"
-									className="text-sm font-medium text-gray-700 mb-1 block"
+									className="text-sm font-medium text-orange-800 mb-1 block"
 								>
 									Your message
 								</label>
@@ -800,11 +800,13 @@ export default function MessagesPage() {
 									placeholder="Write your message..."
 									rows={3}
 									data-testid="new-convo-body"
-									className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm resize-none focus:ring-2 focus:ring-primary focus:border-transparent"
+									className="w-full px-3 py-2 rounded-lg border border-orange-200 bg-orange-50/40 text-sm resize-none focus:ring-2 focus:ring-primary focus:border-transparent"
 								/>
 							</div>
 							<div>
-								<p className="text-sm font-medium text-gray-700 mb-2 block">Select staff member</p>
+								<p className="text-sm font-medium text-orange-800 mb-2 block">
+									Select staff member
+								</p>
 								<div className="space-y-1 max-h-60 overflow-y-auto">
 									{staffData?.staff.map((s) => (
 										<button
@@ -813,14 +815,14 @@ export default function MessagesPage() {
 											onClick={() => handleStartConversation(s.userId)}
 											disabled={!newConvoBody.trim() || createConversationMutation.isPending}
 											data-testid="staff-picker-item"
-											className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 text-left transition-colors disabled:opacity-50"
+											className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-orange-50 text-left transition-colors disabled:opacity-50"
 										>
 											<div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm">
 												{s.name?.[0] || "?"}
 											</div>
 											<div>
 												<p className="text-sm font-medium">{s.name}</p>
-												<p className="text-xs text-gray-500">{s.role}</p>
+												<p className="text-xs text-orange-500">{s.role}</p>
 											</div>
 										</button>
 									))}
