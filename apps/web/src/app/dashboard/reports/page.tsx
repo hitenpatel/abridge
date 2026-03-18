@@ -144,106 +144,116 @@ function ParentView() {
 
 				<Card>
 					<CardHeader>
-						<div className="flex items-center justify-between">
-							<div>
-								<CardTitle>
+						<div className="flex items-center gap-4">
+							<div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-lg font-bold text-primary">
+								{reportCard.child.firstName[0]}
+								{reportCard.child.lastName[0]}
+							</div>
+							<div className="flex-1">
+								<CardTitle className="text-xl">
 									{reportCard.child.firstName} {reportCard.child.lastName}
 								</CardTitle>
 								<p className="text-sm text-muted-foreground">
 									{reportCard.child.yearGroup}
 									{reportCard.child.className && ` - ${reportCard.child.className}`}
+									{" \u00B7 "}
+									{reportCard.cycle.name}
 								</p>
-								<p className="text-sm text-muted-foreground mt-1">{reportCard.cycle.name}</p>
 							</div>
 							<div className="flex items-center gap-2">
 								{reportCard.attendancePct != null && (
-									<Badge className="bg-blue-100 text-blue-800">
-										Attendance: {reportCard.attendancePct}%
-									</Badge>
+									<div className="text-center rounded-xl bg-blue-50 px-4 py-2">
+										<p className="text-lg font-bold text-blue-700">{reportCard.attendancePct}%</p>
+										<p className="text-xs text-blue-600">Attendance</p>
+									</div>
 								)}
 							</div>
 						</div>
 					</CardHeader>
-					<CardContent>
+					<CardContent className="space-y-5">
 						{reportCard.subjectGrades.length > 0 && (
-							<div className="overflow-x-auto">
-								<table className="w-full text-sm">
-									<thead>
-										<tr className="border-b">
-											<th className="py-2 text-left font-medium">Subject</th>
-											{isPrimary ? (
-												<>
-													<th className="py-2 text-left font-medium">Level</th>
-													<th className="py-2 text-left font-medium">Effort</th>
-												</>
-											) : (
-												<>
-													<th className="py-2 text-left font-medium">Current Grade</th>
-													<th className="py-2 text-left font-medium">Target Grade</th>
-												</>
-											)}
-											<th className="py-2 text-left font-medium">Comment</th>
-										</tr>
-									</thead>
-									<tbody>
-										{reportCard.subjectGrades.map((grade) => (
-											<tr key={grade.id} className="border-b last:border-0">
-												<td className="py-2 font-medium">{grade.subject}</td>
-												{isPrimary ? (
-													<>
-														<td className="py-2">
+							<div className="space-y-3">
+								{reportCard.subjectGrades.map((grade) => {
+									const levelColor = grade.level
+										? ({
+												EMERGING: "border-l-red-400",
+												DEVELOPING: "border-l-amber-400",
+												EXPECTED: "border-l-green-400",
+												EXCEEDING: "border-l-blue-400",
+											}[grade.level] ?? "")
+										: "border-l-muted";
+									return (
+										<div
+											key={grade.id}
+											className={`rounded-lg border border-l-4 ${levelColor} p-4`}
+										>
+											<div className="flex items-center justify-between mb-1">
+												<span className="font-medium">{grade.subject}</span>
+												<div className="flex items-center gap-2">
+													{isPrimary ? (
+														<>
 															{grade.level && (
 																<Badge className={LEVEL_COLORS[grade.level]}>
 																	{grade.level.charAt(0) + grade.level.slice(1).toLowerCase()}
 																</Badge>
 															)}
-														</td>
-														<td className="py-2">
 															{grade.effort && (
-																<span className="text-muted-foreground">
+																<span className="text-xs text-muted-foreground">
 																	{EFFORT_LABELS[grade.effort]}
 																</span>
 															)}
-														</td>
-													</>
-												) : (
-													<>
-														<td className="py-2">{grade.currentGrade ?? "-"}</td>
-														<td className="py-2">{grade.targetGrade ?? "-"}</td>
-													</>
-												)}
-												<td className="py-2 text-muted-foreground">{grade.comment ?? "-"}</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
+														</>
+													) : (
+														<>
+															<span className="text-sm">
+																{grade.currentGrade ?? "-"}
+																{grade.targetGrade && (
+																	<span className="text-muted-foreground">
+																		{" \u2192 "}
+																		{grade.targetGrade}
+																	</span>
+																)}
+															</span>
+														</>
+													)}
+												</div>
+											</div>
+											{grade.comment && (
+												<p className="text-sm text-muted-foreground mt-1">{grade.comment}</p>
+											)}
+										</div>
+									);
+								})}
 							</div>
 						)}
 
 						{reportCard.generalComment && (
-							<div className="mt-4 rounded-md border p-4">
-								<p className="text-sm font-medium mb-1">General Comment</p>
-								<p className="text-sm text-muted-foreground">{reportCard.generalComment}</p>
+							<div className="rounded-xl bg-orange-50/50 border border-orange-100 p-4">
+								<div className="flex items-start gap-3">
+									<FileText className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+									<div>
+										<p className="text-sm font-medium mb-1">Teacher's Comment</p>
+										<p className="text-sm text-muted-foreground">{reportCard.generalComment}</p>
+									</div>
+								</div>
 							</div>
 						)}
 
-						<div className="mt-4">
-							<Button
-								onClick={() => {
-									if (childId && selectedCycleId) {
-										generatePdf.mutate({
-											childId,
-											cycleId: selectedCycleId,
-										});
-									}
-								}}
-								disabled={generatePdf.isPending}
-								className="flex items-center gap-2"
-							>
-								<Download className="h-4 w-4" />
-								{generatePdf.isPending ? "Generating..." : "Download Report"}
-							</Button>
-						</div>
+						<Button
+							onClick={() => {
+								if (childId && selectedCycleId) {
+									generatePdf.mutate({
+										childId,
+										cycleId: selectedCycleId,
+									});
+								}
+							}}
+							disabled={generatePdf.isPending}
+							className="flex items-center gap-2"
+						>
+							<Download className="h-4 w-4" />
+							{generatePdf.isPending ? "Generating..." : "Download Report"}
+						</Button>
 					</CardContent>
 				</Card>
 			</div>
@@ -745,9 +755,7 @@ function StaffView({ schoolId }: { schoolId: string }) {
 										<p className="font-medium">
 											{child.firstName} {child.lastName}
 										</p>
-										<p className="text-xs text-muted-foreground">
-											{child.yearGroup}
-										</p>
+										<p className="text-xs text-muted-foreground">{child.yearGroup}</p>
 									</div>
 									<div className="flex items-center gap-2">
 										{child.hasReport ? (

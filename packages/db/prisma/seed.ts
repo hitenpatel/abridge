@@ -607,6 +607,7 @@ async function main() {
 				cycleId: cycle.id,
 				childId: child1.id,
 				schoolId: school.id,
+				attendancePct: 96,
 				generalComment:
 					"Emily has had a wonderful spring term. She is making excellent progress in reading and is always enthusiastic in class.",
 				subjectGrades: {
