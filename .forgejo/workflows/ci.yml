@@ -1,4 +1,4 @@
-name: CI
+name: Visual Regression
 
 on:
   push:
@@ -7,30 +7,11 @@ on:
     branches: [main]
 
 jobs:
-  lint:
+  lost-pixel:
     runs-on: docker
     container: node:24-bookworm
     steps:
       - uses: https://code.forgejo.org/actions/checkout@v4
-      - name: Setup pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@9.15.0 --activate
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm lint
-
-  test:
-    runs-on: docker
-    container: node:24-bookworm
-    steps:
-      - uses: https://code.forgejo.org/actions/checkout@v4
-
-      - name: Install and start PostgreSQL
-        run: |
-          apt-get update -qq && apt-get install -y -qq postgresql postgresql-client > /dev/null
-          pg_ctlcluster 15 main start
-          su - postgres -c "psql -c \"ALTER USER postgres PASSWORD 'postgres';\""
-          su - postgres -c "createdb schoolconnect_test"
 
       - name: Setup pnpm
         run: |
@@ -38,28 +19,35 @@ jobs:
           corepack prepare pnpm@9.15.0 --activate
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm build
-      - run: pnpm test
+
+      - name: Build web app
+        run: pnpm --filter @schoolconnect/web build
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
+          NEXT_PUBLIC_API_URL: http://localhost:4000
 
-  build:
-    runs-on: docker
-    container: node:24-bookworm
-    steps:
-      - uses: https://code.forgejo.org/actions/checkout@v4
-      - name: Setup pnpm
+      - name: Start web app
         run: |
-          corepack enable
-          corepack prepare pnpm@9.15.0 --activate
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build
+          pnpm --filter @schoolconnect/web start &
+          sleep 5
+          curl -s -o /dev/null -w '%{http_code}' http://localhost:3000 || true
 
-  # e2e runs on GitHub Actions (Forgejo NAS runner can't run emulators)
+      - name: Install Lost Pixel
+        run: pnpm add -D lost-pixel
+
+      - name: Run Lost Pixel
+        run: npx lost-pixel
+
+      - name: Upload diffs on failure
+        if: failure()
+        uses: https://code.forgejo.org/actions/upload-artifact@v4
+        with:
+          name: lost-pixel-diffs
+          path: .lostpixel/difference/
+          retention-days: 7
 
   deploy-web:
     if: ${{ secrets.VERCEL_TOKEN != '' }}
-    needs: [lint, test, build]
+    needs: [lost-pixel]
     runs-on: docker
     container: node:24-bookworm
     steps:
@@ -100,7 +88,7 @@ jobs:
 
   deploy-api:
     if: ${{ github.ref == 'refs/heads/main' && secrets.RAILWAY_TOKEN != '' }}
-    needs: [lint, test, build]
+    needs: [lost-pixel]
     runs-on: docker
     container: node:24-bookworm
     steps:

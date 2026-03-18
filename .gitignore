@@ -15,3 +15,5 @@ coverage/
 playwright-report/
 test-results/
 packages/e2e/generated/
+.lostpixel/current/
+.lostpixel/difference/
