@@ -42,8 +42,8 @@ const FEATURES = [
 		description:
 			"Weekly reports enriched with AI-generated insights. Highlight trends, celebrate wins, and flag concerns automatically.",
 		detail: "No competitor offers this.",
-		color: "text-[#FF7D45]",
-		bg: "bg-[#FF7D45]/10",
+		color: "text-primary",
+		bg: "bg-primary/10",
 		badge: "AI-Powered",
 	},
 	{
@@ -52,8 +52,8 @@ const FEATURES = [
 		description:
 			"Replace WhatsApp groups with GDPR-compliant, auditable parent-teacher messaging. Instant delivery, full control.",
 		detail: "No personal phone numbers required.",
-		color: "text-[#1E3A5F]",
-		bg: "bg-[#1E3A5F]/10",
+		color: "text-foreground",
+		bg: "bg-foreground/10",
 		badge: null,
 	},
 	{
@@ -168,22 +168,22 @@ export default function Home() {
 	}, []);
 
 	return (
-		<div className="min-h-screen bg-[#F8FAFC] text-[#1E293B]">
+		<div className="min-h-screen bg-background text-foreground">
 			{/* ============================================================ */}
 			{/*  NAVIGATION                                                   */}
 			{/* ============================================================ */}
 			<nav
 				className={`fixed top-0 w-full z-50 transition-all duration-300 ${
 					scrolled
-						? "bg-[#1E3A5F]/95 backdrop-blur-lg shadow-sm border-b border-[#1E3A5F]"
-						: "bg-[#1E3A5F]"
+						? "bg-foreground/95 backdrop-blur-lg shadow-sm border-b border-foreground"
+						: "bg-foreground"
 				}`}
 			>
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="flex items-center justify-between h-16 lg:h-20">
 						{/* Logo */}
 						<Link href="/" className="flex items-center gap-2.5 group">
-							<div className="w-9 h-9 rounded-xl bg-[#FF7D45] flex items-center justify-center transition-transform group-hover:scale-105">
+							<div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center transition-transform group-hover:scale-105">
 								<BookOpen className="w-5 h-5 text-white" strokeWidth={2.5} />
 							</div>
 							<span className="text-xl font-bold tracking-tight text-white">Abridge</span>
@@ -212,7 +212,7 @@ export default function Home() {
 							</Link>
 							<Link
 								href="/setup"
-								className="inline-flex items-center gap-2 bg-[#FF7D45] hover:bg-[#E86B35] text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors shadow-sm"
+								className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors shadow-sm"
 							>
 								Apply for Early Access
 								<ArrowRight className="w-4 h-4" />
@@ -233,19 +233,19 @@ export default function Home() {
 
 				{/* Mobile menu */}
 				{mobileMenuOpen && (
-					<div className="lg:hidden bg-[#1E3A5F] border-t border-[#2A4D73]">
+					<div className="lg:hidden bg-foreground border-t border-foreground/30">
 						<div className="px-4 py-4 space-y-1">
 							{NAV_LINKS.map((link) => (
 								<Link
 									key={link.href}
 									href={link.href}
-									className="block px-3 py-2.5 text-sm font-medium text-blue-100 hover:text-white hover:bg-[#2A4D73] rounded-lg transition-colors"
+									className="block px-3 py-2.5 text-sm font-medium text-blue-100 hover:text-white hover:bg-foreground/30 rounded-lg transition-colors"
 									onClick={() => setMobileMenuOpen(false)}
 								>
 									{link.label}
 								</Link>
 							))}
-							<div className="pt-3 border-t border-[#2A4D73] space-y-2">
+							<div className="pt-3 border-t border-foreground/30 space-y-2">
 								<Link
 									href="/login"
 									className="block px-3 py-2.5 text-sm font-medium text-blue-100 hover:text-white rounded-lg"
@@ -254,7 +254,7 @@ export default function Home() {
 								</Link>
 								<Link
 									href="/setup"
-									className="block text-center bg-[#FF7D45] hover:bg-[#E86B35] text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors"
+									className="block text-center bg-primary hover:bg-primary/90 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors"
 								>
 									Apply for Early Access
 								</Link>
@@ -269,18 +269,18 @@ export default function Home() {
 			{/* ============================================================ */}
 			<section className="relative pt-28 pb-20 lg:pt-40 lg:pb-32 overflow-hidden bg-gradient-to-b from-amber-50/60 via-orange-50/40 to-background dark:from-orange-950/30 dark:via-amber-950/20 dark:to-background">
 				{/* Gradient background */}
-				<div className="absolute inset-0 bg-gradient-to-b from-[#1E3A5F]/8 via-[#1E3A5F]/3 to-white pointer-events-none" />
-				<div className="absolute top-20 right-0 w-[600px] h-[600px] bg-[#1E3A5F]/5 rounded-full blur-3xl pointer-events-none" />
-				<div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#FF7D45]/5 rounded-full blur-3xl pointer-events-none" />
+				<div className="absolute inset-0 bg-gradient-to-b from-foreground/8 via-foreground/3 to-white pointer-events-none" />
+				<div className="absolute top-20 right-0 w-[600px] h-[600px] bg-foreground/5 rounded-full blur-3xl pointer-events-none" />
+				<div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
 				<div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 					<div className="max-w-4xl mx-auto">
-						<div className="inline-flex items-center gap-2 bg-[#FF7D45]/10 text-[#FF7D45] text-sm font-medium px-4 py-1.5 rounded-full mb-8">
+						<div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-sm font-medium px-4 py-1.5 rounded-full mb-8">
 							<Zap className="w-4 h-4" />
 							Now accepting pilot schools
 						</div>
 
-						<h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.1] mb-6 text-[#1E3A5F]">
+						<h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.1] mb-6 text-foreground">
 							Every child&apos;s progress,
 							<br />
 							in every parent&apos;s hands
@@ -294,14 +294,14 @@ export default function Home() {
 						<div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
 							<Link
 								href="/setup"
-								className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#FF7D45] hover:bg-[#E86B35] text-white font-semibold px-8 py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/30 text-base"
+								className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/30 text-base"
 							>
 								Apply for Early Access
 								<ArrowRight className="w-5 h-5" />
 							</Link>
 							<a
 								href="#features"
-								className="w-full sm:w-auto inline-flex items-center justify-center gap-2 text-[#1E3A5F] hover:text-[#FF7D45] font-semibold px-8 py-3.5 transition-all duration-200 text-base"
+								className="w-full sm:w-auto inline-flex items-center justify-center gap-2 text-foreground hover:text-primary font-semibold px-8 py-3.5 transition-all duration-200 text-base"
 							>
 								See How It Works
 								<ChevronDown className="w-4 h-4" />
@@ -330,8 +330,8 @@ export default function Home() {
 							{
 								icon: ShieldCheck,
 								label: "Cyber Essentials Ready",
-								color: "text-[#1E3A5F]",
-								bg: "bg-[#1E3A5F]/5",
+								color: "text-foreground",
+								bg: "bg-foreground/5",
 							},
 							{
 								icon: Shield,
@@ -342,14 +342,14 @@ export default function Home() {
 							{
 								icon: Lock,
 								label: "UK Data Residency",
-								color: "text-[#1E3A5F]",
-								bg: "bg-[#1E3A5F]/5",
+								color: "text-foreground",
+								bg: "bg-foreground/5",
 							},
 							{
 								icon: CheckCircle,
 								label: "Security-First Design",
-								color: "text-[#FF7D45]",
-								bg: "bg-[#FF7D45]/5",
+								color: "text-primary",
+								bg: "bg-primary/5",
 							},
 						].map((badge) => {
 							const Icon = badge.icon;
@@ -376,7 +376,7 @@ export default function Home() {
 			<section className="py-20 lg:py-28">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="max-w-3xl mx-auto text-center mb-16">
-						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-6 text-[#1E3A5F]">
+						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-6 text-foreground">
 							Why Abridge exists
 						</h2>
 						<p className="text-lg text-slate-500 leading-relaxed">
@@ -420,7 +420,7 @@ export default function Home() {
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					{/* Section header */}
 					<div className="max-w-3xl mx-auto text-center mb-14">
-						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-[#1E3A5F]">
+						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-foreground">
 							See the platform
 						</h2>
 						<p className="text-lg text-slate-500">
@@ -497,7 +497,7 @@ export default function Home() {
 			>
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="text-center max-w-3xl mx-auto mb-16">
-						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-[#1E3A5F]">
+						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-foreground">
 							Everything your school needs
 						</h2>
 						<p className="text-lg text-slate-500">
@@ -525,7 +525,7 @@ export default function Home() {
 										>
 											<Icon className={`w-20 h-20 ${feature.color} opacity-20`} />
 											{feature.badge && (
-												<div className="absolute top-4 right-4 bg-[#FF7D45]/10 text-[#FF7D45] text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+												<div className="absolute top-4 right-4 bg-primary/10 text-primary text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
 													<Sparkles className="w-3 h-3" />
 													{feature.badge}
 												</div>
@@ -539,12 +539,12 @@ export default function Home() {
 										>
 											<Icon className={`w-6 h-6 ${feature.color}`} />
 										</div>
-										<h3 className="text-2xl font-bold mb-3 text-[#1E3A5F]">{feature.title}</h3>
+										<h3 className="text-2xl font-bold mb-3 text-foreground">{feature.title}</h3>
 										<p className="text-slate-500 leading-relaxed mb-2">{feature.description}</p>
 										<p className="text-sm text-slate-400 mb-4">{feature.detail}</p>
 										<Link
 											href="/features"
-											className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#FF7D45] hover:text-[#E86B35] transition-colors"
+											className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
 										>
 											Learn more
 											<ArrowRight className="w-4 h-4" />
@@ -570,7 +570,7 @@ export default function Home() {
 							<Brain className="w-4 h-4" />
 							Responsible AI
 						</div>
-						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-[#1E3A5F]">
+						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-foreground">
 							AI that respects your data
 						</h2>
 						<p className="text-lg text-slate-500">
@@ -582,7 +582,7 @@ export default function Home() {
 					<div className="max-w-2xl mx-auto">
 						{/* Provider selection card */}
 						<div className="bg-card rounded-2xl p-8 border border-orange-100/60 shadow-sm">
-							<h3 className="text-lg font-semibold mb-2 text-[#1E3A5F]">Choose your AI provider</h3>
+							<h3 className="text-lg font-semibold mb-2 text-foreground">Choose your AI provider</h3>
 							<p className="text-sm text-slate-500 mb-6">
 								Your data, your rules. Run AI locally with Ollama for complete data sovereignty.
 							</p>
@@ -595,10 +595,10 @@ export default function Home() {
 								].map((provider) => (
 									<div
 										key={provider.name}
-										className="flex flex-col items-center gap-2 bg-orange-50/40 rounded-xl p-4 border border-orange-100/50 hover:border-[#1E3A5F]/20 transition-colors"
+										className="flex flex-col items-center gap-2 bg-orange-50/40 rounded-xl p-4 border border-orange-100/50 hover:border-foreground/20 transition-colors"
 									>
-										<div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#1E3A5F]/10 to-violet-500/10 flex items-center justify-center">
-											<Brain className="w-5 h-5 text-[#1E3A5F]" />
+										<div className="w-10 h-10 rounded-lg bg-gradient-to-br from-foreground/10 to-violet-500/10 flex items-center justify-center">
+											<Brain className="w-5 h-5 text-foreground" />
 										</div>
 										<div className="text-center">
 											<div className="text-sm font-medium">{provider.name}</div>
@@ -622,7 +622,7 @@ export default function Home() {
 			<section id="comparison" className="py-20 lg:py-28">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="text-center max-w-3xl mx-auto mb-16">
-						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-[#1E3A5F]">
+						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-foreground">
 							See how Abridge compares
 						</h2>
 						<p className="text-lg text-slate-500">
@@ -639,7 +639,7 @@ export default function Home() {
 									<th className="text-left py-4 px-6 text-sm font-medium text-slate-500">
 										Feature
 									</th>
-									<th className="py-4 px-6 text-sm font-semibold text-white bg-[#1E3A5F] text-center">
+									<th className="py-4 px-6 text-sm font-semibold text-white bg-foreground text-center">
 										Abridge
 									</th>
 									{COMPETITORS.map((c) => (
@@ -659,9 +659,9 @@ export default function Home() {
 										className={`border-b border-orange-100/40 ${i % 2 === 0 ? "bg-card" : "bg-orange-50/20"}`}
 									>
 										<td className="py-4 px-6 text-sm font-medium">{feature}</td>
-										<td className="py-4 px-6 text-center bg-[#1E3A5F]/5">
+										<td className="py-4 px-6 text-center bg-foreground/5">
 											{COMPETITOR_DATA.Abridge?.[i] ? (
-												<Check className="w-5 h-5 text-[#FF7D45] mx-auto" />
+												<Check className="w-5 h-5 text-primary mx-auto" />
 											) : (
 												<span className="text-slate-300">&mdash;</span>
 											)}
@@ -690,13 +690,13 @@ export default function Home() {
 									{["Abridge", ...COMPETITORS].map((name) => (
 										<div key={name}>
 											<div
-												className={`text-xs mb-1 ${name === "Abridge" ? "font-semibold text-[#1E3A5F]" : "text-slate-400"}`}
+												className={`text-xs mb-1 ${name === "Abridge" ? "font-semibold text-foreground" : "text-slate-400"}`}
 											>
 												{name}
 											</div>
 											{COMPETITOR_DATA[name]?.[i] ? (
 												<Check
-													className={`w-4 h-4 mx-auto ${name === "Abridge" ? "text-[#FF7D45]" : "text-emerald-500"}`}
+													className={`w-4 h-4 mx-auto ${name === "Abridge" ? "text-primary" : "text-emerald-500"}`}
 												/>
 											) : (
 												<span className="text-slate-300 text-sm">&mdash;</span>
@@ -719,7 +719,7 @@ export default function Home() {
 			>
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="text-center max-w-3xl mx-auto mb-16">
-						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-[#1E3A5F]">
+						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-foreground">
 							Simple, transparent pricing
 						</h2>
 						<p className="text-lg text-slate-500">
@@ -731,11 +731,11 @@ export default function Home() {
 						{/* Free tier */}
 						<div className="relative bg-card rounded-2xl p-8 border-2 border-orange-100/60 hover:shadow-lg transition-shadow">
 							<div className="mb-6">
-								<h3 className="text-lg font-semibold mb-1 text-[#1E3A5F]">Free</h3>
+								<h3 className="text-lg font-semibold mb-1 text-foreground">Free</h3>
 								<p className="text-sm text-slate-500">For pilot programme schools</p>
 							</div>
 							<div className="mb-6">
-								<span className="text-4xl font-bold text-[#1E3A5F]">{"\u00A3"}0</span>
+								<span className="text-4xl font-bold text-foreground">{"\u00A3"}0</span>
 								<span className="text-slate-500 ml-1">/month</span>
 							</div>
 							<ul className="space-y-3 mb-8">
@@ -748,30 +748,30 @@ export default function Home() {
 									"Priority onboarding support",
 								].map((feature) => (
 									<li key={feature} className="flex items-start gap-3 text-sm">
-										<Check className="w-4 h-4 text-[#FF7D45] mt-0.5 shrink-0" />
+										<Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
 										<span>{feature}</span>
 									</li>
 								))}
 							</ul>
 							<Link
 								href="/setup"
-								className="block text-center font-semibold py-3 px-6 rounded-xl transition-all duration-200 text-sm bg-orange-100/50 hover:bg-orange-100 text-[#1E3A5F]"
+								className="block text-center font-semibold py-3 px-6 rounded-xl transition-all duration-200 text-sm bg-orange-100/50 hover:bg-orange-100 text-foreground"
 							>
 								Apply for Pilot
 							</Link>
 						</div>
 
 						{/* Pro tier */}
-						<div className="relative bg-card rounded-2xl p-8 border-2 border-[#FF7D45] shadow-xl shadow-orange-500/10">
-							<div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#FF7D45] text-white text-xs font-semibold px-4 py-1 rounded-full">
+						<div className="relative bg-card rounded-2xl p-8 border-2 border-primary shadow-xl shadow-orange-500/10">
+							<div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-semibold px-4 py-1 rounded-full">
 								After Pilot
 							</div>
 							<div className="mb-6">
-								<h3 className="text-lg font-semibold mb-1 text-[#1E3A5F]">Pro</h3>
+								<h3 className="text-lg font-semibold mb-1 text-foreground">Pro</h3>
 								<p className="text-sm text-slate-500">For schools ready to commit</p>
 							</div>
 							<div className="mb-6">
-								<span className="text-4xl font-bold text-[#1E3A5F]">{"\u00A3"}42</span>
+								<span className="text-4xl font-bold text-foreground">{"\u00A3"}42</span>
 								<span className="text-slate-500 ml-1">/month</span>
 								<p className="text-xs text-slate-400 mt-1">Billed annually at {"\u00A3"}500/year</p>
 							</div>
@@ -785,14 +785,14 @@ export default function Home() {
 									"Dedicated support",
 								].map((feature) => (
 									<li key={feature} className="flex items-start gap-3 text-sm">
-										<Check className="w-4 h-4 text-[#FF7D45] mt-0.5 shrink-0" />
+										<Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
 										<span>{feature}</span>
 									</li>
 								))}
 							</ul>
 							<Link
 								href="/setup"
-								className="block text-center font-semibold py-3 px-6 rounded-xl transition-all duration-200 text-sm bg-[#FF7D45] hover:bg-[#E86B35] text-white shadow-lg shadow-orange-500/25"
+								className="block text-center font-semibold py-3 px-6 rounded-xl transition-all duration-200 text-sm bg-primary hover:bg-primary/90 text-white shadow-lg shadow-orange-500/25"
 							>
 								Apply for Early Access
 							</Link>
@@ -807,7 +807,7 @@ export default function Home() {
 			<section id="faq" className="py-20 lg:py-28">
 				<div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="text-center mb-16">
-						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-[#1E3A5F]">
+						<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-foreground">
 							Frequently asked questions
 						</h2>
 						<p className="text-lg text-slate-500">Everything you need to know about Abridge.</p>
@@ -850,7 +850,7 @@ export default function Home() {
 			{/* ============================================================ */}
 			{/*  9. EARLY ACCESS CTA                                          */}
 			{/* ============================================================ */}
-			<section className="py-20 lg:py-28 bg-[#1E3A5F]">
+			<section className="py-20 lg:py-28 bg-foreground">
 				<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 					<h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-6">
 						Built for UK schools.
@@ -863,7 +863,7 @@ export default function Home() {
 					</p>
 					<Link
 						href="/setup"
-						className="inline-flex items-center justify-center gap-2 bg-[#FF7D45] hover:bg-[#E86B35] text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200 shadow-lg shadow-black/20 text-base"
+						className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200 shadow-lg shadow-black/20 text-base"
 					>
 						Apply for Early Access
 						<ArrowRight className="w-5 h-5" />
@@ -874,13 +874,13 @@ export default function Home() {
 			{/* ============================================================ */}
 			{/*  FOOTER                                                       */}
 			{/* ============================================================ */}
-			<footer className="bg-[#1E3A5F] text-blue-200 py-16 border-t border-[#2A4D73]">
+			<footer className="bg-foreground text-blue-200 py-16 border-t border-foreground/30">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
 						{/* Brand */}
 						<div className="col-span-2 md:col-span-1">
 							<div className="flex items-center gap-2.5 mb-4">
-								<div className="w-8 h-8 rounded-lg bg-[#FF7D45] flex items-center justify-center">
+								<div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
 									<BookOpen className="w-4 h-4 text-white" />
 								</div>
 								<span className="text-lg font-bold text-white">Abridge</span>
@@ -952,7 +952,7 @@ export default function Home() {
 					</div>
 
 					{/* Bottom bar */}
-					<div className="border-t border-[#2A4D73] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+					<div className="border-t border-foreground/30 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
 						<p className="text-sm">
 							&copy; {new Date().getFullYear()} Abridge. All rights reserved.
 						</p>
