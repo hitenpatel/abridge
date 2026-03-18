@@ -215,14 +215,14 @@ function ParentView() {
 									</span>
 								</div>
 							)}
-							<div className="flex justify-between gap-1">
+							<div className="grid grid-cols-7 gap-1">
 								{weekDays.map((day) => {
 									const hasEntry = entryDates.has(day.dateStr);
 									const isToday = day.dateStr === todayString();
 									return (
 										<div
 											key={day.dateStr}
-											className={`flex flex-col items-center rounded-md border p-2 flex-1 ${
+											className={`flex flex-col items-center rounded-md border px-1 py-2 min-w-0 ${
 												hasEntry
 													? "bg-green-100 border-green-300"
 													: isToday
@@ -230,9 +230,15 @@ function ParentView() {
 														: "border-gray-200"
 											}`}
 										>
-											<span className="text-xs font-medium">{day.label}</span>
-											<span className="text-xs text-muted-foreground">{day.date.getDate()}</span>
-											{hasEntry && <span className="text-green-600 text-xs mt-1">✓</span>}
+											<span className="text-[10px] sm:text-xs font-medium truncate">
+												{day.label}
+											</span>
+											<span className="text-[10px] sm:text-xs text-muted-foreground">
+												{day.date.getDate()}
+											</span>
+											{hasEntry && (
+												<span className="text-green-600 text-[10px] sm:text-xs mt-1">✓</span>
+											)}
 										</div>
 									);
 								})}

@@ -13,7 +13,15 @@ import { useTranslation } from "@/hooks/use-translation";
 import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import { MessageCircle, MessageSquare, MessagesSquare, Plus, Search, Send } from "lucide-react";
+import {
+	ArrowLeft,
+	MessageCircle,
+	MessageSquare,
+	MessagesSquare,
+	Plus,
+	Search,
+	Send,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 type ViewTab = "messages" | "direct";
@@ -187,9 +195,17 @@ export default function MessagesPage() {
 	return (
 		<PageShell maxWidth="full">
 			<PageHeader icon={MessageCircle} title="Messages" description="Communication hub" />
-			<main className="flex h-[calc(100vh-200px)] -mx-10 -my-4">
+			<main className="flex h-[calc(100vh-200px)] -mx-6 lg:-mx-10 -my-4 overflow-hidden">
 				{/* Left Sidebar */}
-				<aside className="w-80 lg:w-96 border-r bg-card flex flex-col" aria-label="Messages list">
+				<aside
+					className={cn(
+						"border-r bg-card flex flex-col shrink-0",
+						selectedMessageId || selectedConversationId
+							? "hidden md:flex w-80 lg:w-96"
+							: "w-full md:w-80 lg:w-96",
+					)}
+					aria-label="Messages list"
+				>
 					{/* Search */}
 					<div className="p-4 border-b">
 						<div className="relative">
@@ -405,7 +421,10 @@ export default function MessagesPage() {
 
 				{/* Right Panel */}
 				<section
-					className="flex-1 flex flex-col bg-background"
+					className={cn(
+						"flex-1 flex flex-col bg-background min-w-0",
+						selectedMessageId || selectedConversationId ? "flex" : "hidden md:flex",
+					)}
 					data-testid="message-detail"
 					aria-label="Message detail"
 					aria-live="polite"
@@ -415,6 +434,17 @@ export default function MessagesPage() {
 							{/* Message Header */}
 							<div className="bg-white/80 backdrop-blur-sm border-b border-gray-100 p-4 flex justify-between items-center">
 								<div className="flex items-center gap-3">
+									<button
+										type="button"
+										onClick={() => {
+											setSelectedMessageId(null);
+											setSelectedConversationId(null);
+										}}
+										className="md:hidden p-1 rounded-lg hover:bg-gray-100"
+										aria-label="Back to messages"
+									>
+										<ArrowLeft className="w-5 h-5" />
+									</button>
 									<div className="relative">
 										<div className="w-10 h-10 rounded-[20px] bg-primary/10 flex items-center justify-center text-primary font-bold">
 											{selectedMessage.schoolName?.[0] || selectedMessage.subject?.[0] || "S"}
@@ -586,6 +616,17 @@ export default function MessagesPage() {
 							{/* Conversation Header */}
 							<div className="bg-white/80 backdrop-blur-sm border-b border-gray-100 p-4 flex justify-between items-center">
 								<div className="flex items-center gap-3">
+									<button
+										type="button"
+										onClick={() => {
+											setSelectedMessageId(null);
+											setSelectedConversationId(null);
+										}}
+										className="md:hidden p-1 rounded-lg hover:bg-gray-100"
+										aria-label="Back to messages"
+									>
+										<ArrowLeft className="w-5 h-5" />
+									</button>
 									<div className="w-10 h-10 rounded-[20px] bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
 										{(isStaff
 											? convoData.conversation.parent.name?.[0]
