@@ -1,0 +1,21 @@
+journey:
+  id: payment-success-page
+  name: Payment Success Page Renders
+  tags: [parent, authenticated, payments, regression]
+  role: parent
+  preconditions:
+    seed: parent-with-payments
+    state: authenticated
+  steps:
+    - action: navigate
+      target: payment-success
+      selectors:
+        web: "/dashboard/payments/success?session_id=cs_test_mock"
+        mobile: "Payment Success"
+  assertions:
+    - type: visible
+      text: "Payment Successful!"
+    - type: visible
+      text: "View Payment History"
+    - type: visible
+      text: "Back to Payments"
