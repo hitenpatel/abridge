@@ -433,7 +433,8 @@ function SlotBookingView({
 	const { data: childrenData } = trpc.user.listChildren.useQuery(undefined, {
 		enabled: !!session,
 	});
-	const firstChildId = childrenData?.[0]?.child?.id;
+	const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
+	const activeChildId = selectedChildId ?? childrenData?.[0]?.child?.id;
 
 	const bookMutation = trpc.parentsEvening.book.useMutation({
 		onSuccess: () => {
@@ -467,6 +468,24 @@ function SlotBookingView({
 
 	return (
 		<div className="space-y-6">
+			{childrenData && childrenData.length > 1 && (
+				<div className="flex gap-2" data-testid="parents-evening-child-selector">
+					{childrenData.map((link) => (
+						<button
+							key={link.child.id}
+							type="button"
+							onClick={() => setSelectedChildId(link.child.id)}
+							className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+								activeChildId === link.child.id
+									? "bg-primary text-white"
+									: "bg-orange-100/40 text-foreground hover:bg-orange-50/40"
+							}`}
+						>
+							{link.child.firstName}
+						</button>
+					))}
+				</div>
+			)}
 			{Array.from(grouped.entries()).map(([staffId, { staffName, slots }]) => (
 				<div key={staffId}>
 					<h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
@@ -526,7 +545,7 @@ function SlotBookingView({
 									</div>
 								) : slot.isBooked ? (
 									<p className="text-xs text-muted-foreground mt-1">Taken</p>
-								) : bookingOpen && firstChildId ? (
+								) : bookingOpen && activeChildId ? (
 									<Button
 										size="sm"
 										variant="ghost"
@@ -534,7 +553,7 @@ function SlotBookingView({
 										data-testid="book-slot-button"
 										onClick={(e) => {
 											e.stopPropagation();
-											bookMutation.mutate({ slotId: slot.id, childId: firstChildId });
+											bookMutation.mutate({ slotId: slot.id, childId: activeChildId });
 										}}
 										disabled={bookMutation.isPending}
 									>
