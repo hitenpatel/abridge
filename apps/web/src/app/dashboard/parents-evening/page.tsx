@@ -42,7 +42,13 @@ export default function ParentsEveningPage() {
 				{isAdmin && schoolId && <CreateEveningDialog schoolId={schoolId} />}
 			</PageHeader>
 
-			{isAdmin && schoolId ? <AdminView schoolId={schoolId} /> : <ParentView />}
+			{isAdmin && schoolId ? (
+				<AdminView schoolId={schoolId} />
+			) : isStaff && schoolId ? (
+				<StaffView schoolId={schoolId} />
+			) : (
+				<ParentView />
+			)}
 		</PageShell>
 	);
 }
@@ -178,6 +184,56 @@ function CreateEveningDialog({ schoolId }: { schoolId: string }) {
 				</form>
 			</CardContent>
 		</Card>
+	);
+}
+
+function StaffView({ schoolId }: { schoolId: string }) {
+	const { data, isLoading } = trpc.parentsEvening.listAll.useQuery({ schoolId });
+
+	if (isLoading) {
+		return (
+			<div className="space-y-4">
+				<Skeleton className="h-32 w-full rounded-2xl" />
+			</div>
+		);
+	}
+
+	const publishedEvenings = data?.items.filter((e) => e.isPublished) ?? [];
+
+	if (publishedEvenings.length === 0) {
+		return (
+			<EmptyState
+				icon={Users}
+				title="No published parents' evenings"
+				description="The admin will publish upcoming evenings when they're ready."
+			/>
+		);
+	}
+
+	return (
+		<div className="space-y-4">
+			{publishedEvenings.map((evening) => (
+				<Card key={evening.id} className="rounded-2xl border border-orange-100/50 overflow-hidden">
+					<CardHeader className="bg-gradient-to-r from-orange-50/60 to-amber-50/40">
+						<CardTitle className="flex items-center gap-2 text-lg">
+							<Calendar className="h-5 w-5 text-primary" aria-hidden="true" />
+							{evening.title}
+						</CardTitle>
+						<p className="text-sm text-muted-foreground">
+							{new Date(evening.date).toLocaleDateString("en-GB", {
+								weekday: "long",
+								day: "numeric",
+								month: "long",
+								year: "numeric",
+							})}
+						</p>
+					</CardHeader>
+					<CardContent className="pt-4">
+						<SlotBookingView parentsEveningId={evening.id} bookingOpen={evening.bookingOpen} />
+					</CardContent>
+				</Card>
+			))}
+		</div>
 	);
 }
 
