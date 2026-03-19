@@ -88,6 +88,15 @@ export default function LoginPage() {
 								required
 							/>
 						</div>
+						<div className="flex justify-end">
+							<Link
+								href="/forgot-password"
+								className="text-sm text-muted-foreground hover:text-primary transition-colors"
+								data-testid="forgot-password-link"
+							>
+								Forgot password?
+							</Link>
+						</div>
 						<Button type="submit" disabled={loading} className="w-full" data-testid="login-button">
 							{loading ? "Signing in..." : "Sign In"}
 						</Button>
