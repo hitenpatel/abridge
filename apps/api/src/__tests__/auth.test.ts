@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { Context } from "../context";
 import { appRouter } from "../router";
 
@@ -65,6 +65,14 @@ describe("auth router", () => {
 				staffRole: null,
 				schoolId: null,
 			});
+		});
+	});
+
+	describe("password reset config", () => {
+		it("sendPasswordResetEmail function is exported from email service", async () => {
+			const emailService = await import("../services/email");
+			expect(emailService.sendPasswordResetEmail).toBeDefined();
+			expect(typeof emailService.sendPasswordResetEmail).toBe("function");
 		});
 	});
 

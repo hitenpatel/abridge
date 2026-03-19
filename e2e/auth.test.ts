@@ -94,6 +94,72 @@ test.describe("Authentication Flows", () => {
 		});
 	});
 
+	test.describe("Forgot Password Flow", () => {
+		test("login page should have forgot password link", async ({ page }) => {
+			await page.goto("http://localhost:3000/login");
+
+			const forgotLink = page.getByTestId("forgot-password-link");
+			await expect(forgotLink).toBeVisible();
+			await expect(forgotLink).toHaveText("Forgot password?");
+			await forgotLink.click();
+			await expect(page).toHaveURL(/\/forgot-password/);
+		});
+
+		test("should display forgot password form", async ({ page }) => {
+			await page.goto("http://localhost:3000/forgot-password");
+
+			await expect(page.getByRole("heading", { name: "Forgot password?" })).toBeVisible();
+			await expect(page.getByLabel("Email")).toBeVisible();
+			await expect(page.getByTestId("forgot-submit-button")).toBeVisible();
+		});
+
+		test("should show success state after submitting email", async ({ page }) => {
+			await page.goto("http://localhost:3000/forgot-password");
+
+			await page.getByLabel("Email").fill("sarah@example.com");
+			await page.getByTestId("forgot-submit-button").click();
+
+			await expect(page.getByRole("heading", { name: "Check your email" })).toBeVisible({
+				timeout: 10000,
+			});
+			await expect(page.getByText("password reset link")).toBeVisible();
+			await expect(page.getByRole("link", { name: /Back to login/i })).toBeVisible();
+		});
+
+		test("should display reset password form with error for missing token", async ({ page }) => {
+			await page.goto("http://localhost:3000/reset-password");
+
+			await expect(page.getByRole("heading", { name: "Set new password" })).toBeVisible();
+			await expect(page.getByLabel("New Password")).toBeVisible();
+			await expect(page.getByLabel("Confirm Password")).toBeVisible();
+
+			// Submit without token should show error
+			await page.getByLabel("New Password").fill("NewPassword123!");
+			await page.getByLabel("Confirm Password").fill("NewPassword123!");
+			await page.getByTestId("reset-submit-button").click();
+
+			await expect(page.getByText("Missing reset token")).toBeVisible({ timeout: 5000 });
+		});
+
+		test("should show error for invalid token in URL", async ({ page }) => {
+			await page.goto("http://localhost:3000/reset-password?error=INVALID_TOKEN");
+
+			await expect(
+				page.getByText("This reset link is invalid or has expired."),
+			).toBeVisible();
+		});
+
+		test("should validate password confirmation match", async ({ page }) => {
+			await page.goto("http://localhost:3000/reset-password?token=test-token");
+
+			await page.getByLabel("New Password").fill("NewPassword123!");
+			await page.getByLabel("Confirm Password").fill("DifferentPassword!");
+			await page.getByTestId("reset-submit-button").click();
+
+			await expect(page.getByText("Passwords do not match")).toBeVisible();
+		});
+	});
+
 	test.describe("Protected Routes", () => {
 		test("dashboard should redirect unauthenticated users to login", async ({ page }) => {
 			// Clear any existing session by going to a fresh context
