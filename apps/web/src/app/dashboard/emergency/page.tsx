@@ -12,6 +12,7 @@ import { useFeatureToggles } from "@/lib/feature-toggles";
 import { trpc } from "@/lib/trpc";
 import { AlertTriangle, CheckCircle, Clock, Shield } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const EMERGENCY_TYPE_LABELS: Record<string, string> = {
 	LOCKDOWN: "Lockdown",
@@ -28,12 +29,24 @@ function ActiveAlert({ schoolId }: { schoolId: string }) {
 	);
 
 	const [updateMessage, setUpdateMessage] = useState("");
+	const utils = trpc.useUtils();
 
 	const postUpdateMutation = trpc.emergency.postUpdate.useMutation({
-		onSuccess: () => setUpdateMessage(""),
+		onSuccess: () => {
+			setUpdateMessage("");
+			toast.success("Update posted");
+			utils.emergency.getActiveAlert.invalidate({ schoolId });
+		},
+		onError: (err) => toast.error(err.message),
 	});
 
-	const resolveMutation = trpc.emergency.resolveAlert.useMutation();
+	const resolveMutation = trpc.emergency.resolveAlert.useMutation({
+		onSuccess: (_, variables) => {
+			toast.success(variables.status === "ALL_CLEAR" ? "All clear issued" : "Alert cancelled");
+			utils.emergency.getActiveAlert.invalidate({ schoolId });
+		},
+		onError: (err) => toast.error(err.message),
+	});
 
 	if (isLoading) return <Skeleton className="h-48" />;
 
