@@ -144,9 +144,7 @@ test.describe("Authentication Flows", () => {
 		test("should show error for invalid token in URL", async ({ page }) => {
 			await page.goto("http://localhost:3000/reset-password?error=INVALID_TOKEN");
 
-			await expect(
-				page.getByText("This reset link is invalid or has expired."),
-			).toBeVisible();
+			await expect(page.getByText("This reset link is invalid or has expired.")).toBeVisible();
 		});
 
 		test("should validate password confirmation match", async ({ page }) => {

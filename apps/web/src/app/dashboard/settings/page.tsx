@@ -26,11 +26,11 @@ import { SUPPORTED_LANGUAGES } from "@/hooks/use-translation";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/lib/trpc";
 import {
+	AlertTriangle,
 	Bell,
 	CreditCard,
 	Download,
 	GraduationCap,
-	AlertTriangle,
 	KeyRound,
 	Palette,
 	Settings,
@@ -468,8 +468,8 @@ function DeleteAccountCard() {
 				</CardHeader>
 				<CardContent className="space-y-3">
 					<p className="text-sm text-muted-foreground">
-						Permanently delete your account and all associated personal data. This action cannot
-						be undone. Your children's school records will be preserved.
+						Permanently delete your account and all associated personal data. This action cannot be
+						undone. Your children's school records will be preserved.
 					</p>
 					<Button
 						variant="outline"

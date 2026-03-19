@@ -65,6 +65,73 @@ test.describe("Settings Page - Parent", () => {
 			timeout: 5000,
 		});
 	});
+
+	test("should show Export My Data button and allow clicking without error", async ({ page }) => {
+		await page.getByRole("link", { name: "Settings" }).first().click();
+		await expect(page).toHaveURL(/\/dashboard\/settings/);
+
+		const exportButton = page.getByTestId("export-data-button");
+		await expect(exportButton).toBeVisible({ timeout: 10000 });
+		await expect(exportButton).toBeEnabled();
+
+		// Click the button and verify no error toast appears
+		await exportButton.click();
+		await expect(page.getByText(/Failed to export/i)).not.toBeVisible({ timeout: 3000 });
+	});
+
+	test("should open Delete Account dialog and require confirmation text before enabling confirm button", async ({
+		page,
+	}) => {
+		await page.getByRole("link", { name: "Settings" }).first().click();
+		await expect(page).toHaveURL(/\/dashboard\/settings/);
+
+		// Open the dialog
+		const deleteButton = page.getByTestId("delete-account-button");
+		await expect(deleteButton).toBeVisible({ timeout: 10000 });
+		await deleteButton.click();
+
+		// Dialog should be open
+		await expect(page.getByRole("dialog")).toBeVisible({ timeout: 5000 });
+		await expect(page.getByText("Are you absolutely sure?")).toBeVisible();
+
+		// Confirm button should be disabled initially
+		const confirmButton = page.getByTestId("delete-confirm-button");
+		await expect(confirmButton).toBeDisabled();
+
+		// Type wrong text — button stays disabled
+		const confirmInput = page.getByTestId("delete-confirm-input");
+		await confirmInput.fill("wrong text");
+		await expect(confirmButton).toBeDisabled();
+
+		// Type exact confirmation phrase — button becomes enabled
+		await confirmInput.fill("DELETE MY ACCOUNT");
+		await expect(confirmButton).toBeEnabled();
+
+		// Close dialog without confirming to avoid deleting the account
+		await page.getByRole("button", { name: /Cancel/i }).click();
+		await expect(page.getByRole("dialog")).not.toBeVisible();
+	});
+
+	test("should render Change Password card with Current Password and New Password fields", async ({
+		page,
+	}) => {
+		await page.getByRole("link", { name: "Settings" }).first().click();
+		await expect(page).toHaveURL(/\/dashboard\/settings/);
+
+		await expect(page.getByRole("heading", { name: "Change Password" })).toBeVisible({
+			timeout: 10000,
+		});
+		await expect(page.getByLabel("Current Password")).toBeVisible();
+		await expect(page.getByLabel("New Password")).toBeVisible();
+	});
+
+	test("should show language select dropdown in Profile card", async ({ page }) => {
+		await page.getByRole("link", { name: "Settings" }).first().click();
+		await expect(page).toHaveURL(/\/dashboard\/settings/);
+
+		const languageSelect = page.getByTestId("language-select");
+		await expect(languageSelect).toBeVisible({ timeout: 10000 });
+	});
 });
 
 test.describe("Settings Page - Admin", () => {
