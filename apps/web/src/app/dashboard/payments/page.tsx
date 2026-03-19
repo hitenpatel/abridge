@@ -1,6 +1,7 @@
 "use client";
 
 import { FeatureDisabled } from "@/components/feature-disabled";
+import { OutstandingPayments } from "@/components/payments/outstanding-payments";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -73,20 +74,6 @@ function StaffPaymentsView({ schoolId }: { schoolId: string }) {
 }
 
 function ParentPaymentsView() {
-	const { data: outstanding, isLoading } = trpc.payments.listOutstandingPayments.useQuery();
-
-	if (isLoading) {
-		return (
-			<PageShell>
-				<div className="space-y-4">
-					<Skeleton className="h-10 w-64" />
-					<Skeleton className="h-20 w-full" />
-					<Skeleton className="h-20 w-full" />
-				</div>
-			</PageShell>
-		);
-	}
-
 	return (
 		<PageShell>
 			<PageHeader
@@ -102,41 +89,7 @@ function ParentPaymentsView() {
 				</Link>
 			</PageHeader>
 
-			<div data-testid="payments-list">
-				{outstanding && outstanding.length > 0 ? (
-					<div className="space-y-3">
-						{outstanding.map((item) => (
-							<Card
-								key={`${item.id}-${item.childId}`}
-								className="p-4 hover-lift bg-amber-50/30 border-orange-100/50"
-							>
-								<div className="flex items-center justify-between">
-									<div className="flex items-center gap-3">
-										<div className="p-2 bg-primary/10 rounded-xl">
-											<CreditCard className="h-5 w-5 text-primary" aria-hidden="true" />
-										</div>
-										<div>
-											<h4 className="font-medium text-foreground">{item.title}</h4>
-											<p className="text-sm text-muted-foreground">
-												{item.childName}
-												{item.description ? ` · ${item.description}` : ""}
-											</p>
-										</div>
-									</div>
-									<div className="flex items-center gap-3">
-										<span className="font-bold text-foreground">
-											£{(item.amount / 100).toFixed(2)}
-										</span>
-										<Badge variant="secondary">{item.category}</Badge>
-									</div>
-								</div>
-							</Card>
-						))}
-					</div>
-				) : (
-					<EmptyState icon={CreditCard} title="No outstanding payments" />
-				)}
-			</div>
+			<OutstandingPayments />
 		</PageShell>
 	);
 }
