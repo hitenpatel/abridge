@@ -25,6 +25,17 @@ export default function SingleFormPage() {
 		templateId,
 	});
 	const { data: summaryData } = trpc.dashboard.getSummary.useQuery(undefined);
+	const { data: completedForms } = trpc.forms.getCompletedForms.useQuery(
+		{ childId: initialChildId ?? "" },
+		{ enabled: !!initialChildId },
+	);
+
+	// Check if already submitted for this child
+	React.useEffect(() => {
+		if (completedForms?.some((r) => r.templateId === templateId)) {
+			setIsSubmitted(true);
+		}
+	}, [completedForms, templateId]);
 
 	const submitMutation = trpc.forms.submitForm.useMutation();
 
