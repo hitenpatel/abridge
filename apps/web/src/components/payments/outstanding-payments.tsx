@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
 import { Calendar, Check, CreditCard, ShoppingCart, User } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { type CartItem, PaymentCart } from "./payment-cart";
 
 export function OutstandingPayments() {
@@ -18,6 +19,9 @@ export function OutstandingPayments() {
 				window.location.href = data.url;
 			}
 		},
+		onError: (err) => {
+			toast.error(err.message);
+		},
 	});
 
 	const createCartSession = trpc.payments.createCartCheckout.useMutation({
@@ -25,6 +29,9 @@ export function OutstandingPayments() {
 			if (data.url) {
 				window.location.href = data.url;
 			}
+		},
+		onError: (err) => {
+			toast.error(err.message);
 		},
 	});
 
