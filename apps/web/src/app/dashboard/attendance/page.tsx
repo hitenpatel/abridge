@@ -293,26 +293,55 @@ function ParentAttendanceView() {
 
 	const monthName = currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
-	// Mock attendance data (in real app, fetch from API)
-	const attendanceData: Record<number, "present" | "late" | "absent"> = {
-		1: "present",
-		2: "present",
-		3: "late",
-		4: "present",
-		7: "present",
-		8: "absent",
-		9: "present",
-		10: "present",
-		11: "present",
-		14: "late",
-		15: "present",
-		16: "present",
-		17: "present",
-		18: "present",
-		21: "present",
-		22: "present",
-		23: "present",
-	};
+	// Fetch real attendance data for the selected child and month
+	const { data: attendanceRecords } = trpc.attendance.getAttendanceForChild.useQuery(
+		{
+			childId: activeChildId,
+			startDate: firstDay,
+			endDate: lastDay,
+		},
+		{ enabled: !!activeChildId },
+	);
+
+	// Build calendar lookup from API records (use AM session as primary, fall back to PM)
+	const attendanceData: Record<number, "present" | "late" | "absent"> = {};
+	if (attendanceRecords) {
+		for (const record of attendanceRecords) {
+			const day = new Date(record.date).getDate();
+			if (attendanceData[day]) continue; // AM takes priority
+			switch (record.mark) {
+				case "PRESENT":
+					attendanceData[day] = "present";
+					break;
+				case "LATE":
+					attendanceData[day] = "late";
+					break;
+				case "ABSENT_AUTHORISED":
+				case "ABSENT_UNAUTHORISED":
+					attendanceData[day] = "absent";
+					break;
+			}
+		}
+	}
+
+	// Compute attendance rate from real data
+	const totalSchoolDays = Object.keys(attendanceData).length;
+	const presentDays = Object.values(attendanceData).filter((s) => s === "present").length;
+	const attendanceRate =
+		totalSchoolDays > 0 ? Math.round((presentDays / totalSchoolDays) * 100) : 0;
+
+	// Today's status from real data
+	const today = new Date();
+	const todayRecords = attendanceRecords?.filter((r) => {
+		const d = new Date(r.date);
+		return (
+			d.getDate() === today.getDate() &&
+			d.getMonth() === today.getMonth() &&
+			d.getFullYear() === today.getFullYear()
+		);
+	});
+	const todayAm = todayRecords?.find((r) => r.session === "AM");
+	const todayStatus = todayAm?.mark ?? todayRecords?.[0]?.mark;
 
 	const getAttendanceColor = (status: string) => {
 		switch (status) {
@@ -349,11 +378,15 @@ function ParentAttendanceView() {
 				{/* Header */}
 				<header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
 					<div>
-						<div className="flex items-center gap-3 mb-2">
-							<span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-bold rounded-lg">
-								95% Present
-							</span>
-						</div>
+						{totalSchoolDays > 0 && (
+							<div className="flex items-center gap-3 mb-2">
+								<span
+									className={`px-3 py-1 text-sm font-bold rounded-lg ${attendanceRate >= 90 ? "bg-green-100 text-green-700" : attendanceRate >= 80 ? "bg-yellow-100 text-yellow-700" : "bg-red-100 text-red-700"}`}
+								>
+									{attendanceRate}% Present
+								</span>
+							</div>
+						)}
 						{childrenLinks.length > 1 && (
 							<div className="flex gap-2 mt-3" data-testid="attendance-child-selector">
 								{childrenLinks.map((link) => (
@@ -516,21 +549,55 @@ function ParentAttendanceView() {
 					{/* Right Column */}
 					<div className="lg:col-span-5 space-y-6">
 						{/* Status Banner */}
-						{activeChild && (
-							<div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-6 rounded-2xl border border-yellow-100">
+						{activeChild && todayStatus && (
+							<div
+								className={`bg-gradient-to-br p-6 rounded-2xl border ${todayStatus === "PRESENT" ? "from-green-50 to-emerald-50 border-green-100" : todayStatus === "LATE" ? "from-yellow-50 to-orange-50 border-yellow-100" : "from-red-50 to-orange-50 border-red-100"}`}
+							>
 								<div className="flex items-start gap-4">
-									<div className="bg-secondary p-3 rounded-full text-white shadow-md">
-										<Sun className="h-5 w-5" aria-hidden="true" />
+									<div
+										className={`p-3 rounded-full text-white shadow-md ${todayStatus === "PRESENT" ? "bg-green-500" : todayStatus === "LATE" ? "bg-yellow-500" : "bg-red-500"}`}
+									>
+										{todayStatus === "PRESENT" || todayStatus === "LATE" ? (
+											<Sun className="h-5 w-5" aria-hidden="true" />
+										) : (
+											<XCircle className="h-5 w-5" aria-hidden="true" />
+										)}
 									</div>
 									<div>
-										<h4 className="font-bold text-lg mb-1">{activeChild.firstName} is at School</h4>
-										<p className="text-sm text-muted-foreground">Checked in at 8:15 AM • On Time</p>
+										<h4 className="font-bold text-lg mb-1">
+											{activeChild.firstName}{" "}
+											{todayStatus === "PRESENT"
+												? "is at School"
+												: todayStatus === "LATE"
+													? "arrived late"
+													: "is absent today"}
+										</h4>
+										<p className="text-sm text-muted-foreground">
+											{todayStatus === "PRESENT"
+												? "Checked in • On Time"
+												: todayStatus === "LATE"
+													? "Arrived late today"
+													: "Marked absent"}
+											{todayAm?.note ? ` • ${todayAm.note}` : ""}
+										</p>
 									</div>
 									<div className="ml-auto">
-										<CheckCircle2
-											className="h-6 w-6 text-green-500 bg-white rounded-full p-0.5"
-											aria-hidden="true"
-										/>
+										{todayStatus === "PRESENT" ? (
+											<CheckCircle2
+												className="h-6 w-6 text-green-500 bg-white rounded-full p-0.5"
+												aria-hidden="true"
+											/>
+										) : todayStatus === "LATE" ? (
+											<Clock
+												className="h-6 w-6 text-yellow-500 bg-white rounded-full p-0.5"
+												aria-hidden="true"
+											/>
+										) : (
+											<XCircle
+												className="h-6 w-6 text-red-500 bg-white rounded-full p-0.5"
+												aria-hidden="true"
+											/>
+										)}
 									</div>
 								</div>
 							</div>
