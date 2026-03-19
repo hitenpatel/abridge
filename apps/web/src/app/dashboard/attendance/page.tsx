@@ -24,7 +24,8 @@ import {
 	Sun,
 	XCircle,
 } from "lucide-react";
-import { useState } from "react";
+import { type FormEvent, useState } from "react";
+import { toast } from "sonner";
 
 function StaffAttendanceView({ schoolId }: { schoolId: string }) {
 	const { data, isLoading } = trpc.attendance.getSchoolAttendanceToday.useQuery({ schoolId });
@@ -219,7 +220,44 @@ function ParentAttendanceView() {
 	const { data: childrenLinks, isLoading } = trpc.user.listChildren.useQuery();
 	const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
 	const [selectedReason, setSelectedReason] = useState("sick");
+	const [absenceDate, setAbsenceDate] = useState("");
+	const [absenceNote, setAbsenceNote] = useState("");
 	const [currentMonth, setCurrentMonth] = useState(new Date());
+
+	const reportAbsence = trpc.attendance.reportAbsence.useMutation({
+		onSuccess: () => {
+			toast.success("Absence report submitted");
+			setAbsenceDate("");
+			setAbsenceNote("");
+		},
+		onError: (err) => {
+			toast.error(err.message);
+		},
+	});
+
+	const handleAbsenceSubmit = (e: FormEvent) => {
+		e.preventDefault();
+		if (!absenceDate || !activeChildId) {
+			toast.error("Please select a date");
+			return;
+		}
+		const date = new Date(absenceDate);
+		const reasonLabels: Record<string, string> = {
+			sick: "Sick / Ill",
+			appointment: "Appointment",
+			trip: "Family/Trip",
+			other: "Other",
+		};
+		const reason = absenceNote
+			? `${reasonLabels[selectedReason] ?? selectedReason}: ${absenceNote}`
+			: (reasonLabels[selectedReason] ?? selectedReason);
+		reportAbsence.mutate({
+			childId: activeChildId,
+			startDate: date,
+			endDate: date,
+			reason,
+		});
+	};
 
 	if (isLoading) {
 		return (
@@ -505,7 +543,7 @@ function ParentAttendanceView() {
 								Report Upcoming Absence
 							</h3>
 
-							<form className="space-y-6">
+							<form className="space-y-6" onSubmit={handleAbsenceSubmit}>
 								<div>
 									<label
 										htmlFor="absence-date"
@@ -522,6 +560,9 @@ function ParentAttendanceView() {
 											id="absence-date"
 											type="date"
 											data-testid="absence-date-input"
+											value={absenceDate}
+											onChange={(e) => setAbsenceDate(e.target.value)}
+											required
 											className="w-full pl-10 pr-4 py-3 rounded-xl border border-orange-100/50 bg-orange-50/30 focus:ring-2 focus:ring-primary focus:border-transparent font-semibold transition-all"
 										/>
 									</div>
@@ -579,6 +620,8 @@ function ParentAttendanceView() {
 									</label>
 									<textarea
 										id="absence-note"
+										value={absenceNote}
+										onChange={(e) => setAbsenceNote(e.target.value)}
 										className="w-full p-4 rounded-xl border border-orange-100/50 bg-orange-50/30 focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
 										placeholder="E.g., Leo has a dentist appointment at 10am..."
 										rows={3}
@@ -588,9 +631,10 @@ function ParentAttendanceView() {
 								<button
 									type="submit"
 									data-testid="absence-submit"
-									className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02]"
+									disabled={reportAbsence.isPending}
+									className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] disabled:opacity-50"
 								>
-									Submit Absence Report
+									{reportAbsence.isPending ? "Submitting..." : "Submit Absence Report"}
 									<Send className="h-4 w-4" aria-hidden="true" />
 								</button>
 
