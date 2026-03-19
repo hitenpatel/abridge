@@ -20,6 +20,7 @@ import { trpc } from "@/lib/trpc";
 import {
 	Bell,
 	CreditCard,
+	Download,
 	GraduationCap,
 	KeyRound,
 	Palette,
@@ -366,6 +367,58 @@ function NotificationsCard() {
 						{updatePrefs.isPending ? "Saving..." : "Save Notifications"}
 					</Button>
 				</form>
+			</CardContent>
+		</Card>
+	);
+}
+
+function DataExportCard() {
+	const [exporting, setExporting] = useState(false);
+	const utils = trpc.useUtils();
+
+	const handleExport = async () => {
+		setExporting(true);
+		try {
+			const data = await utils.settings.exportUserData.fetch();
+			const json = JSON.stringify(data, null, 2);
+			const blob = new Blob([json], { type: "application/json" });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = `abridge-data-export-${new Date().toISOString().slice(0, 10)}.json`;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+			toast.success("Data exported successfully");
+		} catch {
+			toast.error("Failed to export data. Please try again.");
+		} finally {
+			setExporting(false);
+		}
+	};
+
+	return (
+		<Card className="rounded-2xl border border-orange-100/50">
+			<CardHeader>
+				<CardTitle className="flex items-center gap-2">
+					<Download className="w-5 h-5 text-primary" aria-hidden="true" />
+					Your Data
+				</CardTitle>
+			</CardHeader>
+			<CardContent className="space-y-3">
+				<p className="text-sm text-muted-foreground">
+					Download a copy of all your personal data stored on Abridge, including your profile,
+					payments, form responses, and activity history.
+				</p>
+				<Button
+					onClick={handleExport}
+					disabled={exporting}
+					variant="outline"
+					data-testid="export-data-button"
+				>
+					{exporting ? "Exporting..." : "Export My Data"}
+				</Button>
 			</CardContent>
 		</Card>
 	);
@@ -1076,6 +1129,7 @@ export default function SettingsPage() {
 					<ProfileCard />
 					<PasswordCard />
 					<NotificationsCard />
+					<DataExportCard />
 				</div>
 				<div className="space-y-6">
 					{isAdmin && schoolId && <SchoolSettingsCard schoolId={schoolId} />}

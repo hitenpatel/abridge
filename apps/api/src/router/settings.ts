@@ -213,6 +213,227 @@ export const settingsRouter = router({
 			return school;
 		}),
 
+	exportUserData: protectedProcedure.query(async ({ ctx }) => {
+		const userId = ctx.user.id;
+
+		const [
+			user,
+			accounts,
+			children,
+			payments,
+			formResponses,
+			messageReads,
+			wellbeingCheckIns,
+			mealBookings,
+			clubEnrollments,
+			homeworkCompletions,
+			eventRsvps,
+			achievements,
+			chatMessages,
+			communityPosts,
+			communityComments,
+			volunteerSignups,
+		] = await Promise.all([
+			ctx.prisma.user.findUnique({
+				where: { id: userId },
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					phone: true,
+					language: true,
+					emailVerified: true,
+					notifyByPush: true,
+					notifyBySms: true,
+					notifyByEmail: true,
+					quietStart: true,
+					quietEnd: true,
+					createdAt: true,
+					updatedAt: true,
+				},
+			}),
+			ctx.prisma.account.findMany({
+				where: { userId },
+				select: {
+					id: true,
+					providerId: true,
+					accountId: true,
+					createdAt: true,
+				},
+			}),
+			ctx.prisma.parentChild.findMany({
+				where: { userId },
+				select: {
+					relation: true,
+					child: {
+						select: {
+							id: true,
+							firstName: true,
+							lastName: true,
+							yearGroup: true,
+							className: true,
+						},
+					},
+				},
+			}),
+			ctx.prisma.payment.findMany({
+				where: { userId },
+				select: {
+					id: true,
+					totalAmount: true,
+					status: true,
+					receiptNumber: true,
+					createdAt: true,
+					completedAt: true,
+					lineItems: {
+						select: {
+							amount: true,
+							paymentItem: { select: { title: true, category: true } },
+						},
+					},
+				},
+			}),
+			ctx.prisma.formResponse.findMany({
+				where: { parentId: userId },
+				select: {
+					id: true,
+					data: true,
+					submittedAt: true,
+					template: { select: { title: true } },
+					child: { select: { firstName: true, lastName: true } },
+				},
+			}),
+			ctx.prisma.messageRead.findMany({
+				where: { userId },
+				select: { messageId: true, readAt: true },
+			}),
+			ctx.prisma.wellbeingCheckIn.findMany({
+				where: {
+					child: { parentLinks: { some: { userId } } },
+				},
+				select: {
+					mood: true,
+					note: true,
+					checkedInBy: true,
+					date: true,
+					child: { select: { firstName: true } },
+				},
+			}),
+			ctx.prisma.mealBooking.findMany({
+				where: { bookedBy: userId },
+				select: {
+					date: true,
+					status: true,
+					mealOption: { select: { name: true, category: true } },
+					child: { select: { firstName: true } },
+				},
+			}),
+			ctx.prisma.clubEnrollment.findMany({
+				where: { enrolledBy: userId },
+				select: {
+					status: true,
+					createdAt: true,
+					club: { select: { name: true, day: true } },
+					child: { select: { firstName: true } },
+				},
+			}),
+			ctx.prisma.homeworkCompletion.findMany({
+				where: {
+					child: { parentLinks: { some: { userId } } },
+				},
+				select: {
+					status: true,
+					completedAt: true,
+					grade: true,
+					feedback: true,
+					assignment: { select: { title: true, subject: true } },
+					child: { select: { firstName: true } },
+				},
+			}),
+			ctx.prisma.eventRsvp.findMany({
+				where: { userId },
+				select: {
+					response: true,
+					note: true,
+					createdAt: true,
+					event: { select: { title: true, startDate: true } },
+				},
+			}),
+			ctx.prisma.achievement.findMany({
+				where: {
+					child: { parentLinks: { some: { userId } } },
+				},
+				select: {
+					points: true,
+					reason: true,
+					createdAt: true,
+					category: { select: { name: true } },
+					child: { select: { firstName: true } },
+				},
+			}),
+			ctx.prisma.chatMessage.findMany({
+				where: { senderId: userId },
+				select: {
+					body: true,
+					createdAt: true,
+					readAt: true,
+				},
+			}),
+			ctx.prisma.communityPost.findMany({
+				where: { authorId: userId },
+				select: {
+					type: true,
+					title: true,
+					body: true,
+					tags: true,
+					status: true,
+					createdAt: true,
+				},
+			}),
+			ctx.prisma.communityComment.findMany({
+				where: { authorId: userId },
+				select: {
+					body: true,
+					status: true,
+					createdAt: true,
+				},
+			}),
+			ctx.prisma.volunteerSignup.findMany({
+				where: { userId },
+				select: {
+					createdAt: true,
+					slot: {
+						select: {
+							description: true,
+							date: true,
+							post: { select: { title: true } },
+						},
+					},
+				},
+			}),
+		]);
+
+		return {
+			exportedAt: new Date().toISOString(),
+			user,
+			accounts,
+			children,
+			payments,
+			formResponses,
+			messageReads,
+			wellbeingCheckIns,
+			mealBookings,
+			clubEnrollments,
+			homeworkCompletions,
+			eventRsvps,
+			achievements,
+			chatMessages,
+			communityPosts,
+			communityComments,
+			volunteerSignups,
+		};
+	}),
+
 	getBranding: schoolAdminProcedure.query(async ({ ctx }) => {
 		const school = await ctx.prisma.school.findUniqueOrThrow({
 			where: { id: ctx.schoolId },
