@@ -15,11 +15,13 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SUPPORTED_LANGUAGES } from "@/hooks/use-translation";
+import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/lib/trpc";
 import {
 	Bell,
 	CreditCard,
 	GraduationCap,
+	KeyRound,
 	Palette,
 	Settings,
 	ToggleRight,
@@ -162,6 +164,74 @@ function ProfileCard() {
 						disabled={updateProfile.isPending}
 					>
 						{updateProfile.isPending ? "Saving..." : "Save Profile"}
+					</Button>
+				</form>
+			</CardContent>
+		</Card>
+	);
+}
+
+function PasswordCard() {
+	const [currentPassword, setCurrentPassword] = useState("");
+	const [newPassword, setNewPassword] = useState("");
+	const [isPending, setIsPending] = useState(false);
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		if (newPassword.length < 8) {
+			toast.error("New password must be at least 8 characters");
+			return;
+		}
+		setIsPending(true);
+		const { error } = await authClient.changePassword({
+			currentPassword,
+			newPassword,
+			revokeOtherSessions: false,
+		});
+		setIsPending(false);
+		if (error) {
+			toast.error(error.message ?? "Failed to change password");
+		} else {
+			toast.success("Password changed");
+			setCurrentPassword("");
+			setNewPassword("");
+		}
+	};
+
+	return (
+		<Card className="rounded-2xl border border-orange-100/50">
+			<CardHeader>
+				<CardTitle className="flex items-center gap-2">
+					<KeyRound className="w-5 h-5 text-primary" aria-hidden="true" />
+					Change Password
+				</CardTitle>
+			</CardHeader>
+			<CardContent>
+				<form onSubmit={handleSubmit} className="space-y-4">
+					<div className="space-y-1">
+						<Label htmlFor="current-password">Current Password</Label>
+						<Input
+							id="current-password"
+							type="password"
+							value={currentPassword}
+							onChange={(e) => setCurrentPassword(e.target.value)}
+							required
+						/>
+					</div>
+					<div className="space-y-1">
+						<Label htmlFor="new-password">New Password</Label>
+						<Input
+							id="new-password"
+							type="password"
+							value={newPassword}
+							onChange={(e) => setNewPassword(e.target.value)}
+							required
+							minLength={8}
+						/>
+						<p className="text-xs text-muted-foreground">Minimum 8 characters</p>
+					</div>
+					<Button type="submit" disabled={isPending}>
+						{isPending ? "Changing..." : "Change Password"}
 					</Button>
 				</form>
 			</CardContent>
@@ -1004,6 +1074,7 @@ export default function SettingsPage() {
 			<div className="grid lg:grid-cols-2 gap-6 items-start">
 				<div className="space-y-6">
 					<ProfileCard />
+					<PasswordCard />
 					<NotificationsCard />
 				</div>
 				<div className="space-y-6">
