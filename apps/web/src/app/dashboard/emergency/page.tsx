@@ -289,6 +289,73 @@ function AlertHistory({ schoolId }: { schoolId: string }) {
 	);
 }
 
+function ParentEmergencyView() {
+	const { data: alert, isLoading } = trpc.emergency.getActiveAlertForParent.useQuery(undefined, {
+		refetchInterval: 10000,
+	});
+
+	return (
+		<PageShell>
+			<div className="space-y-6 p-6">
+				<PageHeader
+					icon={Shield}
+					title="Emergency Alerts"
+					description="Real-time updates from your child's school"
+				/>
+
+				{isLoading && <Skeleton className="h-48" />}
+
+				{!isLoading && !alert && (
+					<Card>
+						<CardContent className="py-12 text-center">
+							<CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
+							<p className="text-lg font-medium text-foreground">All clear</p>
+							<p className="text-sm text-muted-foreground mt-1">
+								There are no active emergency alerts at this time.
+							</p>
+						</CardContent>
+					</Card>
+				)}
+
+				{alert && (
+					<Card className="border-red-500 border-2 bg-red-50" data-testid="parent-emergency-alert">
+						<CardHeader>
+							<CardTitle className="flex items-center gap-2 text-red-700">
+								<AlertTriangle className="h-6 w-6 animate-pulse" />
+								{alert.title}
+							</CardTitle>
+						</CardHeader>
+						<CardContent className="space-y-4">
+							{alert.message && <p className="text-sm font-medium">{alert.message}</p>}
+							<p className="text-xs text-muted-foreground">
+								Initiated by {alert.initiator.name} at{" "}
+								{new Date(alert.createdAt).toLocaleTimeString("en-GB")}
+							</p>
+
+							{alert.updates.length > 0 && (
+								<div className="space-y-2 border-l-2 border-red-300 pl-3">
+									{alert.updates.map((update) => (
+										<div key={update.id}>
+											<p className="text-sm">{update.message}</p>
+											<p className="text-xs text-muted-foreground">
+												{new Date(update.createdAt).toLocaleTimeString("en-GB")}
+											</p>
+										</div>
+									))}
+								</div>
+							)}
+
+							<p className="text-xs text-muted-foreground border-t pt-3">
+								This page updates automatically every 10 seconds. Please follow school instructions.
+							</p>
+						</CardContent>
+					</Card>
+				)}
+			</div>
+		</PageShell>
+	);
+}
+
 export default function EmergencyPage() {
 	const features = useFeatureToggles();
 	const { data: session } = trpc.auth.getSession.useQuery();
@@ -299,13 +366,7 @@ export default function EmergencyPage() {
 	}
 
 	if (!isStaff || !session?.schoolId) {
-		return (
-			<div className="p-6">
-				<p className="text-muted-foreground">
-					Emergency communications is only available to staff.
-				</p>
-			</div>
-		);
+		return <ParentEmergencyView />;
 	}
 
 	return (

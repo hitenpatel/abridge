@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { assertFeatureEnabled } from "../lib/feature-guards";
 import { logger } from "../lib/logger";
-import { router, schoolFeatureProcedure } from "../trpc";
+import { protectedProcedure, router, schoolFeatureProcedure } from "../trpc";
 
 const EMERGENCY_TITLES: Record<string, string> = {
 	LOCKDOWN: "Lockdown in Effect",
@@ -144,6 +144,45 @@ export const emergencyRouter = router({
 
 			return alert;
 		}),
+
+	getActiveAlertForParent: protectedProcedure.query(async ({ ctx }) => {
+		// Derive schoolId from parent's child link
+		const parentChild = await ctx.prisma.parentChild.findFirst({
+			where: { userId: ctx.user.id },
+			select: { child: { select: { schoolId: true } } },
+		});
+
+		if (!parentChild) {
+			return null;
+		}
+
+		const schoolId = parentChild.child.schoolId;
+
+		// Check feature is enabled
+		const school = await ctx.prisma.school.findUnique({
+			where: { id: schoolId },
+			select: { emergencyCommsEnabled: true },
+		});
+
+		if (!school?.emergencyCommsEnabled) {
+			return null;
+		}
+
+		return ctx.prisma.emergencyAlert.findFirst({
+			where: {
+				schoolId,
+				status: "ACTIVE",
+			},
+			include: {
+				updates: {
+					orderBy: { createdAt: "asc" },
+				},
+				initiator: {
+					select: { name: true },
+				},
+			},
+		});
+	}),
 
 	getAlertHistory: schoolFeatureProcedure
 		.input(
