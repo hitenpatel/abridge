@@ -2,6 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PageHeader } from "@/components/ui/page-header";
@@ -22,12 +30,14 @@ import {
 	CreditCard,
 	Download,
 	GraduationCap,
+	AlertTriangle,
 	KeyRound,
 	Palette,
 	Settings,
 	ToggleRight,
 	User,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -421,6 +431,94 @@ function DataExportCard() {
 				</Button>
 			</CardContent>
 		</Card>
+	);
+}
+
+function DeleteAccountCard() {
+	const [open, setOpen] = useState(false);
+	const [confirmText, setConfirmText] = useState("");
+	const [deleting, setDeleting] = useState(false);
+	const router = useRouter();
+
+	const deleteAccount = trpc.settings.deleteAccount.useMutation({
+		onSuccess: () => {
+			toast.success("Account deleted");
+			router.push("/login");
+		},
+		onError: (err) => {
+			toast.error(err.message);
+			setDeleting(false);
+		},
+	});
+
+	const handleDelete = () => {
+		if (confirmText !== "DELETE MY ACCOUNT") return;
+		setDeleting(true);
+		deleteAccount.mutate({ confirmation: "DELETE MY ACCOUNT" });
+	};
+
+	return (
+		<>
+			<Card className="rounded-2xl border border-destructive/20">
+				<CardHeader>
+					<CardTitle className="flex items-center gap-2 text-destructive">
+						<AlertTriangle className="w-5 h-5" aria-hidden="true" />
+						Delete Account
+					</CardTitle>
+				</CardHeader>
+				<CardContent className="space-y-3">
+					<p className="text-sm text-muted-foreground">
+						Permanently delete your account and all associated personal data. This action cannot
+						be undone. Your children's school records will be preserved.
+					</p>
+					<Button
+						variant="outline"
+						onClick={() => setOpen(true)}
+						className="border-destructive/30 text-destructive hover:bg-destructive/10"
+						data-testid="delete-account-button"
+					>
+						Delete My Account
+					</Button>
+				</CardContent>
+			</Card>
+
+			<Dialog open={open} onOpenChange={setOpen}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Are you absolutely sure?</DialogTitle>
+						<DialogDescription>
+							This will permanently delete your account, remove your personal data, and revoke
+							access to all schools. This cannot be undone.
+						</DialogDescription>
+					</DialogHeader>
+					<div className="space-y-2 py-4">
+						<Label htmlFor="confirm-delete">
+							Type <strong>DELETE MY ACCOUNT</strong> to confirm
+						</Label>
+						<Input
+							id="confirm-delete"
+							value={confirmText}
+							onChange={(e) => setConfirmText(e.target.value)}
+							placeholder="DELETE MY ACCOUNT"
+							data-testid="delete-confirm-input"
+						/>
+					</div>
+					<DialogFooter>
+						<Button variant="outline" onClick={() => setOpen(false)}>
+							Cancel
+						</Button>
+						<Button
+							variant="destructive"
+							onClick={handleDelete}
+							disabled={confirmText !== "DELETE MY ACCOUNT" || deleting}
+							data-testid="delete-confirm-button"
+						>
+							{deleting ? "Deleting..." : "Delete Account"}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+		</>
 	);
 }
 
@@ -1130,6 +1228,7 @@ export default function SettingsPage() {
 					<PasswordCard />
 					<NotificationsCard />
 					<DataExportCard />
+					<DeleteAccountCard />
 				</div>
 				<div className="space-y-6">
 					{isAdmin && schoolId && <SchoolSettingsCard schoolId={schoolId} />}

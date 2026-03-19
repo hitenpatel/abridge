@@ -434,6 +434,68 @@ export const settingsRouter = router({
 		};
 	}),
 
+	deleteAccount: protectedProcedure
+		.input(z.object({ confirmation: z.literal("DELETE MY ACCOUNT") }))
+		.mutation(async ({ ctx }) => {
+			const userId = ctx.user.id;
+
+			await ctx.prisma.$transaction(async (tx) => {
+				// 1. Delete user-owned personal records
+				await tx.formResponse.deleteMany({ where: { parentId: userId } });
+				await tx.eventRsvp.deleteMany({ where: { userId } });
+				await tx.volunteerSignup.deleteMany({ where: { userId } });
+				await tx.messageRead.deleteMany({ where: { userId } });
+				await tx.notificationDelivery.deleteMany({ where: { userId } });
+
+				// 2. Anonymize community content (keep for school context)
+				await tx.communityPost.updateMany({
+					where: { authorId: userId },
+					data: { status: "REMOVED", removedReason: "Account deleted" },
+				});
+				await tx.communityComment.updateMany({
+					where: { authorId: userId },
+					data: { status: "REMOVED" },
+				});
+
+				// 3. Nullify optional FK references on shared records
+				await tx.$executeRaw`UPDATE "messages" SET "authorId" = NULL WHERE "authorId" = ${userId}`;
+				await tx.$executeRaw`UPDATE "wellbeing_alert" SET "acknowledgedBy" = NULL WHERE "acknowledgedBy" = ${userId}`;
+				await tx.$executeRaw`UPDATE "wellbeing_alert" SET "resolvedBy" = NULL WHERE "resolvedBy" = ${userId}`;
+				await tx.$executeRaw`UPDATE "emergency_alert" SET "resolvedBy" = NULL WHERE "resolvedBy" = ${userId}`;
+				await tx.$executeRaw`UPDATE "homework_completion" SET "gradedBy" = NULL WHERE "gradedBy" = ${userId}`;
+				await tx.$executeRaw`UPDATE "attendance_alert" SET "acknowledgedBy" = NULL WHERE "acknowledgedBy" = ${userId}`;
+
+				// 4. Delete auth records (prevents login)
+				await tx.session.deleteMany({ where: { userId } });
+				await tx.account.deleteMany({ where: { userId } });
+
+				// 5. Remove school memberships
+				await tx.staffMember.deleteMany({ where: { userId } });
+				await tx.parentChild.deleteMany({ where: { userId } });
+
+				// 6. Anonymize the User record (preserves FK integrity for shared records)
+				await tx.user.update({
+					where: { id: userId },
+					data: {
+						name: "Deleted User",
+						email: `deleted-${userId}@deleted.local`,
+						phone: null,
+						emailVerified: false,
+						image: null,
+						pushToken: null,
+						language: "en",
+						notifyByPush: false,
+						notifyBySms: false,
+						notifyByEmail: false,
+						quietStart: null,
+						quietEnd: null,
+					},
+				});
+			});
+
+			return { success: true };
+		}),
+
 	getBranding: schoolAdminProcedure.query(async ({ ctx }) => {
 		const school = await ctx.prisma.school.findUniqueOrThrow({
 			where: { id: ctx.schoolId },
