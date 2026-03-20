@@ -1,0 +1,13 @@
+appId: com.schoolconnect.app
+---
+- runFlow: ../_helpers/login-parent.yaml
+- waitForAnimationToEnd
+- tapOn:
+    id: "nav-clubs"
+- extendedWaitUntil:
+    visible:
+      id: "clubs-screen"
+    timeout: 10000
+- assertVisible: "Clubs"
+- assertVisible: "Browse and enroll in after-school clubs"
+- takeScreenshot: native-clubs

@@ -27,6 +27,7 @@ import { AchievementsScreen } from "./src/screens/AchievementsScreen";
 import { AttendanceScreen } from "./src/screens/AttendanceScreen";
 import { CalendarScreen } from "./src/screens/CalendarScreen";
 import { ChatScreen } from "./src/screens/ChatScreen";
+import { ClubsScreen } from "./src/screens/ClubsScreen";
 import { ComposeMessageScreen } from "./src/screens/ComposeMessageScreen";
 import { ComposePostScreen } from "./src/screens/ComposePostScreen";
 import { FormDetailScreen } from "./src/screens/FormDetailScreen";
@@ -92,6 +93,7 @@ export type RootStackParamList = {
 	ReadingDiary: undefined;
 	Timetable: undefined;
 	Visitors: undefined;
+	Clubs: undefined;
 };
 
 export type ParentTabParamList = {
@@ -349,6 +351,7 @@ function AuthenticatedApp() {
 					options={{ title: "Timetable" }}
 				/>
 				<Stack.Screen name="Visitors" component={VisitorsScreen} options={{ title: "Visitors" }} />
+				<Stack.Screen name="Clubs" component={ClubsScreen} options={{ title: "Clubs" }} />
 			</Stack.Navigator>
 		</NavigationContainer>
 	);
