@@ -8,12 +8,6 @@ const nextConfig: NextConfig = {
 	turbopack: {
 		root: "../..",
 	},
-	typescript: {
-		// API code is type-checked separately via its own build process.
-		// The web tsconfig includes API router files for tRPC types, which
-		// causes Turbopack to surface pre-existing API type issues.
-		ignoreBuildErrors: true,
-	},
 	async headers() {
 		return [
 			{

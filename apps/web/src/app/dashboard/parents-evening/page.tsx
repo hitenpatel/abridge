@@ -10,7 +10,7 @@ import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import { CalendarX, Plus, User, Users, Video } from "lucide-react";
+import { Calendar, CalendarX, Plus, User, Users, Video } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -229,7 +229,13 @@ function StaffView({ schoolId }: { schoolId: string }) {
 						</p>
 					</CardHeader>
 					<CardContent className="pt-4">
-						<SlotBookingView parentsEveningId={evening.id} bookingOpen={evening.bookingOpen} />
+						<SlotBookingView
+							parentsEveningId={evening.id}
+							bookingOpen={
+								new Date() >= new Date(evening.bookingOpensAt) &&
+								new Date() <= new Date(evening.bookingClosesAt)
+							}
+						/>
 					</CardContent>
 				</Card>
 			))}

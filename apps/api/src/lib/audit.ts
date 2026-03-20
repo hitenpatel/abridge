@@ -1,4 +1,4 @@
-import { Prisma, prisma } from "@schoolconnect/db";
+import { prisma } from "@schoolconnect/db";
 import { logger } from "./logger";
 
 export interface AuditLogEntry {
@@ -19,8 +19,8 @@ export async function writeAuditLog(entry: AuditLogEntry): Promise<void> {
 				action: entry.action,
 				entityType: entry.entityType ?? null,
 				entityId: entry.entityId ?? null,
-				metadata:
-					entry.metadata != null ? (entry.metadata as Prisma.InputJsonValue) : Prisma.JsonNull,
+				// biome-ignore lint/suspicious/noExplicitAny: Prisma Json field accepts any serializable value
+				metadata: entry.metadata != null ? (entry.metadata as any) : undefined,
 			},
 		});
 	} catch (error) {

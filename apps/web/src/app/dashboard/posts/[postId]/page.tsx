@@ -169,7 +169,7 @@ export default function PostDetailPage() {
 											size="sm"
 											onClick={() =>
 												updateMutation.mutate({
-													schoolId: post.schoolId,
+													schoolId: session?.schoolId ?? "",
 													postId: post.id,
 													body: editBody,
 												})
