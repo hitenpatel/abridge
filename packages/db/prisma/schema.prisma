@@ -107,6 +107,7 @@ model School {
   progressSummaries   ProgressSummary[]
   chatConversations   ChatConversation[]
   attendanceAlerts    AttendanceAlert[]
+  auditLogs           AuditLog[]
 
   @@map("schools")
 }
@@ -180,6 +181,7 @@ model User {
   emergencyAlertsResolved     EmergencyAlert[] @relation("EmergencyAlertResolver")
   emergencyUpdatesPosted      EmergencyUpdate[] @relation("EmergencyUpdatePoster")
   emergencyAcknowledgements   EmergencyAcknowledgement[] @relation("EmergencyAcknowledger")
+  auditLogs                   AuditLog[] @relation("AuditLogActor")
   mealMenusCreated            MealMenu[]        @relation("MealMenuCreator")
   mealBookingsMade            MealBooking[]     @relation("MealBookingBooker")
   communityPosts              CommunityPost[]   @relation("CommunityPostAuthor")
@@ -1782,4 +1784,23 @@ model AttendanceAlert {
   @@index([schoolId, status])
   @@index([childId, createdAt])
   @@map("attendance_alert")
+}
+
+// ─── Audit Logging ──────────────────────────────────────────
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  schoolId   String
+  school     School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  actorId    String
+  actor      User     @relation("AuditLogActor", fields: [actorId], references: [id])
+  action     String
+  entityType String?
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([schoolId, createdAt(sort: Desc)])
+  @@index([actorId, createdAt])
+  @@map("audit_log")
 }

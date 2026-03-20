@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { writeAuditLog } from "../lib/audit";
 import { protectedProcedure, router, schoolAdminProcedure, schoolStaffProcedure } from "../trpc";
 
 const featureToggleSelect = {
@@ -210,6 +211,16 @@ export const settingsRouter = router({
 				data,
 				select: featureToggleSelect,
 			});
+
+			void writeAuditLog({
+				schoolId: ctx.schoolId,
+				actorId: ctx.user.id,
+				action: "update_feature_toggles",
+				entityType: "School",
+				entityId: ctx.schoolId,
+				metadata: data,
+			});
+
 			return school;
 		}),
 
@@ -551,5 +562,32 @@ export const settingsRouter = router({
 				},
 			});
 			return school;
+		}),
+
+	getAuditLog: schoolAdminProcedure
+		.input(
+			z.object({
+				limit: z.number().min(1).max(100).default(50),
+				cursor: z.string().nullish(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const items = await ctx.prisma.auditLog.findMany({
+				where: { schoolId: ctx.schoolId },
+				take: input.limit + 1,
+				cursor: input.cursor ? { id: input.cursor } : undefined,
+				orderBy: { createdAt: "desc" },
+				include: {
+					actor: { select: { name: true, email: true } },
+				},
+			});
+
+			let nextCursor: string | undefined;
+			if (items.length > input.limit) {
+				const next = items.pop();
+				nextCursor = next?.id;
+			}
+
+			return { items, nextCursor };
 		}),
 });
