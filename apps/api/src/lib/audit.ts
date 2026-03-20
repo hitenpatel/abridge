@@ -1,4 +1,4 @@
-import { type Prisma, prisma } from "@schoolconnect/db";
+import { Prisma, prisma } from "@schoolconnect/db";
 import { logger } from "./logger";
 
 export interface AuditLogEntry {
