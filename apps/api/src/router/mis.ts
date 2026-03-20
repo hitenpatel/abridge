@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { decrypt, encrypt, isEncrypted } from "../lib/crypto";
 import { assertFeatureEnabled } from "../lib/feature-guards";
 import { getAdapter } from "../lib/mis/adapter-factory";
 import { router, schoolAdminProcedure, schoolFeatureProcedure } from "../trpc";
@@ -31,20 +32,21 @@ export const misRouter = router({
 				});
 			}
 
+			const encryptedCredentials = encrypt(input.credentials);
 			const connection = await ctx.prisma.misConnection.upsert({
 				where: { schoolId: input.schoolId },
 				create: {
 					schoolId: input.schoolId,
 					provider: input.provider,
 					apiUrl: input.apiUrl ?? null,
-					credentials: input.credentials,
+					credentials: encryptedCredentials,
 					syncFrequency: input.syncFrequency,
 					status: "CONNECTED",
 				},
 				update: {
 					provider: input.provider,
 					apiUrl: input.apiUrl ?? null,
-					credentials: input.credentials,
+					credentials: encryptedCredentials,
 					syncFrequency: input.syncFrequency,
 					status: "CONNECTED",
 				},
@@ -77,7 +79,13 @@ export const misRouter = router({
 				});
 			}
 
-			const adapter = getAdapter(connection.provider, connection.apiUrl, connection.credentials);
+			const adapter = getAdapter(
+				connection.provider,
+				connection.apiUrl,
+				isEncrypted(connection.credentials)
+					? decrypt(connection.credentials)
+					: connection.credentials,
+			);
 			const success = await adapter.testConnection();
 			return { success };
 		}),
@@ -109,7 +117,13 @@ export const misRouter = router({
 			});
 
 			try {
-				const adapter = getAdapter(connection.provider, connection.apiUrl, connection.credentials);
+				const adapter = getAdapter(
+					connection.provider,
+					connection.apiUrl,
+					isEncrypted(connection.credentials)
+						? decrypt(connection.credentials)
+						: connection.credentials,
+				);
 				const result = await adapter.syncStudents(input.csvData);
 
 				let created = 0;
@@ -241,7 +255,13 @@ export const misRouter = router({
 			});
 
 			try {
-				const adapter = getAdapter(connection.provider, connection.apiUrl, connection.credentials);
+				const adapter = getAdapter(
+					connection.provider,
+					connection.apiUrl,
+					isEncrypted(connection.credentials)
+						? decrypt(connection.credentials)
+						: connection.credentials,
+				);
 				const result = await adapter.syncAttendance(input.csvData);
 
 				let created = 0;
