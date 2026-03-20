@@ -37,8 +37,16 @@ jobs:
       - name: Type-check Web
         run: pnpm --filter @schoolconnect/web exec tsc --noEmit
 
-      - name: Run API unit tests
-        run: pnpm --filter @schoolconnect/api test -- --run
+      - name: Run API unit tests with coverage
+        run: pnpm --filter @schoolconnect/api test -- --run --coverage
+
+      - name: Upload API coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-coverage
+          path: apps/api/coverage/
+          retention-days: 14
 
       - name: Run mobile unit tests
         run: pnpm --filter @schoolconnect/mobile test:ci
