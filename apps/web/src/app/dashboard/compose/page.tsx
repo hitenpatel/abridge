@@ -46,9 +46,9 @@ export default function ComposePostPage() {
 
 		setIsPosting(true);
 		try {
-			// Upload files
+			// Upload files with per-file error tracking
 			const mediaUrls: string[] = [];
-			let uploadFailed = false;
+			const failedFiles: string[] = [];
 
 			for (const file of files) {
 				try {
@@ -58,22 +58,32 @@ export default function ComposePostPage() {
 						contentType: file.type,
 					});
 
-					await fetch(uploadUrl, {
+					const uploadResponse = await fetch(uploadUrl, {
 						method: "PUT",
 						body: file,
 						headers: { "Content-Type": file.type },
 					});
 
+					if (!uploadResponse.ok) {
+						failedFiles.push(file.name);
+						continue;
+					}
+
 					mediaUrls.push(publicUrl);
 				} catch {
-					uploadFailed = true;
+					failedFiles.push(file.name);
 				}
 			}
 
-			if (uploadFailed && mediaUrls.length === 0 && !body.trim()) {
-				toast.error("Could not upload media. Please try again.");
-				setIsPosting(false);
-				return;
+			if (failedFiles.length > 0) {
+				if (mediaUrls.length === 0 && !body.trim()) {
+					toast.error(`All ${failedFiles.length} file(s) failed to upload. Please try again.`);
+					setIsPosting(false);
+					return;
+				}
+				toast.warning(
+					`${failedFiles.length} of ${files.length} file(s) failed: ${failedFiles.join(", ")}`,
+				);
 			}
 
 			// Create post
