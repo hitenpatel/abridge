@@ -159,6 +159,17 @@ function RegisterForm() {
 							Login
 						</Link>
 					</p>
+					<p className="text-center text-xs text-muted-foreground">
+						By registering, you agree to our{" "}
+						<Link href="/terms" className="text-primary hover:underline">
+							Terms of Service
+						</Link>{" "}
+						and{" "}
+						<Link href="/privacy" className="text-primary hover:underline">
+							Privacy Policy
+						</Link>
+						.
+					</p>
 				</form>
 			</CardContent>
 		</Card>
