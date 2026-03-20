@@ -32,9 +32,10 @@ export function decrypt(encryptedString: string): string {
 	if (parts.length !== 3) {
 		throw new Error("Invalid encrypted format");
 	}
-	const iv = Buffer.from(parts[0], "hex");
-	const authTag = Buffer.from(parts[1], "hex");
-	const encrypted = Buffer.from(parts[2], "hex");
+	const [ivHex, authTagHex, encryptedHex] = parts as [string, string, string];
+	const iv = Buffer.from(ivHex, "hex");
+	const authTag = Buffer.from(authTagHex, "hex");
+	const encrypted = Buffer.from(encryptedHex, "hex");
 	const decipher = createDecipheriv(ALGORITHM, key, iv);
 	decipher.setAuthTag(authTag);
 	return decipher.update(encrypted) + decipher.final("utf8");
@@ -42,5 +43,5 @@ export function decrypt(encryptedString: string): string {
 
 export function isEncrypted(value: string): boolean {
 	const parts = value.split(":");
-	return parts.length === 3 && parts[0].length === IV_LENGTH * 2;
+	return parts.length === 3 && (parts[0]?.length ?? 0) === IV_LENGTH * 2;
 }
