@@ -343,6 +343,15 @@ function ParentEmergencyView() {
 	const { data: alert, isLoading } = trpc.emergency.getActiveAlertForParent.useQuery(undefined, {
 		refetchInterval: 10000,
 	});
+	const utils = trpc.useUtils();
+
+	const ackMutation = trpc.emergency.acknowledgeAlert.useMutation({
+		onSuccess: () => {
+			toast.success("Alert acknowledged");
+			utils.emergency.getActiveAlertForParent.invalidate();
+		},
+		onError: (err) => toast.error(err.message),
+	});
 
 	return (
 		<PageShell>
@@ -395,7 +404,25 @@ function ParentEmergencyView() {
 								</div>
 							)}
 
-							<p className="text-xs text-muted-foreground border-t pt-3">
+							<div className="border-t pt-3">
+								{alert.hasAcknowledged ? (
+									<p className="text-sm text-green-700 flex items-center gap-2">
+										<CheckCircle className="h-4 w-4" />
+										You have acknowledged this alert
+									</p>
+								) : (
+									<Button
+										onClick={() => ackMutation.mutate({ alertId: alert.id })}
+										disabled={ackMutation.isPending}
+										className="bg-red-600 hover:bg-red-700 text-white"
+										data-testid="acknowledge-alert-button"
+									>
+										{ackMutation.isPending ? "Acknowledging..." : "I have read this alert"}
+									</Button>
+								)}
+							</div>
+
+							<p className="text-xs text-muted-foreground">
 								This page updates automatically every 10 seconds. Please follow school instructions.
 							</p>
 						</CardContent>

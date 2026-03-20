@@ -179,6 +179,7 @@ model User {
   emergencyAlertsInitiated    EmergencyAlert[] @relation("EmergencyAlertInitiator")
   emergencyAlertsResolved     EmergencyAlert[] @relation("EmergencyAlertResolver")
   emergencyUpdatesPosted      EmergencyUpdate[] @relation("EmergencyUpdatePoster")
+  emergencyAcknowledgements   EmergencyAcknowledgement[] @relation("EmergencyAcknowledger")
   mealMenusCreated            MealMenu[]        @relation("MealMenuCreator")
   mealBookingsMade            MealBooking[]     @relation("MealBookingBooker")
   communityPosts              CommunityPost[]   @relation("CommunityPostAuthor")
@@ -885,10 +886,24 @@ model EmergencyAlert {
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 
-  updates     EmergencyUpdate[]
+  updates          EmergencyUpdate[]
+  acknowledgements EmergencyAcknowledgement[]
 
   @@index([schoolId, status])
   @@map("emergency_alert")
+}
+
+model EmergencyAcknowledgement {
+  id             String         @id @default(cuid())
+  alertId        String
+  alert          EmergencyAlert @relation(fields: [alertId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User           @relation("EmergencyAcknowledger", fields: [userId], references: [id])
+  acknowledgedAt DateTime       @default(now())
+
+  @@unique([alertId, userId])
+  @@index([alertId])
+  @@map("emergency_acknowledgement")
 }
 
 model EmergencyUpdate {

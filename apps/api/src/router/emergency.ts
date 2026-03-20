@@ -145,6 +145,23 @@ export const emergencyRouter = router({
 			return alert;
 		}),
 
+	acknowledgeAlert: protectedProcedure
+		.input(z.object({ alertId: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const ack = await ctx.prisma.emergencyAcknowledgement.upsert({
+				where: {
+					alertId_userId: { alertId: input.alertId, userId: ctx.user.id },
+				},
+				create: {
+					alertId: input.alertId,
+					userId: ctx.user.id,
+				},
+				update: {},
+			});
+
+			return ack;
+		}),
+
 	getActiveAlertForParent: protectedProcedure.query(async ({ ctx }) => {
 		// Derive schoolId from parent's child link
 		const parentChild = await ctx.prisma.parentChild.findFirst({
@@ -168,7 +185,7 @@ export const emergencyRouter = router({
 			return null;
 		}
 
-		return ctx.prisma.emergencyAlert.findFirst({
+		const alert = await ctx.prisma.emergencyAlert.findFirst({
 			where: {
 				schoolId,
 				status: "ACTIVE",
@@ -180,8 +197,22 @@ export const emergencyRouter = router({
 				initiator: {
 					select: { name: true },
 				},
+				_count: {
+					select: { acknowledgements: true },
+				},
 			},
 		});
+
+		if (!alert) return null;
+
+		// Check if current user has acknowledged
+		const userAck = await ctx.prisma.emergencyAcknowledgement.findUnique({
+			where: {
+				alertId_userId: { alertId: alert.id, userId: ctx.user.id },
+			},
+		});
+
+		return { ...alert, hasAcknowledged: !!userAck };
 	}),
 
 	getAlertHistory: schoolFeatureProcedure
