@@ -17,6 +17,7 @@ import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { ActivityIndicator, SafeAreaView, Text, View } from "react-native";
 import { FloatingTabBar } from "./src/components/FloatingTabBar";
+import { NetworkBanner } from "./src/components/NetworkBanner";
 import { authClient } from "./src/lib/auth-client";
 import { TRPCProvider, clearAuthTokenCache } from "./src/lib/provider";
 import { ThemeProvider } from "./src/lib/theme-provider";
@@ -442,6 +443,7 @@ export default function App() {
 	return (
 		<TRPCProvider>
 			<ThemeProvider>
+				<NetworkBanner />
 				<AppContent />
 			</ThemeProvider>
 		</TRPCProvider>

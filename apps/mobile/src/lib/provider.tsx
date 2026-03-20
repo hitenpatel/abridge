@@ -1,7 +1,8 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, onlineManager } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import Constants from "expo-constants";
 import { useState } from "react";
+import { AppState } from "react-native";
 import superjson from "superjson";
 import { authClient } from "./auth-client";
 import { trpc } from "./trpc";
@@ -54,7 +55,20 @@ export function clearAuthTokenCache() {
 }
 
 export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-	const [queryClient] = useState(() => new QueryClient());
+	const [queryClient] = useState(
+		() =>
+			new QueryClient({
+				defaultOptions: {
+					queries: {
+						networkMode: "offlineFirst",
+						retry: 2,
+					},
+					mutations: {
+						networkMode: "offlineFirst",
+					},
+				},
+			}),
+	);
 	const [trpcClient] = useState(() =>
 		trpc.createClient({
 			links: [
