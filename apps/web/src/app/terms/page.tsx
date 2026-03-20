@@ -663,6 +663,11 @@ export default function TermsPage() {
 										Terms of Service
 									</a>
 								</li>
+								<li>
+									<a href="/dpa" className="hover:text-white transition-colors">
+										Data Processing Agreement
+									</a>
+								</li>
 							</ul>
 						</div>
 					</div>

@@ -497,7 +497,12 @@ export default function PrivacyPage() {
 									<p>
 										We do not sell your data. We share it only with the third-party processors
 										listed below, who help us run the platform. Each processor is bound by a Data
-										Processing Agreement.
+										Processing Agreement. Schools can review and sign the Abridge{" "}
+										<a href="/dpa" className="text-[#FF7D45] hover:underline font-medium">
+											Data Processing Agreement
+										</a>{" "}
+										which sets out the full terms under which Abridge processes data on their
+										behalf, as required by Article 28 of UK GDPR.
 									</p>
 
 									<div className="space-y-4 mt-4">
@@ -1015,6 +1020,11 @@ export default function PrivacyPage() {
 								<li>
 									<a href="/terms" className="hover:text-white transition-colors">
 										Terms of Service
+									</a>
+								</li>
+								<li>
+									<a href="/dpa" className="hover:text-white transition-colors">
+										Data Processing Agreement
 									</a>
 								</li>
 							</ul>
