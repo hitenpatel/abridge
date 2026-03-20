@@ -4,6 +4,13 @@ import { FeatureDisabled } from "@/components/feature-disabled";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	Dialog,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -29,6 +36,8 @@ function ActiveAlert({ schoolId }: { schoolId: string }) {
 	);
 
 	const [updateMessage, setUpdateMessage] = useState("");
+	const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+	const [cancelReason, setCancelReason] = useState("");
 	const utils = trpc.useUtils();
 
 	const postUpdateMutation = trpc.emergency.postUpdate.useMutation({
@@ -53,95 +62,136 @@ function ActiveAlert({ schoolId }: { schoolId: string }) {
 	if (!alert) return null;
 
 	return (
-		<Card className="border-red-500 border-2 bg-red-50">
-			<CardHeader>
-				<CardTitle className="flex items-center gap-2 text-red-700">
-					<AlertTriangle className="h-6 w-6 animate-pulse" />
-					{alert.title}
-				</CardTitle>
-			</CardHeader>
-			<CardContent className="space-y-4">
-				{alert.message && <p className="text-sm font-medium">{alert.message}</p>}
-				<p className="text-xs text-muted-foreground">
-					Initiated by {alert.initiator.name} at{" "}
-					{new Date(alert.createdAt).toLocaleTimeString("en-GB")}
-				</p>
+		<>
+			<Card className="border-red-500 border-2 bg-red-50">
+				<CardHeader>
+					<CardTitle className="flex items-center gap-2 text-red-700">
+						<AlertTriangle className="h-6 w-6 animate-pulse" />
+						{alert.title}
+					</CardTitle>
+				</CardHeader>
+				<CardContent className="space-y-4">
+					{alert.message && <p className="text-sm font-medium">{alert.message}</p>}
+					<p className="text-xs text-muted-foreground">
+						Initiated by {alert.initiator.name} at{" "}
+						{new Date(alert.createdAt).toLocaleTimeString("en-GB")}
+					</p>
 
-				{alert.updates.length > 0 && (
-					<div className="space-y-2 border-l-2 border-red-300 pl-3">
-						{alert.updates.map((update) => (
-							<div key={update.id}>
-								<p className="text-sm">{update.message}</p>
-								<p className="text-xs text-muted-foreground">
-									{new Date(update.createdAt).toLocaleTimeString("en-GB")}
-								</p>
-							</div>
-						))}
+					{alert.updates.length > 0 && (
+						<div className="space-y-2 border-l-2 border-red-300 pl-3">
+							{alert.updates.map((update) => (
+								<div key={update.id}>
+									<p className="text-sm">{update.message}</p>
+									<p className="text-xs text-muted-foreground">
+										{new Date(update.createdAt).toLocaleTimeString("en-GB")}
+									</p>
+								</div>
+							))}
+						</div>
+					)}
+
+					<div className="flex gap-2">
+						<input
+							type="text"
+							placeholder="Post an update..."
+							maxLength={500}
+							value={updateMessage}
+							onChange={(e) => setUpdateMessage(e.target.value)}
+							className="flex-1 rounded-md border p-2 text-sm"
+						/>
+						<Button
+							type="button"
+							onClick={() =>
+								postUpdateMutation.mutate({
+									schoolId,
+									alertId: alert.id,
+									message: updateMessage,
+								})
+							}
+							disabled={!updateMessage.trim() || postUpdateMutation.isPending}
+							className="bg-red-600 hover:bg-red-700 text-white"
+						>
+							Post
+						</Button>
 					</div>
-				)}
 
-				<div className="flex gap-2">
-					<input
-						type="text"
-						placeholder="Post an update..."
-						maxLength={500}
-						value={updateMessage}
-						onChange={(e) => setUpdateMessage(e.target.value)}
-						className="flex-1 rounded-md border p-2 text-sm"
-					/>
-					<Button
-						type="button"
-						onClick={() =>
-							postUpdateMutation.mutate({
-								schoolId,
-								alertId: alert.id,
-								message: updateMessage,
-							})
-						}
-						disabled={!updateMessage.trim() || postUpdateMutation.isPending}
-						className="bg-red-600 hover:bg-red-700 text-white"
-					>
-						Post
-					</Button>
-				</div>
-
-				<div className="flex gap-2 pt-2 border-t">
-					<Button
-						type="button"
-						onClick={() =>
-							resolveMutation.mutate({
-								schoolId,
-								alertId: alert.id,
-								status: "ALL_CLEAR",
-							})
-						}
-						disabled={resolveMutation.isPending}
-						className="bg-green-600 hover:bg-green-700 text-white"
-					>
-						<CheckCircle className="inline h-4 w-4 mr-1" />
-						All Clear
-					</Button>
-					<Button
-						type="button"
-						variant="outline"
-						onClick={() => {
-							const reason = prompt("Reason for cancellation:");
-							if (reason) {
+					<div className="flex gap-2 pt-2 border-t">
+						<Button
+							type="button"
+							onClick={() =>
 								resolveMutation.mutate({
 									schoolId,
 									alertId: alert.id,
-									status: "CANCELLED",
-									reason,
-								});
+									status: "ALL_CLEAR",
+								})
 							}
-						}}
-						disabled={resolveMutation.isPending}
-					>
-						Cancel Alert
-					</Button>
-				</div>
-			</CardContent>
-		</Card>
+							disabled={resolveMutation.isPending}
+							className="bg-green-600 hover:bg-green-700 text-white"
+						>
+							<CheckCircle className="inline h-4 w-4 mr-1" />
+							All Clear
+						</Button>
+						<Button
+							type="button"
+							variant="outline"
+							onClick={() => setCancelDialogOpen(true)}
+							disabled={resolveMutation.isPending}
+						>
+							Cancel Alert
+						</Button>
+					</div>
+				</CardContent>
+			</Card>
+
+			<Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Cancel Emergency Alert</DialogTitle>
+					</DialogHeader>
+					<div className="space-y-2 py-2">
+						<label htmlFor="cancel-reason" className="text-sm font-medium">
+							Reason for cancellation (required)
+						</label>
+						<Textarea
+							id="cancel-reason"
+							placeholder="e.g. False alarm, drill completed"
+							value={cancelReason}
+							onChange={(e) => setCancelReason(e.target.value)}
+							maxLength={500}
+							data-testid="cancel-reason-input"
+						/>
+					</div>
+					<DialogFooter>
+						<Button variant="outline" onClick={() => setCancelDialogOpen(false)}>
+							Go Back
+						</Button>
+						<Button
+							variant="destructive"
+							disabled={!cancelReason.trim() || resolveMutation.isPending}
+							data-testid="confirm-cancel-alert"
+							onClick={() => {
+								resolveMutation.mutate(
+									{
+										schoolId,
+										alertId: alert.id,
+										status: "CANCELLED",
+										reason: cancelReason,
+									},
+									{
+										onSuccess: () => {
+											setCancelDialogOpen(false);
+											setCancelReason("");
+										},
+									},
+								);
+							}}
+						>
+							{resolveMutation.isPending ? "Cancelling..." : "Cancel Alert"}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+		</>
 	);
 }
 
