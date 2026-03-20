@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { endOfDay, endOfWeek, startOfDay, startOfWeek, subDays } from "date-fns";
 import { z } from "zod";
-import { protectedProcedure, router } from "../trpc";
+import { protectedProcedure, router, schoolAdminProcedure } from "../trpc";
 
 // Define local interfaces since generated types are missing/broken in this env
 export interface Child {
@@ -530,4 +530,23 @@ export const dashboardRouter = router({
 
 			return items;
 		}),
+
+	getSetupStatus: schoolAdminProcedure.query(async ({ ctx }) => {
+		const [school, staffCount, childCount, messageCount] = await Promise.all([
+			ctx.prisma.school.findUnique({
+				where: { id: ctx.schoolId },
+				select: { stripeAccountId: true },
+			}),
+			ctx.prisma.staffMember.count({ where: { schoolId: ctx.schoolId } }),
+			ctx.prisma.child.count({ where: { schoolId: ctx.schoolId } }),
+			ctx.prisma.message.count({ where: { schoolId: ctx.schoolId } }),
+		]);
+
+		return {
+			stripeConnected: !!school?.stripeAccountId,
+			staffInvited: staffCount > 1,
+			childrenImported: childCount > 0,
+			firstMessageSent: messageCount > 0,
+		};
+	}),
 });

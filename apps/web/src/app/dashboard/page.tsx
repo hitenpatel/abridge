@@ -1,5 +1,6 @@
 "use client";
 
+import { SetupChecklist } from "@/components/dashboard/setup-checklist";
 import { ActionItemsRow } from "@/components/feed/action-items-row";
 import { ActivityFeed } from "@/components/feed/activity-feed";
 import { ChildSwitcher } from "@/components/feed/child-switcher";
@@ -190,6 +191,7 @@ export default function DashboardPage() {
 	if (isStaff && children.length === 0 && sessionInfo?.schoolId) {
 		return (
 			<PageShell maxWidth="5xl">
+				{sessionInfo.staffRole === "ADMIN" && <SetupChecklist schoolId={sessionInfo.schoolId} />}
 				<StaffDashboard schoolId={sessionInfo.schoolId} userId={sessionInfo.id} />
 			</PageShell>
 		);
