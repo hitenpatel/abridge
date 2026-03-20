@@ -5,7 +5,13 @@ import { z } from "zod";
 import { logger } from "../lib/logger";
 import { invalidateStaffCache } from "../lib/redis";
 import { sendStaffInvitationEmail } from "../services/email";
-import { publicProcedure, router, schoolAdminProcedure } from "../trpc";
+import {
+	protectedProcedure,
+	publicProcedure,
+	router,
+	schoolAdminProcedure,
+	schoolStaffProcedure,
+} from "../trpc";
 
 interface RawInvitation {
 	id: string;
@@ -216,4 +222,125 @@ export const invitationRouter = router({
 			FROM invitations WHERE "schoolId" = ${ctx.schoolId} ORDER BY "createdAt" DESC
 		`;
 	}),
+
+	generateParentInvite: schoolStaffProcedure
+		.input(
+			z.object({
+				childId: z.string(),
+				parentEmail: z.string().email().max(255),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const child = await ctx.prisma.child.findUnique({
+				where: { id: input.childId },
+				select: { id: true, firstName: true, lastName: true, schoolId: true },
+			});
+
+			if (!child || child.schoolId !== ctx.schoolId) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Child not found in this school",
+				});
+			}
+
+			const code = randomBytes(4).toString("hex").toUpperCase();
+			const expiresAt = new Date();
+			expiresAt.setDate(expiresAt.getDate() + 14);
+
+			const invite = await ctx.prisma.studentInvite.create({
+				data: {
+					childId: input.childId,
+					schoolId: ctx.schoolId,
+					code,
+					expiresAt,
+				},
+			});
+
+			const school = await ctx.prisma.school.findUnique({
+				where: { id: ctx.schoolId },
+				select: { name: true },
+			});
+
+			const webUrl = process.env.WEB_URL || "http://localhost:3000";
+
+			await sendStaffInvitationEmail({
+				recipientEmail: input.parentEmail,
+				recipientName: undefined,
+				schoolName: school?.name ?? "School",
+				role: `parent of ${child.firstName} ${child.lastName}`,
+				invitationToken: code,
+				expiresAt,
+			});
+
+			logger.info(
+				{ childId: input.childId, email: input.parentEmail, code: invite.code },
+				"Parent invitation generated",
+			);
+
+			return { success: true, code: invite.code };
+		}),
+
+	acceptParentInvite: protectedProcedure
+		.input(
+			z.object({
+				code: z.string().min(1).max(20),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const invite = await ctx.prisma.studentInvite.findFirst({
+				where: {
+					code: input.code,
+					usedAt: null,
+					expiresAt: { gt: new Date() },
+				},
+				include: {
+					child: { select: { id: true, firstName: true, lastName: true, schoolId: true } },
+				},
+			});
+
+			if (!invite) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Invalid or expired invitation code",
+				});
+			}
+
+			// Check if already linked
+			const existing = await ctx.prisma.parentChild.findUnique({
+				where: {
+					userId_childId: { userId: ctx.user.id, childId: invite.childId },
+				},
+			});
+
+			if (existing) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "You are already linked to this child",
+				});
+			}
+
+			await ctx.prisma.$transaction([
+				ctx.prisma.parentChild.create({
+					data: {
+						userId: ctx.user.id,
+						childId: invite.childId,
+						relation: "PARENT",
+					},
+				}),
+				ctx.prisma.studentInvite.update({
+					where: { id: invite.id },
+					data: { usedAt: new Date(), usedBy: ctx.user.id },
+				}),
+			]);
+
+			logger.info(
+				{ userId: ctx.user.id, childId: invite.childId },
+				"Parent accepted invitation and linked to child",
+			);
+
+			return {
+				success: true,
+				childName: `${invite.child.firstName} ${invite.child.lastName}`,
+			};
+		}),
 });

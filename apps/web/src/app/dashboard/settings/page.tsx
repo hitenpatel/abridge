@@ -382,6 +382,58 @@ function NotificationsCard() {
 	);
 }
 
+function LinkChildCard() {
+	const [code, setCode] = useState("");
+	const [linking, setLinking] = useState(false);
+
+	const linkChild = trpc.invitation.acceptParentInvite.useMutation({
+		onSuccess: (data) => {
+			toast.success(`Linked to ${data.childName}!`);
+			setCode("");
+			setLinking(false);
+		},
+		onError: (err) => {
+			toast.error(err.message);
+			setLinking(false);
+		},
+	});
+
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		if (!code.trim()) return;
+		setLinking(true);
+		linkChild.mutate({ code: code.trim() });
+	};
+
+	return (
+		<Card className="rounded-2xl border border-orange-100/50">
+			<CardHeader>
+				<CardTitle className="flex items-center gap-2">
+					<User className="w-5 h-5 text-primary" aria-hidden="true" />
+					Link a Child
+				</CardTitle>
+			</CardHeader>
+			<CardContent>
+				<form onSubmit={handleSubmit} className="space-y-3">
+					<p className="text-sm text-muted-foreground">
+						Enter the invite code provided by your child's school to link your account.
+					</p>
+					<Input
+						placeholder="Enter invite code (e.g. A1B2C3D4)"
+						value={code}
+						onChange={(e) => setCode(e.target.value.toUpperCase())}
+						maxLength={20}
+						data-testid="link-child-code-input"
+					/>
+					<Button type="submit" disabled={linking || !code.trim()} data-testid="link-child-button">
+						{linking ? "Linking..." : "Link Child"}
+					</Button>
+				</form>
+			</CardContent>
+		</Card>
+	);
+}
+
 function DataExportCard() {
 	const [exporting, setExporting] = useState(false);
 	const utils = trpc.useUtils();
@@ -1243,6 +1295,7 @@ export default function SettingsPage() {
 					<ProfileCard />
 					<PasswordCard />
 					<NotificationsCard />
+					<LinkChildCard />
 					<DataExportCard />
 					<DeleteAccountCard />
 				</div>
