@@ -197,13 +197,13 @@ function PasswordCard() {
 		const { error } = await authClient.changePassword({
 			currentPassword,
 			newPassword,
-			revokeOtherSessions: false,
+			revokeOtherSessions: true,
 		});
 		setIsPending(false);
 		if (error) {
 			toast.error(error.message ?? "Failed to change password");
 		} else {
-			toast.success("Password changed");
+			toast.success("Password changed — other sessions have been signed out");
 			setCurrentPassword("");
 			setNewPassword("");
 		}
