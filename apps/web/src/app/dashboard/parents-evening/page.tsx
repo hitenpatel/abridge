@@ -10,7 +10,7 @@ import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import { Plus, User, Users, Video } from "lucide-react";
+import { CalendarX, Plus, User, Users, Video } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -542,87 +542,101 @@ function SlotBookingView({
 					))}
 				</div>
 			)}
-			{Array.from(grouped.entries()).map(([staffId, { staffName, slots }]) => (
-				<div key={staffId}>
-					<h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
-						<User className="h-4 w-4 text-primary" aria-hidden="true" />
-						{staffName}
-					</h3>
-					<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-						{slots.map((slot) => (
-							<div
-								key={slot.id}
-								className={cn(
-									"rounded-lg border p-2 text-center text-sm",
-									slot.isOwnBooking
-										? "bg-primary/10 border-primary"
-										: slot.isBooked
-											? "bg-orange-50/30 border-orange-100/60 opacity-50"
-											: "bg-white border-orange-100/60 hover:border-primary/50",
-								)}
-							>
-								<p className="font-medium">
-									{slot.startTime} – {slot.endTime}
-								</p>
-								{slot.isOwnBooking ? (
-									<div className="mt-1">
-										<span
-											className="text-xs text-primary font-medium"
-											data-testid="booked-indicator"
-										>
-											Booked
-										</span>
-										{slot.videoCallLink && (
-											<a
-												href={slot.videoCallLink}
-												target="_blank"
-												rel="noopener noreferrer"
-												className="block text-xs text-blue-600 mt-1 hover:underline"
-												onClick={(e) => e.stopPropagation()}
-											>
-												Join call
-											</a>
+			{Array.from(grouped.entries()).map(([staffId, { staffName, slots }]) => {
+				const allBooked = slots.every((s) => s.isBooked);
+				const hasOwnBooking = slots.some((s) => s.isOwnBooking);
+				const fullyBooked = allBooked && !hasOwnBooking;
+
+				return (
+					<div key={staffId}>
+						<h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+							<User className="h-4 w-4 text-primary" aria-hidden="true" />
+							{staffName}
+						</h3>
+						{fullyBooked ? (
+							<EmptyState
+								icon={CalendarX}
+								title="Fully booked"
+								description={`All slots with ${staffName} have been taken. Please contact the school if you need an appointment.`}
+							/>
+						) : (
+							<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+								{slots.map((slot) => (
+									<div
+										key={slot.id}
+										className={cn(
+											"rounded-lg border p-2 text-center text-sm",
+											slot.isOwnBooking
+												? "bg-primary/10 border-primary"
+												: slot.isBooked
+													? "bg-orange-50/30 border-orange-100/60 opacity-50"
+													: "bg-white border-orange-100/60 hover:border-primary/50",
 										)}
-										{bookingOpen && (
+									>
+										<p className="font-medium">
+											{slot.startTime} – {slot.endTime}
+										</p>
+										{slot.isOwnBooking ? (
+											<div className="mt-1">
+												<span
+													className="text-xs text-primary font-medium"
+													data-testid="booked-indicator"
+												>
+													Booked
+												</span>
+												{slot.videoCallLink && (
+													<a
+														href={slot.videoCallLink}
+														target="_blank"
+														rel="noopener noreferrer"
+														className="block text-xs text-blue-600 mt-1 hover:underline"
+														onClick={(e) => e.stopPropagation()}
+													>
+														Join call
+													</a>
+												)}
+												{bookingOpen && (
+													<Button
+														size="sm"
+														variant="ghost"
+														className="mt-1 h-6 text-xs text-red-600"
+														data-testid="cancel-booking-button"
+														onClick={(e) => {
+															e.stopPropagation();
+															cancelMutation.mutate({ slotId: slot.id });
+														}}
+														disabled={cancelMutation.isPending}
+													>
+														Cancel
+													</Button>
+												)}
+											</div>
+										) : slot.isBooked ? (
+											<p className="text-xs text-muted-foreground mt-1">Taken</p>
+										) : bookingOpen && activeChildId ? (
 											<Button
 												size="sm"
 												variant="ghost"
-												className="mt-1 h-6 text-xs text-red-600"
-												data-testid="cancel-booking-button"
+												className="mt-1 h-6 text-xs"
+												data-testid="book-slot-button"
 												onClick={(e) => {
 													e.stopPropagation();
-													cancelMutation.mutate({ slotId: slot.id });
+													bookMutation.mutate({ slotId: slot.id, childId: activeChildId });
 												}}
-												disabled={cancelMutation.isPending}
+												disabled={bookMutation.isPending}
 											>
-												Cancel
+												Book
 											</Button>
+										) : (
+											<p className="text-xs text-muted-foreground mt-1">Available</p>
 										)}
 									</div>
-								) : slot.isBooked ? (
-									<p className="text-xs text-muted-foreground mt-1">Taken</p>
-								) : bookingOpen && activeChildId ? (
-									<Button
-										size="sm"
-										variant="ghost"
-										className="mt-1 h-6 text-xs"
-										data-testid="book-slot-button"
-										onClick={(e) => {
-											e.stopPropagation();
-											bookMutation.mutate({ slotId: slot.id, childId: activeChildId });
-										}}
-										disabled={bookMutation.isPending}
-									>
-										Book
-									</Button>
-								) : (
-									<p className="text-xs text-muted-foreground mt-1">Available</p>
-								)}
+								))}
 							</div>
-						))}
+						)}
 					</div>
-				</div>
-			))}
+				);
+			})}
 		</div>
 	);
 }
