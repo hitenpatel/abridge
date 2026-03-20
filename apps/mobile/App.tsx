@@ -28,6 +28,7 @@ import { AttendanceScreen } from "./src/screens/AttendanceScreen";
 import { CalendarScreen } from "./src/screens/CalendarScreen";
 import { ChatScreen } from "./src/screens/ChatScreen";
 import { ClubsScreen } from "./src/screens/ClubsScreen";
+import { CommunityScreen } from "./src/screens/CommunityScreen";
 import { ComposeMessageScreen } from "./src/screens/ComposeMessageScreen";
 import { ComposePostScreen } from "./src/screens/ComposePostScreen";
 import { FormDetailScreen } from "./src/screens/FormDetailScreen";
@@ -44,6 +45,7 @@ import { PaymentsScreen } from "./src/screens/PaymentsScreen";
 import { PostDetailScreen } from "./src/screens/PostDetailScreen";
 import { ProgressScreen } from "./src/screens/ProgressScreen";
 import { ReadingDiaryScreen } from "./src/screens/ReadingDiaryScreen";
+import { ReportCardsScreen } from "./src/screens/ReportCardsScreen";
 import { SearchScreen } from "./src/screens/SearchScreen";
 import { SettingsScreen } from "./src/screens/SettingsScreen";
 import { StaffAttendanceScreen } from "./src/screens/StaffAttendanceScreen";
@@ -94,6 +96,8 @@ export type RootStackParamList = {
 	Timetable: undefined;
 	Visitors: undefined;
 	Clubs: undefined;
+	Community: undefined;
+	ReportCards: undefined;
 };
 
 export type ParentTabParamList = {
@@ -352,6 +356,16 @@ function AuthenticatedApp() {
 				/>
 				<Stack.Screen name="Visitors" component={VisitorsScreen} options={{ title: "Visitors" }} />
 				<Stack.Screen name="Clubs" component={ClubsScreen} options={{ title: "Clubs" }} />
+				<Stack.Screen
+					name="Community"
+					component={CommunityScreen}
+					options={{ title: "Community" }}
+				/>
+				<Stack.Screen
+					name="ReportCards"
+					component={ReportCardsScreen}
+					options={{ title: "Report Cards" }}
+				/>
 			</Stack.Navigator>
 		</NavigationContainer>
 	);

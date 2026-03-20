@@ -1,0 +1,12 @@
+appId: com.schoolconnect.app
+---
+- runFlow: ../_helpers/login-parent.yaml
+- waitForAnimationToEnd
+- tapOn:
+    id: "nav-reports"
+- extendedWaitUntil:
+    visible:
+      id: "report-cards-screen"
+    timeout: 10000
+- assertVisible: "Report Cards"
+- takeScreenshot: native-report-cards

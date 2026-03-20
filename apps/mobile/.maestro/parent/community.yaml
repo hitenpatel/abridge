@@ -1,0 +1,12 @@
+appId: com.schoolconnect.app
+---
+- runFlow: ../_helpers/login-parent.yaml
+- waitForAnimationToEnd
+- tapOn:
+    id: "nav-community"
+- extendedWaitUntil:
+    visible:
+      id: "community-screen"
+    timeout: 10000
+- assertVisible: "Community"
+- takeScreenshot: native-community
