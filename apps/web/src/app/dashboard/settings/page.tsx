@@ -992,6 +992,12 @@ function StripeCard({ schoolId }: { schoolId: string }) {
 		},
 		onError: (err) => toast.error(err.message),
 	});
+	const openDashboard = trpc.stripe.getDashboardLink.useMutation({
+		onSuccess: (data) => {
+			window.open(data.url, "_blank");
+		},
+		onError: (err) => toast.error(err.message),
+	});
 
 	const isConnected = status?.chargesEnabled;
 
@@ -1024,6 +1030,16 @@ function StripeCard({ schoolId }: { schoolId: string }) {
 						disabled={createOnboarding.isPending}
 					>
 						{createOnboarding.isPending ? "Connecting..." : "Connect Stripe"}
+					</Button>
+				)}
+				{isConnected && status?.chargesEnabled && (
+					<Button
+						variant="outline"
+						data-testid="stripe-dashboard-button"
+						onClick={() => openDashboard.mutate({ schoolId })}
+						disabled={openDashboard.isPending}
+					>
+						{openDashboard.isPending ? "Opening..." : "Open Stripe Dashboard"}
 					</Button>
 				)}
 			</CardContent>

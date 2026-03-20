@@ -74,4 +74,22 @@ export const stripeRouter = router({
 			chargesEnabled: account.charges_enabled,
 		};
 	}),
+
+	getDashboardLink: schoolAdminProcedure.mutation(async ({ ctx, input }) => {
+		const school = await ctx.prisma.school.findUnique({
+			where: { id: input.schoolId },
+			select: { stripeAccountId: true },
+		});
+
+		if (!school?.stripeAccountId) {
+			throw new TRPCError({
+				code: "BAD_REQUEST",
+				message: "Stripe is not connected for this school",
+			});
+		}
+
+		const loginLink = await stripe.accounts.createLoginLink(school.stripeAccountId);
+
+		return { url: loginLink.url };
+	}),
 });
