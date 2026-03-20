@@ -1,5 +1,6 @@
 "use client";
 
+import { OnboardingDialog } from "@/components/onboarding-dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -53,9 +54,12 @@ interface NavItem {
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
 	const { data: session } = trpc.auth.getSession.useQuery();
 
+	const isParent = !session?.staffRole;
+
 	return (
 		<FeatureToggleProvider schoolId={session?.schoolId ?? undefined}>
 			<DashboardLayoutInner session={session ?? undefined}>{children}</DashboardLayoutInner>
+			{session && <OnboardingDialog isParent={isParent} />}
 		</FeatureToggleProvider>
 	);
 }
