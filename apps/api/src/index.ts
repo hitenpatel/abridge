@@ -100,8 +100,33 @@ async function main() {
 		timeWindow: "1 minute",
 	});
 
+	const webUrl = process.env.WEB_URL || "http://localhost:3000";
+	const r2PublicUrl = process.env.R2_PUBLIC_URL || "";
+	const apiHost = process.env.BETTER_AUTH_URL?.replace(/^https?:\/\//, "") || "localhost:4000";
+
 	await server.register(helmet, {
-		contentSecurityPolicy: false,
+		contentSecurityPolicy: {
+			directives: {
+				defaultSrc: ["'self'"],
+				scriptSrc: ["'self'", "'unsafe-inline'", "js.stripe.com"],
+				styleSrc: ["'self'", "'unsafe-inline'"],
+				imgSrc: ["'self'", "data:", "blob:", r2PublicUrl, "*.stripe.com"].filter(Boolean),
+				connectSrc: [
+					"'self'",
+					webUrl,
+					"api.stripe.com",
+					"exp.host",
+					`ws://${apiHost}`,
+					`wss://${apiHost}`,
+				],
+				frameSrc: ["'self'", "js.stripe.com"],
+				frameAncestors: ["'self'", webUrl],
+				fontSrc: ["'self'", "data:"],
+				objectSrc: ["'none'"],
+				baseUri: ["'self'"],
+				formAction: ["'self'"],
+			},
+		},
 		crossOriginEmbedderPolicy: false,
 	});
 
