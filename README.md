@@ -7,7 +7,7 @@ A comprehensive school-parent communication platform built as a full-stack monor
 - **Monorepo:** [Turborepo](https://turbo.build/) + [pnpm workspaces](https://pnpm.io/workspaces)
 - **API:** [Fastify](https://www.fastify.io/) + [tRPC](https://trpc.io/) (v11)
 - **Database:** PostgreSQL + [Prisma ORM](https://www.prisma.io/) + Redis
-- **Web:** [Next.js 14](https://nextjs.org/) (App Router) + Tailwind CSS
+- **Web:** [Next.js 16](https://nextjs.org/) (App Router) + Tailwind CSS
 - **Mobile:** [Expo](https://expo.dev/) (React Native)
 - **CI/CD:** Forgejo (lint, test, build, deploy) + GitHub Actions (E2E tests)
 - **E2E:** Playwright (web) + Maestro (mobile) + Firebase Test Lab
