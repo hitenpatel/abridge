@@ -2,7 +2,7 @@ import { type StaffRole, prisma } from "@schoolconnect/db";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { bearer } from "better-auth/plugins";
-import { sendPasswordResetEmail } from "../services/email";
+import { sendPasswordResetEmail, sendVerificationEmail } from "../services/email";
 import { logger } from "./logger";
 import { invalidateStaffCache } from "./redis";
 
@@ -36,6 +36,17 @@ export const auth = betterAuth({
 		modelName: "Verification",
 	},
 	plugins: [bearer()],
+	emailVerification: {
+		sendVerificationEmail: async ({ user, url }) => {
+			void sendVerificationEmail({
+				recipientEmail: user.email,
+				recipientName: user.name,
+				verificationUrl: url,
+			});
+		},
+		sendOnSignUp: true,
+		autoSignInAfterVerification: true,
+	},
 	emailAndPassword: {
 		enabled: true,
 		minPasswordLength: 8,

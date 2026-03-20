@@ -14,6 +14,12 @@ function getResend() {
 const FROM_EMAIL = process.env.FROM_EMAIL || "Abridge <onboarding@resend.dev>";
 const WEB_URL = process.env.WEB_URL || "http://localhost:3000";
 
+export interface VerificationEmailData {
+	recipientEmail: string;
+	recipientName: string;
+	verificationUrl: string;
+}
+
 export interface PasswordResetEmailData {
 	recipientEmail: string;
 	recipientName: string;
@@ -44,6 +50,99 @@ export interface ReceiptEmailData {
 	amount: number;
 	schoolName: string;
 	pdfUrl?: string;
+}
+
+/**
+ * Send email verification email
+ */
+export async function sendVerificationEmail(data: VerificationEmailData) {
+	try {
+		const { data: emailData, error: emailError } = await getResend().emails.send({
+			from: FROM_EMAIL,
+			to: [data.recipientEmail],
+			subject: "Verify your Abridge email",
+			html: `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 0;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #f56e3d 0%, #ff8f6b 100%); padding: 40px; text-align: center; border-radius: 8px 8px 0 0;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">Abridge</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 40px;">
+                            <h2 style="margin: 0 0 20px 0; color: #333333; font-size: 24px;">Verify your email</h2>
+                            <p style="margin: 0 0 20px 0; color: #666666; font-size: 16px; line-height: 1.6;">
+                                Hi ${data.recipientName || "there"},
+                            </p>
+                            <p style="margin: 0 0 20px 0; color: #666666; font-size: 16px; line-height: 1.6;">
+                                Thanks for signing up! Please verify your email address to get started.
+                            </p>
+                            <table cellpadding="0" cellspacing="0" style="margin: 0 auto;">
+                                <tr>
+                                    <td align="center" style="background: linear-gradient(135deg, #f56e3d 0%, #ff8f6b 100%); border-radius: 6px;">
+                                        <a href="${data.verificationUrl}" style="display: inline-block; padding: 16px 40px; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600;">
+                                            Verify Email
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="margin: 30px 0 0 0; color: #999999; font-size: 14px; line-height: 1.6;">
+                                Or copy and paste this link:<br>
+                                <a href="${data.verificationUrl}" style="color: #f56e3d; word-break: break-all;">${data.verificationUrl}</a>
+                            </p>
+                            <p style="margin: 20px 0 0 0; color: #999999; font-size: 14px;">
+                                This link expires in 1 hour.
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #f9f9f9; padding: 30px; text-align: center; border-radius: 0 0 8px 8px; border-top: 1px solid #eeeeee;">
+                            <p style="margin: 0; color: #999999; font-size: 12px;">
+                                &copy; ${new Date().getFullYear()} Abridge. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+			`,
+		});
+
+		if (emailError) {
+			logger.error(
+				{ error: emailError.message, recipient: data.recipientEmail },
+				"Resend API returned error for verification email",
+			);
+			return { success: false, error: emailError };
+		}
+
+		logger.info(
+			{ messageId: emailData?.id, recipient: data.recipientEmail },
+			"Verification email sent",
+		);
+
+		return { success: true, messageId: emailData?.id };
+	} catch (error) {
+		logger.error(
+			{ err: error, recipient: data.recipientEmail },
+			"Failed to send verification email",
+		);
+		return { success: false, error };
+	}
 }
 
 /**
