@@ -95,6 +95,37 @@ export const classPostRouter = router({
 			return { success: true };
 		}),
 
+	update: schoolStaffProcedure
+		.input(
+			z.object({
+				schoolId: z.string(),
+				postId: z.string(),
+				body: z.string().max(5000).optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const post = await ctx.prisma.classPost.findUnique({
+				where: { id: input.postId },
+			});
+
+			if (!post || post.schoolId !== input.schoolId) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Post not found" });
+			}
+
+			if (post.authorId !== ctx.user.id) {
+				throw new TRPCError({ code: "FORBIDDEN", message: "You can only edit your own posts" });
+			}
+
+			const updated = await ctx.prisma.classPost.update({
+				where: { id: input.postId },
+				data: {
+					body: input.body ?? post.body,
+				},
+			});
+
+			return updated;
+		}),
+
 	getById: protectedProcedure
 		.input(z.object({ postId: z.string() }))
 		.query(async ({ ctx, input }) => {

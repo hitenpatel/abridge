@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
 import { format } from "date-fns";
-import { ArrowLeft, Play, User } from "lucide-react";
+import { ArrowLeft, Pencil, Play, User } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useState } from "react";
+import { toast } from "sonner";
 
 type Emoji = "HEART" | "THUMBS_UP" | "CLAP" | "LAUGH" | "WOW";
 
@@ -22,6 +24,19 @@ export default function PostDetailPage() {
 	const params = useParams<{ postId: string }>();
 	const utils = trpc.useUtils();
 	const [expandedImage, setExpandedImage] = useState<string | null>(null);
+
+	const { data: session } = trpc.auth.getSession.useQuery();
+	const [editing, setEditing] = useState(false);
+	const [editBody, setEditBody] = useState("");
+
+	const updateMutation = trpc.classPost.update.useMutation({
+		onSuccess: () => {
+			toast.success("Post updated");
+			setEditing(false);
+			utils.classPost.getById.invalidate({ postId: params.postId });
+		},
+		onError: (err) => toast.error(err.message),
+	});
 
 	const { data: post, isLoading } = trpc.classPost.getById.useQuery(
 		{ postId: params.postId },
@@ -105,6 +120,20 @@ export default function PostDetailPage() {
 							</Button>
 						</Link>
 						<h1 className="text-xl font-bold">Class Post</h1>
+						{session?.id === post.authorId && !editing && (
+							<Button
+								variant="ghost"
+								size="sm"
+								onClick={() => {
+									setEditBody(post.body ?? "");
+									setEditing(true);
+								}}
+								data-testid="edit-post-button"
+							>
+								<Pencil className="h-4 w-4 mr-1" />
+								Edit
+							</Button>
+						)}
 						<span className="text-sm text-muted-foreground ml-auto">
 							{post.yearGroup} {post.className}
 						</span>
@@ -126,10 +155,41 @@ export default function PostDetailPage() {
 							</div>
 
 							{/* Body */}
-							{post.body && (
-								<p className="text-base text-foreground whitespace-pre-wrap leading-relaxed">
-									{post.body}
-								</p>
+							{editing ? (
+								<div className="space-y-2">
+									<Textarea
+										value={editBody}
+										onChange={(e) => setEditBody(e.target.value)}
+										rows={4}
+										maxLength={5000}
+										data-testid="edit-post-body"
+									/>
+									<div className="flex gap-2">
+										<Button
+											size="sm"
+											onClick={() =>
+												updateMutation.mutate({
+													schoolId: post.schoolId,
+													postId: post.id,
+													body: editBody,
+												})
+											}
+											disabled={updateMutation.isPending}
+											data-testid="save-edit-button"
+										>
+											{updateMutation.isPending ? "Saving..." : "Save"}
+										</Button>
+										<Button size="sm" variant="ghost" onClick={() => setEditing(false)}>
+											Cancel
+										</Button>
+									</div>
+								</div>
+							) : (
+								post.body && (
+									<p className="text-base text-foreground whitespace-pre-wrap leading-relaxed">
+										{post.body}
+									</p>
+								)
 							)}
 
 							{/* Images */}
