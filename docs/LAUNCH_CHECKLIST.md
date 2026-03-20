@@ -47,8 +47,30 @@ A step-by-step guide to go from code-complete to production with your first pilo
 - [ ] Set up Resend: add + verify your domain, create API key
 - [ ] Set up Stripe: create account, get API keys, set webhook URL to `https://api.abridge.school/webhook/stripe`
 - [ ] Set up Sentry: create project, copy DSN to env vars
-- [ ] Set up UptimeRobot: add monitor for `https://api.abridge.school/trpc/health.check`
+- [ ] Set up UptimeRobot (see Step 4b below for detailed guide)
 - [ ] Set up R2: create bucket `abridge-media`, create API token, set env vars
+
+### Step 4b: Uptime Monitoring Setup (10 min)
+
+1. Sign up at [UptimeRobot](https://uptimerobot.com) (free plan: 50 monitors, 5-min intervals)
+2. Create monitors for these endpoints:
+
+| Monitor Name | URL | Type | Interval |
+|---|---|---|---|
+| Abridge API Health | `https://api.abridge.school/health` | HTTP(s) | 5 min |
+| Abridge Web Health | `https://app.abridge.school/api/health` | HTTP(s) | 5 min |
+| Abridge tRPC Health | `https://api.abridge.school/trpc/health.check` | HTTP(s) - Keyword "ok" | 5 min |
+
+3. Configure alert contacts:
+   - [ ] Add email alert: your admin email
+   - [ ] (Optional) Add Slack webhook for #ops channel
+4. Create a status page:
+   - [ ] Enable public status page in UptimeRobot dashboard
+   - [ ] Custom domain (optional): `status.abridge.school` via CNAME
+   - [ ] Document the status page URL here: `___________________`
+5. Verify:
+   - [ ] Temporarily stop the API container — confirm alert fires within 5 minutes
+   - [ ] Restart the API container — confirm recovery notification arrives
 
 ## Step 5: Security Scan (15 min)
 
