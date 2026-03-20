@@ -25,6 +25,7 @@ import { paymentsRouter } from "./payments";
 import { progressSummaryRouter } from "./progress-summary";
 import { readingDiaryRouter } from "./reading-diary";
 import { reportCardRouter } from "./report-card";
+import { searchRouter } from "./search";
 import { settingsRouter } from "./settings";
 import { setupRouter } from "./setup";
 import { staffRouter } from "./staff";
@@ -73,6 +74,7 @@ export const appRouter = router({
 	mis: misRouter,
 	reportCard: reportCardRouter,
 	progressSummary: progressSummaryRouter,
+	search: searchRouter,
 });
 
 export type AppRouter = typeof appRouter;
