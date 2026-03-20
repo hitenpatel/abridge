@@ -24,6 +24,10 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
 
+      - name: Audit dependencies
+        run: pnpm audit --audit-level=high
+        continue-on-error: true
+
       - name: Generate Prisma types
         run: pnpm --filter @schoolconnect/db build
 
