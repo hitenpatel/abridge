@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import { ConsentBanner } from "@/components/consent-banner";
 import { Providers } from "@/components/providers";
 import { cn } from "@/lib/utils";
 
@@ -46,7 +47,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 				>
 					Skip to content
 				</a>
-				<Providers>{children}</Providers>
+				<Providers>
+					{children}
+					<ConsentBanner />
+				</Providers>
 			</body>
 		</html>
 	);
