@@ -582,7 +582,9 @@ export default function Home() {
 					<div className="max-w-2xl mx-auto">
 						{/* Provider selection card */}
 						<div className="bg-card rounded-2xl p-8 border border-orange-100/60 shadow-sm">
-							<h3 className="text-lg font-semibold mb-2 text-foreground">Choose your AI provider</h3>
+							<h3 className="text-lg font-semibold mb-2 text-foreground">
+								Choose your AI provider
+							</h3>
 							<p className="text-sm text-slate-500 mb-6">
 								Your data, your rules. Run AI locally with Ollama for complete data sovereignty.
 							</p>
