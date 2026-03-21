@@ -2,7 +2,8 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { assertFeatureEnabled, assertPaymentCategoryEnabled } from "../lib/feature-guards";
 import { stripe } from "../lib/stripe";
-import { protectedProcedure, router, schoolFeatureProcedure } from "../trpc";
+import { sendReceiptEmail } from "../services/email";
+import { protectedProcedure, router, schoolAdminProcedure, schoolFeatureProcedure } from "../trpc";
 
 export const paymentsRouter = router({
 	createCheckoutSession: protectedProcedure
@@ -643,5 +644,84 @@ export const paymentsRouter = router({
 					childName: li.child ? `${li.child.firstName} ${li.child.lastName}` : null,
 				})),
 			};
+		}),
+
+	refundPayment: schoolAdminProcedure
+		.input(
+			z.object({
+				schoolId: z.string(),
+				paymentId: z.string(),
+				amount: z.number().int().positive().optional(), // partial refund in pence, or full if omitted
+				reason: z.string().min(1).max(500),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const payment = await ctx.prisma.payment.findUnique({
+				where: { id: input.paymentId },
+				include: {
+					user: { select: { email: true, name: true, notifyByEmail: true } },
+					lineItems: { include: { paymentItem: { select: { schoolId: true } } } },
+				},
+			});
+
+			if (!payment) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Payment not found" });
+			}
+
+			// Verify payment belongs to this school
+			const paymentSchoolId = payment.lineItems[0]?.paymentItem?.schoolId;
+			if (paymentSchoolId !== input.schoolId) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "Payment does not belong to this school",
+				});
+			}
+
+			if (payment.status !== "COMPLETED") {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "Only completed payments can be refunded",
+				});
+			}
+
+			if (!payment.stripeId) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "No Stripe session ID for this payment",
+				});
+			}
+
+			// Process refund via Stripe
+			const refundAmount = input.amount ?? payment.totalAmount;
+			const refund = await stripe.refunds.create({
+				payment_intent: payment.stripeId,
+				amount: refundAmount,
+				reason: "requested_by_customer",
+			});
+
+			// Update payment status
+			await ctx.prisma.payment.update({
+				where: { id: input.paymentId },
+				data: {
+					status: refundAmount >= payment.totalAmount ? "REFUNDED" : "COMPLETED",
+				},
+			});
+
+			// Send notification email
+			if (payment.user.notifyByEmail !== false) {
+				const school = await ctx.prisma.school.findUnique({
+					where: { id: input.schoolId },
+					select: { name: true },
+				});
+				await sendReceiptEmail({
+					recipientEmail: payment.user.email,
+					recipientName: payment.user.name ?? "Parent",
+					receiptNumber: `REFUND-${payment.receiptNumber ?? payment.id.slice(-8)}`,
+					amount: -refundAmount,
+					schoolName: school?.name ?? "School",
+				}).catch(() => {}); // non-blocking
+			}
+
+			return { refundId: refund.id, amount: refundAmount, status: refund.status };
 		}),
 });
