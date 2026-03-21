@@ -2,6 +2,7 @@ import { prisma } from "@schoolconnect/db";
 import type { FastifyInstance } from "fastify";
 import type Stripe from "stripe";
 import { stripe } from "../lib/stripe";
+import { sendReceiptEmail } from "../services/email";
 
 export async function webhookRoutes(server: FastifyInstance) {
 	server.post("/api/webhooks/stripe", async (req, res) => {
@@ -92,6 +93,37 @@ export async function webhookRoutes(server: FastifyInstance) {
 				});
 
 				server.log.info(`Payment ${metadata.paymentId} fulfilled successfully`);
+
+				// Send receipt email (non-blocking — don't fail the webhook)
+				try {
+					const payment = await prisma.payment.findUnique({
+						where: { id: metadata.paymentId },
+						include: {
+							user: { select: { email: true, name: true, notifyByEmail: true } },
+							lineItems: { include: { paymentItem: { select: { title: true, schoolId: true } } } },
+						},
+					});
+
+					if (payment?.user.notifyByEmail !== false) {
+						const schoolId = payment?.lineItems[0]?.paymentItem?.schoolId;
+						const school = schoolId
+							? await prisma.school.findUnique({ where: { id: schoolId }, select: { name: true } })
+							: null;
+
+						await sendReceiptEmail({
+							recipientEmail: payment?.user.email ?? "",
+							recipientName: payment?.user.name ?? "Parent",
+							receiptNumber: payment?.receiptNumber ?? "N/A",
+							amount: payment?.totalAmount ?? 0,
+							schoolName: school?.name ?? "School",
+						});
+					}
+				} catch (emailErr) {
+					server.log.error(
+						{ err: emailErr, paymentId: metadata.paymentId },
+						"Failed to send receipt email",
+					);
+				}
 			}
 		}
 
