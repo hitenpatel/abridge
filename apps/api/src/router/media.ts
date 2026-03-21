@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { processUploadedImage } from "../lib/image-processor";
 import { ALLOWED_TYPES, MAX_IMAGE_SIZE, MAX_VIDEO_SIZE, getPresignedUploadUrl } from "../lib/media";
 import { router, schoolFeatureProcedure } from "../trpc";
 
@@ -72,6 +73,18 @@ export const mediaRouter = router({
 					height: input.height,
 				},
 			});
+
+			// Generate thumbnail + medium variants (non-blocking)
+			if (input.mimeType.startsWith("image/")) {
+				processUploadedImage(input.key, input.mimeType).then(async (result) => {
+					if (result) {
+						await ctx.prisma.mediaUpload.update({
+							where: { id: media.id },
+							data: { thumbnailKey: result.thumbnailKey },
+						});
+					}
+				});
+			}
 
 			return media;
 		}),
