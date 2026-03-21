@@ -32,6 +32,14 @@ function DownloadPdfButton({ responseId, formTitle }: { responseId: string; form
 		setLoading(true);
 		try {
 			const result = await utils.forms.getFormPdf.fetch({ responseId });
+			if (result.pdfUrl) {
+				window.open(result.pdfUrl, "_blank");
+				return;
+			}
+			if (!result.pdfData) {
+				toast.error("PDF not available for this form");
+				return;
+			}
 			const byteChars = atob(result.pdfData);
 			const byteNumbers = new Array(byteChars.length);
 			for (let i = 0; i < byteChars.length; i++) {

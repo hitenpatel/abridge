@@ -2,6 +2,9 @@ import { describe, expect, it, vi } from "vitest";
 import { misRouter } from "../router/mis";
 import { router } from "../trpc";
 
+// Set test encryption key (64 hex chars = 32 bytes for AES-256)
+process.env.MIS_ENCRYPTION_KEY = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
 vi.mock("../lib/redis", () => ({
 	getCachedStaffMembership: vi.fn().mockResolvedValue(null),
 	setCachedStaffMembership: vi.fn().mockResolvedValue(undefined),
@@ -51,6 +54,7 @@ function createTestContext(overrides?: Record<string, any>): any {
 					id: "conn-1",
 					schoolId: "school-1",
 					provider: "CSV_MANUAL",
+					credentials: "csv-manual",
 					status: "CONNECTED",
 					syncFrequency: "MANUAL",
 				}),
@@ -58,6 +62,7 @@ function createTestContext(overrides?: Record<string, any>): any {
 					id: "conn-1",
 					schoolId: "school-1",
 					provider: "CSV_MANUAL",
+					credentials: "csv-manual",
 					status: "CONNECTED",
 					syncFrequency: "MANUAL",
 					lastSyncAt: null,
