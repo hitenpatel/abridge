@@ -1,12 +1,21 @@
 # Skill Enhancements: sprint-work, po-ba-analyst, project-docs
 
 **Date:** 2026-03-21
-**Status:** Approved
+**Status:** Approved (rev 2 — post spec review)
 **Scope:** 14 enhancements across 3 skills + cross-skill integration
+
+## Design Principles
+
+These skills are **project-agnostic global skills**. They must work across any project — not just Abridge and Iron Pulse. All project-specific details (Plane project IDs, state IDs, git remotes, repo conventions) come from:
+- `.plane-project` file in the repo root (4d)
+- Project-level memory files (`~/.claude/projects/{project}/memory/`)
+- The project's own CLAUDE.md
+
+No project-specific values should be hardcoded in any skill's SKILL.md or reference files.
 
 ## Context
 
-After intensive real-world usage across the Abridge and Iron Pulse projects (120+ Plane tickets, 10+ sprints), several gaps emerged:
+After real-world usage across multiple projects (120+ Plane tickets, 10+ sprints), several gaps emerged:
 
 - Code shipped with type errors and missing tests (no pre-commit verification)
 - Tickets closed without checking all acceptance criteria
@@ -15,34 +24,35 @@ After intensive real-world usage across the Abridge and Iron Pulse projects (120
 - Three skills duplicated Plane API logic independently
 - Sprint retrospectives didn't exist — learnings were lost between sessions
 
-This spec addresses all gaps with 14 targeted enhancements.
-
 ## 1. sprint-work Enhancements
 
 ### 1a. Pre-commit verification (Step 4d)
 
 After implementation, before committing:
-1. Run `biome check` on staged files
-2. Run `tsc --noEmit` on the relevant app (detect from file paths: `apps/api/` → API tsconfig, `apps/web/` → web tsconfig)
-3. If any unit test file exists alongside the changed file (e.g., `payments.ts` → `__tests__/payments.test.ts`), run it
+1. Run the project's lint command (detect from `package.json` scripts — `lint`, `check`, or `biome check`) on staged files
+2. Run type-check: detect the build system from the project root (`package.json` scripts). Use `pnpm build` if available (lets Turborepo/build tooling handle tsconfig resolution), or fall back to `tsc --noEmit` on the relevant app
+3. If a unit test file exists alongside the changed file (e.g., `payments.ts` → `__tests__/payments.test.ts`), run it
 
 If anything fails, fix the issue before committing. Never commit code that fails lint or type-check.
+
+**Detecting which app changed:** Map staged file paths to workspace packages:
+- `apps/api/**` → API package
+- `apps/web/**` → web package
+- `apps/mobile/**` → mobile package
+- `packages/**` → shared package (type-check all consumers)
+- Root-level config → full build
 
 **Insert between:** Step 4c (Sync documentation) and Step 5 (Commit)
 
 ### 1b. Acceptance criteria verification (Step 4e)
 
-Before committing, parse the ticket's acceptance criteria from `description_html` and present a checklist:
+Before committing, parse the ticket's acceptance criteria from `description_html` and present a checklist.
 
-```
-Acceptance criteria check for ABRIDGE-72:
-- [x] New ClubsScreen.tsx in mobile app
-- [x] List available clubs with details (day, time, capacity, fee)
-- [x] Enroll/unenroll actions
-- [x] Show enrollment status per child
-- [x] Add to navigation (feature-gated)
-All criteria met. Proceeding to commit.
-```
+**Handling different AC formats:**
+- **Structured checklist** (`<ul><li>` items under an "Acceptance Criteria" heading) — parse directly
+- **Prose/bullets without heading** — extract implied criteria from bullet points in the description
+- **No AC at all** — extract testable claims from the description and implementation notes. Flag: "No explicit AC found — inferred these criteria from the description. Correct?"
+- **Ambiguous criteria** — flag to user: "This criterion is unclear — can you verify: [criterion]?"
 
 If any criterion is not met, flag it and go back to implementation. Do not close incomplete tickets.
 
@@ -50,29 +60,22 @@ If any criterion is not met, flag it and go back to implementation. Do not close
 
 ### 1c. Complexity estimate in ticket list
 
-When presenting Todo items in Step 1, add estimated complexity:
+When presenting Todo items in Step 1, add estimated complexity derived from implementation notes:
 
-```
-| # | ID | Title | Priority | Complexity |
-|---|-----|-------|----------|------------|
-| 1 | ABRIDGE-116 | Payment receipt email | high | S (1 file, API-only) |
-| 2 | ABRIDGE-115 | Instalment payment UI | medium | M (3 files, full-stack) |
-| 3 | ABRIDGE-127 | Introduce job queue | medium | L (new dep, 5+ files, infra) |
-```
-
-Derive complexity from implementation notes:
 - **S:** 1-2 files, single layer (API or web), no schema change
 - **M:** 3-4 files, crosses layers, or includes schema change
 - **L:** 5+ files, new dependencies, infrastructure changes, or migration needed
 
+If implementation notes are absent or sparse, estimate from title keywords and ticket category, and mark as "estimated — verify before starting."
+
 ### 1d. Sprint retrospective with learning loop
 
-When a sprint completes (all code tickets done), generate a retrospective:
+**Trigger:** When all code tickets in a cycle are Done. Non-code tickets (SETUP, audit) that remain open do NOT block the retro — they are noted as carried over.
 
 **What happened:**
-- Tickets completed vs planned
-- Carried-over items and why
-- Rework events (tickets that needed follow-up fixes)
+- Code tickets completed vs planned
+- Carried-over items and why (human action needed? too complex? dependency blocked?)
+- Rework events (tickets that needed follow-up fixes after initial commit)
 
 **What to learn:**
 - Complexity estimation accuracy (S/M/L vs actual)
@@ -81,33 +84,37 @@ When a sprint completes (all code tickets done), generate a retrospective:
 - Checks that were missed (tests, docs, types)
 
 **How to carry forward:**
-- Save learnings to `~/.claude/projects/{project}/memory/feedback_sprint_learnings.md`
-- Concrete rules: "Mobile screen tickets should include navigation wiring — bump S to M", "Payment tickets must run Stripe mock tests before commit"
+- Save to `~/.claude/projects/{project}/memory/feedback_sprint_learnings.md`
+- File structure: see Section 4b
 - sprint-work reads this file at the start of each ticket and applies relevant rules
 - po-ba-analyst reads it when planning future sprints
-- Rolling window: keep last 5 sprints, prune to actionable rules
 
-**Post retro as a Plane comment** on the completed cycle for project history.
+**Pruning rules:** After adding Sprint N data, if more than 5 sprint entries exist in the Velocity section, remove the oldest. Rules in Estimation/Pre-commit/Doc sections are only removed if explicitly contradicted by newer data or flagged as no longer relevant by the user.
+
+**Post retro as a Plane comment** on the completed cycle. If Plane is unreachable, save locally and note: "Retro saved to learnings file but could not post to Plane — will retry next session."
 
 ## 2. po-ba-analyst Enhancements
 
 ### 2a. Throughput-based velocity tracking
 
 Drop story points as the velocity metric. Track instead:
-- **Tickets per session** — how many completed before context limit
+- **Tickets per session** — how many code tickets completed
 - **Complexity accuracy** — how often S/M/L matched actual effort
 - **Rework rate** — % of tickets needing follow-up fixes
-- **Carry-over pattern** — which ticket types consistently carry over (e.g., SETUP tickets always need human action)
+- **Carry-over pattern** — which ticket types consistently carry over
 
-Store in sprint learnings memory. Use rolling averages for planning:
-- "Last 3 sprints completed 8-10 code tickets per session"
-- "SETUP tickets always carry over — plan accordingly"
-- "Debt/refactor tickets are under-estimated 30% of the time"
+**Sprint capacity calculation:** Rolling average of code tickets completed per session from the learnings file. Default to 10 if no history. Adjust for complexity mix: a sprint heavy on L tickets should plan fewer total tickets.
+
+`estimate_point` is still assigned to Plane work items for display/sorting (S=1, M=3, L=5, XL=8) but is NOT used for velocity calculation.
+
+Store in sprint learnings memory. The existing fixed "velocity cap: 20-25 points" in Step 10 is replaced with: "Sprint capacity = rolling average from learnings file, defaulting to 10 code tickets."
 
 ### 2b. Dependency detection in sprint planning
 
-When assigning stories to sprints, scan implementation notes for cross-references:
-- File path overlap: if story A and B both modify `schema.prisma`, schedule A first if B references A's model
+**When it runs:** During sprint planning, after stories are written but before they are synced to Plane. For continuation workflows, scan both new stories and existing Plane tickets in Backlog.
+
+Scan implementation notes for cross-references:
+- File path overlap: if story A and B both modify the schema, schedule A first if B references A's model
 - Env var dependencies: if a story needs an env var from a SETUP ticket, the SETUP must come first
 - Explicit references: if implementation notes say "depends on X", respect it
 
@@ -120,24 +127,26 @@ Auto-tag stories based on what they touch:
 | Area | Risk | Rationale |
 |------|------|-----------|
 | Auth, encryption, session management | High | Security-sensitive |
-| Payments, Stripe, refunds | High | Financial data |
-| Child data, GDPR, deletion | High | Regulatory |
+| Payments, financial transactions | High | Financial data |
+| User data, GDPR, deletion | High | Regulatory |
 | Schema migrations, data transforms | Medium | Data integrity |
 | New API procedures, middleware | Medium | Authorization surface |
 | CI/CD, Docker, deployment | Medium | Infrastructure stability |
 | UI components, styling | Low | Reversible, no data risk |
 | Documentation, config | Low | Non-functional |
 
-Show in sprint plan. Schedule high-risk stories early in the sprint, not as the last item before the testing gate.
+This table is the default. The learnings file can extend it (e.g., if retro reveals "notification changes cause regressions", add "Notifications: Medium risk").
+
+Schedule high-risk stories early in the sprint, not as the last item before the testing gate.
 
 ### 2d. Framework-aware gap detection
 
-During Step 6 (identify gaps), optionally cross-reference against:
+During Step 6 (identify gaps), optionally cross-reference against standard checklists:
 - **OWASP Top 10** — injection, broken auth, XSS, SSRF, etc.
 - **WCAG 2.1 AA** — keyboard nav, contrast, screen readers, touch targets
-- **ICO Children's Code** — age-appropriate design, data minimisation, transparency
+- **Industry-specific** — for education apps: ICO Children's Code; for health apps: HIPAA; etc.
 
-Opt-in: ask "Check against OWASP/WCAG/ICO frameworks?" before running. Not a full audit — a quick flag of obvious misses that become stories.
+Opt-in: ask "Check against security/accessibility frameworks?" before running. Uses model's training knowledge — no stored checklists needed for common frameworks. For niche regulations (ICO Children's Code), note findings as "suspected — verify with specialist" rather than definitive.
 
 ## 3. project-docs Enhancements
 
@@ -145,67 +154,66 @@ Opt-in: ask "Check against OWASP/WCAG/ICO frameworks?" before running. Not a ful
 
 Replace the manual 8-point checklist with automated detection:
 
-1. Run `git diff HEAD~1 --name-only` to get changed files
-2. Map files to affected docs:
+1. Determine diff scope:
+   - **Per-ticket** (invoked from sprint-work Step 4c): `git diff HEAD~1 --name-only`
+   - **Per-sprint** (invoked from sprint completion handoff 4c): `git log --name-only --since={sprint_start_date}` or diff against the last doc-verified commit from the freshness tracker
+2. Map changed files to affected docs using generic patterns:
 
 | Changed file pattern | Affected doc |
 |---------------------|-------------|
-| `schema.prisma` | AGENTS.md (models list) |
-| `apps/api/src/router/*.ts` (new) | AGENTS.md (procedures), API.md |
-| `.github/workflows/*` | INFRASTRUCTURE.md |
-| `docker-compose*` | INFRASTRUCTURE.md |
-| `.env*` or new env var in code | AGENTS.md (env vars table) |
-| `apps/web/src/app/dashboard/*/page.tsx` (new) | CLAUDE.md (key files) |
-| `packages/db/prisma/schema.prisma` (new model) | AGENTS.md, seed data check |
+| `**/schema.prisma` or `**/models/**` | AGENTS.md (models list) |
+| `**/router/**` or `**/routes/**` (new file) | AGENTS.md (procedures/endpoints), API.md |
+| `.github/workflows/*` or CI config | INFRASTRUCTURE.md |
+| `docker-compose*` or `Dockerfile*` | INFRASTRUCTURE.md |
+| `.env*` or new `process.env.` in code | AGENTS.md (env vars table) |
+| New page/screen files | CLAUDE.md (key files) |
 
-3. Present only affected docs: "Based on your changes, these docs may need updating: [list]"
-4. Skip entirely if no docs are affected
+These patterns are generic — they work for any project structure, not just monorepos with `apps/api`.
+
+3. Present only affected docs. Skip entirely if nothing is affected.
 
 ### 3b. Changelog generation
 
-On-demand or after sprint completion, scan commits and generate:
+On-demand or after sprint completion, scan commits and generate CHANGELOG entries:
 
-```markdown
-## [2026-03-21]
+| Commit prefix | Changelog section |
+|--------------|-------------------|
+| `feat:` | Added |
+| `fix:` | Fixed |
+| `perf:` | Performance |
+| `security:` or encryption/auth changes | Security |
+| `ci:`, `chore:`, `docs:` | Omitted (unless user-visible) |
+| No prefix | Listed under "Other" |
 
-### Added
-- In-app notification centre with bell icon and dropdown [ABRIDGE-114]
-- Payment receipt email after Stripe checkout [ABRIDGE-116]
-- Staff daily task summary on dashboard [ABRIDGE-117]
-- Instalment payment configuration [ABRIDGE-115]
-- Image optimization pipeline with Sharp [ABRIDGE-121]
-
-### Fixed
-- Removed ignoreBuildErrors, fixed surfaced type errors [ABRIDGE-112]
-
-### Security
-- MIS credentials encrypted at rest with AES-256-GCM [ABRIDGE-111]
-- PDF form data migrated to S3 object storage [ABRIDGE-113]
-```
-
-Derived from `git log` using conventional commit prefixes (`feat:` → Added, `fix:` → Fixed, `ci:` → CI/CD). Write to `CHANGELOG.md`.
+Write to `CHANGELOG.md` in the project root. If the file doesn't exist, create it with a header.
 
 ### 3c. Freshness scoring
 
-Maintain a freshness tracker (in the skill's reference or in memory):
+Location: `~/.claude/projects/{project}/memory/feedback_doc_freshness.md` (project-specific).
 
-```
-| Doc | Last verified | Days ago | Status |
-|-----|--------------|----------|--------|
-| AGENTS.md | 2026-03-21 | 0 | Fresh |
-| API.md | 2026-03-10 | 11 | Check soon |
-| INFRASTRUCTURE.md | 2026-02-28 | 21 | Stale |
+Structure:
+```markdown
+---
+name: Doc freshness tracker
+description: Tracks when project docs were last verified against codebase
+type: reference
+---
+
+| Doc | Last verified | Status |
+|-----|--------------|--------|
+| AGENTS.md | 2026-03-21 | Fresh |
+| API.md | 2026-03-10 | Check (11 days) |
 ```
 
-When project-docs is invoked for any reason, check the table. If anything is >14 days stale, mention it as a nudge: "API.md hasn't been verified in 11 days — want me to check it?"
+When project-docs is invoked for any reason, check the table. If anything is >14 days since last verification, nudge: "API.md hasn't been verified in 11 days — want me to check it?"
 
 Reset timestamp when a doc is verified or updated.
 
 ### 3d. Page templates for all types
 
-Add HTML templates to `references/plane-pages.md` for each page type:
+Add HTML templates to `references/plane-pages.md` for each page type. The existing Setup guide template is kept. Add:
 
-**Runbook template:**
+**Runbook:**
 ```html
 <h2>Runbook: [Procedure]</h2>
 <p><strong>When to use:</strong> [trigger condition]</p>
@@ -216,7 +224,7 @@ Add HTML templates to `references/plane-pages.md` for each page type:
 <h3>Contacts</h3><ul>...</ul>
 ```
 
-**Architecture template:**
+**Architecture:**
 ```html
 <h2>Architecture: [Area]</h2>
 <p><strong>Purpose:</strong> [what this covers]</p>
@@ -226,66 +234,85 @@ Add HTML templates to `references/plane-pages.md` for each page type:
 <h3>Trade-offs</h3><ul>...</ul>
 ```
 
+**Audit guide** (supplements existing Guide template):
+```html
+<h2>Guide: [Audit Type]</h2>
+<p><strong>Scope:</strong> [what's being audited]</p>
+<h3>Automated Steps</h3><ol>...</ol>
+<h3>Manual Steps</h3><ol>...</ol>
+<h3>Known Issues</h3><ul>...</ul>
+<h3>Deliverables</h3><ul>...</ul>
+```
+
 ## 4. Cross-skill Integration
 
 ### 4a. Shared Plane API reference
 
-Create `~/.claude/skills/shared/plane-api.md` consolidating:
-- Connection details, auth
-- All project IDs and state IDs (Abridge + Iron Pulse)
-- Work item, cycle, label, comment endpoints
-- Pages API (internal, session auth)
-- API field gotchas
-- Git remote URL patterns
+Create `~/.claude/skills/shared/plane-api.md` containing ONLY project-agnostic content:
+- Connection details (SSH MCP pattern, API key)
+- Generic endpoint paths (work-items, cycles, labels, comments, pages)
+- API field gotchas (state vs state_id, labels array, etc.)
+- Pages API (internal API, session auth workflow)
 
-All three skills reference this single file. Update all SKILL.md files to point here.
+**Project-specific data** (project IDs, state IDs, git remotes) lives in `.plane-project` (4d), NOT in this shared file. The shared reference is portable across all projects.
+
+**How skills reference it:** Each SKILL.md says `Read ~/.claude/skills/shared/plane-api.md for Plane API details.` This is an absolute path, not a relative reference. Skills use the Read tool to load it when needed.
+
+**What happens to existing per-skill references:**
+- `po-ba-analyst/references/plane-api.md` → deleted, replaced by shared file
+- `sprint-work/references/plane-api.md` → deleted, replaced by shared file
+- `project-docs/references/plane-pages.md` → **kept** as a separate file for page-specific templates and naming conventions (the Pages API uses different auth and endpoints from the main API, so keeping them separate is clearer)
 
 ### 4b. Sprint learnings memory file
 
 Location: `~/.claude/projects/{project}/memory/feedback_sprint_learnings.md`
 
-Structure:
 ```markdown
 ---
-name: Sprint learnings
-description: Rolling log of sprint retrospective learnings — estimation patterns, rework triggers, workflow rules
+name: Sprint learnings for {project}
+description: Rolling retrospective learnings — estimation patterns, rework triggers, workflow rules. Read by sprint-work and po-ba-analyst.
 type: feedback
 ---
 
 ## Estimation Rules
-- Mobile screen tickets: include navigation wiring, bump S→M
-- Debt/refactor tickets: often under-estimated, plan buffer
+- [learned rule]: [why]
 
 ## Pre-commit Rules
-- Payment tickets: run Stripe mock tests
-- Schema changes: always run db:generate before type-check
+- [learned rule]: [why]
 
 ## Doc Rules
-- New routers: always update AGENTS.md procedures list
-- New env vars: always update AGENTS.md env vars table
+- [learned rule]: [why]
 
 ## Carry-over Patterns
-- SETUP tickets always carry over — don't count toward velocity
-- Testing gate tickets: close last, after all code tickets
+- [pattern]: [action]
+
+## Risk Overrides
+- [area]: [revised risk level]: [why]
 
 ## Velocity (last 5 sprints)
-- Sprint 6: 8 code tickets, 2 carried over (SETUP)
-- Sprint 5: 12 tickets, 0 carried over
-- Average: ~10 code tickets/session
+- Sprint N: X code tickets, Y carried over (reason)
+- Average: ~Z code tickets/session
 ```
 
-Written by sprint-work (retro) and po-ba-analyst (planning). Read by all three skills.
+**Writers:** sprint-work (retro, Step 1d) and po-ba-analyst (planning calibration).
+**Readers:** sprint-work (ticket start — check for applicable rules), po-ba-analyst (sprint planning — velocity + estimation), project-docs (doc rules section — which docs need attention).
+
+**Defensive parsing:** Skills should handle missing sections gracefully — add them if absent rather than failing. The file format may grow over time.
+
+**Max size guideline:** Keep under 200 lines. If sections grow beyond this, prune older velocity data and consolidate rules that overlap.
 
 ### 4c. Sprint completion handoff
 
-When sprint-work completes the last code ticket in a sprint:
+When sprint-work detects that all **code tickets** in a cycle are Done (non-code SETUP/audit tickets remaining do NOT block this):
 
-1. **Retro** — generate retrospective, save learnings, post to Plane cycle
-2. **Doc audit** — invoke project-docs for a targeted audit of docs affected during the sprint
-3. **Changelog** — invoke project-docs to generate CHANGELOG entry for the sprint
-4. **Summary** — present to user: "Sprint X complete. Retro saved. Changelog updated. 1 doc flagged stale. Ready for next sprint?"
+1. **Retro** — generate retrospective per 1d, save learnings, post to Plane cycle
+2. **Doc sync** — follow the project-docs "Doc Sync Check" workflow using sprint-scoped diff (not just last commit)
+3. **Changelog** — follow project-docs changelog generation for commits since last changelog entry
+4. **Summary** — present to user: "Sprint X complete. Retro saved. Changelog updated. N docs flagged. Ready for next sprint?"
 
-This creates a clean **plan → implement → document → reflect** loop.
+**This is a sequential instruction set, not an automated pipeline.** Each step is a prompt instruction that the model follows in order. If context limits are a concern, the model should complete the retro + learnings first, then address docs in a follow-up if needed.
+
+**Plane error handling:** If Plane is unreachable for any step (retro comment, doc page update), save the content locally and note it. Don't fail the entire handoff because of a network issue.
 
 ### 4d. Project detection via `.plane-project`
 
@@ -293,23 +320,52 @@ Add a `.plane-project` file to each repo root:
 
 ```json
 {
-  "projectId": "e228ecbc-4b4c-4f9d-8f7b-bf181913af6f",
-  "identifier": "ABRIDGE",
-  "workspace": "personal"
+  "projectId": "uuid-here",
+  "identifier": "PROJECT_PREFIX",
+  "workspace": "workspace-slug",
+  "states": {
+    "backlog": "uuid",
+    "todo": "uuid",
+    "in_progress": "uuid",
+    "done": "uuid",
+    "cancelled": "uuid"
+  },
+  "gitRemote": "https://git.example.com/org/repo"
 }
 ```
 
-All three skills check for this file first. Falls back to directory name matching if not present. New projects need only this file — no skill updates required.
+**This file should be committed to the repo** — it's not secret (just UUIDs and URLs) and enables any developer or agent to interact with Plane without skill configuration.
+
+All three skills check for this file first via `Read .plane-project` from the project root. Falls back to directory name matching against the shared Plane reference if not present.
+
+**New project onboarding:** Creating this file is the only step needed to make all three skills work with a new project. No skill file edits required.
 
 ## Implementation Order
 
 Recommended sequence (highest impact first):
 
-1. **4a + 4d** — Shared reference + project detection (foundation for everything else)
-2. **1a + 1b** — Pre-commit verification + acceptance criteria check (biggest quality win)
-3. **3a** — Auto-diff doc detection (biggest workflow win for project-docs)
-4. **1d + 4b** — Sprint retro + learnings memory (enables the feedback loop)
-5. **2a** — Throughput-based velocity (uses data from 1d)
-6. **3b + 3c** — Changelog + freshness scoring
-7. **4c** — Sprint completion handoff (ties everything together)
-8. **1c + 2b + 2c + 2d + 3d** — Remaining quality improvements
+1. **4a + 4d** — Shared reference + project detection (foundation — unblocks project-agnostic operation)
+2. **1a** — Pre-commit verification (biggest quality win — catches type errors and lint before commit)
+3. **1b** — Acceptance criteria verification (prevents premature ticket closure)
+4. **3a** — Auto-diff doc detection (biggest workflow win for project-docs)
+5. **1d + 4b** — Sprint retro + learnings memory (enables the feedback loop)
+6. **2a** — Throughput-based velocity (uses data from 1d)
+7. **3b + 3c** — Changelog + freshness scoring
+8. **4c** — Sprint completion handoff (ties everything together — depends on 1d, 3a, 3b)
+9. **1c + 2b + 2c** — Complexity estimates, dependency detection, risk scoring
+10. **2d + 3d** — Framework gap detection + page templates (lowest priority, additive)
+
+## Appendix: Review Issues Addressed
+
+| Issue | Resolution |
+|-------|-----------|
+| C1: Shared path resolution | 4a now uses absolute path, keeps plane-pages.md separate |
+| C2: Cross-skill invocation | 4c clarified as sequential instructions, not automated pipeline |
+| C3: Missing AC fallback | 1b now handles prose, missing AC, and ambiguous criteria |
+| I1: tsconfig detection | 1a now uses project's build command, maps all workspace packages |
+| I2: Prune semantics | 1d defines explicit prune rules for learnings file |
+| I3: Velocity contradiction | 2a explicitly replaces fixed point cap with ticket-count capacity |
+| I4: Dependency timing | 2b clarifies it runs on generated stories before Plane sync |
+| I5: git diff scope | 3a uses sprint-scoped diff for sprint-level, HEAD~1 for per-ticket |
+| I6: Freshness location | 3c specifies project-specific memory file path |
+| Project-agnostic | Design Principles section + 4a/4d ensure no project-specific hardcoding |
