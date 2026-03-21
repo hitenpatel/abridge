@@ -377,6 +377,11 @@ export const paymentsRouter = router({
 						schoolName: item.school.name,
 						childId: childLink.childId,
 						childName: child ? `${child.firstName} ${child.lastName}` : "Unknown",
+						allowInstalments: item.allowInstalments,
+						instalmentPlan: item.instalmentPlan as {
+							count: number;
+							amountPerInstalment: number;
+						} | null,
 					});
 				}
 			}
@@ -394,6 +399,8 @@ export const paymentsRouter = router({
 				amount: z.number().int().positive().max(1000000), // in pence, max £10,000
 				dueDate: z.date().optional(),
 				category: z.enum(["DINNER_MONEY", "TRIP", "CLUB", "UNIFORM", "OTHER"]),
+				allowInstalments: z.boolean().default(false),
+				instalmentCount: z.number().int().min(2).max(12).optional(),
 				allChildren: z.boolean().default(false),
 				childIds: z.array(z.string()).optional(),
 			}),
@@ -437,6 +444,15 @@ export const paymentsRouter = router({
 			}
 
 			// 2. Create payment item + links
+			// Build instalment plan if enabled
+			const instalmentPlan =
+				input.allowInstalments && input.instalmentCount
+					? {
+							count: input.instalmentCount,
+							amountPerInstalment: Math.ceil(input.amount / input.instalmentCount),
+						}
+					: undefined;
+
 			const paymentItem = await ctx.prisma.paymentItem.create({
 				data: {
 					schoolId: input.schoolId,
@@ -445,6 +461,8 @@ export const paymentsRouter = router({
 					amount: input.amount,
 					dueDate: input.dueDate,
 					category: input.category,
+					allowInstalments: input.allowInstalments,
+					instalmentPlan: instalmentPlan ?? undefined,
 					children: {
 						createMany: {
 							data: targetChildIds.map((cid) => ({ childId: cid })),

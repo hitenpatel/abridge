@@ -27,6 +27,8 @@ const paymentItemSchema = z.object({
 		}),
 	category: z.enum(["DINNER_MONEY", "TRIP", "CLUB", "UNIFORM", "OTHER"]),
 	allChildren: z.boolean(),
+	allowInstalments: z.boolean(),
+	instalmentCount: z.string().optional(),
 });
 
 type PaymentItemValues = z.infer<typeof paymentItemSchema>;
@@ -47,18 +49,24 @@ export function PaymentItemForm({ schoolId }: PaymentItemFormProps) {
 		register,
 		handleSubmit,
 		control,
+		watch,
 		formState: { errors },
 	} = useForm<PaymentItemValues>({
 		resolver: zodResolver(paymentItemSchema),
 		defaultValues: {
 			category: "OTHER",
 			allChildren: true,
+			allowInstalments: false,
 		},
 	});
 
+	const allowInstalments = watch("allowInstalments");
+
 	const onSubmit = (values: PaymentItemValues) => {
-		// Convert pounds to pence
 		const amountInPence = Math.round(Number.parseFloat(values.amount) * 100);
+		const instalmentCount = values.instalmentCount
+			? Number.parseInt(values.instalmentCount, 10)
+			: undefined;
 
 		createPaymentItem.mutate({
 			schoolId,
@@ -67,6 +75,8 @@ export function PaymentItemForm({ schoolId }: PaymentItemFormProps) {
 			amount: amountInPence,
 			category: values.category,
 			allChildren: values.allChildren,
+			allowInstalments: values.allowInstalments,
+			instalmentCount: values.allowInstalments ? instalmentCount : undefined,
 		});
 	};
 
@@ -141,6 +151,33 @@ export function PaymentItemForm({ schoolId }: PaymentItemFormProps) {
 							Send to all children in school
 						</Label>
 					</div>
+
+					<div className="flex items-center">
+						<input
+							{...register("allowInstalments")}
+							type="checkbox"
+							className="h-4 w-4 rounded border-border text-primary-600 focus:ring-primary-500"
+						/>
+						<Label htmlFor="allowInstalments" className="ml-2">
+							Allow instalment payments
+						</Label>
+					</div>
+
+					{allowInstalments && (
+						<div>
+							<Label htmlFor="instalmentCount">Number of instalments</Label>
+							<select
+								{...register("instalmentCount")}
+								className="mt-1 block w-full rounded-md border-border shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+							>
+								<option value="2">2 instalments</option>
+								<option value="3">3 instalments</option>
+								<option value="4">4 instalments</option>
+								<option value="6">6 instalments</option>
+								<option value="12">12 instalments</option>
+							</select>
+						</div>
+					)}
 
 					<div className="pt-4">
 						<Button
