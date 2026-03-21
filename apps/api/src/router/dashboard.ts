@@ -549,4 +549,60 @@ export const dashboardRouter = router({
 			firstMessageSent: messageCount > 0,
 		};
 	}),
+
+	getStaffTaskSummary: protectedProcedure
+		.input(z.object({ schoolId: z.string() }))
+		.query(async ({ ctx, input }) => {
+			const today = startOfDay(new Date());
+			const todayEnd = endOfDay(new Date());
+
+			const [unmarkedAttendance, unreadMessages, pendingForms, overdueHomework] = await Promise.all(
+				[
+					// Unmarked attendance today: children with no record for today's AM session
+					ctx.prisma.child.count({
+						where: {
+							schoolId: input.schoolId,
+							attendance: { none: { date: { gte: today, lte: todayEnd }, session: "AM" } },
+						},
+					}),
+					// Unread parent messages (conversations with unread replies)
+					ctx.prisma.conversation.count({
+						where: {
+							schoolId: input.schoolId,
+							staffId: ctx.user.id,
+							closedAt: null,
+							messages: {
+								some: {
+									reads: { none: { userId: ctx.user.id } },
+								},
+							},
+						},
+					}),
+					// Pending form responses (not yet reviewed — just count total responses this week)
+					ctx.prisma.formResponse.count({
+						where: {
+							template: { schoolId: input.schoolId },
+							submittedAt: { gte: startOfWeek(new Date(), { weekStartsOn: 1 }) },
+						},
+					}),
+					// Overdue homework (past due date, has incomplete completions)
+					ctx.prisma.homeworkAssignment.count({
+						where: {
+							schoolId: input.schoolId,
+							setBy: ctx.user.id,
+							status: "ACTIVE",
+							dueDate: { lt: today },
+							completions: { some: { status: { not: "COMPLETED" } } },
+						},
+					}),
+				],
+			);
+
+			return {
+				unmarkedAttendance,
+				unreadMessages,
+				pendingForms,
+				overdueHomework,
+			};
+		}),
 });

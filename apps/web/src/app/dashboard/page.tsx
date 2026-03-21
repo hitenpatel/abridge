@@ -12,12 +12,77 @@ import { PageShell } from "@/components/ui/page-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/lib/trpc";
-import { AlertTriangle, Home, PenSquare, Users } from "lucide-react";
+import {
+	AlertTriangle,
+	BookOpen,
+	ClipboardCheck,
+	Home,
+	Inbox,
+	PenSquare,
+	Users,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 type Emoji = "HEART" | "THUMBS_UP" | "CLAP" | "LAUGH" | "WOW";
+
+function StaffTaskSummary({ schoolId }: { schoolId: string }) {
+	const { data } = trpc.dashboard.getStaffTaskSummary.useQuery({ schoolId });
+
+	if (!data) return null;
+
+	const tasks = [
+		{
+			label: "Unmarked attendance",
+			count: data.unmarkedAttendance,
+			href: "/dashboard/attendance",
+			icon: ClipboardCheck,
+			color: "text-orange-600 bg-orange-100",
+		},
+		{
+			label: "Unread messages",
+			count: data.unreadMessages,
+			href: "/dashboard/messages",
+			icon: Inbox,
+			color: "text-blue-600 bg-blue-100",
+		},
+		{
+			label: "Form responses this week",
+			count: data.pendingForms,
+			href: "/dashboard/forms",
+			icon: Users,
+			color: "text-purple-600 bg-purple-100",
+		},
+		{
+			label: "Overdue homework",
+			count: data.overdueHomework,
+			href: "/dashboard/homework",
+			icon: BookOpen,
+			color: "text-red-600 bg-red-100",
+		},
+	].filter((t) => t.count > 0);
+
+	if (tasks.length === 0) return null;
+
+	return (
+		<div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+			{tasks.map((task) => (
+				<Link key={task.href} href={task.href}>
+					<div className="bg-card rounded-2xl p-4 border border-orange-100/50 hover-lift cursor-pointer">
+						<div className="flex items-center gap-2 mb-2">
+							<div className={`p-1.5 rounded-lg ${task.color}`}>
+								<task.icon className="h-4 w-4" aria-hidden="true" />
+							</div>
+						</div>
+						<p className="text-2xl font-bold text-foreground">{task.count}</p>
+						<p className="text-xs text-muted-foreground mt-1">{task.label}</p>
+					</div>
+				</Link>
+			))}
+		</div>
+	);
+}
 
 function StaffDashboard({ schoolId, userId }: { schoolId: string; userId: string }) {
 	const utils = trpc.useUtils();
@@ -42,6 +107,7 @@ function StaffDashboard({ schoolId, userId }: { schoolId: string; userId: string
 
 	return (
 		<div data-testid="dashboard-view" className="max-w-5xl mx-auto space-y-6">
+			<StaffTaskSummary schoolId={schoolId} />
 			<div className="flex items-center justify-between">
 				<h1 className="text-xl font-semibold">Recent Posts</h1>
 				<Link href="/dashboard/compose">
