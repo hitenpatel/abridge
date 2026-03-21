@@ -6,6 +6,7 @@ import { z } from "zod";
 import { callAIProvider } from "../lib/ai-provider";
 import { assertFeatureEnabled } from "../lib/feature-guards";
 import { logger } from "../lib/logger";
+import { uploadBuffer } from "../lib/s3";
 import { translateText } from "../services/translator";
 import { protectedProcedure, router, schoolFeatureProcedure } from "../trpc";
 
@@ -380,7 +381,7 @@ export const formsRouter = router({
 		.query(async ({ ctx, input }) => {
 			const response = await ctx.prisma.formResponse.findUnique({
 				where: { id: input.responseId },
-				select: { pdfData: true, parentId: true },
+				select: { pdfData: true, pdfUrl: true, parentId: true },
 			});
 
 			if (!response) {
@@ -391,11 +392,11 @@ export const formsRouter = router({
 				throw new TRPCError({ code: "FORBIDDEN", message: "You do not have access to this form" });
 			}
 
-			if (!response.pdfData) {
+			if (!response.pdfData && !response.pdfUrl) {
 				throw new TRPCError({ code: "NOT_FOUND", message: "PDF not available for this form" });
 			}
 
-			return { pdfData: response.pdfData };
+			return { pdfData: response.pdfData, pdfUrl: response.pdfUrl };
 		}),
 
 	submitForm: protectedProcedure
@@ -470,12 +471,24 @@ export const formsRouter = router({
 					submittedAt: form.submittedAt,
 				});
 
+				// Upload to S3 if configured, otherwise fall back to DB storage
+				let pdfUrl: string | undefined;
+				if (process.env.S3_ENDPOINT || process.env.S3_BUCKET) {
+					const pdfBuffer = Buffer.from(pdfBase64, "base64");
+					const key = `${template.schoolId}/forms/${form.id}.pdf`;
+					pdfUrl = await uploadBuffer({
+						key,
+						body: pdfBuffer,
+						contentType: "application/pdf",
+					});
+				}
+
 				await ctx.prisma.formResponse.update({
 					where: { id: form.id },
-					data: { pdfData: pdfBase64 },
+					data: pdfUrl ? { pdfUrl } : { pdfData: pdfBase64 },
 				});
 
-				logger.info({ formId: form.id }, "PDF generated for form");
+				logger.info({ formId: form.id, storage: pdfUrl ? "s3" : "db" }, "PDF generated for form");
 			} catch (err) {
 				logger.error({ formId: form.id, err }, "Failed to generate PDF");
 			}

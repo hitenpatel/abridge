@@ -62,4 +62,21 @@ export async function getPresignedUploadUrl(opts: {
 	return { uploadUrl, publicUrl, key };
 }
 
+export async function uploadBuffer(opts: {
+	key: string;
+	body: Buffer;
+	contentType: string;
+}): Promise<string> {
+	await s3.send(
+		new PutObjectCommand({
+			Bucket: bucket,
+			Key: opts.key,
+			Body: opts.body,
+			ContentType: opts.contentType,
+		}),
+	);
+	const endpoint = process.env.S3_ENDPOINT ?? `https://s3.${process.env.S3_REGION}.amazonaws.com`;
+	return `${endpoint}/${bucket}/${opts.key}`;
+}
+
 export { s3, bucket };
