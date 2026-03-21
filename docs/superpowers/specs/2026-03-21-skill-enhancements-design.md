@@ -155,7 +155,7 @@ Opt-in: ask "Check against security/accessibility frameworks?" before running. U
 Replace the manual 8-point checklist with automated detection:
 
 1. Determine diff scope:
-   - **Per-ticket** (invoked from sprint-work Step 4c): `git diff HEAD~1 --name-only`
+   - **Per-ticket** (invoked from sprint-work Step 4c): `git diff --name-only --cached` on staged files (before commit), or `git diff HEAD~N` where N = number of commits since the ticket was picked up. If uncertain, use `git log --oneline --since="1 hour ago" --name-only` as a practical approximation.
    - **Per-sprint** (invoked from sprint completion handoff 4c): `git log --name-only --since={sprint_start_date}` or diff against the last doc-verified commit from the freshness tracker
 2. Map changed files to affected docs using generic patterns:
 
@@ -248,13 +248,23 @@ Add HTML templates to `references/plane-pages.md` for each page type. The existi
 
 ### 4a. Shared Plane API reference
 
-Create `~/.claude/skills/shared/plane-api.md` containing ONLY project-agnostic content:
-- Connection details (SSH MCP pattern, API key)
+Create `~/.claude/skills/shared/plane-api.md` containing ONLY generic API mechanics:
 - Generic endpoint paths (work-items, cycles, labels, comments, pages)
 - API field gotchas (state vs state_id, labels array, etc.)
-- Pages API (internal API, session auth workflow)
+- Pages API workflow (internal API, session auth sequence)
+- Payload examples and mappings (priority, effort)
 
-**Project-specific data** (project IDs, state IDs, git remotes) lives in `.plane-project` (4d), NOT in this shared file. The shared reference is portable across all projects.
+**Three-tier config model:**
+
+| Level | What | Where | Example |
+|-------|------|-------|---------|
+| **Instance** (Plane deployment) | API key, SSH host, workspace slug, admin email | `~/.claude/plane.json` (user-global, not in any repo) | `{"apiKey": "plane_api_...", "host": "projects.example.com", "sshConnection": "default", "adminEmail": "user@example.com"}` |
+| **Project** (per-repo) | Project ID, state IDs, identifier prefix, git remote | `.plane-project` in repo root (committed) | See 4d |
+| **Shared reference** (API mechanics) | Endpoints, payloads, gotchas | `~/.claude/skills/shared/plane-api.md` | Generic, no credentials or IDs |
+
+Instance-level config (`~/.claude/plane.json`) is **user-specific** — it contains the API key and SSH connection details for the user's Plane deployment. This is NOT committed to any repo. Skills read it to authenticate, then read `.plane-project` for project-specific IDs.
+
+**Project-specific data** (project IDs, state IDs, git remotes) lives in `.plane-project` (4d), NOT in the shared file or instance config.
 
 **How skills reference it:** Each SKILL.md says `Read ~/.claude/skills/shared/plane-api.md for Plane API details.` This is an absolute path, not a relative reference. Skills use the Read tool to load it when needed.
 
@@ -336,9 +346,11 @@ Add a `.plane-project` file to each repo root:
 
 **This file should be committed to the repo** — it's not secret (just UUIDs and URLs) and enables any developer or agent to interact with Plane without skill configuration.
 
-All three skills check for this file first via `Read .plane-project` from the project root. Falls back to directory name matching against the shared Plane reference if not present.
+All three skills check for this file first via `Read .plane-project` from the project root. **If the file is not present, Plane integration is unavailable** — skills degrade gracefully by skipping Plane operations (no state changes, no comments, no cycle management) and warn: "No .plane-project found — Plane integration disabled for this project."
 
-**New project onboarding:** Creating this file is the only step needed to make all three skills work with a new project. No skill file edits required.
+**New project onboarding:** Two steps to enable full skill support:
+1. Create `~/.claude/plane.json` (once per user, if not already present)
+2. Create `.plane-project` in the repo root (once per project)
 
 ## Implementation Order
 
@@ -366,6 +378,9 @@ Recommended sequence (highest impact first):
 | I2: Prune semantics | 1d defines explicit prune rules for learnings file |
 | I3: Velocity contradiction | 2a explicitly replaces fixed point cap with ticket-count capacity |
 | I4: Dependency timing | 2b clarifies it runs on generated stories before Plane sync |
-| I5: git diff scope | 3a uses sprint-scoped diff for sprint-level, HEAD~1 for per-ticket |
+| I5: git diff scope | 3a uses sprint-scoped diff for sprint-level, staged/recent for per-ticket |
 | I6: Freshness location | 3c specifies project-specific memory file path |
 | Project-agnostic | Design Principles section + 4a/4d ensure no project-specific hardcoding |
+| R2-1: Instance vs project config | 4a now defines three-tier model: instance (~/.claude/plane.json), project (.plane-project), shared (API mechanics) |
+| R2-2: Fallback clause | 4d now degrades gracefully without .plane-project instead of impossible fallback |
+| R2-3: Multi-commit diff | 3a now handles staged files or recent commit window instead of only HEAD~1 |
