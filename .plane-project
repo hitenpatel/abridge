@@ -1,0 +1,13 @@
+{
+  "projectId": "e228ecbc-4b4c-4f9d-8f7b-bf181913af6f",
+  "identifier": "ABRIDGE",
+  "workspace": "personal",
+  "states": {
+    "backlog": "e3426606-848d-471b-993e-ae484047d57b",
+    "todo": "0a1a14cd-e9b6-4b15-b368-95c9b88a096d",
+    "in_progress": "bb8a1be0-a105-4783-b824-71877ced5b2b",
+    "done": "6f1e8ef3-6d26-4c11-a07a-15337cc42f07",
+    "cancelled": "d6c8a96b-83c7-4bb1-89be-fa186229d6a8"
+  },
+  "gitRemote": "https://git.hiten-patel.co.uk/hiten/abridge"
+}
