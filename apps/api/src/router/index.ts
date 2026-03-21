@@ -20,6 +20,7 @@ import { mealBookingRouter } from "./meal-booking";
 import { mediaRouter } from "./media";
 import { messagingRouter } from "./messaging";
 import { misRouter } from "./mis";
+import { notificationRouter } from "./notification";
 import { parentsEveningRouter } from "./parents-evening";
 import { paymentsRouter } from "./payments";
 import { progressSummaryRouter } from "./progress-summary";
@@ -75,6 +76,7 @@ export const appRouter = router({
 	reportCard: reportCardRouter,
 	progressSummary: progressSummaryRouter,
 	search: searchRouter,
+	notification: notificationRouter,
 });
 
 export type AppRouter = typeof appRouter;

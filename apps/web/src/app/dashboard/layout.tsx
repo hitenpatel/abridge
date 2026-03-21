@@ -16,7 +16,7 @@ import { FeatureToggleProvider, useFeatureToggles } from "@/lib/feature-toggles"
 import { navIcons } from "@/lib/nav-icons";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import { GraduationCap, LogOut, Menu, X } from "lucide-react";
+import { Bell, GraduationCap, LogOut, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -61,6 +61,83 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 			<DashboardLayoutInner session={session ?? undefined}>{children}</DashboardLayoutInner>
 			{session && <OnboardingDialog isParent={isParent} />}
 		</FeatureToggleProvider>
+	);
+}
+
+function NotificationBell() {
+	const { data: unread } = trpc.notification.unreadCount.useQuery(undefined, {
+		refetchInterval: 30000,
+	});
+	const { data: notifications } = trpc.notification.list.useQuery({ limit: 10 });
+	const utils = trpc.useUtils();
+	const markAllRead = trpc.notification.markAllAsRead.useMutation({
+		onSuccess: () => {
+			utils.notification.unreadCount.invalidate();
+			utils.notification.list.invalidate();
+		},
+	});
+	const [open, setOpen] = useState(false);
+	const count = unread?.count ?? 0;
+
+	return (
+		<DropdownMenu open={open} onOpenChange={setOpen}>
+			<DropdownMenuTrigger asChild>
+				<button
+					type="button"
+					className="relative flex items-center gap-2 p-2 rounded-xl hover:bg-orange-50/40 w-full text-left transition-colors mb-2"
+					aria-label={`Notifications${count > 0 ? `, ${count} unread` : ""}`}
+					data-testid="notification-bell"
+				>
+					<Bell className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
+					<span className="text-sm font-medium text-foreground">Notifications</span>
+					{count > 0 && (
+						<span className="ml-auto bg-primary text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+							{count > 99 ? "99+" : count}
+						</span>
+					)}
+				</button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="end" className="w-80 max-h-96 overflow-y-auto">
+				<DropdownMenuLabel className="flex items-center justify-between">
+					<span>Notifications</span>
+					{count > 0 && (
+						<button
+							type="button"
+							onClick={() => markAllRead.mutate()}
+							className="text-xs text-primary hover:underline"
+						>
+							Mark all read
+						</button>
+					)}
+				</DropdownMenuLabel>
+				<DropdownMenuSeparator />
+				{notifications?.items.length === 0 ? (
+					<div className="p-4 text-center text-sm text-muted-foreground">No notifications</div>
+				) : (
+					notifications?.items.map((n) => (
+						<DropdownMenuItem key={n.id} asChild>
+							<Link
+								href={"/dashboard/messages"}
+								className={cn("flex flex-col items-start gap-1 p-3", !n.openedAt && "bg-primary/5")}
+							>
+								<p className="text-sm font-medium line-clamp-1">{n.message.subject}</p>
+								<p className="text-xs text-muted-foreground line-clamp-1">
+									{n.message.body?.slice(0, 80)}
+								</p>
+								<p className="text-xs text-muted-foreground">
+									{new Date(n.createdAt).toLocaleDateString("en-GB", {
+										day: "numeric",
+										month: "short",
+										hour: "2-digit",
+										minute: "2-digit",
+									})}
+								</p>
+							</Link>
+						</DropdownMenuItem>
+					))
+				)}
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }
 
@@ -410,6 +487,7 @@ function DashboardLayoutInner({
 				</div>
 				<NavContent />
 				<div className="mt-auto pt-6 border-t border-orange-100/50">
+					<NotificationBell />
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<button
