@@ -53,6 +53,7 @@ jobs:
 
   e2e-web:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
       BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only
@@ -102,7 +103,7 @@ jobs:
       - name: Start servers and run E2E tests
         run: |
           pnpm --filter @schoolconnect/api dev &
-          pnpm --filter @schoolconnect/web dev &
+          pnpm --filter @schoolconnect/web start &
           for i in $(seq 1 60); do
             if curl -sf http://localhost:4000/trpc/health.check > /dev/null 2>&1; then
               echo "API is ready"
