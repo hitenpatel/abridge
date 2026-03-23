@@ -53,7 +53,7 @@ jobs:
 
   e2e-web:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/schoolconnect_test
       BETTER_AUTH_SECRET: test-secret-for-ci-e2e-testing-only

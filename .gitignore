@@ -14,4 +14,5 @@ coverage/
 .worktrees/
 playwright-report/
 test-results/
+e2e/.auth/
 packages/e2e/generated/
