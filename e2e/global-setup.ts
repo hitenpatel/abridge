@@ -13,6 +13,7 @@ async function globalSetup(config: FullConfig) {
 	await page.goto(baseURL);
 	await page.evaluate(() => {
 		localStorage.setItem("abridge-cookie-consent", "accepted");
+		localStorage.setItem("abridge-onboarding-completed", "true");
 	});
 
 	await context.storageState({ path: "e2e/.auth/storage-state.json" });
