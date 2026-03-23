@@ -133,12 +133,8 @@ test.describe("Authentication Flows", () => {
 			await expect(page.getByLabel("New Password")).toBeVisible();
 			await expect(page.getByLabel("Confirm Password")).toBeVisible();
 
-			// Submit without token should show error
-			await page.getByLabel("New Password").fill("NewPassword123!");
-			await page.getByLabel("Confirm Password").fill("NewPassword123!");
-			await page.getByTestId("reset-submit-button").click();
-
-			await expect(page.getByText("Missing reset token")).toBeVisible({ timeout: 5000 });
+			// Without a token in the URL the submit button must be disabled
+			await expect(page.getByTestId("reset-submit-button")).toBeDisabled();
 		});
 
 		test("should show error for invalid token in URL", async ({ page }) => {

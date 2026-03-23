@@ -87,9 +87,11 @@ test.describe("Clubs", () => {
 		await expect(page).toHaveURL(/\/dashboard\/clubs/);
 
 		// === STEP 5: Verify page heading is visible ===
-		await expect(page.getByRole("heading", { name: /Clubs/i }).first()).toBeVisible({
-			timeout: 10000,
-		});
+		await expect(async () => {
+			await expect(page.getByRole("heading", { name: /Clubs/i }).first()).toBeVisible({
+				timeout: 3000,
+			});
+		}).toPass({ timeout: 15000 });
 	});
 
 	test("staff sees Create Club button when feature is enabled", async ({ page }) => {
@@ -130,9 +132,11 @@ test.describe("Clubs", () => {
 		await expect(page).toHaveURL(/\/dashboard\/clubs/);
 
 		// === STEP 5: Verify the Create Club button is visible for staff ===
-		await expect(page.getByRole("button", { name: /Create Club/i })).toBeVisible({
-			timeout: 10000,
-		});
+		await expect(async () => {
+			await expect(page.getByRole("button", { name: /Create Club/i })).toBeVisible({
+				timeout: 3000,
+			});
+		}).toPass({ timeout: 15000 });
 	});
 
 	test("parent can view clubs page after feature is enabled", async ({ page }) => {

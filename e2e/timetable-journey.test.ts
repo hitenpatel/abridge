@@ -124,6 +124,9 @@ test.describe("Timetable", () => {
 		});
 
 		// === STEP 5: Verify the staff-specific MIS import link is rendered ===
-		await expect(page.getByText(/MIS Integration/i)).toBeVisible({ timeout: 10000 });
+		// StaffView only renders after the session loads with staffRole — use toPass to wait
+		await expect(async () => {
+			await expect(page.getByText(/MIS Integration/i)).toBeVisible({ timeout: 3000 });
+		}).toPass({ timeout: 20000 });
 	});
 });

@@ -521,21 +521,10 @@ export async function enableSchoolFeature(params: {
 		studentPortalEnabled: boolean;
 	}>;
 }): Promise<void> {
-	const updated = await prisma.school.update({
+	await prisma.school.update({
 		where: { id: params.schoolId },
 		data: params.features,
 	});
-	// Verify the update was applied
-	const verified = await prisma.school.findUnique({
-		where: { id: params.schoolId },
-		select: params.features,
-	});
-	console.log(
-		"[enableSchoolFeature] Updated school:",
-		params.schoolId,
-		"features:",
-		JSON.stringify(verified),
-	);
 }
 
 /**
