@@ -54,7 +54,7 @@ test.describe("Clubs", () => {
 		await page.goto("http://localhost:3000/setup");
 		await page.getByLabel("School Name").fill(`Clubs Staff School ${uniqueURN}`);
 		await page.getByLabel("Ofsted URN").fill(uniqueURN);
-		await page.getByLabel("Admin Email").fill(`admin-clubs-staff-${uniqueURN}@test.com`);
+		await page.getByLabel("Admin Email").fill(staffEmail);
 		await page.getByLabel("Setup Key").fill("admin123");
 		await page.getByRole("button", { name: /Create School/i }).click();
 		await expect(page.getByText("School Created!")).toBeVisible({ timeout: 10000 });
@@ -99,7 +99,7 @@ test.describe("Clubs", () => {
 		await page.goto("http://localhost:3000/setup");
 		await page.getByLabel("School Name").fill(`Clubs Create School ${uniqueURN}`);
 		await page.getByLabel("Ofsted URN").fill(uniqueURN);
-		await page.getByLabel("Admin Email").fill(`admin-clubs-create-${uniqueURN}@test.com`);
+		await page.getByLabel("Admin Email").fill(staffEmail);
 		await page.getByLabel("Setup Key").fill("admin123");
 		await page.getByRole("button", { name: /Create School/i }).click();
 		await expect(page.getByText("School Created!")).toBeVisible({ timeout: 10000 });

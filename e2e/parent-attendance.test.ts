@@ -70,8 +70,11 @@ test.describe("Parent Attendance Journey", () => {
 		await page.getByRole("link", { name: "Attendance", exact: true }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/attendance/);
 
-		// Step 4: Verify attendance page shows child's name
-		await expect(page.getByText(/Emma/i).first()).toBeVisible({ timeout: 10000 });
+		// Step 4: Verify attendance page shows child's name (may need reload to pick up seeded data)
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByText(/Emma/i).first()).toBeVisible({ timeout: 3000 });
+		}).toPass({ timeout: 30000 });
 
 		// Verify attendance heading is visible (not "No children found")
 		await expect(page.getByRole("heading", { name: /Attendance/i })).toBeVisible();
@@ -121,8 +124,11 @@ test.describe("Parent Attendance Journey", () => {
 		await page.getByRole("link", { name: "Attendance", exact: true }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/attendance/);
 
-		// Wait for page to load with child data
-		await expect(page.getByText(/Oliver/i).first()).toBeVisible({ timeout: 10000 });
+		// Wait for page to load with child data (may need reload to pick up seeded data)
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByText(/Oliver/i).first()).toBeVisible({ timeout: 3000 });
+		}).toPass({ timeout: 30000 });
 
 		// Step 4: Fill out absence form (always visible in the right column)
 		// Select reason via radio button
@@ -194,8 +200,11 @@ test.describe("Parent Attendance Journey", () => {
 		await page.getByRole("link", { name: "Attendance", exact: true }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/attendance/);
 
-		// Step 4: Verify both children are shown (child selector buttons show first name only)
-		await expect(page.getByText(/Sophia/i).first()).toBeVisible({ timeout: 10000 });
+		// Step 4: Verify both children are shown (may need reload for seeded data)
+		await expect(async () => {
+			await page.reload();
+			await expect(page.getByText(/Sophia/i).first()).toBeVisible({ timeout: 3000 });
+		}).toPass({ timeout: 30000 });
 
 		// Check if there's a button for second child
 		const liamTab = page.getByRole("button", { name: /Liam/i });
