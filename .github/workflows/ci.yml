@@ -95,6 +95,7 @@ jobs:
             'BETTER_AUTH_URL=http://localhost:4000' \
             'NODE_ENV=test' \
             'SETUP_KEY=admin123' \
+            'RESEND_API_KEY=re_test_placeholder' \
             > apps/api/.env
 
       - name: Build packages
@@ -103,7 +104,7 @@ jobs:
       - name: Start servers and run E2E tests
         run: |
           pnpm --filter @schoolconnect/api dev &
-          pnpm --filter @schoolconnect/web start &
+          pnpm --filter @schoolconnect/web dev &
           for i in $(seq 1 60); do
             if curl -sf http://localhost:4000/trpc/health.check > /dev/null 2>&1; then
               echo "API is ready"
