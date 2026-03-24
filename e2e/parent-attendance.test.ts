@@ -72,8 +72,9 @@ test.describe("Parent Attendance Journey", () => {
 
 		// Step 4: Verify attendance page shows child's name (may need reload to pick up seeded data)
 		await expect(async () => {
-			await page.reload();
-			await expect(page.getByText(/Emma/i).first()).toBeVisible({ timeout: 3000 });
+			await page.goto("http://localhost:3000/dashboard/attendance");
+			await page.waitForLoadState("networkidle");
+			await expect(page.getByText(/Emma/i).first()).toBeVisible({ timeout: 5000 });
 		}).toPass({ timeout: 30000 });
 
 		// Verify attendance heading is visible (not "No children found")
@@ -124,10 +125,11 @@ test.describe("Parent Attendance Journey", () => {
 		await page.getByRole("link", { name: "Attendance", exact: true }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/attendance/);
 
-		// Wait for page to load with child data (may need reload to pick up seeded data)
+		// Wait for page to load with child data (may need full navigation to pick up seeded data)
 		await expect(async () => {
-			await page.reload();
-			await expect(page.getByText(/Oliver/i).first()).toBeVisible({ timeout: 3000 });
+			await page.goto("http://localhost:3000/dashboard/attendance");
+			await page.waitForLoadState("networkidle");
+			await expect(page.getByText(/Oliver/i).first()).toBeVisible({ timeout: 5000 });
 		}).toPass({ timeout: 30000 });
 
 		// Step 4: Fill out absence form (always visible in the right column)
@@ -200,10 +202,11 @@ test.describe("Parent Attendance Journey", () => {
 		await page.getByRole("link", { name: "Attendance", exact: true }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/attendance/);
 
-		// Step 4: Verify both children are shown (may need reload for seeded data)
+		// Step 4: Verify both children are shown (may need full navigation for seeded data)
 		await expect(async () => {
-			await page.reload();
-			await expect(page.getByText(/Sophia/i).first()).toBeVisible({ timeout: 3000 });
+			await page.goto("http://localhost:3000/dashboard/attendance");
+			await page.waitForLoadState("networkidle");
+			await expect(page.getByText(/Sophia/i).first()).toBeVisible({ timeout: 5000 });
 		}).toPass({ timeout: 30000 });
 
 		// Check if there's a button for second child
