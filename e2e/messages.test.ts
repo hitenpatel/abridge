@@ -18,7 +18,7 @@ test.describe("Messages Page", () => {
 		await page.getByRole("link", { name: "Messages" }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/messages/);
 
-		await expect(page.getByRole("button", { name: "Messages" })).toBeVisible();
+		await expect(page.getByRole("heading", { name: /Messages/i })).toBeVisible();
 	});
 
 	test("should have compose new button", async ({ page }) => {
