@@ -9,12 +9,6 @@ import { expect, test } from "@playwright/test";
  */
 test.describe("Parent Attendance Journey", () => {
 	test("parent should view child's attendance records", async ({ page }) => {
-		// Capture console errors for debugging
-		page.on("console", (msg) => {
-			if (msg.type() === "error") console.log("[BROWSER ERROR]", msg.text());
-		});
-		page.on("pageerror", (err) => console.log("[PAGE ERROR]", err.message));
-
 		// Login as seeded parent
 		await page.goto("http://localhost:3000/login");
 		await page.getByLabel("Email").fill("sarah@example.com");
@@ -22,21 +16,9 @@ test.describe("Parent Attendance Journey", () => {
 		await page.getByRole("button", { name: /Sign In/i }).click();
 		await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 
-		// Navigate to attendance page using toPass to wait for nav to load
-		await expect(async () => {
-			await page.reload();
-			await expect(page.getByRole("link", { name: "Attendance" }).first()).toBeVisible({
-				timeout: 3000,
-			});
-		}).toPass({ timeout: 30000 });
+		// Navigate to attendance page
 		await page.getByRole("link", { name: "Attendance" }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/attendance/);
-
-		// Wait for attendance view or diagnostic
-		await page.waitForLoadState("networkidle");
-		const currentUrl = page.url();
-		const bodyText = await page.locator("body").innerText();
-		console.log("[DEBUG] URL:", currentUrl, "Body (500 chars):", bodyText.substring(0, 500));
 
 		// Verify attendance page shows a child's name
 		await expect(page.getByText(/Emily/i).first()).toBeVisible({ timeout: 10000 });

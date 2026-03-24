@@ -279,7 +279,7 @@ function ParentAttendanceView() {
 		);
 	}
 
-	const firstChild = childrenLinks[0]!;
+	const firstChild = childrenLinks[0];
 	const activeChildId = selectedChildId || firstChild.childId;
 	const activeChild = childrenLinks.find((link) => link.childId === activeChildId)?.child;
 
@@ -724,23 +724,14 @@ export default function AttendancePage() {
 
 	if (!features.attendanceEnabled) return <FeatureDisabled featureName="Attendance" />;
 
-	if (isStaff && session.schoolId) {
-		return (
-			<PageShell>
-				<PageHeader
-					icon={ClipboardCheck}
-					title="Attendance"
-					description="Track student attendance"
-				/>
-				<StaffAttendanceView schoolId={session.schoolId} />
-			</PageShell>
-		);
-	}
-
 	return (
 		<PageShell>
 			<PageHeader icon={ClipboardCheck} title="Attendance" description="Track student attendance" />
-			<ParentAttendanceView />
+			{isStaff && session?.schoolId ? (
+				<StaffAttendanceView schoolId={session.schoolId} />
+			) : (
+				<ParentAttendanceView />
+			)}
 		</PageShell>
 	);
 }
