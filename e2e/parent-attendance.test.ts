@@ -46,12 +46,14 @@ test.describe("Parent Attendance Journey", () => {
 			throw new Error("Failed to get school or user for test");
 		}
 
+		console.log("[DEBUG] Seeding child for user:", user.id, "school:", school.id);
 		const child = await seedChildForParent({
 			userId: user.id,
 			schoolId: school.id,
 			firstName: "Emma",
 			lastName: "Smith",
 		});
+		console.log("[DEBUG] Seeded child:", child.id, child.firstName);
 
 		// Seed 7 days of attendance records
 		await seedAttendanceRecords({
@@ -59,6 +61,18 @@ test.describe("Parent Attendance Journey", () => {
 			schoolId: school.id,
 			daysBack: 7,
 		});
+
+		// Verify via API that listChildren returns data
+		const verifyResponse = await page.evaluate(async () => {
+			const resp = await fetch(
+				"/trpc/user.listChildren?batch=1&input=%7B%220%22%3A%7B%22json%22%3Anull%2C%22meta%22%3A%7B%22values%22%3A%5B%22undefined%22%5D%2C%22v%22%3A1%7D%7D%7D",
+				{
+					credentials: "include",
+				},
+			);
+			return resp.text();
+		});
+		console.log("[DEBUG] listChildren API response:", verifyResponse.substring(0, 200));
 
 		// Step 3: Navigate to attendance page using toPass to wait for nav to load
 		await expect(async () => {
