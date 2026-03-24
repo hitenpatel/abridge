@@ -28,6 +28,7 @@ import { testSeedRoutes } from "./routes/test-seed";
 import { webhookRoutes } from "./routes/webhooks";
 
 const server = Fastify({
+	maxParamLength: 500,
 	genReqId: (req) => (req.headers["x-request-id"] as string) || crypto.randomUUID(),
 	logger: {
 		level: process.env.LOG_LEVEL || (process.env.NODE_ENV === "production" ? "info" : "debug"),
