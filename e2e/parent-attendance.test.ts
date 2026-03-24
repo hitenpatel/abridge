@@ -26,6 +26,11 @@ test.describe("Parent Attendance Journey", () => {
 		await page.getByRole("link", { name: "Attendance" }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/attendance/);
 
+		// Wait for attendance view or diagnostic
+		await page.waitForLoadState("networkidle");
+		const bodyText = await page.locator("body").innerText();
+		console.log("[DEBUG] Attendance page body (first 500 chars):", bodyText.substring(0, 500));
+
 		// Verify attendance page shows a child's name
 		await expect(page.getByText(/Emily/i).first()).toBeVisible({ timeout: 10000 });
 
