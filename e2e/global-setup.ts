@@ -10,11 +10,15 @@ async function globalSetup(config: FullConfig) {
 	const context = await browser.newContext();
 	const page = await context.newPage();
 
-	await page.goto(baseURL);
+	// Navigate to login page (minimal page that won't create auth sessions)
+	await page.goto(`${baseURL}/login`);
 	await page.evaluate(() => {
 		localStorage.setItem("abridge-cookie-consent", "accepted");
 		localStorage.setItem("abridge-onboarding-completed", "true");
 	});
+
+	// Clear all cookies to prevent stale session cookies from leaking into tests
+	await context.clearCookies();
 
 	await context.storageState({ path: "e2e/.auth/storage-state.json" });
 	await browser.close();
