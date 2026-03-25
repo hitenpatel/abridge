@@ -279,8 +279,8 @@ function ParentAttendanceView() {
 		);
 	}
 
-	const firstChild = childrenLinks[0];
-	const activeChildId = selectedChildId || firstChild?.childId;
+	const firstChild = childrenLinks[0] as (typeof childrenLinks)[number];
+	const activeChildId = selectedChildId || firstChild.childId;
 	const activeChild = childrenLinks.find((link) => link.childId === activeChildId)?.child;
 
 	// Generate calendar days for current month
