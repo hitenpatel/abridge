@@ -19,6 +19,23 @@ test.describe("Parent Attendance Journey", () => {
 		// Navigate to attendance page
 		await page.getByRole("link", { name: "Attendance" }).first().click();
 		await expect(page).toHaveURL(/\/dashboard\/attendance/);
+		await page.waitForLoadState("networkidle");
+
+		// Debug: check what's on the page
+		const hasFeatureDisabled = await page.getByText(/not enabled/i).count();
+		const hasNoChildren = await page.getByText(/No children found/i).count();
+		const hasLoading = await page.locator(".animate-pulse").count();
+		const hasEmily = await page.getByText(/Emily/i).count();
+		console.log(
+			"[DEBUG] FeatureDisabled:",
+			hasFeatureDisabled,
+			"NoChildren:",
+			hasNoChildren,
+			"Loading:",
+			hasLoading,
+			"Emily:",
+			hasEmily,
+		);
 
 		// Verify attendance page shows a child's name
 		await expect(page.getByText(/Emily/i).first()).toBeVisible({ timeout: 10000 });
