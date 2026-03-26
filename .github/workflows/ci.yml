@@ -669,9 +669,11 @@ jobs:
           if git rev-parse --verify gh-pages >/dev/null 2>&1; then
             git worktree add dashboard-deploy gh-pages
           else
-            mkdir dashboard-deploy
-            cd dashboard-deploy && git init && git checkout --orphan gh-pages
-            git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+            git checkout --orphan gh-pages
+            git rm -rf . 2>/dev/null || true
+            git commit --allow-empty -m "init gh-pages"
+            git checkout main
+            git worktree add dashboard-deploy gh-pages
           fi
 
       - name: Copy dashboard SPA
@@ -708,5 +710,4 @@ jobs:
           git add -A
           git -c user.name="github-actions" -c user.email="actions@github.com" \
             commit -m "update dashboard: run ${{ github.run_id }}" --allow-empty
-          git remote set-url origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" 2>/dev/null || true
-          git push origin gh-pages --force
+          git push "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" gh-pages --force
