@@ -671,7 +671,8 @@ jobs:
           else
             git checkout --orphan gh-pages
             git rm -rf . 2>/dev/null || true
-            git commit --allow-empty -m "init gh-pages"
+            git -c user.name="github-actions" -c user.email="actions@github.com" \
+              commit --allow-empty -m "init gh-pages"
             git checkout main
             git worktree add dashboard-deploy gh-pages
           fi
