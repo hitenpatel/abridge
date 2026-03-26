@@ -7,11 +7,7 @@ import { expect, test } from "@playwright/test";
  *   Children: Emily Johnson (Year 2) and Jack Johnson (Year 5)
  *   School: Oakwood Primary School (attendanceEnabled: true)
  */
-// TODO: Investigate CI-specific rendering failure — the ParentAttendanceView
-// component never renders content for seeded parent sarah@example.com.
-// The page loads (HTTP 200), API calls return 200, but React produces
-// empty output. Passes locally, fails consistently in CI (GitHub Actions).
-test.describe.skip("Parent Attendance Journey", () => {
+test.describe("Parent Attendance Journey", () => {
 	test("parent should view child's attendance records", async ({ page }) => {
 		// Login as seeded parent
 		await page.goto("http://localhost:3000/login");

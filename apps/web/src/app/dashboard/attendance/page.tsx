@@ -235,6 +235,31 @@ function ParentAttendanceView() {
 		},
 	});
 
+	// Derive active child from loaded data (safe even when childrenLinks is empty/undefined)
+	const firstChild = childrenLinks?.[0];
+	const activeChildId = selectedChildId || firstChild?.childId;
+	const activeChild = childrenLinks?.find((link) => link.childId === activeChildId)?.child;
+
+	// Calendar month boundaries
+	const year = currentMonth.getFullYear();
+	const month = currentMonth.getMonth();
+	const firstDay = new Date(year, month, 1);
+	const lastDay = new Date(year, month + 1, 0);
+	const daysInMonth = lastDay.getDate();
+	const startingDayOfWeek = firstDay.getDay();
+
+	const monthName = currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
+	// All hooks must be called unconditionally (before any early returns)
+	const { data: attendanceRecords } = trpc.attendance.getAttendanceForChild.useQuery(
+		{
+			childId: activeChildId ?? "",
+			startDate: firstDay,
+			endDate: lastDay,
+		},
+		{ enabled: !!activeChildId },
+	);
+
 	const handleAbsenceSubmit = (e: FormEvent) => {
 		e.preventDefault();
 		if (!absenceDate || !activeChildId) {
@@ -278,30 +303,6 @@ function ParentAttendanceView() {
 			</Card>
 		);
 	}
-
-	const firstChild = childrenLinks[0] as (typeof childrenLinks)[number];
-	const activeChildId = selectedChildId || firstChild.childId;
-	const activeChild = childrenLinks.find((link) => link.childId === activeChildId)?.child;
-
-	// Generate calendar days for current month
-	const year = currentMonth.getFullYear();
-	const month = currentMonth.getMonth();
-	const firstDay = new Date(year, month, 1);
-	const lastDay = new Date(year, month + 1, 0);
-	const daysInMonth = lastDay.getDate();
-	const startingDayOfWeek = firstDay.getDay();
-
-	const monthName = currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" });
-
-	// Fetch real attendance data for the selected child and month
-	const { data: attendanceRecords } = trpc.attendance.getAttendanceForChild.useQuery(
-		{
-			childId: activeChildId,
-			startDate: firstDay,
-			endDate: lastDay,
-		},
-		{ enabled: !!activeChildId },
-	);
 
 	// Build calendar lookup from API records (use AM session as primary, fall back to PM)
 	const attendanceData: Record<number, "present" | "late" | "absent"> = {};
