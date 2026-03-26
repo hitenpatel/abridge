@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E2E Dashboard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0f17;
+      --surface: #1a1a2e;
+      --surface-2: #222240;
+      --border: #2a2a4a;
+      --text: #e0e0e0;
+      --text-dim: #8888aa;
+      --green: #4caf50;
+      --red: #f44336;
+      --grey: #6b6b8d;
+      --blue: #5c6bc0;
+      --orange: #ff9800;
+      --teal: #26a69a;
+      --radius: 8px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    header .subtitle {
+      color: var(--text-dim);
+      font-size: 0.875rem;
+    }
+
+    /* Summary Cards */
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .card .label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    .card .value {
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+
+    .card .detail {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* Pills */
+    .pill {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .pill-passed { background: rgba(76, 175, 80, 0.2); color: var(--green); }
+    .pill-failed { background: rgba(244, 67, 54, 0.2); color: var(--red); }
+    .pill-skipped { background: rgba(107, 107, 141, 0.2); color: var(--grey); }
+
+    .suite-pills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    /* Trend Chart */
+    .chart-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+
+    .chart-container h2 {
+      font-size: 1rem;
+      margin-bottom: 16px;
+      color: var(--text-dim);
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+      font-size: 0.8rem;
+    }
+
+    .chart-legend span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chart-legend .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    /* History Table */
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .history-table th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface-2);
+    }
+
+    .history-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.875rem;
+    }
+
+    .history-table tr:last-child td { border-bottom: none; }
+
+    .history-table tr:hover td {
+      background: var(--surface-2);
+      cursor: pointer;
+    }
+
+    .sha {
+      font-family: 'SF Mono', SFMono-Regular, Consolas, monospace;
+      color: var(--blue);
+      font-size: 0.8rem;
+    }
+
+    .message {
+      color: var(--text);
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .timestamp {
+      color: var(--text-dim);
+      font-size: 0.8rem;
+    }
+
+    /* Detail View */
+    .detail-view { display: none; }
+    .detail-view.active { display: block; }
+    .main-view.hidden { display: none; }
+
+    .back-btn {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.875rem;
+      margin-bottom: 24px;
+    }
+
+    .back-btn:hover { background: var(--border); }
+
+    .run-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .run-meta .meta-item .meta-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .suite-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .suite-header {
+      padding: 16px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--surface-2);
+    }
+
+    .suite-header:hover { background: var(--border); }
+
+    .suite-header h3 {
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .suite-body { padding: 0; }
+    .suite-body.collapsed { display: none; }
+
+    .test-row {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      gap: 12px;
+    }
+
+    .test-row:hover { background: var(--surface-2); }
+
+    .test-name {
+      flex: 1;
+      font-size: 0.875rem;
+    }
+
+    .test-duration {
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      min-width: 60px;
+      text-align: right;
+    }
+
+    .test-screenshots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .test-screenshot {
+      width: 60px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 4px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+    }
+
+    .test-screenshot:hover {
+      border-color: var(--blue);
+    }
+
+    .test-error {
+      width: 100%;
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: rgba(244, 67, 54, 0.1);
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: var(--red);
+      white-space: pre-wrap;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-overlay img {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: var(--radius);
+    }
+
+    .modal-overlay .close-btn {
+      position: absolute;
+      top: 16px;
+      right: 24px;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    /* Loading / Empty states */
+    .loading, .empty {
+      text-align: center;
+      padding: 64px;
+      color: var(--text-dim);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .history-table { font-size: 0.8rem; }
+      .history-table th, .history-table td { padding: 8px 10px; }
+      .message { max-width: 150px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1 id="project-name">E2E Dashboard</h1>
+        <span class="subtitle">End-to-end test results</span>
+      </div>
+    </header>
+
+    <div class="main-view" id="main-view">
+      <div class="summary-cards" id="summary-cards"></div>
+      <div class="chart-container" id="chart-container">
+        <h2>Pass Rate Trend</h2>
+        <div id="trend-chart"></div>
+        <div class="chart-legend" id="chart-legend"></div>
+      </div>
+      <table class="history-table" id="history-table">
+        <thead id="table-head"></thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+
+    <div class="detail-view" id="detail-view">
+      <button class="back-btn" onclick="navigateTo('')">&larr; Back to runs</button>
+      <div id="detail-content"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+    <button class="close-btn" onclick="closeModal()">&times;</button>
+    <img id="modal-img" src="" alt="Screenshot">
+  </div>
+
+  <script>
+    let historyData = [];
+
+    // Derive project name from URL
+    function getProjectName() {
+      try {
+        const parts = location.hostname.split('.');
+        if (parts.length >= 2 && (parts[1] === 'github' || location.hostname.includes('pages'))) {
+          const pathParts = location.pathname.split('/').filter(Boolean);
+          return pathParts[0] || 'E2E Dashboard';
+        }
+      } catch {}
+      return 'E2E Dashboard';
+    }
+
+    // Routing
+    function navigateTo(hash) {
+      location.hash = hash;
+    }
+
+    function handleRoute() {
+      const hash = location.hash.slice(1);
+      const mainView = document.getElementById('main-view');
+      const detailView = document.getElementById('detail-view');
+
+      if (hash.startsWith('run/')) {
+        const runId = hash.slice(4);
+        const run = historyData.find(r => r.id === runId);
+        if (run) {
+          mainView.classList.add('hidden');
+          detailView.classList.add('active');
+          renderDetailView(run);
+          return;
+        }
+      }
+
+      mainView.classList.remove('hidden');
+      detailView.classList.remove('active');
+    }
+
+    // Get all unique suite names across all runs
+    function getAllSuites(history) {
+      const suites = new Set();
+      for (const run of history) {
+        for (const key of Object.keys(run.suites || {})) {
+          suites.add(key);
+        }
+      }
+      return [...suites].sort();
+    }
+
+    // Summary cards
+    function renderSummaryCards(history) {
+      const container = document.getElementById('summary-cards');
+      if (history.length === 0) {
+        container.innerHTML = '<div class="empty">No runs yet</div>';
+        return;
+      }
+
+      const last10 = history.slice(0, 10);
+      let totalPassed = 0, totalTests = 0;
+      for (const run of last10) {
+        for (const suite of Object.values(run.suites || {})) {
+          totalPassed += suite.passed;
+          totalTests += suite.passed + suite.failed;
+        }
+      }
+      const passRate = totalTests > 0 ? Math.round((totalPassed / totalTests) * 100) : 0;
+
+      const latest = history[0];
+      const latestSuites = Object.values(latest.suites || {});
+      const latestFailed = latestSuites.reduce((sum, s) => sum + s.failed, 0);
+      const latestStatus = latestFailed > 0 ? 'failing' : 'passing';
+
+      const allSuites = getAllSuites(history);
+      const suitePills = allSuites.map(name => {
+        const s = latest.suites?.[name];
+        if (!s) return `<span class="pill pill-skipped">${name}: —</span>`;
+        if (s.failed > 0) return `<span class="pill pill-failed">${name}: ${s.failed} failed</span>`;
+        return `<span class="pill pill-passed">${name}: ${s.passed} passed</span>`;
+      }).join('');
+
+      container.innerHTML = `
+        <div class="card">
+          <div class="label">Pass Rate (last 10)</div>
+          <div class="value" style="color: ${passRate >= 90 ? 'var(--green)' : passRate >= 70 ? 'var(--orange)' : 'var(--red)'}">${passRate}%</div>
+          <div class="detail">${totalPassed}/${totalTests} tests</div>
+        </div>
+        <div class="card">
+          <div class="label">Total Runs</div>
+          <div class="value">${history.length}</div>
+        </div>
+        <div class="card">
+          <div class="label">Latest Status</div>
+          <div class="value" style="color: ${latestFailed > 0 ? 'var(--red)' : 'var(--green)'}">${latestStatus}</div>
+          <div class="detail">${relativeTime(latest.timestamp)}</div>
+        </div>
+        <div class="card">
+          <div class="label">Suites</div>
+          <div class="suite-pills">${suitePills}</div>
+        </div>
+      `;
+    }
+
+    // Trend chart (SVG)
+    function renderTrendChart(history) {
+      const container = document.getElementById('trend-chart');
+      const legendContainer = document.getElementById('chart-legend');
+
+      if (history.length < 2) {
+        container.innerHTML = '<div class="empty" style="padding:32px">Need at least 2 runs for trend chart</div>';
+        return;
+      }
+
+      const suiteNames = getAllSuites(history);
+      const colors = { web: '#5c6bc0', android: '#26a69a', ios: '#ff9800' };
+      const defaultColors = ['#5c6bc0', '#26a69a', '#ff9800', '#ab47bc', '#ef5350'];
+
+      const width = 800;
+      const height = 200;
+      const padding = { top: 20, right: 20, bottom: 30, left: 40 };
+      const chartW = width - padding.left - padding.right;
+      const chartH = height - padding.top - padding.bottom;
+
+      // Reverse so oldest is left
+      const runs = [...history].reverse();
+
+      let svg = `<svg viewBox="0 0 ${width} ${height}" width="100%" preserveAspectRatio="xMidYMid meet">`;
+
+      // Y-axis gridlines
+      for (let pct = 0; pct <= 100; pct += 25) {
+        const y = padding.top + chartH - (pct / 100) * chartH;
+        svg += `<line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" stroke="var(--border)" stroke-dasharray="4"/>`;
+        svg += `<text x="${padding.left - 8}" y="${y + 4}" text-anchor="end" fill="var(--text-dim)" font-size="11">${pct}%</text>`;
+      }
+
+      // Lines per suite
+      suiteNames.forEach((suiteName, si) => {
+        const color = colors[suiteName] || defaultColors[si % defaultColors.length];
+        const points = [];
+
+        runs.forEach((run, i) => {
+          const suite = run.suites?.[suiteName];
+          if (!suite) return;
+          const total = suite.passed + suite.failed;
+          const rate = total > 0 ? suite.passed / total : 0;
+          const x = padding.left + (i / (runs.length - 1)) * chartW;
+          const y = padding.top + chartH - rate * chartH;
+          points.push({ x, y, rate, run });
+        });
+
+        if (points.length < 2) return;
+
+        const pathData = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+        svg += `<path d="${pathData}" fill="none" stroke="${color}" stroke-width="2"/>`;
+
+        // Dots
+        for (const p of points) {
+          svg += `<circle cx="${p.x}" cy="${p.y}" r="3" fill="${color}"/>`;
+        }
+      });
+
+      svg += '</svg>';
+      container.innerHTML = svg;
+
+      // Legend
+      legendContainer.innerHTML = suiteNames.map((name, i) => {
+        const color = colors[name] || defaultColors[i % defaultColors.length];
+        return `<span><span class="dot" style="background:${color}"></span>${name}</span>`;
+      }).join('');
+    }
+
+    // History table
+    function renderHistoryTable(history) {
+      const suiteNames = getAllSuites(history);
+      const thead = document.getElementById('table-head');
+      const tbody = document.getElementById('table-body');
+
+      thead.innerHTML = `<tr>
+        <th>SHA</th>
+        <th>Message</th>
+        ${suiteNames.map(s => `<th>${s}</th>`).join('')}
+        <th>Time</th>
+      </tr>`;
+
+      tbody.innerHTML = history.map(run => {
+        const suiteCells = suiteNames.map(name => {
+          const s = run.suites?.[name];
+          if (!s) return '<td><span class="pill pill-skipped">—</span></td>';
+          if (s.failed > 0) return `<td><span class="pill pill-failed">${s.passed}/${s.passed + s.failed}</span></td>`;
+          return `<td><span class="pill pill-passed">${s.passed}/${s.passed + s.failed}</span></td>`;
+        }).join('');
+
+        return `<tr onclick="navigateTo('run/${run.id}')">
+          <td><span class="sha">${run.sha || '—'}</span></td>
+          <td><span class="message">${escapeHtml(run.message || '—')}</span></td>
+          ${suiteCells}
+          <td><span class="timestamp">${relativeTime(run.timestamp)}</span></td>
+        </tr>`;
+      }).join('');
+    }
+
+    // Detail view
+    function renderDetailView(run) {
+      const container = document.getElementById('detail-content');
+      const suiteNames = Object.keys(run.suites || {});
+
+      const meta = `
+        <div class="run-meta">
+          <div class="meta-item"><div class="meta-label">SHA</div><span class="sha">${run.sha || '—'}</span></div>
+          <div class="meta-item"><div class="meta-label">Message</div>${escapeHtml(run.message || '—')}</div>
+          <div class="meta-item"><div class="meta-label">Branch</div>${escapeHtml(run.branch || '—')}</div>
+          <div class="meta-item"><div class="meta-label">Time</div>${run.timestamp ? new Date(run.timestamp).toLocaleString() : '—'}</div>
+        </div>
+      `;
+
+      const sections = suiteNames.map(name => {
+        const suite = run.suites[name];
+        const tests = suite.tests || [];
+
+        const testRows = tests.map(t => {
+          const pillClass = `pill-${t.status}`;
+          const duration = t.duration_ms > 0 ? `${(t.duration_ms / 1000).toFixed(1)}s` : '—';
+          const screenshots = [];
+          if (t.screenshot) screenshots.push(`<img class="test-screenshot" src="${escapeHtml(t.screenshot)}" alt="Screenshot" onclick="event.stopPropagation(); openModal(this.src)">`);
+          if (t.failureScreenshot) screenshots.push(`<img class="test-screenshot" src="${escapeHtml(t.failureScreenshot)}" alt="Failure" style="border-color: var(--red)" onclick="event.stopPropagation(); openModal(this.src)">`);
+          const errorHtml = t.error ? `<div class="test-error">${escapeHtml(t.error)}</div>` : '';
+
+          return `<div class="test-row" style="flex-wrap:wrap">
+            <span class="pill ${pillClass}">${t.status}</span>
+            <span class="test-name">${escapeHtml(t.name)}</span>
+            <span class="test-duration">${duration}</span>
+            <div class="test-screenshots">${screenshots.join('')}</div>
+            ${errorHtml}
+          </div>`;
+        }).join('');
+
+        return `<div class="suite-section">
+          <div class="suite-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">
+            <h3>${name} <span class="pill pill-passed">${suite.passed}</span> <span class="pill pill-failed">${suite.failed}</span> ${suite.skipped ? `<span class="pill pill-skipped">${suite.skipped}</span>` : ''}</h3>
+            <span style="color:var(--text-dim)">${suite.framework}</span>
+          </div>
+          <div class="suite-body">${testRows}</div>
+        </div>`;
+      }).join('');
+
+      container.innerHTML = meta + sections;
+    }
+
+    // Screenshot modal
+    function openModal(src) {
+      document.getElementById('modal-img').src = src;
+      document.getElementById('modal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+
+    // Utilities
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function relativeTime(iso) {
+      if (!iso) return '—';
+      const diff = Date.now() - new Date(iso).getTime();
+      const mins = Math.floor(diff / 60000);
+      if (mins < 1) return 'just now';
+      if (mins < 60) return `${mins}m ago`;
+      const hours = Math.floor(mins / 60);
+      if (hours < 24) return `${hours}h ago`;
+      const days = Math.floor(hours / 24);
+      if (days < 30) return `${days}d ago`;
+      return new Date(iso).toLocaleDateString();
+    }
+
+    // Init
+    async function init() {
+      document.getElementById('project-name').textContent = getProjectName();
+
+      try {
+        const res = await fetch('data/history.json');
+        if (!res.ok) throw new Error('Failed to load history');
+        historyData = await res.json();
+      } catch {
+        historyData = [];
+      }
+
+      if (historyData.length === 0) {
+        document.getElementById('main-view').innerHTML = '<div class="empty">No test runs yet. Push to main to see results.</div>';
+        return;
+      }
+
+      renderSummaryCards(historyData);
+      renderTrendChart(historyData);
+      renderHistoryTable(historyData);
+
+      window.addEventListener('hashchange', handleRoute);
+      handleRoute();
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    init();
+  </script>
+</body>
+</html>
