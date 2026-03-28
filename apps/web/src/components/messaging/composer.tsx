@@ -70,9 +70,14 @@ export function MessageComposer({ schoolId }: MessageComposerProps) {
 
 	const handleAttachFile = async (files: FileList | null) => {
 		if (!files) return;
+		const remaining = 5 - attachments.length;
+		if (remaining <= 0) {
+			toast.error("Maximum 5 attachments per message");
+			return;
+		}
 		setUploadingAttachment(true);
 		try {
-			for (const file of Array.from(files)) {
+			for (const file of Array.from(files).slice(0, remaining)) {
 				const { uploadUrl, key } = await getUploadUrl.mutateAsync({
 					schoolId,
 					filename: file.name,
@@ -183,16 +188,18 @@ export function MessageComposer({ schoolId }: MessageComposerProps) {
 								variant="outline"
 								size="sm"
 								onClick={() => attachmentInputRef.current?.click()}
-								disabled={uploadingAttachment}
+								disabled={uploadingAttachment || attachments.length >= 5}
 								data-testid="message-attach-button"
 							>
 								<Paperclip className="h-4 w-4 mr-1" />
-								{uploadingAttachment ? "Uploading..." : "Attach File"}
+								{uploadingAttachment
+									? "Uploading..."
+									: `Attach File${attachments.length > 0 ? ` (${attachments.length}/5)` : ""}`}
 							</Button>
 							<input
 								ref={attachmentInputRef}
 								type="file"
-								accept="image/jpeg,image/png,image/webp,video/mp4"
+								accept="image/jpeg,image/png,image/webp,video/mp4,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 								multiple
 								className="hidden"
 								onChange={(e) => handleAttachFile(e.target.files)}

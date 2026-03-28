@@ -3,6 +3,15 @@
 import { describe, expect, it, vi } from "vitest";
 import { appRouter } from "../router";
 
+// Mock getMediaUrl so tests don't need R2 env vars
+vi.mock("../lib/media", async (importOriginal) => {
+	const actual = await importOriginal<typeof import("../lib/media")>();
+	return {
+		...actual,
+		getMediaUrl: vi.fn((key: string) => `https://cdn.example.com/${key}`),
+	};
+});
+
 // Mock NotificationService
 vi.mock("../services/notification", () => ({
 	notificationService: {
@@ -159,6 +168,54 @@ describe("messaging router", () => {
 				}),
 			).rejects.toThrow();
 		});
+
+		it("rejects when more than 5 attachments are provided", async () => {
+			const ctx = createTestContext();
+			const caller = appRouter.createCaller(ctx);
+
+			await expect(
+				caller.messaging.send({
+					schoolId: "school-1",
+					subject: "Hello",
+					body: "World",
+					category: "STANDARD",
+					allChildren: true,
+					attachmentIds: ["a1", "a2", "a3", "a4", "a5", "a6"],
+				}),
+			).rejects.toThrow();
+		});
+
+		it("creates message attachments when attachmentIds provided", async () => {
+			const mockMediaUpload = { id: "media-1" };
+			const ctx = createTestContext({
+				prisma: {
+					...createTestContext().prisma,
+					mediaUpload: {
+						findMany: vi.fn().mockResolvedValue([mockMediaUpload]),
+					},
+					messageAttachment: {
+						createMany: vi.fn().mockResolvedValue({ count: 1 }),
+					},
+				},
+			});
+			const caller = appRouter.createCaller(ctx);
+
+			const result = await caller.messaging.send({
+				schoolId: "school-1",
+				subject: "With attachment",
+				body: "See attached",
+				category: "STANDARD",
+				allChildren: true,
+				attachmentIds: ["media-1"],
+			});
+
+			expect(result.success).toBe(true);
+			expect(ctx.prisma.messageAttachment.createMany).toHaveBeenCalledWith(
+				expect.objectContaining({
+					data: [{ messageId: "msg-1", mediaId: "media-1" }],
+				}),
+			);
+		});
 	});
 
 	describe("listSent", () => {
@@ -170,7 +227,8 @@ describe("messaging router", () => {
 					body: "Content",
 					category: "STANDARD",
 					createdAt: new Date(),
-					_count: { children: 10, reads: 5 },
+					_count: { children: 10, reads: 5, replies: 2 },
+					attachments: [],
 				},
 			];
 			const ctx = createTestContext({
@@ -196,8 +254,57 @@ describe("messaging router", () => {
 			expect(result.data).toHaveLength(1);
 			expect(result.data[0]!.recipientCount).toBe(10);
 			expect(result.data[0]!.readCount).toBe(5);
+			expect(result.data[0]!.attachments).toEqual([]);
 			expect(result.total).toBe(1);
 			expect(result.totalPages).toBe(1);
+		});
+
+		it("includes attachments with URLs in sent messages", async () => {
+			const mockMessages = [
+				{
+					id: "msg-1",
+					subject: "Attachment Test",
+					body: "See attached",
+					category: "STANDARD",
+					createdAt: new Date(),
+					_count: { children: 5, reads: 2, replies: 0 },
+					attachments: [
+						{
+							id: "att-1",
+							media: {
+								key: "schools/school-1/media/abc123.pdf",
+								filename: "newsletter.pdf",
+								mimeType: "application/pdf",
+								sizeBytes: 204800,
+							},
+						},
+					],
+				},
+			];
+			const ctx = createTestContext({
+				prisma: {
+					...createTestContext().prisma,
+					message: {
+						findMany: vi.fn().mockResolvedValue(mockMessages),
+						count: vi.fn().mockResolvedValue(1),
+					},
+					staffMember: {
+						findUnique: vi.fn().mockResolvedValue({ schoolId: "school-1", role: "TEACHER" }),
+					},
+				},
+			});
+			const caller = appRouter.createCaller(ctx);
+
+			const result = await caller.messaging.listSent({ schoolId: "school-1" });
+
+			expect(result.data[0]!.attachments).toHaveLength(1);
+			expect(result.data[0]!.attachments[0]).toMatchObject({
+				id: "att-1",
+				filename: "newsletter.pdf",
+				mimeType: "application/pdf",
+				sizeBytes: 204800,
+				url: expect.stringContaining("cdn.example.com"),
+			});
 		});
 
 		it("rejects unauthenticated user", async () => {
@@ -235,6 +342,7 @@ describe("messaging router", () => {
 					createdAt: new Date(),
 					school: { name: "Oak Primary", logoUrl: null },
 					reads: [{ readAt: new Date() }],
+					attachments: [],
 				},
 			];
 			const ctx = createTestContext({
@@ -287,6 +395,7 @@ describe("messaging router", () => {
 					createdAt: new Date(),
 					school: { name: "School", logoUrl: null },
 					reads: [], // No reads
+					attachments: [],
 				},
 			];
 			const ctx = createTestContext({
@@ -314,6 +423,55 @@ describe("messaging router", () => {
 			const caller = appRouter.createCaller(ctx);
 
 			await expect(caller.messaging.listReceived({ limit: 20 })).rejects.toThrow("UNAUTHORIZED");
+		});
+
+		it("includes attachment data with URLs for received messages", async () => {
+			const mockMessages = [
+				{
+					id: "msg-1",
+					subject: "Newsletter",
+					body: "See attachment",
+					category: "FYI",
+					createdAt: new Date(),
+					school: { name: "Oak Primary", logoUrl: null },
+					reads: [],
+					attachments: [
+						{
+							id: "att-1",
+							media: {
+								key: "schools/school-1/media/xyz.png",
+								filename: "photo.png",
+								mimeType: "image/png",
+								sizeBytes: 51200,
+							},
+						},
+					],
+				},
+			];
+			const ctx = createTestContext({
+				user: { id: "parent-1" },
+				prisma: {
+					...createTestContext().prisma,
+					parentChild: {
+						findMany: vi.fn().mockResolvedValue([{ childId: "child-1" }]),
+					},
+					message: {
+						findMany: vi.fn().mockResolvedValue(mockMessages),
+					},
+				},
+			});
+			const caller = appRouter.createCaller(ctx);
+
+			const result = await caller.messaging.listReceived({ limit: 20 });
+
+			expect(result.items[0]!.attachments).toHaveLength(1);
+			expect(result.items[0]!.attachments[0]).toMatchObject({
+				id: "att-1",
+				filename: "photo.png",
+				mimeType: "image/png",
+				sizeBytes: 51200,
+				url: expect.stringContaining("cdn.example.com"),
+			});
 		});
 	});
 

@@ -15,9 +15,14 @@ import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import {
 	ArrowLeft,
+	Download,
+	FileSpreadsheet,
+	FileText,
+	Image,
 	MessageCircle,
 	MessageSquare,
 	MessagesSquare,
+	Paperclip,
 	Plus,
 	Search,
 	Send,
@@ -511,6 +516,76 @@ export default function MessagesPage() {
 													>
 														{showOriginal ? "Show translation" : "Show original"}
 													</button>
+												</div>
+											)}
+											{selectedMessage.attachments && selectedMessage.attachments.length > 0 && (
+												<div
+													className="mt-3 pt-3 border-t border-orange-100 space-y-1.5"
+													data-testid="message-attachments"
+												>
+													<div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
+														<Paperclip className="h-3 w-3" />
+														<span>
+															{selectedMessage.attachments.length}{" "}
+															{selectedMessage.attachments.length === 1
+																? "attachment"
+																: "attachments"}
+														</span>
+													</div>
+													{selectedMessage.attachments.map(
+														(att: {
+															id: string;
+															filename: string;
+															mimeType: string;
+															sizeBytes: number;
+															url: string;
+														}) => {
+															const isImage = att.mimeType.startsWith("image/");
+															const isPdf = att.mimeType === "application/pdf";
+															const isSpreadsheet =
+																att.mimeType.includes("spreadsheet") ||
+																att.mimeType.includes("excel");
+															const AttachIcon = isImage
+																? Image
+																: isSpreadsheet
+																	? FileSpreadsheet
+																	: FileText;
+															const sizeKb = Math.round(att.sizeBytes / 1024);
+															return (
+																<a
+																	key={att.id}
+																	href={att.url}
+																	target="_blank"
+																	rel="noopener noreferrer"
+																	download={att.filename}
+																	data-testid="attachment-item"
+																	className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-orange-50/60 border border-orange-100 hover:bg-orange-100/60 transition-colors group"
+																>
+																	<AttachIcon
+																		className={cn(
+																			"h-4 w-4 shrink-0",
+																			isPdf
+																				? "text-red-500"
+																				: isSpreadsheet
+																					? "text-green-600"
+																					: isImage
+																						? "text-blue-500"
+																						: "text-orange-500",
+																		)}
+																	/>
+																	<span className="text-xs font-medium text-foreground truncate flex-1">
+																		{att.filename}
+																	</span>
+																	<span className="text-[10px] text-muted-foreground shrink-0">
+																		{sizeKb < 1024
+																			? `${sizeKb} KB`
+																			: `${(sizeKb / 1024).toFixed(1)} MB`}
+																	</span>
+																	<Download className="h-3.5 w-3.5 text-muted-foreground shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+																</a>
+															);
+														},
+													)}
 												</div>
 											)}
 										</Card>

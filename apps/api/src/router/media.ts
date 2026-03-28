@@ -1,7 +1,14 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { processUploadedImage } from "../lib/image-processor";
-import { ALLOWED_TYPES, MAX_IMAGE_SIZE, MAX_VIDEO_SIZE, getPresignedUploadUrl } from "../lib/media";
+import {
+	ALLOWED_TYPES,
+	DOCUMENT_TYPES,
+	MAX_DOCUMENT_SIZE,
+	MAX_IMAGE_SIZE,
+	MAX_VIDEO_SIZE,
+	getPresignedUploadUrl,
+} from "../lib/media";
 import { router, schoolFeatureProcedure } from "../trpc";
 
 export const mediaRouter = router({
@@ -22,7 +29,14 @@ export const mediaRouter = router({
 				});
 			}
 
-			const maxSize = input.mimeType.startsWith("video/") ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE;
+			let maxSize: number;
+			if (input.mimeType.startsWith("video/")) {
+				maxSize = MAX_VIDEO_SIZE;
+			} else if (DOCUMENT_TYPES.includes(input.mimeType)) {
+				maxSize = MAX_DOCUMENT_SIZE;
+			} else {
+				maxSize = MAX_IMAGE_SIZE;
+			}
 			if (input.sizeBytes > maxSize) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",

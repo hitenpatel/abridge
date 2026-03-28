@@ -3,6 +3,7 @@ import { z } from "zod";
 import { checkRateLimit, generateDraft } from "../lib/ai-drafting";
 import { assertFeatureEnabled } from "../lib/feature-guards";
 import { logger } from "../lib/logger";
+import { getMediaUrl } from "../lib/media";
 import { notificationService } from "../services/notification";
 import { protectedProcedure, router, schoolFeatureProcedure } from "../trpc";
 
@@ -16,7 +17,7 @@ export const messagingRouter = router({
 				category: z.enum(["STANDARD", "URGENT", "FYI"]),
 				allChildren: z.boolean().default(false),
 				childIds: z.array(z.string()).optional(),
-				attachmentIds: z.array(z.string()).default([]),
+				attachmentIds: z.array(z.string()).max(5, "Maximum 5 attachments per message").default([]),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -133,7 +134,7 @@ export const messagingRouter = router({
 
 			const [messages, total] = await Promise.all([
 				ctx.prisma.message.findMany({
-					where: { schoolId: input.schoolId, type: "BROADCAST", deletedAt: null },
+					where: { schoolId: input.schoolId, type: "BROADCAST" },
 					orderBy: { createdAt: "desc" },
 					take: input.limit,
 					skip,
@@ -145,11 +146,12 @@ export const messagingRouter = router({
 								replies: true,
 							},
 						},
+						attachments: {
+							include: { media: true },
+						},
 					},
 				}),
-				ctx.prisma.message.count({
-					where: { schoolId: input.schoolId, type: "BROADCAST", deletedAt: null },
-				}),
+				ctx.prisma.message.count({ where: { schoolId: input.schoolId, type: "BROADCAST" } }),
 			]);
 
 			return {
@@ -161,12 +163,23 @@ export const messagingRouter = router({
 						category: string;
 						createdAt: Date;
 						_count: { children: number; reads: number; replies: number };
+						attachments: {
+							id: string;
+							media: { key: string; filename: string; mimeType: string; sizeBytes: number };
+						}[];
 					}) => ({
 						...m,
 						category: m.category as "STANDARD" | "URGENT" | "FYI",
 						recipientCount: m._count.children,
 						readCount: m._count.reads,
 						replyCount: m._count.replies,
+						attachments: m.attachments.map((a) => ({
+							id: a.id,
+							filename: a.media.filename,
+							mimeType: a.media.mimeType,
+							sizeBytes: a.media.sizeBytes,
+							url: getMediaUrl(a.media.key),
+						})),
 					}),
 				),
 				total,
@@ -197,7 +210,6 @@ export const messagingRouter = router({
 			const messages = await ctx.prisma.message.findMany({
 				where: {
 					type: "BROADCAST",
-					deletedAt: null,
 					children: {
 						some: {
 							childId: { in: childIds },
@@ -212,6 +224,9 @@ export const messagingRouter = router({
 					reads: {
 						where: { userId: ctx.user.id },
 						select: { readAt: true },
+					},
+					attachments: {
+						include: { media: true },
 					},
 				},
 			});
@@ -232,6 +247,10 @@ export const messagingRouter = router({
 						createdAt: Date;
 						school: { name: string; logoUrl: string | null };
 						reads: { readAt: Date }[];
+						attachments: {
+							id: string;
+							media: { key: string; filename: string; mimeType: string; sizeBytes: number };
+						}[];
 					}) => ({
 						id: m.id,
 						subject: m.subject,
@@ -242,6 +261,13 @@ export const messagingRouter = router({
 						schoolLogo: m.school.logoUrl,
 						isRead: m.reads.length > 0,
 						readAt: m.reads[0]?.readAt,
+						attachments: m.attachments.map((a) => ({
+							id: a.id,
+							filename: a.media.filename,
+							mimeType: a.media.mimeType,
+							sizeBytes: a.media.sizeBytes,
+							url: getMediaUrl(a.media.key),
+						})),
 					}),
 				),
 				nextCursor,
@@ -404,7 +430,7 @@ export const messagingRouter = router({
 			}
 
 			const replies = await ctx.prisma.message.findMany({
-				where: { threadId: input.messageId, type: "REPLY", deletedAt: null },
+				where: { threadId: input.messageId, type: "REPLY" },
 				orderBy: { createdAt: "asc" },
 				take: input.limit + 1,
 				cursor: input.cursor ? { id: input.cursor } : undefined,
@@ -628,7 +654,7 @@ export const messagingRouter = router({
 			}
 
 			const messages = await ctx.prisma.message.findMany({
-				where: { conversationId: input.conversationId, type: "DIRECT", deletedAt: null },
+				where: { conversationId: input.conversationId, type: "DIRECT" },
 				orderBy: { createdAt: "asc" },
 				take: input.limit + 1,
 				cursor: input.cursor ? { id: input.cursor } : undefined,
