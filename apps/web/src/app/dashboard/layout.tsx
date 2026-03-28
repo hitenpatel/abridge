@@ -2,6 +2,7 @@
 
 import { OnboardingDialog } from "@/components/onboarding-dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -15,6 +16,7 @@ import { authClient } from "@/lib/auth-client";
 import { FeatureToggleProvider, useFeatureToggles } from "@/lib/feature-toggles";
 import { navIcons } from "@/lib/nav-icons";
 import { trpc } from "@/lib/trpc";
+import { useBreadcrumbs } from "@/lib/use-breadcrumbs";
 import { cn } from "@/lib/utils";
 import { Bell, GraduationCap, LogOut, Menu, X } from "lucide-react";
 import Link from "next/link";
@@ -153,6 +155,7 @@ function DashboardLayoutInner({
 	const pathname = usePathname();
 	const router = useRouter();
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+	const breadcrumbs = useBreadcrumbs();
 
 	const userRole = session
 		? {
@@ -592,6 +595,9 @@ function DashboardLayoutInner({
 						<Menu className="w-5 h-5 text-foreground" aria-hidden="true" />
 					</button>
 				</div>
+
+				{/* Breadcrumbs */}
+				<Breadcrumbs items={breadcrumbs} />
 
 				{/* Page Content */}
 				{children}
