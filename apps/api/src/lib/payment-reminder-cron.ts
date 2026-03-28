@@ -22,3 +22,8 @@ export function startPaymentReminderCron(prisma: PrismaClient): void {
 		60 * 60 * 1000,
 	);
 }
+
+/** One-shot execution for use by BullMQ workers. */
+export async function runPaymentRemindersOnce(prisma: PrismaClient): Promise<void> {
+	await sendPaymentReminders(prisma);
+}

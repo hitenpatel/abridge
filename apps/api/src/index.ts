@@ -14,14 +14,11 @@ import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 import Fastify from "fastify";
 import rawBody from "fastify-raw-body";
 import { createContext } from "./context";
-import { processWellbeingAlerts } from "./crons/wellbeing-alerts";
-import { checkUndeliveredNotifications } from "./jobs/notification-fallback";
+import { registerJobs } from "./jobs";
 import { auth } from "./lib/auth";
 import { registerChatWebSocket } from "./lib/chat/ws-handler";
 import { logger } from "./lib/logger";
-import { startMisSyncCron } from "./lib/mis-sync-cron";
-import { startPaymentReminderCron } from "./lib/payment-reminder-cron";
-import { startProgressSummaryCron } from "./lib/progress-summary-cron";
+import { closeQueues } from "./lib/queue";
 import { appRouter } from "./router";
 import { pdfRoutes } from "./routes/pdf";
 import { testSeedRoutes } from "./routes/test-seed";
@@ -229,36 +226,14 @@ async function main() {
 	await server.listen({ port, host: "::" });
 	server.log.info(`API server running on port ${port}`);
 
-	// Run every 5 minutes
-	setInterval(
-		() => {
-			checkUndeliveredNotifications(prisma).catch((err) => {
-				Sentry.captureException(err);
-				logger.error({ err }, "Notification fallback job failed");
-			});
-		},
-		5 * 60 * 1000,
-	);
+	// Register background jobs (BullMQ if Redis available, setInterval otherwise)
+	await registerJobs(prisma);
 
-	// Run wellbeing alert processing every 15 minutes
-	setInterval(
-		() => {
-			processWellbeingAlerts(prisma).catch((err) => {
-				Sentry.captureException(err);
-				logger.error({ err }, "Wellbeing alert cron failed");
-			});
-		},
-		15 * 60 * 1000,
-	);
-
-	// Run MIS auto-sync every 15 minutes
-	startMisSyncCron(prisma);
-
-	// Run weekly progress summary generation (checks every hour, runs Monday)
-	startProgressSummaryCron(prisma);
-
-	// Run daily payment reminder checks (checks every hour, sends at 9am)
-	startPaymentReminderCron(prisma);
+	// Graceful shutdown: close queues/workers before process exits
+	process.once("SIGTERM", async () => {
+		server.log.info("SIGTERM received, shutting down queues...");
+		await closeQueues();
+	});
 }
 
 main().catch((err) => {

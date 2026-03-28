@@ -161,3 +161,8 @@ export function startMisSyncCron(prisma: PrismaClient): NodeJS.Timeout {
 		});
 	}, CRON_INTERVAL_MS);
 }
+
+/** One-shot execution for use by BullMQ workers. */
+export async function runMisSyncOnce(prisma: PrismaClient): Promise<void> {
+	return runSync(prisma);
+}

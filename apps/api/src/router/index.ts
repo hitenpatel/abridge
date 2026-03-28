@@ -24,6 +24,7 @@ import { notificationRouter } from "./notification";
 import { parentsEveningRouter } from "./parents-evening";
 import { paymentsRouter } from "./payments";
 import { progressSummaryRouter } from "./progress-summary";
+import { queueRouter } from "./queue";
 import { readingDiaryRouter } from "./reading-diary";
 import { reportCardRouter } from "./report-card";
 import { searchRouter } from "./search";
@@ -77,6 +78,7 @@ export const appRouter = router({
 	progressSummary: progressSummaryRouter,
 	search: searchRouter,
 	notification: notificationRouter,
+	queue: queueRouter,
 });
 
 export type AppRouter = typeof appRouter;

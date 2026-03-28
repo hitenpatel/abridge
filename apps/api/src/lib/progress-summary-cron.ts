@@ -133,3 +133,8 @@ export function startProgressSummaryCron(prisma: PrismaClient): void {
 		60 * 60 * 1000,
 	);
 }
+
+/** One-shot execution for use by BullMQ workers. */
+export async function runProgressSummaryOnce(prisma: PrismaClient): Promise<void> {
+	return runWeeklySummaries(prisma);
+}
