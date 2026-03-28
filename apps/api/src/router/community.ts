@@ -92,6 +92,7 @@ export const communityRouter = router({
 				where: {
 					schoolId: input.schoolId,
 					status: "ACTIVE",
+					deletedAt: null,
 					...(input.type ? { type: input.type } : {}),
 					...(input.tag ? { tags: { has: input.tag } } : {}),
 				},
@@ -121,7 +122,7 @@ export const communityRouter = router({
 		.input(z.object({ postId: z.string() }))
 		.query(async ({ ctx, input }) => {
 			return ctx.prisma.communityPost.findUnique({
-				where: { id: input.postId },
+				where: { id: input.postId, deletedAt: null },
 				include: {
 					author: { select: { id: true, name: true } },
 					comments: {
@@ -259,7 +260,7 @@ export const communityRouter = router({
 
 			if (input.pinned) {
 				const pinnedCount = await ctx.prisma.communityPost.count({
-					where: { schoolId: input.schoolId, isPinned: true },
+					where: { schoolId: input.schoolId, isPinned: true, deletedAt: null },
 				});
 				if (pinnedCount >= 3) {
 					throw new TRPCError({

@@ -104,6 +104,7 @@ export const calendarRouter = router({
 					where: {
 						schoolId: { in: schoolIds },
 						recurrencePattern: null,
+						deletedAt: null,
 						startDate: { gte: input.startDate, lte: input.endDate },
 						...(input.category ? { category: input.category } : {}),
 					},
@@ -113,6 +114,7 @@ export const calendarRouter = router({
 					where: {
 						schoolId: { in: schoolIds },
 						recurrencePattern: { not: null },
+						deletedAt: null,
 						startDate: { lte: input.endDate },
 						...(input.category ? { category: input.category } : {}),
 					},
@@ -191,7 +193,7 @@ export const calendarRouter = router({
 			const realEventId = input.eventId.includes("_") ? input.eventId.split("_")[0] : input.eventId;
 
 			const event = await ctx.prisma.event.findUnique({
-				where: { id: realEventId },
+				where: { id: realEventId, deletedAt: null },
 			});
 
 			if (!event || event.schoolId !== input.schoolId) {
@@ -201,7 +203,10 @@ export const calendarRouter = router({
 				});
 			}
 
-			await ctx.prisma.event.delete({ where: { id: realEventId } });
+			await ctx.prisma.event.update({
+				where: { id: realEventId },
+				data: { deletedAt: new Date() },
+			});
 			return { success: true };
 		}),
 
@@ -229,7 +234,7 @@ export const calendarRouter = router({
 
 			// Get event details
 			const event = await ctx.prisma.event.findUnique({
-				where: { id: input.eventId },
+				where: { id: input.eventId, deletedAt: null },
 			});
 			if (!event) {
 				throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
@@ -317,7 +322,7 @@ export const calendarRouter = router({
 			assertFeatureEnabled(ctx, "calendar");
 
 			const event = await ctx.prisma.event.findUnique({
-				where: { id: input.eventId },
+				where: { id: input.eventId, deletedAt: null },
 			});
 
 			if (!event || event.schoolId !== input.schoolId) {

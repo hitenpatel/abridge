@@ -349,6 +349,8 @@ model Message {
   conversationId String?
   createdAt      DateTime        @default(now())
 
+  deletedAt    DateTime?
+
   school       School              @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   children     MessageChild[]
   reads        MessageRead[]
@@ -465,6 +467,7 @@ model PaymentItem {
   allowInstalments Boolean @default(false)
   instalmentPlan   Json?
   isRecurring      Boolean @default(false)
+  deletedAt        DateTime?
 
   school   School             @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   children PaymentItemChild[]
@@ -546,6 +549,7 @@ model Event {
   maxCapacity       Int?
   rsvpRequired      Boolean            @default(false)
   createdAt         DateTime           @default(now())
+  deletedAt         DateTime?
 
   school School      @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   rsvps  EventRsvp[]
@@ -605,6 +609,7 @@ model FormTemplate {
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
 
   school    School         @relation(fields: [schoolId], references: [id])
   responses FormResponse[]
@@ -746,6 +751,7 @@ model ClassPost {
   className String
   mediaUrls Json     @default("[]")
   createdAt DateTime @default(now())
+  deletedAt DateTime?
 
   school    School              @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   reactions ClassPostReaction[]
@@ -1061,6 +1067,7 @@ model CommunityPost {
   removedReason String?
   createdAt     DateTime             @default(now())
   updatedAt     DateTime             @updatedAt
+  deletedAt     DateTime?
 
   comments       CommunityComment[]
   volunteerSlots VolunteerSlot[]

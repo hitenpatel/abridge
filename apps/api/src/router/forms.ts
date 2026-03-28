@@ -204,7 +204,7 @@ export const formsRouter = router({
 	getTemplates: schoolFeatureProcedure.query(async ({ ctx, input }) => {
 		assertFeatureEnabled(ctx, "forms");
 		return ctx.prisma.formTemplate.findMany({
-			where: { schoolId: input.schoolId },
+			where: { schoolId: input.schoolId, deletedAt: null },
 			orderBy: { createdAt: "desc" },
 		});
 	}),
@@ -233,7 +233,7 @@ export const formsRouter = router({
 		.input(z.object({ templateId: z.string() }))
 		.query(async ({ ctx, input }) => {
 			const template = await ctx.prisma.formTemplate.findUnique({
-				where: { id: input.templateId },
+				where: { id: input.templateId, deletedAt: null },
 			});
 
 			if (!template) {
@@ -335,6 +335,7 @@ export const formsRouter = router({
 				where: {
 					schoolId: child.schoolId,
 					isActive: true,
+					deletedAt: null,
 					responses: {
 						none: {
 							childId: input.childId,
@@ -427,7 +428,7 @@ export const formsRouter = router({
 
 			const [template, child] = await Promise.all([
 				ctx.prisma.formTemplate.findUnique({
-					where: { id: input.templateId },
+					where: { id: input.templateId, deletedAt: null },
 					include: { school: { select: { name: true } } },
 				}),
 				ctx.prisma.child.findUnique({

@@ -133,7 +133,7 @@ export const messagingRouter = router({
 
 			const [messages, total] = await Promise.all([
 				ctx.prisma.message.findMany({
-					where: { schoolId: input.schoolId, type: "BROADCAST" },
+					where: { schoolId: input.schoolId, type: "BROADCAST", deletedAt: null },
 					orderBy: { createdAt: "desc" },
 					take: input.limit,
 					skip,
@@ -147,7 +147,9 @@ export const messagingRouter = router({
 						},
 					},
 				}),
-				ctx.prisma.message.count({ where: { schoolId: input.schoolId, type: "BROADCAST" } }),
+				ctx.prisma.message.count({
+					where: { schoolId: input.schoolId, type: "BROADCAST", deletedAt: null },
+				}),
 			]);
 
 			return {
@@ -195,6 +197,7 @@ export const messagingRouter = router({
 			const messages = await ctx.prisma.message.findMany({
 				where: {
 					type: "BROADCAST",
+					deletedAt: null,
 					children: {
 						some: {
 							childId: { in: childIds },
@@ -401,7 +404,7 @@ export const messagingRouter = router({
 			}
 
 			const replies = await ctx.prisma.message.findMany({
-				where: { threadId: input.messageId, type: "REPLY" },
+				where: { threadId: input.messageId, type: "REPLY", deletedAt: null },
 				orderBy: { createdAt: "asc" },
 				take: input.limit + 1,
 				cursor: input.cursor ? { id: input.cursor } : undefined,
@@ -625,7 +628,7 @@ export const messagingRouter = router({
 			}
 
 			const messages = await ctx.prisma.message.findMany({
-				where: { conversationId: input.conversationId, type: "DIRECT" },
+				where: { conversationId: input.conversationId, type: "DIRECT", deletedAt: null },
 				orderBy: { createdAt: "asc" },
 				take: input.limit + 1,
 				cursor: input.cursor ? { id: input.cursor } : undefined,

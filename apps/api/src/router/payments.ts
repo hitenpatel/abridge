@@ -326,6 +326,7 @@ export const paymentsRouter = router({
 		// 2. Get payment items for these children
 		const paymentItems = await ctx.prisma.paymentItem.findMany({
 			where: {
+				deletedAt: null,
 				children: {
 					some: { childId: { in: childIds } },
 				},
@@ -493,7 +494,7 @@ export const paymentsRouter = router({
 
 			const [items, total] = await Promise.all([
 				ctx.prisma.paymentItem.findMany({
-					where: { schoolId: input.schoolId },
+					where: { schoolId: input.schoolId, deletedAt: null },
 					orderBy: { createdAt: "desc" },
 					take: input.limit,
 					skip,
@@ -506,7 +507,7 @@ export const paymentsRouter = router({
 						},
 					},
 				}),
-				ctx.prisma.paymentItem.count({ where: { schoolId: input.schoolId } }),
+				ctx.prisma.paymentItem.count({ where: { schoolId: input.schoolId, deletedAt: null } }),
 			]);
 
 			return {

@@ -79,7 +79,7 @@ export const classPostRouter = router({
 		)
 		.mutation(async ({ ctx, input }) => {
 			const post = await ctx.prisma.classPost.findUnique({
-				where: { id: input.postId },
+				where: { id: input.postId, deletedAt: null },
 			});
 
 			if (!post || post.schoolId !== input.schoolId) {
@@ -90,7 +90,10 @@ export const classPostRouter = router({
 				throw new TRPCError({ code: "FORBIDDEN", message: "You can only delete your own posts" });
 			}
 
-			await ctx.prisma.classPost.delete({ where: { id: input.postId } });
+			await ctx.prisma.classPost.update({
+				where: { id: input.postId },
+				data: { deletedAt: new Date() },
+			});
 
 			return { success: true };
 		}),
@@ -105,7 +108,7 @@ export const classPostRouter = router({
 		)
 		.mutation(async ({ ctx, input }) => {
 			const post = await ctx.prisma.classPost.findUnique({
-				where: { id: input.postId },
+				where: { id: input.postId, deletedAt: null },
 			});
 
 			if (!post || post.schoolId !== input.schoolId) {
@@ -130,7 +133,7 @@ export const classPostRouter = router({
 		.input(z.object({ postId: z.string() }))
 		.query(async ({ ctx, input }) => {
 			const post = await ctx.prisma.classPost.findUnique({
-				where: { id: input.postId },
+				where: { id: input.postId, deletedAt: null },
 				include: {
 					reactions: { select: { emoji: true, userId: true } },
 				},
@@ -201,7 +204,7 @@ export const classPostRouter = router({
 		)
 		.query(async ({ ctx, input }) => {
 			const posts = await ctx.prisma.classPost.findMany({
-				where: { schoolId: input.schoolId },
+				where: { schoolId: input.schoolId, deletedAt: null },
 				orderBy: { createdAt: "desc" },
 				take: input.limit,
 			});
@@ -233,6 +236,7 @@ export const classPostRouter = router({
 					schoolId: input.schoolId,
 					yearGroup: input.yearGroup,
 					className: input.className,
+					deletedAt: null,
 				},
 				orderBy: { createdAt: "desc" },
 				take: input.limit + 1,
@@ -299,7 +303,7 @@ export const classPostRouter = router({
 			}
 
 			const posts = await ctx.prisma.classPost.findMany({
-				where: { schoolId, yearGroup, className },
+				where: { schoolId, yearGroup, className, deletedAt: null },
 				orderBy: { createdAt: "desc" },
 				take: input.limit + 1,
 				cursor: input.cursor ? { id: input.cursor } : undefined,
@@ -353,7 +357,7 @@ export const classPostRouter = router({
 		.mutation(async ({ ctx, input }) => {
 			// Verify post exists and parent can see it
 			const post = await ctx.prisma.classPost.findUnique({
-				where: { id: input.postId },
+				where: { id: input.postId, deletedAt: null },
 				select: { schoolId: true, yearGroup: true, className: true },
 			});
 
