@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { generateHint } from "../lib/ai-homework-hints";
 import { assertFeatureEnabled } from "../lib/feature-guards";
+import { getPresignedUploadUrl } from "../lib/s3";
 import { isParentOrStudentOfChild } from "../lib/student-auth";
 import { protectedProcedure, router, schoolFeatureProcedure } from "../trpc";
 
@@ -119,6 +120,8 @@ export const homeworkRouter = router({
 			z.object({
 				assignmentId: z.string(),
 				childId: z.string(),
+				attachmentUrl: z.string().url().max(2000).optional(),
+				attachmentName: z.string().max(255).optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -141,6 +144,8 @@ export const homeworkRouter = router({
 					status: "COMPLETED",
 					completedAt: new Date(),
 					markedBy: "PARENT",
+					...(input.attachmentUrl !== undefined && { attachmentUrl: input.attachmentUrl }),
+					...(input.attachmentName !== undefined && { attachmentName: input.attachmentName }),
 				},
 				create: {
 					assignmentId: input.assignmentId,
@@ -148,6 +153,8 @@ export const homeworkRouter = router({
 					status: "COMPLETED",
 					completedAt: new Date(),
 					markedBy: "PARENT",
+					attachmentUrl: input.attachmentUrl ?? null,
+					attachmentName: input.attachmentName ?? null,
 				},
 			});
 		}),
@@ -291,6 +298,82 @@ export const homeworkRouter = router({
 			return ctx.prisma.homeworkAssignment.update({
 				where: { id: input.assignmentId },
 				data: { status: "CANCELLED" },
+			});
+		}),
+
+	getSubmissionUploadUrl: protectedProcedure
+		.input(
+			z.object({
+				childId: z.string(),
+				filename: z.string().min(1).max(255),
+				contentType: z.string().min(1).max(127),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const hasAccess = await isParentOrStudentOfChild(ctx.prisma, ctx.user.id, input.childId);
+			if (!hasAccess) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "Not authorised to upload for this child",
+				});
+			}
+
+			const child = await ctx.prisma.child.findUnique({
+				where: { id: input.childId },
+				select: { schoolId: true },
+			});
+			if (!child) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Child not found" });
+			}
+
+			const allowedTypes = [
+				"image/jpeg",
+				"image/png",
+				"image/webp",
+				"application/pdf",
+				"application/msword",
+				"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+			];
+			if (!allowedTypes.includes(input.contentType)) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "File type not allowed. Permitted types: images, PDF, Word documents.",
+				});
+			}
+
+			return getPresignedUploadUrl({
+				schoolId: child.schoolId,
+				filename: input.filename,
+				contentType: input.contentType,
+			});
+		}),
+
+	getSubmissions: schoolFeatureProcedure
+		.input(
+			z.object({
+				schoolId: z.string(),
+				assignmentId: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			assertFeatureEnabled(ctx, "homework");
+
+			const assignment = await ctx.prisma.homeworkAssignment.findUnique({
+				where: { id: input.assignmentId },
+				select: { schoolId: true, setBy: true },
+			});
+			if (!assignment || assignment.schoolId !== input.schoolId) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Assignment not found" });
+			}
+
+			return ctx.prisma.homeworkCompletion.findMany({
+				where: { assignmentId: input.assignmentId },
+				include: {
+					child: {
+						select: { id: true, firstName: true, lastName: true, yearGroup: true },
+					},
+				},
+				orderBy: { completedAt: "desc" },
 			});
 		}),
 

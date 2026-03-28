@@ -1331,6 +1331,8 @@ model HomeworkCompletion {
   gradedBy     String?
   grader       User?                      @relation("HomeworkGradedBy", fields: [gradedBy], references: [id])
   gradedAt     DateTime?
+  attachmentUrl  String?
+  attachmentName String?
   hintCount    Int                        @default(0)
   createdAt    DateTime                   @default(now())
   updatedAt    DateTime                   @updatedAt

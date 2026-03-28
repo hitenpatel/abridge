@@ -23,14 +23,17 @@ import {
 	ChevronDown,
 	ChevronUp,
 	ClipboardList,
+	Download,
 	Filter,
 	GraduationCap,
+	Paperclip,
 	Plus,
 	Save,
 	Trash2,
 	X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 function getDueDateColor(dueDate: Date, completed: boolean): string {
 	if (completed) return "bg-green-100 text-green-800";
@@ -63,7 +66,10 @@ function ParentView() {
 	const [selectedChild, setSelectedChild] = useState<string | null>(null);
 	const [expandedId, setExpandedId] = useState<string | null>(null);
 	const [subjectFilter, setSubjectFilter] = useState<string>("all");
-
+	const [uploading, setUploading] = useState<string | null>(null);
+	const [pendingAttachment, setPendingAttachment] = useState<
+		Record<string, { url: string; name: string }>
+	>({});
 	const childId = selectedChild ?? children?.[0]?.child?.id;
 
 	const { data: homework, isLoading } = trpc.homework.listForChild.useQuery(
@@ -73,6 +79,8 @@ function ParentView() {
 
 	const utils = trpc.useUtils();
 
+	const getUploadUrlMutation = trpc.homework.getSubmissionUploadUrl.useMutation();
+
 	const markCompleteMutation = trpc.homework.markComplete.useMutation({
 		onSuccess: () => {
 			if (childId) {
@@ -80,6 +88,32 @@ function ParentView() {
 			}
 		},
 	});
+
+	const handleFileSelect = async (assignmentId: string, file: File) => {
+		if (!childId) return;
+		setUploading(assignmentId);
+		try {
+			const { uploadUrl, publicUrl } = await getUploadUrlMutation.mutateAsync({
+				childId,
+				filename: file.name,
+				contentType: file.type,
+			});
+			await fetch(uploadUrl, {
+				method: "PUT",
+				body: file,
+				headers: { "Content-Type": file.type },
+			});
+			setPendingAttachment((prev) => ({
+				...prev,
+				[assignmentId]: { url: publicUrl, name: file.name },
+			}));
+			toast.success("File attached. Click 'Mark as Done' to submit.");
+		} catch {
+			toast.error("Failed to upload file. Please try again.");
+		} finally {
+			setUploading(null);
+		}
+	};
 
 	const subjects = useMemo(() => {
 		if (!homework?.assignments?.length) return [];
@@ -212,21 +246,81 @@ function ParentView() {
 													</div>
 												)}
 
-												{!isCompleted && (
-													<Button
-														size="sm"
-														onClick={() => {
-															markCompleteMutation.mutate({
-																assignmentId: item.id,
-																childId: childId ?? "",
-															});
-														}}
-														disabled={markCompleteMutation.isPending}
-														className="flex items-center gap-1.5 bg-green-600 hover:bg-green-700 text-white"
+												{isCompleted && completion?.attachmentUrl && (
+													<a
+														href={completion.attachmentUrl}
+														target="_blank"
+														rel="noopener noreferrer"
+														className="inline-flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800"
 													>
-														<CheckCircle2 className="h-3.5 w-3.5" />
-														{markCompleteMutation.isPending ? "Marking..." : "Mark as Done"}
-													</Button>
+														<Paperclip className="h-3 w-3" />
+														{completion.attachmentName ?? "Attachment"}
+													</a>
+												)}
+
+												{!isCompleted && (
+													<div className="flex flex-wrap items-center gap-2">
+														<input
+															type="file"
+															accept="image/jpeg,image/png,image/webp,application/pdf,.doc,.docx"
+															className="hidden"
+															id={`hw-upload-${item.id}`}
+															onChange={(e) => {
+																const file = e.target.files?.[0];
+																if (file) handleFileSelect(item.id, file);
+																e.target.value = "";
+															}}
+														/>
+														<Button
+															size="sm"
+															variant="outline"
+															disabled={uploading === item.id}
+															onClick={() => {
+																document.getElementById(`hw-upload-${item.id}`)?.click();
+															}}
+															className="flex items-center gap-1.5"
+														>
+															<Paperclip className="h-3.5 w-3.5" />
+															{uploading === item.id
+																? "Uploading..."
+																: pendingAttachment[item.id]
+																	? pendingAttachment[item.id].name
+																	: "Attach File"}
+														</Button>
+														{pendingAttachment[item.id] && (
+															<button
+																type="button"
+																onClick={() =>
+																	setPendingAttachment((prev) => {
+																		const next = { ...prev };
+																		delete next[item.id];
+																		return next;
+																	})
+																}
+																className="text-muted-foreground hover:text-foreground"
+																aria-label="Remove attachment"
+															>
+																<X className="h-3.5 w-3.5" />
+															</button>
+														)}
+														<Button
+															size="sm"
+															onClick={() => {
+																const attachment = pendingAttachment[item.id];
+																markCompleteMutation.mutate({
+																	assignmentId: item.id,
+																	childId: childId ?? "",
+																	attachmentUrl: attachment?.url,
+																	attachmentName: attachment?.name,
+																});
+															}}
+															disabled={markCompleteMutation.isPending || uploading === item.id}
+															className="flex items-center gap-1.5 bg-green-600 hover:bg-green-700 text-white"
+														>
+															<CheckCircle2 className="h-3.5 w-3.5" />
+															{markCompleteMutation.isPending ? "Marking..." : "Mark as Done"}
+														</Button>
+													</div>
 												)}
 											</div>
 										)}
@@ -237,6 +331,43 @@ function ParentView() {
 					)}
 				</CardContent>
 			</Card>
+		</div>
+	);
+}
+
+function SubmissionsPanel({ schoolId, assignmentId }: { schoolId: string; assignmentId: string }) {
+	const { data: submissions, isLoading } = trpc.homework.getSubmissions.useQuery({
+		schoolId,
+		assignmentId,
+	});
+
+	if (isLoading) return <Skeleton className="h-16 w-full" />;
+	if (!submissions?.length) return null;
+
+	const withAttachments = submissions.filter((s) => s.attachmentUrl);
+	if (!withAttachments.length) return null;
+
+	return (
+		<div className="space-y-1">
+			<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+				Submitted Files
+			</p>
+			{withAttachments.map((s) => (
+				<div key={s.id} className="flex items-center gap-2 text-sm">
+					<span className="text-muted-foreground">
+						{s.child.firstName} {s.child.lastName}
+					</span>
+					<a
+						href={s.attachmentUrl ?? ""}
+						target="_blank"
+						rel="noopener noreferrer"
+						className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800"
+					>
+						<Download className="h-3.5 w-3.5" />
+						{s.attachmentName ?? "Download"}
+					</a>
+				</div>
+			))}
 		</div>
 	);
 }
@@ -537,6 +668,8 @@ function StaffView({ schoolId }: { schoolId: string }) {
 														{assignment._count.completions !== 1 ? "s" : ""} submitted
 													</p>
 												)}
+
+												<SubmissionsPanel schoolId={schoolId} assignmentId={assignment.id} />
 
 												<div className="flex items-center gap-2">
 													<Button
