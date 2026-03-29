@@ -84,7 +84,7 @@ test.describe("Student Portal", () => {
 		// === STEP 4: Navigate to homework page ===
 		await page.reload();
 		await page.goto("http://localhost:3000/dashboard/homework");
-		await expect(page.getByText("Homework")).toBeVisible({ timeout: 10000 });
+		await expect(page.getByRole("heading", { name: /Homework/i })).toBeVisible({ timeout: 10000 });
 
 		// Student should see the homework assignment
 		await expect(async () => {
