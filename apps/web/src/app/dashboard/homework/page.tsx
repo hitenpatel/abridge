@@ -284,7 +284,7 @@ function ParentView() {
 															{uploading === item.id
 																? "Uploading..."
 																: pendingAttachment[item.id]
-																	? pendingAttachment[item.id].name
+																	? pendingAttachment[item.id]?.name
 																	: "Attach File"}
 														</Button>
 														{pendingAttachment[item.id] && (
