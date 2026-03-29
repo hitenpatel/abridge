@@ -255,7 +255,7 @@ describe("classPost router", () => {
 							schoolId: "school-1",
 							authorId: "staff-1",
 						}),
-						delete: vi.fn().mockResolvedValue({}),
+						update: vi.fn().mockResolvedValue({ id: "post-1", deletedAt: new Date() }),
 					},
 				},
 			});
@@ -267,8 +267,9 @@ describe("classPost router", () => {
 			});
 
 			expect(result.success).toBe(true);
-			expect(ctx.prisma.classPost.delete).toHaveBeenCalledWith({
+			expect(ctx.prisma.classPost.update).toHaveBeenCalledWith({
 				where: { id: "post-1" },
+				data: { deletedAt: expect.any(Date) },
 			});
 		});
 

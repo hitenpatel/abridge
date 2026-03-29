@@ -31,6 +31,7 @@ function createTestContext(overrides?: Record<string, any>): any {
 				create: vi.fn().mockResolvedValue({ id: "evt-new", title: "New Event" }),
 				findUnique: vi.fn().mockResolvedValue({ id: "evt-1", schoolId: "school-1" }),
 				delete: vi.fn().mockResolvedValue({ id: "evt-1" }),
+				update: vi.fn().mockResolvedValue({ id: "evt-1", deletedAt: new Date() }),
 			},
 			staffMember: {
 				findUnique: vi.fn().mockResolvedValue({ schoolId: "school-1", role: "TEACHER" }),

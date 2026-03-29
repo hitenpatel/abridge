@@ -10,6 +10,14 @@ vi.mock("../lib/media", () => ({
 	ALLOWED_TYPES: ["image/jpeg", "image/png", "image/webp", "video/mp4", "video/quicktime"],
 	MAX_IMAGE_SIZE: 10 * 1024 * 1024,
 	MAX_VIDEO_SIZE: 50 * 1024 * 1024,
+	MAX_DOCUMENT_SIZE: 20 * 1024 * 1024,
+	DOCUMENT_TYPES: [
+		"application/pdf",
+		"application/msword",
+		"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+		"application/vnd.ms-excel",
+		"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+	],
 	getPresignedUploadUrl: vi.fn().mockResolvedValue({
 		uploadUrl: "https://r2.example.com/presigned-url",
 		key: "schools/school-1/media/test123.jpg",

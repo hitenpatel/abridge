@@ -79,7 +79,7 @@ describe("forms router", () => {
 
 			expect(result).toEqual(mockTemplates);
 			expect(ctx.prisma.formTemplate.findMany).toHaveBeenCalledWith({
-				where: { schoolId: "school-1" },
+				where: { schoolId: "school-1", deletedAt: null },
 				orderBy: { createdAt: "desc" },
 			});
 		});
